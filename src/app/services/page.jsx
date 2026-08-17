@@ -1,4 +1,10 @@
 import { Camera, Video, User, Users, Gift, Stamp } from "lucide-react";
+import AnimatedSection from "@/components/ui/AnimatedSection";
+
+export const metadata = {
+  title: 'Our Services',
+  description: 'Explore our range of professional photography services in Madurai, including weddings, events, birthdays, and portraits.',
+};
 
 export default function Services() {
   const services = [
@@ -36,22 +42,24 @@ export default function Services() {
 
   return (
     <div className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Our Services</h1>
-        <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
+      <AnimatedSection className="text-center mb-16">
+        <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-br from-amber-100 to-yellow-600 drop-shadow-sm">Our Services</h1>
+        <p className="text-zinc-300 text-xl max-w-2xl mx-auto font-light leading-relaxed">
           From grand weddings to professional headshots, we offer a comprehensive range of photography and videography services.
         </p>
-      </div>
+      </AnimatedSection>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {services.map((service, idx) => (
-          <div key={idx} className="bg-zinc-900 border border-zinc-800 p-8 rounded-2xl hover:border-zinc-700 transition-colors">
-            <div className="bg-zinc-800 w-16 h-16 rounded-xl flex items-center justify-center mb-6">
-              {service.icon}
+          <AnimatedSection key={idx} delay={idx * 0.1}>
+            <div className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800/50 p-10 rounded-3xl hover:border-amber-500/30 transition-all duration-300 shadow-xl h-full group">
+              <div className="bg-gradient-to-br from-amber-400 to-yellow-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-8 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                {service.icon}
+              </div>
+              <h3 className="font-serif text-3xl font-bold mb-4 text-white group-hover:text-amber-300 transition-colors">{service.title}</h3>
+              <p className="text-zinc-300 leading-relaxed text-lg">{service.description}</p>
             </div>
-            <h3 className="text-2xl font-semibold mb-3">{service.title}</h3>
-            <p className="text-zinc-400">{service.description}</p>
-          </div>
+          </AnimatedSection>
         ))}
       </div>
     </div>

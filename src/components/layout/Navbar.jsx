@@ -18,15 +18,12 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 w-full backdrop-blur-md bg-zinc-950/80 border-b border-zinc-800">
+    <nav className="sticky top-0 z-50 bg-zinc-950/60 backdrop-blur-xl border-b border-zinc-800/50 supports-[backdrop-filter]:bg-zinc-950/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-2">
-            <Camera className="w-8 h-8 text-white" />
-            <Link href="/" className="text-xl font-bold tracking-tight text-white">
-              SSS STUDIO
-            </Link>
-          </div>
+        <div className="flex justify-between items-center h-20">
+          <Link href="/" className="font-serif font-bold text-2xl tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400">
+            SSS STUDIO
+          </Link>
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
               {links.map((link) => (

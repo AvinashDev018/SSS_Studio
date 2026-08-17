@@ -41,28 +41,28 @@ export default function Gallery() {
 
   return (
     <div className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Portfolio Gallery</h1>
-        <p className="text-zinc-400 text-lg max-w-2xl mx-auto mb-8">
-          A collection of our finest work.
+      <div className="text-center mb-16">
+        <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-br from-amber-100 to-yellow-600 drop-shadow-sm">Our Portfolio</h1>
+        <p className="text-zinc-300 text-xl max-w-2xl mx-auto font-light leading-relaxed">
+          A collection of our finest moments captured through the lens.
         </p>
-        
-        {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-4">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
-                activeCategory === cat 
-                  ? "bg-white text-black" 
-                  : "bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+      </div>
+      
+      {/* Filter Categories */}
+      <div className="flex flex-wrap justify-center gap-4 mb-16">
+        {categories.map(category => (
+          <button
+            key={category}
+            onClick={() => setActiveCategory(category)}
+            className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
+              activeCategory === category
+                ? "bg-gradient-to-r from-amber-400 to-yellow-600 text-black shadow-lg shadow-amber-500/20"
+                : "bg-zinc-900/50 backdrop-blur-sm text-zinc-400 hover:text-white hover:bg-zinc-800/80 border border-zinc-800/50"
+            }`}
+          >
+            {category}
+          </button>
+        ))}
       </div>
 
       {/* Masonry Grid */}

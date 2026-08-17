@@ -1,0 +1,52 @@
+import { Star } from "lucide-react";
+import AnimatedSection from "@/components/ui/AnimatedSection";
+
+const testimonials = [
+  {
+    name: "Priya & Karthik",
+    event: "Wedding",
+    text: "SSS Studio made our wedding day unforgettable! The photos are absolutely stunning and they captured every single candid moment perfectly. Highly recommended!",
+  },
+  {
+    name: "Ramesh Family",
+    event: "Birthday Function",
+    text: "We hired them for our daughter's 1st birthday. The team was so patient and friendly, and the album output was extremely premium. Thank you!",
+  },
+  {
+    name: "Suresh Kumar",
+    event: "Corporate Event",
+    text: "Very professional team in Madurai. They arrived on time, delivered the edited videos quickly, and the quality was top-notch. Will book again.",
+  }
+];
+
+export default function Testimonials() {
+  return (
+    <div className="py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-zinc-900/50 relative">
+      <AnimatedSection className="text-center mb-20">
+        <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-600 drop-shadow-sm">Client Love</h2>
+        <p className="text-zinc-400 text-xl max-w-2xl mx-auto font-light">
+          Don't just take our word for it. Here is what our happy clients have to say about their experience with us.
+        </p>
+      </AnimatedSection>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {testimonials.map((t, idx) => (
+          <AnimatedSection key={idx} delay={idx * 0.2}>
+            <div className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800/50 p-10 rounded-3xl h-full flex flex-col hover:border-amber-500/30 transition-colors shadow-xl">
+              <div className="flex gap-1 mb-8">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-amber-500 text-amber-500" />
+                ))}
+              </div>
+              <p className="text-zinc-300 flex-grow mb-10 text-lg italic leading-relaxed">"{t.text}"</p>
+              <div>
+                <h4 className="font-serif font-bold text-white text-xl mb-1">{t.name}</h4>
+                <p className="text-amber-500/80 text-sm font-medium tracking-wide uppercase">{t.event}</p>
+              </div>
+            </div>
+          </AnimatedSection>
+        ))}
+      </div>
+    </div>
+  );
+}

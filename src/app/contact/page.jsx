@@ -76,9 +76,9 @@ Please let me know if this date is available.`;
   return (
     <div className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Book Your Session</h1>
-        <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
-          Fill out the form below with your details and we will get back to you shortly to confirm your booking.
+        <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-br from-amber-100 to-yellow-600 drop-shadow-sm">Let's Create Magic</h1>
+        <p className="text-zinc-300 text-xl max-w-2xl mx-auto font-light leading-relaxed">
+          Ready to book your session? Fill out the form below and we'll get back to you within 24 hours to discuss the details.
         </p>
       </div>
 
@@ -188,13 +188,13 @@ Please let me know if this date is available.`;
               ></textarea>
             </div>
 
-            <button 
-              type="submit" 
-              disabled={!!dateError}
-              className={`w-full font-bold py-4 rounded-xl transition-colors ${dateError ? 'bg-zinc-700 text-zinc-500 cursor-not-allowed' : 'bg-white text-black hover:bg-zinc-200'}`}
-            >
-              Submit Booking Request
-            </button>
+              <button
+                type="submit"
+                disabled={mockBookedDates.includes(formData.date)}
+                className="w-full bg-gradient-to-r from-amber-400 to-yellow-600 text-black py-4 rounded-xl font-bold text-lg hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none"
+              >
+                Send Booking Request
+              </button>
           </form>
         </div>
 
@@ -207,8 +207,8 @@ Please let me know if this date is available.`;
                 <MapPin className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg text-white">Visit Our Studio</h3>
-                <p className="text-zinc-400 mt-1">34, prasanna new colony, Avaniyapuram, Madurai.</p>
+                <h3 className="font-serif font-bold text-xl text-amber-400">Visit Our Studio</h3>
+                <p className="text-zinc-300 mt-1 leading-relaxed text-lg">34, prasanna new colony, Avaniyapuram,<br/>Madurai.</p>
               </div>
             </div>
             
@@ -217,8 +217,8 @@ Please let me know if this date is available.`;
                 <Phone className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg text-white">Call Us</h3>
-                <p className="text-zinc-400 mt-1">+91 98659 92379</p>
+                <h3 className="font-serif font-bold text-xl text-amber-400">Call Us</h3>
+                <p className="text-zinc-300 mt-1 text-lg">+91 98659 92379</p>
               </div>
             </div>
 
@@ -227,8 +227,8 @@ Please let me know if this date is available.`;
                 <Mail className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg text-white">Email Us</h3>
-                <p className="text-zinc-400 mt-1">ajayavinashsss@gmail.com</p>
+                <h3 className="font-serif font-bold text-xl text-amber-400">Email Us</h3>
+                <p className="text-zinc-300 mt-1 text-lg">ajayavinashsss@gmail.com</p>
               </div>
             </div>
 
