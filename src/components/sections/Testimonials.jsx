@@ -23,8 +23,8 @@ export default function Testimonials() {
   return (
     <div className="py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-zinc-900/50 relative">
       <AnimatedSection className="text-center mb-20">
-        <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-600 drop-shadow-sm">Client Love</h2>
-        <p className="text-zinc-400 text-xl max-w-2xl mx-auto font-light">
+        <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 to-zinc-500 dark:from-amber-200 dark:to-yellow-600 drop-shadow-sm">Client Love</h2>
+        <p className="text-zinc-600 dark:text-zinc-400 text-xl max-w-2xl mx-auto font-light">
           Don't just take our word for it. Here is what our happy clients have to say about their experience with us.
         </p>
       </AnimatedSection>
@@ -32,16 +32,16 @@ export default function Testimonials() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {testimonials.map((t, idx) => (
           <AnimatedSection key={idx} delay={idx * 0.2}>
-            <div className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800/50 p-10 rounded-3xl h-full flex flex-col hover:border-amber-500/30 transition-colors shadow-xl">
+            <div className="bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800/50 p-10 rounded-3xl h-full flex flex-col hover:border-amber-500/50 dark:hover:border-amber-500/30 transition-colors shadow-xl">
               <div className="flex gap-1 mb-8">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-5 h-5 fill-amber-500 text-amber-500" />
                 ))}
               </div>
-              <p className="text-zinc-300 flex-grow mb-10 text-lg italic leading-relaxed">"{t.text}"</p>
+              <p className="text-zinc-700 dark:text-zinc-300 flex-grow mb-10 text-lg italic leading-relaxed">"{t.text}"</p>
               <div>
-                <h4 className="font-serif font-bold text-white text-xl mb-1">{t.name}</h4>
-                <p className="text-amber-500/80 text-sm font-medium tracking-wide uppercase">{t.event}</p>
+                <h4 className="font-serif font-bold text-zinc-900 dark:text-white text-xl mb-1">{t.name}</h4>
+                <p className="text-amber-600 dark:text-amber-500/80 text-sm font-medium tracking-wide uppercase">{t.event}</p>
               </div>
             </div>
           </AnimatedSection>

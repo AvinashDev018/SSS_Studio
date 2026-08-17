@@ -42,8 +42,8 @@ export default function Gallery() {
   return (
     <div className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen">
       <div className="text-center mb-16">
-        <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-br from-amber-100 to-yellow-600 drop-shadow-sm">Our Portfolio</h1>
-        <p className="text-zinc-300 text-xl max-w-2xl mx-auto font-light leading-relaxed">
+        <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-br from-zinc-900 to-zinc-500 dark:from-amber-100 dark:to-yellow-600 drop-shadow-sm">Our Portfolio</h1>
+        <p className="text-zinc-600 dark:text-zinc-300 text-xl max-w-2xl mx-auto font-light leading-relaxed">
           A collection of our finest moments captured through the lens.
         </p>
       </div>
@@ -57,7 +57,7 @@ export default function Gallery() {
             className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
               activeCategory === category
                 ? "bg-gradient-to-r from-amber-400 to-yellow-600 text-black shadow-lg shadow-amber-500/20"
-                : "bg-zinc-900/50 backdrop-blur-sm text-zinc-400 hover:text-white hover:bg-zinc-800/80 border border-zinc-800/50"
+                : "bg-zinc-100 dark:bg-zinc-900/50 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-800/50"
             }`}
           >
             {category}
@@ -70,7 +70,7 @@ export default function Gallery() {
         {filteredPhotos.map((photo, index) => (
           <div 
             key={photo.id} 
-            className="break-inside-avoid cursor-pointer overflow-hidden rounded-2xl group"
+            className="break-inside-avoid cursor-pointer overflow-hidden rounded-2xl group border border-zinc-200 dark:border-zinc-800"
             onClick={() => openLightbox(index)}
           >
             <img 
@@ -85,8 +85,8 @@ export default function Gallery() {
 
       {/* Lightbox */}
       {lightboxIndex !== null && (
-        <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center" onClick={closeLightbox}>
-          <button className="absolute top-6 right-6 text-white/70 hover:text-white" onClick={closeLightbox}>
+        <div className="fixed inset-0 z-[100] bg-zinc-950/95 flex items-center justify-center" onClick={closeLightbox}>
+          <button className="absolute top-6 right-6 text-zinc-400 hover:text-white" onClick={closeLightbox}>
             <X className="w-8 h-8" />
           </button>
           

@@ -20,10 +20,10 @@ export default function Home() {
         </div>
         
         <AnimatedSection className="relative z-20 text-center px-4 max-w-5xl mx-auto" yOffset={40}>
-          <h1 className="font-serif text-6xl md:text-8xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-br from-amber-100 via-amber-300 to-yellow-600 drop-shadow-sm">
+          <h1 className="font-serif text-6xl md:text-8xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-br from-zinc-800 via-zinc-600 to-zinc-400 dark:from-amber-100 dark:via-amber-300 dark:to-yellow-600 drop-shadow-sm">
             Capturing Your Special Moments
           </h1>
-          <p className="text-xl md:text-3xl text-zinc-200 mb-10 max-w-3xl mx-auto font-light leading-relaxed">
+          <p className="text-xl md:text-3xl text-zinc-100 dark:text-zinc-200 mb-10 max-w-3xl mx-auto font-light leading-relaxed">
             Premium Photography & Videography for Weddings, Events, and Portraits in Madurai.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
@@ -47,8 +47,8 @@ export default function Home() {
       <section className="py-32 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection className="text-center mb-16">
-            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-4 text-white">Our Expertise</h2>
-            <p className="text-zinc-400 text-xl max-w-2xl mx-auto font-light">We specialize in a variety of photography styles to bring your vision to life.</p>
+            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-4 text-zinc-900 dark:text-white">Our Expertise</h2>
+            <p className="text-zinc-600 dark:text-zinc-400 text-xl max-w-2xl mx-auto font-light">We specialize in a variety of photography styles to bring your vision to life.</p>
           </AnimatedSection>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[250px]">
@@ -92,13 +92,13 @@ export default function Home() {
       {/* Why Choose Us */}
       <section className="py-32 relative">
         {/* Subtle glass background behind the section */}
-        <div className="absolute inset-0 bg-zinc-900/30 backdrop-blur-xl border-y border-zinc-800/50 z-0" />
+        <div className="absolute inset-0 bg-white/30 dark:bg-zinc-900/30 backdrop-blur-xl border-y border-zinc-200 dark:border-zinc-800/50 z-0" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
             <AnimatedSection>
-              <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400">Why Choose SSS Studio?</h2>
-              <p className="text-zinc-300 mb-10 text-xl font-light leading-relaxed">
+              <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-zinc-900 to-zinc-500 dark:from-white dark:to-zinc-400">Why Choose SSS Studio?</h2>
+              <p className="text-zinc-600 dark:text-zinc-300 mb-10 text-xl font-light leading-relaxed">
                 With years of experience and a passion for visual storytelling, we deliver exceptional quality and service for every client.
               </p>
               
@@ -109,7 +109,7 @@ export default function Home() {
                   "High-End Retouching & Color Grading",
                   "Affordable & Transparent Packages"
                 ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-4 text-zinc-200">
+                  <li key={i} className="flex items-start gap-4 text-zinc-800 dark:text-zinc-200">
                     <div className="bg-amber-500/10 p-2 rounded-full border border-amber-500/20 shrink-0">
                       <CheckCircle2 className="w-5 h-5 text-amber-500" />
                     </div>

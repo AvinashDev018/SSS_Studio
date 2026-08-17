@@ -16,22 +16,26 @@ export const metadata = {
   keywords: ['photography', 'madurai', 'wedding photographer', 'photo studio', 'avaniyapuram', 'birthday photography'],
 };
 
+import { ThemeProvider } from "@/components/theme-provider";
+
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.variable} ${playfair.variable} font-sans bg-zinc-950 text-zinc-50 min-h-screen flex flex-col relative`}>
-        {/* Ambient Global Glow */}
-        <div className="fixed inset-0 z-0 pointer-events-none opacity-20">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-500/20 rounded-full blur-[120px]" />
-          <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-zinc-600/20 rounded-full blur-[150px]" />
-        </div>
-        
-        <div className="relative z-10 flex flex-col min-h-screen">
-          <Navbar />
-          <main className="flex-grow">{children}</main>
-          <Footer />
-          <WhatsAppButton />
-        </div>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.variable} ${playfair.variable} font-sans bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 min-h-screen flex flex-col relative transition-colors duration-500`}>
+        <ThemeProvider>
+          {/* Ambient Global Glow */}
+          <div className="fixed inset-0 z-0 pointer-events-none opacity-20">
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-500/20 rounded-full blur-[120px]" />
+            <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-zinc-400/20 dark:bg-zinc-600/20 rounded-full blur-[150px]" />
+          </div>
+          
+          <div className="relative z-10 flex flex-col min-h-screen">
+            <Navbar />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+            <WhatsAppButton />
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
