@@ -1,17 +1,12 @@
 "use client";
 
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
-import { useState } from "react";
-
-// Mock database of already booked dates (Format: YYYY-MM-DD)
-// Once the Spring Boot backend is ready, we will fetch this array from the API!
-const mockBookedDates = [
-  "2026-08-20",
-  "2026-08-25",
-  "2026-09-01"
-];
+import { useState, useEffect } from "react";
+import { getBookedDates, createBooking } from "@/app/actions/booking";
 
 export default function Contact() {
+  const [bookedDates, setBookedDates] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -27,6 +22,15 @@ export default function Contact() {
   // Get today's date in YYYY-MM-DD format to prevent booking in the past
   const today = new Date().toISOString().split('T')[0];
 
+  useEffect(() => {
+    // Fetch booked dates from Supabase when the component mounts
+    const fetchDates = async () => {
+      const dates = await getBookedDates();
+      setBookedDates(dates);
+    };
+    fetchDates();
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -36,24 +40,36 @@ export default function Contact() {
     const selectedDate = e.target.value;
     setFormData((prev) => ({ ...prev, date: selectedDate }));
 
-    if (mockBookedDates.includes(selectedDate)) {
+    if (bookedDates.includes(selectedDate)) {
       setDateError("Sorry, this date is already booked! Please select another date.");
     } else {
       setDateError("");
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (mockBookedDates.includes(formData.date)) {
+    if (bookedDates.includes(formData.date)) {
       alert("Cannot submit. The selected date is already booked.");
       return;
     }
     
+    setIsSubmitting(true);
+    
+    // Save booking to Supabase database via Server Action
+    const result = await createBooking(formData);
+    
+    setIsSubmitting(false);
+
+    if (!result.success) {
+      alert(result.error || "Something went wrong. Please try again.");
+      return;
+    }
+
     const finalEventType = formData.eventType === "Other" ? formData.customEventType : formData.eventType;
     
     // Format the WhatsApp message
-    const phoneNumber = "919865992379";
+    const phoneNumber = "916383565425";
     const textMessage = `*New Booking Request!* 📸
 
 *Name:* ${formData.name}
@@ -71,6 +87,17 @@ Please let me know if this date is available.`;
     
     // Open WhatsApp in a new tab
     window.open(whatsappUrl, "_blank");
+    
+    // Reset form after successful submission
+    setFormData({
+      name: "",
+      phone: "",
+      eventType: "Wedding",
+      customEventType: "",
+      date: "",
+      location: "",
+      requirements: ""
+    });
   };
 
   return (
@@ -156,7 +183,7 @@ Please let me know if this date is available.`;
                   min={today}
                   value={formData.date}
                   onChange={handleDateChange}
-                  className={`w-full bg-zinc-50 dark:bg-zinc-950 border rounded-lg px-4 py-3 text-zinc-900 dark:text-white focus:outline-none ${dateError ? 'border-red-500 focus:border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-amber-500 dark:focus:border-zinc-500'}`} 
+                  className={`w-full bg-zinc-50 dark:bg-zinc-950 dark:[color-scheme:dark] border rounded-lg px-4 py-3 text-zinc-900 dark:text-white focus:outline-none ${dateError ? 'border-red-500 focus:border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-amber-500 dark:focus:border-zinc-500'}`} 
                 />
                 {dateError && <p className="text-red-500 text-sm mt-2">{dateError}</p>}
               </div>
@@ -189,10 +216,10 @@ Please let me know if this date is available.`;
 
               <button
                 type="submit"
-                disabled={mockBookedDates.includes(formData.date)}
-                className="w-full bg-gradient-to-r from-amber-400 to-yellow-600 text-black py-4 rounded-xl font-bold text-lg hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none"
+                disabled={bookedDates.includes(formData.date) || isSubmitting}
+                className="w-full bg-gradient-to-r from-amber-400 to-yellow-600 text-black py-4 rounded-xl font-bold text-lg hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center justify-center gap-2"
               >
-                Send Booking Request
+                {isSubmitting ? "Submitting..." : "Send Booking Request"}
               </button>
           </form>
         </div>
@@ -217,7 +244,7 @@ Please let me know if this date is available.`;
               </div>
               <div>
                 <h3 className="font-serif font-bold text-xl text-zinc-900 dark:text-amber-400">Call Us</h3>
-                <p className="text-zinc-600 dark:text-zinc-300 mt-1 text-lg">+91 98659 92379</p>
+                <p className="text-zinc-600 dark:text-zinc-300 mt-1 text-lg">+91 63835 65425</p>
               </div>
             </div>
 
