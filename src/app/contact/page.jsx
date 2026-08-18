@@ -3,6 +3,8 @@
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getBookedDates, createBooking } from "@/app/actions/booking";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function Contact() {
   const [bookedDates, setBookedDates] = useState([]);
@@ -174,18 +176,71 @@ Please let me know if this date is available.`;
                 )}
               </div>
               
-              <div>
+              <div className="relative">
                 <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-400 mb-2">Date</label>
-                <input 
-                  required 
-                  type="date" 
-                  name="date"
-                  min={today}
-                  value={formData.date}
-                  onChange={handleDateChange}
-                  className={`w-full bg-zinc-50 dark:bg-zinc-950 dark:[color-scheme:dark] border rounded-lg px-4 py-3 text-zinc-900 dark:text-white focus:outline-none ${dateError ? 'border-red-500 focus:border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-amber-500 dark:focus:border-zinc-500'}`} 
+                <DatePicker
+                  selected={formData.date ? new Date(formData.date) : null}
+                  onChange={(date) => {
+                    // DatePicker returns a Date object, convert it back to YYYY-MM-DD for our form state
+                    const formattedDate = date ? date.toLocaleDateString('en-CA') : "";
+                    setFormData((prev) => ({ ...prev, date: formattedDate }));
+                    setDateError("");
+                  }}
+                  minDate={new Date()}
+                  excludeDates={bookedDates.map(dateString => new Date(dateString))}
+                  placeholderText="Select a date"
+                  className={`w-full bg-zinc-50 dark:bg-zinc-950 border rounded-lg px-4 py-3 text-zinc-900 dark:text-white focus:outline-none ${dateError ? 'border-red-500 focus:border-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-amber-500 dark:focus:border-zinc-500'}`} 
+                  wrapperClassName="w-full"
+                  required
                 />
                 {dateError && <p className="text-red-500 text-sm mt-2">{dateError}</p>}
+                
+                <style jsx global>{`
+                  .react-datepicker-wrapper {
+                    display: block;
+                    width: 100%;
+                  }
+                  .react-datepicker {
+                    font-family: inherit;
+                    background-color: #18181b;
+                    border: 1px solid #27272a;
+                    border-radius: 1rem;
+                    color: white;
+                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+                  }
+                  .react-datepicker__header {
+                    background-color: #18181b;
+                    border-bottom: 1px solid #27272a;
+                    border-top-left-radius: 1rem;
+                    border-top-right-radius: 1rem;
+                  }
+                  .react-datepicker__current-month, .react-datepicker-time__header, .react-datepicker-year-header {
+                    color: white;
+                  }
+                  .react-datepicker__day-name {
+                    color: #a1a1aa;
+                  }
+                  .react-datepicker__day {
+                    color: #e4e4e7;
+                  }
+                  .react-datepicker__day:hover {
+                    background-color: #27272a;
+                    border-radius: 0.5rem;
+                  }
+                  .react-datepicker__day--selected, .react-datepicker__day--keyboard-selected {
+                    background-color: #D4AF37 !important;
+                    color: black !important;
+                    border-radius: 0.5rem;
+                    font-weight: bold;
+                  }
+                  .react-datepicker__day--disabled {
+                    color: #52525b !important;
+                    text-decoration: line-through;
+                  }
+                  .react-datepicker__day--disabled:hover {
+                    background-color: transparent;
+                  }
+                `}</style>
               </div>
             </div>
 
