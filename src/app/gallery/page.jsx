@@ -1,22 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { getPhotos } from "@/app/actions/gallery";
 
-const photos = [
-  { id: 1, category: "Wedding", url: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop" },
-  { id: 2, category: "Portrait", url: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1000&auto=format&fit=crop" },
-  { id: 3, category: "Event", url: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1000&auto=format&fit=crop" },
-  { id: 4, category: "Wedding", url: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1000&auto=format&fit=crop" },
-  { id: 5, category: "Birthday", url: "https://images.unsplash.com/photo-1530103862676-de8892bc952f?q=80&w=1000&auto=format&fit=crop" },
-  { id: 6, category: "Portrait", url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1000&auto=format&fit=crop" },
-];
-
-const categories = ["All", "Wedding", "Portrait", "Event", "Birthday"];
+const categories = ["All", "Wedding", "Portrait", "Event", "Birthday", "Commercial"];
 
 export default function Gallery() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [lightboxIndex, setLightboxIndex] = useState(null);
+  const [photos, setPhotos] = useState([]);
+
+  useEffect(() => {
+    async function loadPhotos() {
+      const data = await getPhotos();
+      setPhotos(data);
+    }
+    loadPhotos();
+  }, []);
 
   const filteredPhotos = activeCategory === "All" 
     ? photos 

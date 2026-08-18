@@ -2,7 +2,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { logoutAdmin } from "@/app/actions/auth";
-import { LogOut, Calendar, User, Phone, MapPin, AlignLeft } from "lucide-react";
+import { updateBookingStatus, deleteBooking } from "@/app/actions/booking";
+import { LogOut, Calendar, User, Phone, MapPin, AlignLeft, CheckCircle2, Trash2 } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
@@ -30,15 +31,20 @@ export default async function AdminDashboard() {
           <p className="text-zinc-400 mt-2">Manage your booking requests here.</p>
         </div>
         
-        <form action={logoutAdmin}>
-          <button
-            type="submit"
-            className="flex items-center gap-2 bg-zinc-900 hover:bg-red-900/30 text-zinc-300 hover:text-red-400 border border-zinc-800 hover:border-red-900/50 px-4 py-2 rounded-xl transition-all"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Logout</span>
-          </button>
-        </form>
+        <div className="flex items-center gap-4">
+          <a href="/admin/gallery" className="bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded-xl border border-zinc-700 transition-colors font-medium">
+            Manage Gallery
+          </a>
+          <form action={logoutAdmin}>
+            <button
+              type="submit"
+              className="flex items-center gap-2 bg-zinc-900 hover:bg-red-900/30 text-zinc-300 hover:text-red-400 border border-zinc-800 hover:border-red-900/50 px-4 py-2 rounded-xl transition-all"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Logout</span>
+            </button>
+          </form>
+        </div>
       </div>
 
       <div className="backdrop-blur-xl bg-white/5 dark:bg-black/20 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl">
@@ -50,7 +56,8 @@ export default async function AdminDashboard() {
                 <th className="p-4 text-zinc-400 font-medium whitespace-nowrap"><div className="flex items-center gap-2"><User className="w-4 h-4 text-[#D4AF37]" /> Client Details</div></th>
                 <th className="p-4 text-zinc-400 font-medium whitespace-nowrap"><div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-[#D4AF37]" /> Event / Location</div></th>
                 <th className="p-4 text-zinc-400 font-medium"><div className="flex items-center gap-2"><AlignLeft className="w-4 h-4 text-[#D4AF37]" /> Requirements</div></th>
-                <th className="p-4 text-zinc-400 font-medium text-right">Status</th>
+                <th className="p-4 text-zinc-400 font-medium">Status</th>
+                <th className="p-4 text-zinc-400 font-medium text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800">
@@ -85,16 +92,41 @@ export default async function AdminDashboard() {
                         {booking.requirements || <span className="italic text-zinc-600">None specified</span>}
                       </p>
                     </td>
-                    <td className="p-4 align-top text-right">
+                    <td className="p-4 align-top">
                       <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
                         booking.status === 'PENDING' 
                           ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                           : booking.status === 'CONFIRMED'
                           ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                          : booking.status === 'COMPLETED'
+                          ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
                           : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
                       }`}>
                         {booking.status}
                       </span>
+                    </td>
+                    <td className="p-4 align-top text-right">
+                      <div className="flex justify-end gap-2">
+                        {booking.status === 'PENDING' && (
+                          <form action={updateBookingStatus.bind(null, booking.id, 'CONFIRMED')}>
+                            <button title="Confirm Booking" className="p-2 text-zinc-400 hover:text-green-400 hover:bg-green-400/10 rounded-lg transition-colors">
+                              <CheckCircle2 className="w-4 h-4" />
+                            </button>
+                          </form>
+                        )}
+                        {booking.status === 'CONFIRMED' && (
+                          <form action={updateBookingStatus.bind(null, booking.id, 'COMPLETED')}>
+                            <button title="Mark Completed" className="p-2 text-zinc-400 hover:text-blue-400 hover:bg-blue-400/10 rounded-lg transition-colors">
+                              <CheckCircle2 className="w-4 h-4" />
+                            </button>
+                          </form>
+                        )}
+                        <form action={deleteBooking.bind(null, booking.id)}>
+                          <button title="Delete Booking" className="p-2 text-zinc-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </form>
+                      </div>
                     </td>
                   </tr>
                 ))

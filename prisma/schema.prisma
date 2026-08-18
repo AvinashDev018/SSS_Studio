@@ -19,3 +19,10 @@ model Booking {
   status          String   @default("PENDING")
   createdAt       DateTime @default(now())
 }
+
+model Photo {
+  id        String   @id @default(uuid())
+  url       String
+  category  String
+  createdAt DateTime @default(now())
+}

@@ -70,3 +70,31 @@ export async function getBookedDates() {
     return [];
   }
 }
+
+export async function updateBookingStatus(id, newStatus) {
+  try {
+    await prisma.booking.update({
+      where: { id },
+      data: { status: newStatus }
+    });
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to update booking status:", error);
+    return { success: false, error: "Failed to update status." };
+  }
+}
+
+export async function deleteBooking(id) {
+  try {
+    await prisma.booking.delete({
+      where: { id }
+    });
+    revalidatePath("/admin");
+    revalidatePath("/contact");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete booking:", error);
+    return { success: false, error: "Failed to delete booking." };
+  }
+}
