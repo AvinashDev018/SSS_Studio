@@ -14,7 +14,7 @@ export default function Home() {
           <img
             src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop"
             alt="Wedding Photography"
-            className="w-full h-full object-cover scale-105"
+            className="w-full h-full object-cover object-center scale-105"
             style={{ transform: "translateZ(0)" }}
           />
         </div>
