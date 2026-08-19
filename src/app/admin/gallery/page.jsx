@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getPhotos, addPhoto, deletePhoto } from "@/app/actions/gallery";
 import { Trash2, Plus, ArrowLeft } from "lucide-react";
+import AdminNav from "@/components/admin/AdminNav";
 
 export const dynamic = 'force-dynamic';
 
@@ -18,18 +19,14 @@ export default async function AdminGallery() {
 
   return (
     <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
+      <AdminNav currentPath="/admin/gallery" />
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-6">
         <div>
           <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-500 bg-clip-text text-transparent">
             Gallery CMS
           </h1>
           <p className="text-zinc-400 mt-2">Manage your public portfolio images.</p>
         </div>
-        
-        <a href="/admin" className="flex items-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 px-4 py-2 rounded-xl transition-all">
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to Bookings</span>
-        </a>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

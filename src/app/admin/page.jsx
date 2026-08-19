@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { logoutAdmin } from "@/app/actions/auth";
 import { updateBookingStatus, deleteBooking } from "@/app/actions/booking";
 import { LogOut, Calendar, User, Phone, MapPin, AlignLeft, CheckCircle2, Trash2 } from "lucide-react";
+import AdminNav from "@/components/admin/AdminNav";
 
 export const dynamic = 'force-dynamic';
 
@@ -23,27 +24,13 @@ export default async function AdminDashboard() {
 
   return (
     <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
+      <AdminNav currentPath="/admin" />
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-6">
         <div>
           <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-500 bg-clip-text text-transparent">
             Admin Dashboard
           </h1>
           <p className="text-zinc-400 mt-2">Manage your booking requests here.</p>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <a href="/admin/gallery" className="bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded-xl border border-zinc-700 transition-colors font-medium">
-            Manage Gallery
-          </a>
-          <form action={logoutAdmin}>
-            <button
-              type="submit"
-              className="flex items-center gap-2 bg-zinc-900 hover:bg-red-900/30 text-zinc-300 hover:text-red-400 border border-zinc-800 hover:border-red-900/50 px-4 py-2 rounded-xl transition-all"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Logout</span>
-            </button>
-          </form>
         </div>
       </div>
 

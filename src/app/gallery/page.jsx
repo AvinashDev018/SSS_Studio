@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { getPhotos } from "@/app/actions/gallery";
 
+export const dynamic = 'force-dynamic';
+
 const categories = ["All", "Wedding", "Portrait", "Event", "Birthday", "Commercial"];
 
 export default function Gallery() {

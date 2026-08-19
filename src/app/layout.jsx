@@ -14,6 +14,19 @@ export const metadata = {
   },
   description: 'Premium photography services in Avaniyapuram, Madurai. Specializing in weddings, portraits, birthday functions, and events.',
   keywords: ['photography', 'madurai', 'wedding photographer', 'photo studio', 'avaniyapuram', 'birthday photography'],
+  openGraph: {
+    title: 'SSS Studio | Professional Photography in Madurai',
+    description: 'Premium photography services in Avaniyapuram, Madurai. Specializing in weddings, portraits, birthday functions, and events.',
+    url: 'https://sssstudiomadurai.com',
+    siteName: 'SSS Studio',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SSS Studio | Professional Photography in Madurai',
+    description: 'Premium photography services in Avaniyapuram, Madurai.',
+  },
 };
 
 import { ThemeProvider } from "@/components/theme-provider";

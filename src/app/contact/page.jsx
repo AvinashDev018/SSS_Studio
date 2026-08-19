@@ -1,6 +1,6 @@
 "use client";
 
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Instagram, Facebook } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getBookedDates, createBooking } from "@/app/actions/booking";
 import DatePicker from "react-datepicker";

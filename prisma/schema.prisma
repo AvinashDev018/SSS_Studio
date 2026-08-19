@@ -26,3 +26,22 @@ model Photo {
   category  String
   createdAt DateTime @default(now())
 }
+
+model Testimonial {
+  id        String   @id @default(uuid())
+  name      String
+  event     String
+  text      String
+  rating    Int      @default(5)
+  createdAt DateTime @default(now())
+}
+
+model Package {
+  id          String   @id @default(uuid())
+  name        String
+  price       String
+  description String
+  features    String[]
+  popular     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}

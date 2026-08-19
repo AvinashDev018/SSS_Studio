@@ -1,25 +1,34 @@
 import { Star } from "lucide-react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
+import { getTestimonials } from "@/app/actions/testimonials";
 
-const testimonials = [
-  {
-    name: "Priya & Karthik",
-    event: "Wedding",
-    text: "SSS Studio made our wedding day unforgettable! The photos are absolutely stunning and they captured every single candid moment perfectly. Highly recommended!",
-  },
-  {
-    name: "Ramesh Family",
-    event: "Birthday Function",
-    text: "We hired them for our daughter's 1st birthday. The team was so patient and friendly, and the album output was extremely premium. Thank you!",
-  },
-  {
-    name: "Suresh Kumar",
-    event: "Corporate Event",
-    text: "Very professional team in Madurai. They arrived on time, delivered the edited videos quickly, and the quality was top-notch. Will book again.",
-  }
-];
-
-export default function Testimonials() {
+export default async function Testimonials() {
+  const testimonials = await getTestimonials();
+  
+  // Fallback to default testimonials if none in DB yet
+  const displayTestimonials = testimonials.length > 0 ? testimonials : [
+    {
+      id: "1",
+      name: "Priya & Karthik",
+      event: "Wedding",
+      text: "SSS Studio made our wedding day unforgettable! The photos are absolutely stunning and they captured every single candid moment perfectly. Highly recommended!",
+      rating: 5
+    },
+    {
+      id: "2",
+      name: "Ramesh Family",
+      event: "Birthday Function",
+      text: "We hired them for our daughter's 1st birthday. The team was so patient and friendly, and the album output was extremely premium. Thank you!",
+      rating: 5
+    },
+    {
+      id: "3",
+      name: "Suresh Kumar",
+      event: "Corporate Event",
+      text: "Very professional team in Madurai. They arrived on time, delivered the edited videos quickly, and the quality was top-notch. Will book again.",
+      rating: 5
+    }
+  ];
   return (
     <div className="py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-zinc-900/50 relative">
       <AnimatedSection className="text-center mb-20">
@@ -30,11 +39,11 @@ export default function Testimonials() {
       </AnimatedSection>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {testimonials.map((t, idx) => (
-          <AnimatedSection key={idx} delay={idx * 0.2}>
+        {displayTestimonials.map((t, idx) => (
+          <AnimatedSection key={t.id || idx} delay={idx * 0.2}>
             <div className="bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800/50 p-10 rounded-3xl h-full flex flex-col hover:border-amber-500/50 dark:hover:border-amber-500/30 transition-colors shadow-xl">
               <div className="flex gap-1 mb-8">
-                {[...Array(5)].map((_, i) => (
+                {[...Array(t.rating || 5)].map((_, i) => (
                   <Star key={i} className="w-5 h-5 fill-amber-500 text-amber-500" />
                 ))}
               </div>
