@@ -16,7 +16,6 @@ export default function Navbar() {
     { name: "About", href: "/about" },
     { name: "Services", href: "/services" },
     { name: "Gallery", href: "/gallery" },
-    { name: "Packages", href: "/packages" },
     { name: "Contact", href: "/contact" },
   ];
 
@@ -54,11 +53,13 @@ export default function Navbar() {
               )}
 
               <Link
-                href="/contact"
+                href="/book"
                 className="bg-zinc-900 dark:bg-white text-white dark:text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
               >
                 Book Session
               </Link>
+
+
             </div>
           </div>
           <div className="-mr-2 flex md:hidden">

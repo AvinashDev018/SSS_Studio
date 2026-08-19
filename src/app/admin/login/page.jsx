@@ -39,6 +39,7 @@ export default function AdminLogin() {
                 type="password"
                 name="password"
                 required
+                suppressHydrationWarning
                 className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-colors"
                 placeholder="Password"
               />
@@ -53,6 +54,7 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={loading}
+              suppressHydrationWarning
               className="w-full bg-[#D4AF37] hover:bg-[#c5a028] text-black font-bold py-3 px-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Authenticating..." : "Login"}

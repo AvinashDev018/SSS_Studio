@@ -14,8 +14,10 @@ model Booking {
   phone           String
   eventType       String
   date            DateTime
+  timeSlot        String   @default("09:00 AM")
   location        String
   requirements    String?
+  packageId       String?
   status          String   @default("PENDING")
   createdAt       DateTime @default(now())
 }

@@ -19,15 +19,21 @@ export async function getPackages() {
   }
 }
 
-export async function addPackage(data) {
+export async function addPackage(formData) {
   try {
+    const name = formData.get("name");
+    const price = formData.get("price");
+    const description = formData.get("description");
+    const featuresStr = formData.get("features") || "";
+    const popular = formData.get("popular") === "on";
+
     const pkg = await prisma.package.create({
       data: {
-        name: data.name,
-        price: data.price,
-        description: data.description,
-        features: data.features.split(',').map(f => f.trim()).filter(f => f.length > 0),
-        popular: data.popular === "true" || data.popular === true,
+        name,
+        price,
+        description,
+        features: featuresStr.split(',').map(f => f.trim()).filter(f => f.length > 0),
+        popular,
       }
     });
     revalidatePath("/packages");

@@ -39,10 +39,10 @@ export default async function AdminDashboard() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-zinc-800 bg-zinc-900/50">
-                <th className="p-4 text-zinc-400 font-medium whitespace-nowrap"><div className="flex items-center gap-2"><Calendar className="w-4 h-4 text-[#D4AF37]" /> Date</div></th>
+                <th className="p-4 text-zinc-400 font-medium whitespace-nowrap"><div className="flex items-center gap-2"><Calendar className="w-4 h-4 text-[#D4AF37]" /> Date & Time</div></th>
                 <th className="p-4 text-zinc-400 font-medium whitespace-nowrap"><div className="flex items-center gap-2"><User className="w-4 h-4 text-[#D4AF37]" /> Client Details</div></th>
-                <th className="p-4 text-zinc-400 font-medium whitespace-nowrap"><div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-[#D4AF37]" /> Event / Location</div></th>
-                <th className="p-4 text-zinc-400 font-medium"><div className="flex items-center gap-2"><AlignLeft className="w-4 h-4 text-[#D4AF37]" /> Requirements</div></th>
+                <th className="p-4 text-zinc-400 font-medium whitespace-nowrap"><div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-[#D4AF37]" /> Event / Package</div></th>
+                <th className="p-4 text-zinc-400 font-medium"><div className="flex items-center gap-2"><AlignLeft className="w-4 h-4 text-[#D4AF37]" /> Location & Reqs</div></th>
                 <th className="p-4 text-zinc-400 font-medium">Status</th>
                 <th className="p-4 text-zinc-400 font-medium text-right">Actions</th>
               </tr>
@@ -59,6 +59,7 @@ export default async function AdminDashboard() {
                   <tr key={booking.id} className="hover:bg-zinc-900/30 transition-colors">
                     <td className="p-4 align-top">
                       <div className="font-medium text-white">{new Date(booking.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                      <div className="text-[#D4AF37] font-semibold mt-1">{booking.timeSlot}</div>
                       <div className="text-xs text-zinc-500 mt-1">Requested: {new Date(booking.createdAt).toLocaleDateString()}</div>
                     </td>
                     <td className="p-4 align-top">
@@ -72,9 +73,12 @@ export default async function AdminDashboard() {
                       <span className="inline-block px-2.5 py-1 bg-zinc-800 text-[#D4AF37] text-xs rounded-full font-medium mb-2 border border-zinc-700/50">
                         {booking.eventType}
                       </span>
-                      <div className="text-sm text-zinc-300 line-clamp-2">{booking.location}</div>
+                      {booking.packageId && (
+                        <div className="text-xs font-mono text-zinc-400">Pkg ID: {booking.packageId}</div>
+                      )}
                     </td>
                     <td className="p-4 align-top max-w-xs">
+                      <div className="text-sm text-zinc-300 font-semibold mb-1">{booking.location}</div>
                       <p className="text-sm text-zinc-400 line-clamp-3">
                         {booking.requirements || <span className="italic text-zinc-600">None specified</span>}
                       </p>

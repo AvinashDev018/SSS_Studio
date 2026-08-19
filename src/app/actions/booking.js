@@ -8,20 +8,21 @@ import { revalidatePath } from "next/cache";
  */
 export async function createBooking(formData) {
   try {
-    const { name, phone, eventType, customEventType, date, location, requirements } = formData;
+    const { name, phone, eventType, customEventType, date, timeSlot, location, requirements, packageId } = formData;
     
     // Determine the final event type
     const finalEventType = eventType === "Other" ? customEventType : eventType;
 
-    // Check if date is already booked
+    // Check if the specific time slot on that date is already booked
     const existingBooking = await prisma.booking.findFirst({
       where: {
-        date: new Date(date)
+        date: new Date(date),
+        timeSlot: timeSlot
       }
     });
 
     if (existingBooking) {
-      return { success: false, error: "This date is already booked. Please choose another date." };
+      return { success: false, error: "This time slot is already booked. Please choose another time." };
     }
 
     // Save to database
@@ -31,14 +32,17 @@ export async function createBooking(formData) {
         phone,
         eventType: finalEventType,
         date: new Date(date),
+        timeSlot,
         location,
         requirements: requirements || null,
+        packageId: packageId || null,
         status: "PENDING"
       }
     });
 
-    // Revalidate the contact page so the new booked date appears in the calendar
-    revalidatePath("/contact");
+    // Revalidate relevant pages
+    revalidatePath("/");
+    revalidatePath("/admin");
 
     return { success: true };
   } catch (error) {
@@ -48,25 +52,29 @@ export async function createBooking(formData) {
 }
 
 /**
- * Fetches an array of all booked dates (YYYY-MM-DD format)
+ * Fetches all booked dates and time slots to disable them on the frontend calendar
  */
-export async function getBookedDates() {
+export async function getBookedSlots() {
   try {
     const bookings = await prisma.booking.findMany({
       select: {
-        date: true
+        date: true,
+        timeSlot: true
       },
       where: {
         date: {
-          gte: new Date() // Only get future dates
+          gte: new Date(new Date().setHours(0, 0, 0, 0)) // Only get today and future dates
         }
       }
     });
 
-    // Format dates to YYYY-MM-DD
-    return bookings.map(b => b.date.toISOString().split('T')[0]);
+    // Return array of objects with formatted date strings
+    return bookings.map(b => ({
+      date: b.date.toISOString().split('T')[0],
+      timeSlot: b.timeSlot
+    }));
   } catch (error) {
-    console.error("Failed to fetch booked dates:", error);
+    console.error("Failed to fetch booked slots:", error);
     return [];
   }
 }
@@ -91,7 +99,6 @@ export async function deleteBooking(id) {
       where: { id }
     });
     revalidatePath("/admin");
-    revalidatePath("/contact");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete booking:", error);
