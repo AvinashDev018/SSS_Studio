@@ -8,6 +8,7 @@ export default function AdminNav({ currentPath }) {
     { name: "Gallery", href: "/admin/gallery" },
     { name: "Reviews", href: "/admin/reviews" },
     { name: "Packages", href: "/admin/packages" },
+    { name: "Orders", href: "/admin/orders" },
   ];
 
   return (

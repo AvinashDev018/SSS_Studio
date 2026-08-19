@@ -1,0 +1,162 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import AnimatedSection from "@/components/ui/AnimatedSection";
+import FrameBuilder from "@/components/store/FrameBuilder";
+import OrderCart from "@/components/store/OrderCart";
+import { Package, Camera, Gift } from "lucide-react";
+
+// Hardcoded store products (can be moved to DB later)
+const GIFTS = [
+  { id: "g1", name: "Magic Mug", price: 350, category: "Gift", image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=500&auto=format&fit=crop" },
+  { id: "g2", name: "Crystal Photo Cube", price: 850, category: "Gift", image: "https://images.unsplash.com/photo-1610444585149-aebaa465ccde?w=500&auto=format&fit=crop" },
+  { id: "g3", name: "Custom Keychain", price: 150, category: "Gift", image: "https://images.unsplash.com/photo-1627993466185-5b87ec1b6a15?w=500&auto=format&fit=crop" },
+  { id: "g4", name: "LED Photo Lamp", price: 1200, category: "Gift", image: "https://images.unsplash.com/photo-1517658797914-1fbc5b36916a?w=500&auto=format&fit=crop" },
+];
+
+const PASSPORT_PACKAGES = [
+  { id: "p1", name: "8 Passport Size Photos", price: 100, category: "Passport", image: "https://images.unsplash.com/photo-1579405021287-21fbdf8d2703?w=500&auto=format&fit=crop" },
+  { id: "p2", name: "16 Passport Size Photos", price: 150, category: "Passport", image: "https://images.unsplash.com/photo-1579405021287-21fbdf8d2703?w=500&auto=format&fit=crop" },
+  { id: "p3", name: "32 Passport + 2 Stamp Size", price: 250, category: "Passport", image: "https://images.unsplash.com/photo-1579405021287-21fbdf8d2703?w=500&auto=format&fit=crop" },
+];
+
+export default function StorePage() {
+  const [activeTab, setActiveTab] = useState("frames");
+  const [cartItems, setCartItems] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load cart from local storage on mount
+  useEffect(() => {
+    const savedCart = localStorage.getItem("studioCart");
+    if (savedCart) {
+      try {
+        setCartItems(JSON.parse(savedCart));
+        setIsCartOpen(true);
+      } catch (e) {
+        console.error("Failed to load cart");
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // Save cart to local storage whenever it changes
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("studioCart", JSON.stringify(cartItems));
+    }
+  }, [cartItems, isLoaded]);
+
+  const addToCart = (product) => {
+    setCartItems(prev => [...prev, { ...product, cartId: Math.random().toString(36).substr(2, 9) }]);
+    setIsCartOpen(true);
+  };
+
+  const removeFromCart = (cartId) => {
+    setCartItems(prev => prev.filter(item => item.cartId !== cartId));
+  };
+
+  const tabs = [
+    { id: "frames", label: "Custom Frames", icon: <Package className="w-4 h-4" /> },
+    { id: "passport", label: "Passport Photos", icon: <Camera className="w-4 h-4" /> },
+    { id: "gifts", label: "Birthday Gifts", icon: <Gift className="w-4 h-4" /> },
+  ];
+
+  return (
+    <div className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-[90vh] relative">
+      <AnimatedSection className="text-center mb-12">
+        <h1 className="font-serif text-5xl md:text-6xl font-bold tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-br from-zinc-900 to-zinc-500 dark:from-amber-100 dark:to-yellow-600">
+          Studio Store
+        </h1>
+        <p className="text-zinc-600 dark:text-zinc-300 text-lg max-w-2xl mx-auto font-light">
+          Order premium photo frames, passport prints, and personalized birthday gifts directly to your door.
+        </p>
+      </AnimatedSection>
+
+      {/* Tabs */}
+      <div className="flex justify-center mb-12">
+        <div className="bg-zinc-100 dark:bg-zinc-900 p-1 rounded-full inline-flex border border-zinc-200 dark:border-zinc-800">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${
+                activeTab === tab.id
+                  ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm"
+                  : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50"
+              }`}
+            >
+              {tab.icon} {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
+        {/* Main Content Area */}
+        <div className="lg:col-span-8">
+          {activeTab === "frames" && (
+            <AnimatedSection>
+              <FrameBuilder onAddToCart={addToCart} />
+            </AnimatedSection>
+          )}
+
+          {activeTab === "passport" && (
+            <AnimatedSection className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {PASSPORT_PACKAGES.map((pkg) => (
+                <div key={pkg.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:border-amber-400 transition-colors group">
+                  <div className="h-48 overflow-hidden">
+                    <img src={pkg.image} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-bold text-lg text-zinc-900 dark:text-white mb-1">{pkg.name}</h3>
+                    <p className="text-amber-600 dark:text-amber-500 font-semibold mb-4">₹{pkg.price}</p>
+                    <button 
+                      onClick={() => addToCart(pkg)}
+                      className="w-full bg-zinc-900 dark:bg-white text-white dark:text-black py-2 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+                    >
+                      Add to Order
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </AnimatedSection>
+          )}
+
+          {activeTab === "gifts" && (
+            <AnimatedSection className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {GIFTS.map((gift) => (
+                <div key={gift.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:border-amber-400 transition-colors group">
+                  <div className="h-48 overflow-hidden">
+                    <img src={gift.image} alt={gift.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-bold text-lg text-zinc-900 dark:text-white mb-1">{gift.name}</h3>
+                    <p className="text-amber-600 dark:text-amber-500 font-semibold mb-4">₹{gift.price}</p>
+                    <button 
+                      onClick={() => addToCart(gift)}
+                      className="w-full bg-zinc-900 dark:bg-white text-white dark:text-black py-2 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+                    >
+                      Add to Order
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </AnimatedSection>
+          )}
+        </div>
+
+        {/* Sidebar Cart */}
+        <div className="lg:col-span-4">
+          <div className="sticky top-24">
+            <OrderCart 
+              items={cartItems} 
+              onRemove={removeFromCart} 
+              isOpen={isCartOpen}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

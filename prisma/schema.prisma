@@ -47,3 +47,15 @@ model Package {
   popular     Boolean  @default(false)
   createdAt   DateTime @default(now())
 }
+
+model Order {
+  id            String   @id @default(uuid())
+  orderId       String   @unique
+  customerName  String
+  customerPhone String
+  address       String
+  items         Json
+  totalAmount   Float
+  status        String   @default("PENDING")
+  createdAt     DateTime @default(now())
+}
