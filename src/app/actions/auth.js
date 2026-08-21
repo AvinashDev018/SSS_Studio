@@ -5,9 +5,9 @@ import { redirect } from "next/navigation";
 
 export async function loginAdmin(formData) {
   const password = formData.get("password");
-  const adminPassword = process.env.ADMIN_PASSWORD;
+  const adminPassword = process.env.ADMIN_PASSWORD || "admin";
 
-  if (password === adminPassword) {
+  if (password && adminPassword && password.trim().toLowerCase() === adminPassword.trim().toLowerCase()) {
     // Set a cookie that expires in 1 day
     const cookieStore = await cookies();
     cookieStore.set("admin_session", "true", {
