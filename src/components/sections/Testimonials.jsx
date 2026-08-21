@@ -1,9 +1,21 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Star } from "lucide-react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import { getTestimonials } from "@/app/actions/testimonials";
 
-export default async function Testimonials() {
-  const testimonials = await getTestimonials();
+export default function Testimonials() {
+  const [testimonials, setTestimonials] = useState([]);
+
+  useEffect(() => {
+    async function fetchTestimonials() {
+      const data = await getTestimonials();
+      setTestimonials(data);
+    }
+    fetchTestimonials();
+  }, []);
+
   
   // Fallback to default testimonials if none in DB yet
   const displayTestimonials = testimonials.length > 0 ? testimonials : [

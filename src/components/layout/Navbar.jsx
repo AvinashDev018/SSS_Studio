@@ -1,15 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { Menu, X, Camera, Sun, Moon } from "lucide-react";
+import { useState } from "react";
+import { Menu, X, Camera, Aperture } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useTheme } from "@/components/theme-provider";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const { theme, toggleTheme, mounted } = useTheme();
 
   const links = [
     { name: "Home", href: "/" },
@@ -22,11 +20,18 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/60 dark:bg-zinc-950/60 backdrop-blur-xl border-b border-zinc-200 dark:border-zinc-800/50 supports-[backdrop-filter]:bg-white/40 dark:supports-[backdrop-filter]:bg-zinc-950/40 transition-colors duration-500">
+    <nav className="sticky top-0 z-50 bg-black/40 backdrop-blur-2xl border-b border-white/5 transition-colors duration-500 shadow-2xl shadow-black/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          <Link href="/" className="font-serif font-bold text-2xl tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-zinc-900 to-zinc-500 dark:from-white dark:to-zinc-400">
-            SSS STUDIO
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-[0_0_15px_rgba(251,191,36,0.4)] group-hover:shadow-[0_0_25px_rgba(251,191,36,0.7)] group-hover:scale-105 transition-all duration-300">
+               <Camera className="w-6 h-6 text-black" strokeWidth={2.5} />
+               <div className="absolute inset-0 bg-white/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+            <div className="flex flex-col justify-center">
+              <span className="font-serif font-black text-2xl tracking-wider text-white leading-none drop-shadow-md">SSS</span>
+              <span className="font-sans text-[11px] font-black tracking-[0.4em] text-amber-500 uppercase mt-0.5 ml-0.5">Studio</span>
+            </div>
           </Link>
           <div className="hidden md:block">
             <div className="ml-10 flex items-center space-x-8">
@@ -34,29 +39,20 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`${
+                  className={`relative px-4 py-2 text-sm transition-all duration-300 rounded-full ${
                     pathname === link.href
-                      ? "text-zinc-900 dark:text-white font-semibold"
-                      : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
-                  } px-3 py-2 text-sm`}
+                      ? "text-amber-400 font-semibold bg-amber-500/10 border border-amber-500/20 shadow-[0_0_15px_rgba(251,191,36,0.15)]"
+                      : "text-zinc-400 hover:text-white hover:bg-white/5"
+                  }`}
                 >
                   {link.name}
                 </Link>
               ))}
-              
-              {mounted && (
-                <button
-                  onClick={toggleTheme}
-                  className="p-2 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors text-zinc-600 dark:text-zinc-400"
-                  aria-label="Toggle theme"
-                >
-                  {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                </button>
-              )}
+
 
               <Link
                 href="/book"
-                className="bg-zinc-900 dark:bg-white text-white dark:text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+                className="bg-gradient-to-r from-amber-400 to-yellow-600 text-black px-5 py-2.5 rounded-full text-sm font-bold hover:shadow-[0_0_20px_rgba(251,191,36,0.4)] transition-all duration-300"
               >
                 Book Session
               </Link>
@@ -78,7 +74,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 transition-colors duration-500">
+        <div className="md:hidden bg-zinc-900/95 backdrop-blur-xl border-b border-white/10 transition-colors duration-500 shadow-2xl">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {links.map((link) => (
               <Link
@@ -87,24 +83,13 @@ export default function Navbar() {
                 onClick={() => setIsOpen(false)}
                 className={`${
                   pathname === link.href
-                    ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white"
-                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-colors"
-                } block px-3 py-2 rounded-md text-base font-medium`}
+                    ? "bg-white/10 text-white font-bold"
+                    : "text-zinc-400 hover:bg-white/5 hover:text-white transition-colors"
+                } block px-3 py-2 rounded-md text-base`}
               >
                 {link.name}
               </Link>
             ))}
-            {mounted && (
-              <button
-                onClick={() => {
-                  toggleTheme();
-                  setIsOpen(false);
-                }}
-                className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-colors flex items-center gap-2"
-              >
-                {theme === "dark" ? <><Sun className="w-5 h-5" /> Light Mode</> : <><Moon className="w-5 h-5" /> Dark Mode</>}
-              </button>
-            )}
           </div>
         </div>
       )}

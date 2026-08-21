@@ -1,26 +1,52 @@
+"use client";
+
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { CheckCircle2, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import Testimonials from "@/components/sections/Testimonials";
 
+const HERO_IMAGES = [
+  "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=1000&auto=format&fit=crop"
+];
+
 export default function Home() {
+  const [currentImage, setCurrentImage] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImage((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div>
       {/* Hero Section */}
       <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-black/50 z-10" />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/50 to-zinc-950 z-10" />
-          <img
-            src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop"
-            alt="Wedding Photography"
-            className="w-full h-full object-cover object-center scale-105"
-            style={{ transform: "translateZ(0)" }}
-          />
+        <div className="absolute inset-0 z-0 bg-black">
+          <div className="absolute inset-0 bg-black/40 z-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/40 to-zinc-950 z-10" />
+          
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentImage}
+              src={HERO_IMAGES[currentImage]}
+              initial={{ opacity: 0, scale: 1.05 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+              className="absolute inset-0 w-full h-full object-cover object-center"
+              alt="Studio Photography"
+            />
+          </AnimatePresence>
         </div>
         
         <AnimatedSection className="relative z-20 text-center px-4 max-w-5xl mx-auto" yOffset={40}>
-          <h1 className="font-serif text-6xl md:text-8xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-br from-zinc-800 via-zinc-600 to-zinc-400 dark:from-amber-100 dark:via-amber-300 dark:to-yellow-600 drop-shadow-sm">
+          <h1 className="font-serif text-6xl md:text-8xl font-bold tracking-tight mb-6 text-white drop-shadow-2xl">
             Capturing Your Special Moments
           </h1>
           <p className="text-xl md:text-3xl text-zinc-100 dark:text-zinc-200 mb-10 max-w-3xl mx-auto font-light leading-relaxed">
@@ -29,13 +55,13 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <Link 
               href="/contact" 
-              className="bg-gradient-to-r from-amber-400 to-yellow-600 text-black px-10 py-5 rounded-full text-lg font-bold hover:shadow-[0_0_30px_rgba(251,191,36,0.3)] transition-all duration-300 w-full sm:w-auto flex items-center justify-center gap-2"
+              className="group bg-gradient-to-r from-amber-400 to-amber-600 text-black px-10 py-5 rounded-full text-lg font-bold hover:shadow-[0_0_40px_rgba(251,191,36,0.6)] hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto flex items-center justify-center gap-2"
             >
-              Book a Session <ArrowRight className="w-5 h-5" />
+              Book a Session <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link 
               href="/gallery" 
-              className="bg-zinc-900/40 backdrop-blur-md text-white border border-zinc-700/50 px-10 py-5 rounded-full text-lg font-medium hover:bg-zinc-800/60 hover:border-zinc-500 transition-all duration-300 w-full sm:w-auto"
+              className="bg-white/10 backdrop-blur-xl text-white border border-white/20 px-10 py-5 rounded-full text-lg font-medium hover:bg-white/20 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto"
             >
               View Portfolio
             </Link>
@@ -47,7 +73,7 @@ export default function Home() {
       <section className="py-32 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection className="text-center mb-16">
-            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-4 text-zinc-900 dark:text-white">Our Expertise</h2>
+            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 to-zinc-500 dark:from-amber-200 dark:to-yellow-600 drop-shadow-[0_0_25px_rgba(251,191,36,0.5)]">Our Expertise</h2>
             <p className="text-zinc-600 dark:text-zinc-400 text-xl max-w-2xl mx-auto font-light">We specialize in a variety of photography styles to bring your vision to life.</p>
           </AnimatedSection>
           
@@ -92,13 +118,13 @@ export default function Home() {
       {/* Why Choose Us */}
       <section className="py-32 relative">
         {/* Subtle glass background behind the section */}
-        <div className="absolute inset-0 bg-white/30 dark:bg-zinc-900/30 backdrop-blur-xl border-y border-zinc-200 dark:border-zinc-800/50 z-0" />
+        <div className="absolute inset-0 bg-zinc-900/40 backdrop-blur-3xl border-y border-white/5 z-0" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
             <AnimatedSection>
-              <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-zinc-900 to-zinc-500 dark:from-white dark:to-zinc-400">Why Choose SSS Studio?</h2>
-              <p className="text-zinc-600 dark:text-zinc-300 mb-10 text-xl font-light leading-relaxed">
+              <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-600 drop-shadow-[0_0_25px_rgba(251,191,36,0.5)]">Why Choose SSS Studio?</h2>
+              <p className="text-zinc-400 mb-10 text-xl font-light leading-relaxed">
                 With years of experience and a passion for visual storytelling, we deliver exceptional quality and service for every client.
               </p>
               
@@ -109,8 +135,8 @@ export default function Home() {
                   "High-End Retouching & Color Grading",
                   "Affordable & Transparent Packages"
                 ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-4 text-zinc-800 dark:text-zinc-200">
-                    <div className="bg-amber-500/10 p-2 rounded-full border border-amber-500/20 shrink-0">
+                  <li key={i} className="flex items-start gap-4 text-zinc-200">
+                    <div className="bg-amber-500/10 p-2 rounded-full border border-amber-500/30 shrink-0 shadow-[0_0_15px_rgba(251,191,36,0.15)]">
                       <CheckCircle2 className="w-5 h-5 text-amber-500" />
                     </div>
                     <span className="text-lg pt-1">{item}</span>
@@ -119,8 +145,14 @@ export default function Home() {
               </ul>
             </AnimatedSection>
             <AnimatedSection className="grid grid-cols-2 gap-4" delay={0.2}>
-              <img src="https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=1000&auto=format&fit=crop" alt="Studio Setup" className="rounded-3xl object-cover h-72 w-full border border-zinc-800/50 shadow-2xl" />
-              <img src="https://images.unsplash.com/photo-1554048612-b9a35e985871?q=80&w=1000&auto=format&fit=crop" alt="Camera Lens" className="rounded-3xl object-cover h-72 w-full mt-12 border border-zinc-800/50 shadow-2xl" />
+              <div className="group overflow-hidden rounded-3xl border border-white/10 shadow-2xl h-72 w-full relative">
+                 <img src="https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=1000&auto=format&fit=crop" alt="Studio Setup" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              </div>
+              <div className="group overflow-hidden rounded-3xl border border-white/10 shadow-2xl h-72 w-full mt-12 relative">
+                 <img src="https://images.unsplash.com/photo-1554048612-b9a35e985871?q=80&w=1000&auto=format&fit=crop" alt="Camera Lens" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              </div>
             </AnimatedSection>
           </div>
         </div>

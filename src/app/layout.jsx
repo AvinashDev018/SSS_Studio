@@ -28,17 +28,14 @@ export const metadata = {
   },
 };
 
-import { ThemeProvider } from "@/components/theme-provider";
-
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${playfair.variable} font-sans bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 min-h-screen flex flex-col relative transition-colors duration-500`}>
-        <ThemeProvider>
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body className={`${inter.variable} ${playfair.variable} font-sans bg-zinc-950 text-zinc-50 min-h-screen flex flex-col relative antialiased selection:bg-amber-500/30`}>
           {/* Ambient Global Glow */}
-          <div className="fixed inset-0 z-0 pointer-events-none opacity-20">
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-500/20 rounded-full blur-[120px]" />
-            <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-zinc-400/20 dark:bg-zinc-600/20 rounded-full blur-[150px]" />
+          <div className="fixed inset-0 z-0 pointer-events-none opacity-30">
+            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-600/20 rounded-full blur-[120px]" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-zinc-600/20 rounded-full blur-[150px]" />
           </div>
           
           <div className="relative z-10 flex flex-col min-h-screen">
@@ -46,7 +43,6 @@ export default function RootLayout({ children }) {
             <main className="flex-grow">{children}</main>
             <WhatsAppButton />
           </div>
-        </ThemeProvider>
       </body>
     </html>
   );

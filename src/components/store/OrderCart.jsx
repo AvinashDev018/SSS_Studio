@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { ShoppingBag, X, MessageCircle, Truck, User, Phone, Upload, Image as ImageIcon, Minus, Plus } from "lucide-react";
+import { ShoppingBag, ShoppingCart, Lock, Home, X, MessageCircle, Truck, User, Phone, Upload, Image as ImageIcon, Minus, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createOrder } from "@/app/actions/orders";
 import { uploadImageToCloud } from "@/app/actions/upload";
@@ -14,12 +14,41 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [activeUploadId, setActiveUploadId] = useState(null);
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState(null);
   const fileInputRef = useRef(null);
 
   const itemTotal = items.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
   const deliveryCharge = deliveryOption === "HOME" ? 50 : 0;
-  const totalAmount = itemTotal + deliveryCharge;
+  
+  let discountAmount = 0;
+  if (appliedPromo) {
+    if (appliedPromo.type === "PERCENTAGE") {
+      discountAmount = (itemTotal * appliedPromo.value) / 100;
+    } else if (appliedPromo.type === "FIXED") {
+      discountAmount = appliedPromo.value;
+    }
+  }
+  
+  const totalAmount = itemTotal - discountAmount + deliveryCharge;
   const hasPhotoItem = items.some(item => item.hasCustomPhoto);
+
+  const applyPromo = () => {
+    const saved = localStorage.getItem("studioPromos");
+    if (!saved) {
+      setError("Invalid promo code.");
+      return;
+    }
+    const promos = JSON.parse(saved);
+    const found = promos.find(p => p.code === promoCode.toUpperCase() && p.active);
+    if (found) {
+      setAppliedPromo(found);
+      setError("");
+    } else {
+      setAppliedPromo(null);
+      setError("Invalid or inactive promo code.");
+    }
+  };
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -113,7 +142,13 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
       return line;
     }).join("\n\n");
 
-    let textMessage = `*New Store Order Request!* 🛍️\n\n*Order ID:* ${res.orderId}\n\n*Customer Details:*\nName: ${name}\nPhone: ${phone}\n\n*Order Details:*\n${orderDetails}\n\n*Delivery Option:* ${deliveryOption === "HOME" ? "Home Delivery (₹50)" : "Collect from Studio (Free)"}\n*Total Amount:* ₹${totalAmount}\n`;
+    let textMessage = `*New Store Order Request!* 🛍️\n\n*Order ID:* ${res.orderId}\n\n*Customer Details:*\nName: ${name}\nPhone: ${phone}\n\n*Order Details:*\n${orderDetails}\n\n*Subtotal:* ₹${itemTotal}\n`;
+    
+    if (appliedPromo) {
+      textMessage += `*Discount (${appliedPromo.code}):* -₹${discountAmount}\n`;
+    }
+
+    textMessage += `*Delivery Option:* ${deliveryOption === "HOME" ? "Home Delivery (₹50)" : "Collect from Studio (Free)"}\n*Total Amount:* ₹${totalAmount}\n`;
     
     if (deliveryOption === "HOME") {
       textMessage += `\n*Delivery Address:*\n${address}\n`;
@@ -139,28 +174,24 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
   if (!isOpen && items.length === 0) return null;
 
   return (
-    <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl overflow-y-auto shadow-2xl flex flex-col max-h-[calc(100vh-6rem)] relative">
+    <div className={`bg-black/40 backdrop-blur-3xl rounded-3xl p-6 border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-all duration-300 ${!isOpen && 'opacity-50 hover:opacity-100'}`}>
       {/* Cart Header */}
-      <div className="p-6 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex items-center justify-between sticky top-0 z-20">
-        <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+      <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+        <h2 className="text-xl font-serif font-bold flex items-center gap-2 text-white">
           <ShoppingBag className="w-5 h-5 text-amber-500" /> Your Order
         </h2>
-        <span className="bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 px-3 py-1 rounded-full text-sm font-bold">
-          {items.length} item{items.length !== 1 ? 's' : ''}
+        <span className="bg-amber-500/20 text-amber-400 text-xs font-bold px-3 py-1 rounded-full border border-amber-500/30">
+          {items.length} Items
         </span>
       </div>
 
       {/* Cart Items */}
-      <div className="p-6 space-y-4">
+      <div className="space-y-4">
         <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" multiple />
         <AnimatePresence>
           {items.length === 0 ? (
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              className="text-center py-10 text-zinc-500"
-            >
-              Your cart is empty. Add some items to build your order!
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-10 text-zinc-500">
+              Your cart is empty.
             </motion.div>
           ) : (
             items.map((item) => (
@@ -169,60 +200,37 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="flex gap-4 items-center bg-zinc-50 dark:bg-zinc-950/50 p-3 rounded-2xl border border-zinc-100 dark:border-zinc-800/50 relative group"
+                className="flex gap-4 items-center bg-white/5 p-3 rounded-2xl border border-white/5 relative group"
               >
                 <div className="relative shrink-0">
                   {item.image ? (
                     <img src={item.image} alt={item.name} className="w-16 h-16 rounded-xl object-cover" />
                   ) : (
-                    <div className="w-16 h-16 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-400">
+                    <div className="w-16 h-16 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-500">
                       <ImageIcon className="w-6 h-6" />
                     </div>
                   )}
                   {['Frame', 'Collage', 'Gift'].includes(item.category) && (
                     <button 
                       onClick={() => triggerUpload(item.cartId)}
-                      className="absolute -bottom-2 -right-2 bg-amber-500 text-white p-1.5 rounded-full shadow-md hover:bg-amber-600 transition-colors"
-                      title="Upload/Change Photo"
+                      className="absolute -bottom-2 -right-2 bg-amber-500 text-black p-1.5 rounded-full shadow-md"
                     >
                       <Upload className="w-3 h-3" />
                     </button>
                   )}
                 </div>
-                <div className="flex-1 pr-6">
-                  <h4 className="font-semibold text-zinc-900 dark:text-white text-sm line-clamp-1">{item.name}</h4>
-                  {item.details && <p className="text-xs text-zinc-500 line-clamp-1">{item.details}</p>}
+                <div className="flex-1">
+                  <h4 className="font-semibold text-white text-sm">{item.name}</h4>
                   <div className="flex items-center justify-between mt-2">
-                    <p className="font-bold text-amber-600 dark:text-amber-500">₹{item.price * (item.quantity || 1)}</p>
-                    <div className="flex items-center gap-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-2 py-1">
-                      <button 
-                        onClick={() => {
-                          if ((item.quantity || 1) > 1) {
-                            onUpdateItem(item.cartId, { quantity: item.quantity - 1 });
-                          } else {
-                            onRemove(item.cartId);
-                          }
-                        }}
-                        className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
-                      >
-                        <Minus className="w-3 h-3" />
-                      </button>
-                      <span className="text-xs font-bold text-zinc-900 dark:text-white w-4 text-center">{item.quantity || 1}</span>
-                      <button 
-                        onClick={() => onUpdateItem(item.cartId, { quantity: (item.quantity || 1) + 1 })}
-                        className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
-                      >
-                        <Plus className="w-3 h-3" />
-                      </button>
+                    <p className="font-bold text-amber-500">₹{item.price * (item.quantity || 1)}</p>
+                    <div className="flex items-center gap-3 bg-black/40 border border-white/10 rounded-lg px-2 py-1">
+                      <button onClick={() => (item.quantity || 1) > 1 ? onUpdateItem(item.cartId, { quantity: item.quantity - 1 }) : onRemove(item.cartId)} className="text-zinc-400 hover:text-white"><Minus className="w-3 h-3" /></button>
+                      <span className="text-xs font-bold text-white w-4 text-center">{item.quantity || 1}</span>
+                      <button onClick={() => onUpdateItem(item.cartId, { quantity: (item.quantity || 1) + 1 })} className="text-zinc-400 hover:text-white"><Plus className="w-3 h-3" /></button>
                     </div>
                   </div>
                 </div>
-                <button
-                  onClick={() => onRemove(item.cartId)}
-                  className="absolute right-3 top-3 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 p-1.5 rounded-full transition-colors opacity-0 group-hover:opacity-100"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+                <button onClick={() => onRemove(item.cartId)} className="absolute right-3 top-3 text-zinc-500 hover:text-red-500"><X className="w-4 h-4" /></button>
               </motion.div>
             ))
           )}
@@ -231,96 +239,58 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
 
       {/* Checkout Section */}
       {items.length > 0 && (
-        <div className="p-6 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 space-y-4">
+        <div className="mt-6 space-y-4">
+          {error && <div className="bg-red-500/20 border border-red-500/30 text-red-400 p-3 rounded-xl text-sm">{error}</div>}
           
-          {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm">
-              {error}
+          {hasPhotoItem && (
+            <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3">
+              <p className="text-xs text-amber-400 font-medium flex items-center gap-2">
+                <Upload className="w-4 h-4 shrink-0" />
+                Upload photos for your customized items.
+              </p>
             </div>
           )}
 
-          <div>
-            <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 flex items-center gap-2 mb-1">
-              <User className="w-3 h-3" /> Full Name
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="John Doe"
-              className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 text-sm"
-            />
+          <div className="space-y-4">
+            <div>
+              <label className="text-xs font-medium text-zinc-400 block mb-1">Full Name</label>
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-amber-500 text-sm text-white placeholder-zinc-600" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-zinc-400 block mb-1">WhatsApp Number</label>
+              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 9876543210" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-amber-500 text-sm text-white placeholder-zinc-600" />
+            </div>
+
+            <div className="pt-2 border-t border-white/10">
+              <label className="text-xs font-medium text-zinc-400 block mb-3">Delivery Option</label>
+              <div className="flex gap-2 bg-black/50 p-1 rounded-xl border border-white/10">
+                <button onClick={() => setDeliveryOption("STUDIO")} className={`flex-1 flex justify-center items-center gap-2 py-2 text-sm font-medium rounded-lg transition-all ${deliveryOption === "STUDIO" ? "bg-white/10 text-white shadow-sm" : "text-zinc-500 hover:text-white"}`}><Home className="w-4 h-4" /> Pick Up</button>
+                <button onClick={() => setDeliveryOption("HOME")} className={`flex-1 flex justify-center items-center gap-2 py-2 text-sm font-medium rounded-lg transition-all ${deliveryOption === "HOME" ? "bg-white/10 text-white shadow-sm" : "text-zinc-500 hover:text-white"}`}><Truck className="w-4 h-4" /> Delivery (+₹50)</button>
+              </div>
+            </div>
+
+            {deliveryOption === "HOME" && (
+              <textarea rows={2} value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Delivery Address..." className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-amber-500 text-sm text-white placeholder-zinc-600" />
+            )}
           </div>
 
-          <div>
-            <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 flex items-center gap-2 mb-1">
-              <Phone className="w-3 h-3" /> Phone Number
-            </label>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+91 9876543210"
-              className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 text-sm"
-            />
-          </div>
-
-          <div className="space-y-3">
-            <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Delivery Method</label>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => setDeliveryOption("STUDIO")}
-                className={`p-3 border-2 rounded-xl text-left transition-colors flex flex-col gap-1 ${
-                  deliveryOption === "STUDIO" 
-                    ? "border-amber-500 bg-amber-50 dark:bg-amber-900/20" 
-                    : "border-zinc-200 dark:border-zinc-800 hover:border-amber-200"
-                }`}
-              >
-                <span className="font-semibold text-sm text-zinc-900 dark:text-white">Collect from Studio</span>
-                <span className="text-xs text-amber-600 dark:text-amber-500 font-medium">Free</span>
-              </button>
-              <button
-                onClick={() => setDeliveryOption("HOME")}
-                className={`p-3 border-2 rounded-xl text-left transition-colors flex flex-col gap-1 ${
-                  deliveryOption === "HOME" 
-                    ? "border-amber-500 bg-amber-50 dark:bg-amber-900/20" 
-                    : "border-zinc-200 dark:border-zinc-800 hover:border-amber-200"
-                }`}
-              >
-                <span className="font-semibold text-sm text-zinc-900 dark:text-white">Home Delivery</span>
-                <span className="text-xs text-amber-600 dark:text-amber-500 font-medium">+₹50 Courier</span>
-              </button>
+          <div className="flex flex-col gap-1 py-4 border-t border-white/10">
+            <div className="flex justify-between items-center text-zinc-500 text-sm"><span>Subtotal</span><span>₹{itemTotal}</span></div>
+            {discountAmount > 0 && <div className="flex justify-between items-center text-green-400 text-sm font-medium"><span>Discount</span><span>-₹{discountAmount}</span></div>}
+            {deliveryCharge > 0 && <div className="flex justify-between items-center text-zinc-500 text-sm"><span>Delivery</span><span>+₹{deliveryCharge}</span></div>}
+            <div className="flex justify-between items-center pt-3 mt-2 border-t border-white/10">
+              <span className="text-white font-bold text-lg">Total Amount</span>
+              <span className="text-3xl font-bold text-amber-500 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]">₹{totalAmount}</span>
             </div>
           </div>
 
-          {deliveryOption === "HOME" && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="pt-2">
-              <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 flex items-center gap-2 mb-1">
-                <Truck className="w-3 h-3" /> Delivery Address
-              </label>
-              <textarea
-                rows={2}
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Full address for courier delivery..."
-                className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 text-sm"
-              />
-            </motion.div>
-          )}
-
-          <div className="flex justify-between items-center py-2 border-t border-zinc-200 dark:border-zinc-800">
-            <span className="text-zinc-500 font-medium">Total Amount</span>
-            <span className="text-2xl font-bold text-zinc-900 dark:text-white">₹{totalAmount}</span>
-          </div>
-
-          <button
-            onClick={handleWhatsAppOrder}
-            disabled={isSubmitting}
-            className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-[#25D366]/30 disabled:opacity-50"
-          >
-            <MessageCircle className="w-5 h-5" />
-            {isSubmitting ? "Generating Order..." : "Order via WhatsApp"}
+          <button onClick={handleWhatsAppOrder} disabled={isSubmitting} className="w-full bg-gradient-to-r from-amber-400 to-amber-600 text-black py-4 rounded-xl font-bold text-lg hover:shadow-[0_0_30px_rgba(251,191,36,0.4)] hover:-translate-y-1 transition-all disabled:opacity-50">
+            {isSubmitting ? "Processing..." : "Place Order on WhatsApp"}
           </button>
+          
+          <p className="text-center text-xs text-zinc-500 mt-4 flex items-center justify-center gap-1">
+            <Lock className="w-3 h-3" /> Secure Order Processing
+          </p>
         </div>
       )}
     </div>

@@ -138,16 +138,16 @@ export default function StorePage() {
       </AnimatedSection>
 
       {/* Tabs */}
-      <div className="flex justify-center mb-12">
-        <div className="bg-zinc-100 dark:bg-zinc-900 p-1 rounded-full inline-flex border border-zinc-200 dark:border-zinc-800">
+      <div className="flex justify-center mb-12 relative z-10">
+        <div className="bg-black/40 backdrop-blur-md p-1.5 rounded-full inline-flex border border-white/10 shadow-2xl">
           {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
                 activeTab === tab.id
-                  ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm"
-                  : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50"
+                  ? "bg-amber-500 text-black shadow-[0_0_20px_rgba(251,191,36,0.3)]"
+                  : "text-zinc-400 hover:text-white hover:bg-white/5"
               }`}
             >
               {tab.icon} {tab.label}
@@ -168,17 +168,18 @@ export default function StorePage() {
           {activeTab === "passport" && (
             <AnimatedSection className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {PASSPORT_PACKAGES.map((pkg) => (
-                <div key={pkg.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:border-amber-400 transition-colors group flex flex-col h-full">
-                  <div className="h-48 overflow-hidden shrink-0">
-                    <img src={pkg.image} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div key={pkg.id} className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:border-amber-500/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-500 group flex flex-col h-full relative">
+                  <div className="h-48 overflow-hidden shrink-0 relative">
+                    <img src={pkg.image} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500"></div>
                   </div>
-                  <div className="p-5 flex flex-col flex-1">
-                    <h3 className="font-bold text-lg text-zinc-900 dark:text-white mb-1">{pkg.name}</h3>
-                    <p className="text-amber-600 dark:text-amber-500 font-semibold mb-4">₹{pkg.price}</p>
+                  <div className="p-5 flex flex-col flex-1 relative z-10">
+                    <h3 className="font-serif font-bold text-xl text-white mb-1">{pkg.name}</h3>
+                    <p className="text-amber-500 font-bold text-lg mb-4">₹{pkg.price}</p>
                     
-                    <div className="mt-auto">
+                    <div className="mt-auto transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                       <div className="mb-4">
-                        <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1 block">
+                        <label className="text-xs font-medium text-zinc-400 mb-1 block">
                           Old Studio Photo? (Optional)
                         </label>
                         <input 
@@ -186,13 +187,13 @@ export default function StorePage() {
                           placeholder="e.g. A123" 
                           value={passportRefs[pkg.id] || ""}
                           onChange={(e) => setPassportRefs(prev => ({...prev, [pkg.id]: e.target.value}))}
-                          className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500 uppercase"
+                          className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500 uppercase placeholder-zinc-600 transition-colors"
                         />
                       </div>
 
                       <button 
                         onClick={() => addToCart(pkg)}
-                        className="w-full bg-zinc-900 dark:bg-white text-white dark:text-black py-2 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2"
+                        className="w-full bg-amber-500 text-black py-2.5 rounded-xl font-bold hover:bg-amber-400 hover:shadow-[0_0_15px_rgba(251,191,36,0.4)] transition-all flex items-center justify-center gap-2"
                       >
                         <Plus className="w-4 h-4" /> Add to Order
                       </button>
@@ -206,18 +207,19 @@ export default function StorePage() {
           {activeTab === "gifts" && (
             <AnimatedSection className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {GIFTS.map((gift) => (
-                <div key={gift.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:border-amber-400 transition-colors group flex flex-col h-full">
-                  <div className="h-48 overflow-hidden shrink-0">
-                    <img src={gift.image} alt={gift.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div key={gift.id} className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:border-amber-500/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-500 group flex flex-col h-full relative">
+                  <div className="h-48 overflow-hidden shrink-0 relative">
+                    <img src={gift.image} alt={gift.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500"></div>
                   </div>
-                  <div className="p-5 flex flex-col flex-1">
-                    <h3 className="font-bold text-lg text-zinc-900 dark:text-white mb-1">{gift.name}</h3>
-                    <p className="text-amber-600 dark:text-amber-500 font-semibold mb-4">₹{gift.price}</p>
+                  <div className="p-5 flex flex-col flex-1 relative z-10">
+                    <h3 className="font-serif font-bold text-xl text-white mb-1">{gift.name}</h3>
+                    <p className="text-amber-500 font-bold text-lg mb-4">₹{gift.price}</p>
                     
-                    <div className="mt-auto">
+                    <div className="mt-auto transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                       <div className="mb-4">
                         <div className="mb-3">
-                          <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1 block">
+                          <label className="text-xs font-medium text-zinc-400 mb-1 block">
                             Upload Custom Photo (Optional)
                           </label>
                           <input 
@@ -233,10 +235,10 @@ export default function StorePage() {
                                 reader.readAsDataURL(file);
                               }
                             }}
-                            className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500 text-zinc-500 dark:text-zinc-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100"
+                            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-zinc-400 focus:outline-none focus:border-amber-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-black hover:file:bg-amber-400 transition-colors"
                           />
                         </div>
-                        <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1 block">
+                        <label className="text-xs font-medium text-zinc-400 mb-1 block">
                           Custom Text / Name (Optional)
                         </label>
                         <input 
@@ -244,13 +246,13 @@ export default function StorePage() {
                           placeholder="e.g. Happy Birthday!" 
                           value={giftMessages[gift.id] || ""}
                           onChange={(e) => setGiftMessages(prev => ({...prev, [gift.id]: e.target.value}))}
-                          className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
+                          className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500 placeholder-zinc-600 transition-colors"
                         />
                       </div>
 
                       <button 
                         onClick={() => addToCart(gift)}
-                        className="w-full bg-zinc-900 dark:bg-white text-white dark:text-black py-2 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2"
+                        className="w-full bg-amber-500 text-black py-2.5 rounded-xl font-bold hover:bg-amber-400 hover:shadow-[0_0_15px_rgba(251,191,36,0.4)] transition-all flex items-center justify-center gap-2"
                       >
                         <Plus className="w-4 h-4" /> Add to Order
                       </button>
