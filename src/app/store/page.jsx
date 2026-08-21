@@ -25,6 +25,7 @@ export default function StorePage() {
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [passportRefs, setPassportRefs] = useState({});
 
   // Load cart from local storage on mount
   useEffect(() => {
@@ -48,8 +49,21 @@ export default function StorePage() {
   }, [cartItems, isLoaded]);
 
   const addToCart = (product) => {
-    setCartItems(prev => [...prev, { ...product, cartId: Math.random().toString(36).substr(2, 9) }]);
+    let details = product.details || "";
+    if (product.category === "Passport" && passportRefs[product.id]) {
+      details = `Studio Reference No: ${passportRefs[product.id].toUpperCase()}`;
+    }
+    
+    setCartItems(prev => [...prev, { 
+      ...product, 
+      details,
+      cartId: Math.random().toString(36).substr(2, 9) 
+    }]);
     setIsCartOpen(true);
+
+    if (product.category === "Passport") {
+      setPassportRefs(prev => ({ ...prev, [product.id]: "" }));
+    }
   };
 
   const removeFromCart = (cartId) => {
@@ -115,6 +129,20 @@ export default function StorePage() {
                   <div className="p-5">
                     <h3 className="font-bold text-lg text-zinc-900 dark:text-white mb-1">{pkg.name}</h3>
                     <p className="text-amber-600 dark:text-amber-500 font-semibold mb-4">₹{pkg.price}</p>
+                    
+                    <div className="mb-4">
+                      <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1 block">
+                        Old Studio Photo? (Optional)
+                      </label>
+                      <input 
+                        type="text" 
+                        placeholder="e.g. A123" 
+                        value={passportRefs[pkg.id] || ""}
+                        onChange={(e) => setPassportRefs(prev => ({...prev, [pkg.id]: e.target.value}))}
+                        className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500 uppercase"
+                      />
+                    </div>
+
                     <button 
                       onClick={() => addToCart(pkg)}
                       className="w-full bg-zinc-900 dark:bg-white text-white dark:text-black py-2 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
