@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Image as ImageIcon, Frame, Plus, Upload, RotateCw } from "lucide-react";
+import { Image as ImageIcon, Frame, Plus, Upload, RotateCw, MonitorSmartphone } from "lucide-react";
 
 const FRAME_TYPES = [
   { id: "synthetic_wood", name: "Synthetic Wood", multiplier: 1.2, image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=200&auto=format&fit=crop" },
@@ -22,6 +22,7 @@ export default function FrameBuilder({ onAddToCart }) {
   const [selectedSize, setSelectedSize] = useState(FRAME_SIZES[0]);
   const [previewImage, setPreviewImage] = useState(null);
   const [rotation, setRotation] = useState(0);
+  const [orientation, setOrientation] = useState("Portrait");
   const fileInputRef = useRef(null);
 
   // Calculate final price based on base size price * material multiplier
@@ -49,7 +50,7 @@ export default function FrameBuilder({ onAddToCart }) {
       name: `Custom Frame (${selectedSize.name})`,
       category: "Frame",
       price: finalPrice,
-      details: `Material: ${selectedType.name}${previewImage ? ' (Custom Photo)' : ''}`,
+      details: `Material: ${selectedType.name} | Orientation: ${orientation}${previewImage ? ' (Custom Photo)' : ''}`,
       image: previewImage || selectedType.image,
       hasCustomPhoto: !!previewImage
     });
@@ -67,8 +68,12 @@ export default function FrameBuilder({ onAddToCart }) {
           <div 
             className="relative shadow-2xl transition-all duration-500 flex items-center justify-center overflow-hidden"
             style={{
-              width: selectedSize.id === '8x12' ? '120px' : selectedSize.id === '12x18' ? '180px' : selectedSize.id === '16x20' ? '200px' : selectedSize.id === '20x30' ? '240px' : '280px',
-              height: selectedSize.id === '8x12' ? '180px' : selectedSize.id === '12x18' ? '270px' : selectedSize.id === '16x20' ? '250px' : selectedSize.id === '20x30' ? '360px' : '420px',
+              width: orientation === "Portrait" 
+                ? (selectedSize.id === '8x12' ? '90px' : selectedSize.id === '12x18' ? '120px' : selectedSize.id === '16x20' ? '140px' : selectedSize.id === '20x30' ? '160px' : '180px')
+                : (selectedSize.id === '8x12' ? '135px' : selectedSize.id === '12x18' ? '180px' : selectedSize.id === '16x20' ? '175px' : selectedSize.id === '20x30' ? '240px' : '270px'),
+              height: orientation === "Portrait"
+                ? (selectedSize.id === '8x12' ? '135px' : selectedSize.id === '12x18' ? '180px' : selectedSize.id === '16x20' ? '175px' : selectedSize.id === '20x30' ? '240px' : '270px')
+                : (selectedSize.id === '8x12' ? '90px' : selectedSize.id === '12x18' ? '120px' : selectedSize.id === '16x20' ? '140px' : selectedSize.id === '20x30' ? '160px' : '180px'),
               border: selectedType.id === 'premium_matte' ? '12px solid #18181b' : selectedType.id === 'classic_gold' ? '12px solid #d4af37' : '12px solid #8b5a2b',
               backgroundColor: previewImage ? '#fff' : '#fff',
             }}
@@ -95,7 +100,7 @@ export default function FrameBuilder({ onAddToCart }) {
             accept="image/*" 
             className="hidden" 
           />
-          <div className="flex gap-3 mt-6">
+          <div className="flex flex-wrap gap-3 mt-6 justify-center">
             <button 
               onClick={() => fileInputRef.current?.click()}
               className="flex items-center gap-2 text-amber-600 dark:text-amber-500 font-medium hover:text-amber-700 transition-colors bg-amber-50 dark:bg-amber-900/20 px-3 py-1.5 rounded-lg text-sm"
@@ -112,6 +117,13 @@ export default function FrameBuilder({ onAddToCart }) {
                 Rotate
               </button>
             )}
+            <button 
+              onClick={() => setOrientation(prev => prev === "Portrait" ? "Landscape" : "Portrait")}
+              className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 font-medium hover:text-zinc-900 dark:hover:text-white transition-colors bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-3 py-1.5 rounded-lg text-sm"
+            >
+              <MonitorSmartphone className="w-4 h-4" /> 
+              {orientation}
+            </button>
           </div>
         </div>
 

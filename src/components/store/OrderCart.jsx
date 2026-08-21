@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { ShoppingBag, X, MessageCircle, Truck, User, Phone, Upload, Image as ImageIcon } from "lucide-react";
+import { ShoppingBag, X, MessageCircle, Truck, User, Phone, Upload, Image as ImageIcon, Minus, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createOrder } from "@/app/actions/orders";
 import { uploadImageToCloud } from "@/app/actions/upload";
@@ -16,7 +16,7 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
   const [activeUploadId, setActiveUploadId] = useState(null);
   const fileInputRef = useRef(null);
 
-  const itemTotal = items.reduce((sum, item) => sum + item.price, 0);
+  const itemTotal = items.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
   const deliveryCharge = deliveryOption === "HOME" ? 50 : 0;
   const totalAmount = itemTotal + deliveryCharge;
   const hasPhotoItem = items.some(item => item.hasCustomPhoto);
@@ -106,7 +106,7 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
 
     // 3. Format the cart items for WhatsApp
     let orderDetails = processedItems.map((item, index) => {
-      let line = `${index + 1}. ${item.name} ${item.details ? `(${item.details})` : ""} - ₹${item.price}`;
+      let line = `${index + 1}. ${item.name} x${item.quantity || 1} ${item.details ? `(${item.details})` : ""} - ₹${item.price * (item.quantity || 1)}`;
       if (item.hasCustomPhoto && item.image && item.image.startsWith('http')) {
         line += `\n   📷 Photo: ${item.image}`;
       }
@@ -192,7 +192,30 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
                 <div className="flex-1 pr-6">
                   <h4 className="font-semibold text-zinc-900 dark:text-white text-sm line-clamp-1">{item.name}</h4>
                   {item.details && <p className="text-xs text-zinc-500 line-clamp-1">{item.details}</p>}
-                  <p className="font-bold text-amber-600 dark:text-amber-500 mt-1">₹{item.price}</p>
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="font-bold text-amber-600 dark:text-amber-500">₹{item.price * (item.quantity || 1)}</p>
+                    <div className="flex items-center gap-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-2 py-1">
+                      <button 
+                        onClick={() => {
+                          if ((item.quantity || 1) > 1) {
+                            onUpdateItem(item.cartId, { quantity: item.quantity - 1 });
+                          } else {
+                            onRemove(item.cartId);
+                          }
+                        }}
+                        className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                      >
+                        <Minus className="w-3 h-3" />
+                      </button>
+                      <span className="text-xs font-bold text-zinc-900 dark:text-white w-4 text-center">{item.quantity || 1}</span>
+                      <button 
+                        onClick={() => onUpdateItem(item.cartId, { quantity: (item.quantity || 1) + 1 })}
+                        className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 <button
                   onClick={() => onRemove(item.cartId)}

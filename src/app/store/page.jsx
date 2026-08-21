@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import FrameBuilder from "@/components/store/FrameBuilder";
+import CollageBuilder from "@/components/store/CollageBuilder";
 import OrderCart from "@/components/store/OrderCart";
-import { Package, Camera, Gift, ShoppingCart } from "lucide-react";
+import { Package, Camera, Gift, ShoppingCart, Plus } from "lucide-react";
 
 // Hardcoded store products (can be moved to DB later)
 const GIFTS = [
@@ -14,16 +15,10 @@ const GIFTS = [
   { id: "g4", name: "LED Photo Lamp", price: 1200, category: "Gift", image: "https://images.unsplash.com/photo-1517658797914-1fbc5b36916a?w=500&auto=format&fit=crop" },
 ];
 
-const COLLAGE_PACKAGES = [
-  { id: "c1", name: "3-Photo Small Collage", price: 500, category: "Collage", image: "https://images.unsplash.com/photo-1549210996-5256e6d195f2?w=500&auto=format&fit=crop" },
-  { id: "c2", name: "5-Photo Family Collage", price: 850, category: "Collage", image: "https://images.unsplash.com/photo-1549210996-5256e6d195f2?w=500&auto=format&fit=crop" },
-  { id: "c3", name: "10-Photo Giant Collage", price: 1500, category: "Collage", image: "https://images.unsplash.com/photo-1549210996-5256e6d195f2?w=500&auto=format&fit=crop" },
-];
-
 const PASSPORT_PACKAGES = [
-  { id: "p1", name: "8 Passport Size Photos", price: 100, category: "Passport", image: "https://images.unsplash.com/photo-1579405021287-21fbdf8d2703?w=500&auto=format&fit=crop" },
-  { id: "p2", name: "16 Passport Size Photos", price: 150, category: "Passport", image: "https://images.unsplash.com/photo-1579405021287-21fbdf8d2703?w=500&auto=format&fit=crop" },
-  { id: "p3", name: "32 Passport + 2 Stamp Size", price: 250, category: "Passport", image: "https://images.unsplash.com/photo-1579405021287-21fbdf8d2703?w=500&auto=format&fit=crop" },
+  { id: "p1", name: "8 Passport Size Photos", price: 100, category: "Passport", image: "https://res.cloudinary.com/e5pnwpo5/image/upload/f_auto,q_auto/passport-mockup" },
+  { id: "p2", name: "8 Passport + 8 Stamp Size", price: 150, category: "Passport", image: "https://res.cloudinary.com/e5pnwpo5/image/upload/f_auto,q_auto/passport-mockup" },
+  { id: "p3", name: "16 Stamp Size Photos", price: 100, category: "Passport", image: "https://res.cloudinary.com/e5pnwpo5/image/upload/f_auto,q_auto/passport-mockup" },
 ];
 
 export default function StorePage() {
@@ -81,12 +76,30 @@ export default function StorePage() {
       }
     }
     
-    setCartItems(prev => [...prev, { 
-      ...product, 
-      details,
-      ...(hasCustomPhoto && { hasCustomPhoto, image }),
-      cartId: Math.random().toString(36).substr(2, 9) 
-    }]);
+    setCartItems(prev => {
+      const existingItemIndex = prev.findIndex(item => 
+        item.id === product.id && 
+        item.details === details && 
+        (!hasCustomPhoto || item.image === image)
+      );
+
+      if (existingItemIndex >= 0) {
+        const newItems = [...prev];
+        newItems[existingItemIndex] = {
+          ...newItems[existingItemIndex],
+          quantity: (newItems[existingItemIndex].quantity || 1) + 1
+        };
+        return newItems;
+      } else {
+        return [...prev, { 
+          ...product, 
+          details,
+          quantity: 1,
+          ...(hasCustomPhoto && { hasCustomPhoto, image }),
+          cartId: Math.random().toString(36).substr(2, 9) 
+        }];
+      }
+    });
     setIsCartOpen(true);
 
     if (product.category === "Passport") {
@@ -155,33 +168,35 @@ export default function StorePage() {
           {activeTab === "passport" && (
             <AnimatedSection className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {PASSPORT_PACKAGES.map((pkg) => (
-                <div key={pkg.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:border-amber-400 transition-colors group">
-                  <div className="h-48 overflow-hidden">
+                <div key={pkg.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:border-amber-400 transition-colors group flex flex-col h-full">
+                  <div className="h-48 overflow-hidden shrink-0">
                     <img src={pkg.image} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   </div>
-                  <div className="p-5">
+                  <div className="p-5 flex flex-col flex-1">
                     <h3 className="font-bold text-lg text-zinc-900 dark:text-white mb-1">{pkg.name}</h3>
                     <p className="text-amber-600 dark:text-amber-500 font-semibold mb-4">₹{pkg.price}</p>
                     
-                    <div className="mb-4">
-                      <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1 block">
-                        Old Studio Photo? (Optional)
-                      </label>
-                      <input 
-                        type="text" 
-                        placeholder="e.g. A123" 
-                        value={passportRefs[pkg.id] || ""}
-                        onChange={(e) => setPassportRefs(prev => ({...prev, [pkg.id]: e.target.value}))}
-                        className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500 uppercase"
-                      />
-                    </div>
+                    <div className="mt-auto">
+                      <div className="mb-4">
+                        <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1 block">
+                          Old Studio Photo? (Optional)
+                        </label>
+                        <input 
+                          type="text" 
+                          placeholder="e.g. A123" 
+                          value={passportRefs[pkg.id] || ""}
+                          onChange={(e) => setPassportRefs(prev => ({...prev, [pkg.id]: e.target.value}))}
+                          className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500 uppercase"
+                        />
+                      </div>
 
-                    <button 
-                      onClick={() => addToCart(pkg)}
-                      className="w-full bg-zinc-900 dark:bg-white text-white dark:text-black py-2 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
-                    >
-                      Add to Order
-                    </button>
+                      <button 
+                        onClick={() => addToCart(pkg)}
+                        className="w-full bg-zinc-900 dark:bg-white text-white dark:text-black py-2 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2"
+                      >
+                        <Plus className="w-4 h-4" /> Add to Order
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -191,84 +206,63 @@ export default function StorePage() {
           {activeTab === "gifts" && (
             <AnimatedSection className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {GIFTS.map((gift) => (
-                <div key={gift.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:border-amber-400 transition-colors group">
-                  <div className="h-48 overflow-hidden">
+                <div key={gift.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:border-amber-400 transition-colors group flex flex-col h-full">
+                  <div className="h-48 overflow-hidden shrink-0">
                     <img src={gift.image} alt={gift.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   </div>
-                  <div className="p-5">
+                  <div className="p-5 flex flex-col flex-1">
                     <h3 className="font-bold text-lg text-zinc-900 dark:text-white mb-1">{gift.name}</h3>
                     <p className="text-amber-600 dark:text-amber-500 font-semibold mb-4">₹{gift.price}</p>
                     
-                    <div className="mb-4">
-                      <div className="mb-3">
+                    <div className="mt-auto">
+                      <div className="mb-4">
+                        <div className="mb-3">
+                          <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1 block">
+                            Upload Custom Photo (Optional)
+                          </label>
+                          <input 
+                            type="file" 
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                const reader = new FileReader();
+                                reader.onloadend = () => {
+                                  setGiftImages(prev => ({...prev, [gift.id]: { name: file.name, dataUrl: reader.result }}));
+                                };
+                                reader.readAsDataURL(file);
+                              }
+                            }}
+                            className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500 text-zinc-500 dark:text-zinc-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100"
+                          />
+                        </div>
                         <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1 block">
-                          Upload Custom Photo (Optional)
+                          Custom Text / Name (Optional)
                         </label>
                         <input 
-                          type="file" 
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            if (file) {
-                              const reader = new FileReader();
-                              reader.onloadend = () => {
-                                setGiftImages(prev => ({...prev, [gift.id]: { name: file.name, dataUrl: reader.result }}));
-                              };
-                              reader.readAsDataURL(file);
-                            }
-                          }}
-                          className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500 text-zinc-500 dark:text-zinc-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100"
+                          type="text" 
+                          placeholder="e.g. Happy Birthday!" 
+                          value={giftMessages[gift.id] || ""}
+                          onChange={(e) => setGiftMessages(prev => ({...prev, [gift.id]: e.target.value}))}
+                          className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
                         />
                       </div>
-                      <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1 block">
-                        Custom Text / Name (Optional)
-                      </label>
-                      <input 
-                        type="text" 
-                        placeholder="e.g. Happy Birthday!" 
-                        value={giftMessages[gift.id] || ""}
-                        onChange={(e) => setGiftMessages(prev => ({...prev, [gift.id]: e.target.value}))}
-                        className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
-                      />
-                    </div>
 
-                    <button 
-                      onClick={() => addToCart(gift)}
-                      className="w-full bg-zinc-900 dark:bg-white text-white dark:text-black py-2 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
-                    >
-                      Add to Order
-                    </button>
+                      <button 
+                        onClick={() => addToCart(gift)}
+                        className="w-full bg-zinc-900 dark:bg-white text-white dark:text-black py-2 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2"
+                      >
+                        <Plus className="w-4 h-4" /> Add to Order
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
             </AnimatedSection>
           )}
           {activeTab === "collages" && (
-            <AnimatedSection className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {COLLAGE_PACKAGES.map((pkg) => (
-                <div key={pkg.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:border-amber-400 transition-colors group">
-                  <div className="h-48 overflow-hidden">
-                    <img src={pkg.image} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-bold text-lg text-zinc-900 dark:text-white mb-1">{pkg.name}</h3>
-                    <p className="text-amber-600 dark:text-amber-500 font-semibold mb-4">₹{pkg.price}</p>
-                    
-                    <div className="mb-4">
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">
-                        * You can upload multiple photos for this item in the cart!
-                      </p>
-                    </div>
-
-                    <button 
-                      onClick={() => addToCart(pkg)}
-                      className="w-full bg-zinc-900 dark:bg-white text-white dark:text-black py-2 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
-                    >
-                      Add to Order
-                    </button>
-                  </div>
-                </div>
-              ))}
+            <AnimatedSection>
+              <CollageBuilder onAddToCart={addToCart} />
             </AnimatedSection>
           )}
         </div>
