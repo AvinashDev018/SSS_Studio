@@ -14,6 +14,12 @@ const GIFTS = [
   { id: "g4", name: "LED Photo Lamp", price: 1200, category: "Gift", image: "https://images.unsplash.com/photo-1517658797914-1fbc5b36916a?w=500&auto=format&fit=crop" },
 ];
 
+const COLLAGE_PACKAGES = [
+  { id: "c1", name: "3-Photo Small Collage", price: 500, category: "Collage", image: "https://images.unsplash.com/photo-1549210996-5256e6d195f2?w=500&auto=format&fit=crop" },
+  { id: "c2", name: "5-Photo Family Collage", price: 850, category: "Collage", image: "https://images.unsplash.com/photo-1549210996-5256e6d195f2?w=500&auto=format&fit=crop" },
+  { id: "c3", name: "10-Photo Giant Collage", price: 1500, category: "Collage", image: "https://images.unsplash.com/photo-1549210996-5256e6d195f2?w=500&auto=format&fit=crop" },
+];
+
 const PASSPORT_PACKAGES = [
   { id: "p1", name: "8 Passport Size Photos", price: 100, category: "Passport", image: "https://images.unsplash.com/photo-1579405021287-21fbdf8d2703?w=500&auto=format&fit=crop" },
   { id: "p2", name: "16 Passport Size Photos", price: 150, category: "Passport", image: "https://images.unsplash.com/photo-1579405021287-21fbdf8d2703?w=500&auto=format&fit=crop" },
@@ -26,6 +32,7 @@ export default function StorePage() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [passportRefs, setPassportRefs] = useState({});
+  const [giftMessages, setGiftMessages] = useState({});
 
   // Load cart from local storage on mount
   useEffect(() => {
@@ -52,6 +59,8 @@ export default function StorePage() {
     let details = product.details || "";
     if (product.category === "Passport" && passportRefs[product.id]) {
       details = `Studio Reference No: ${passportRefs[product.id].toUpperCase()}`;
+    } else if (product.category === "Gift" && giftMessages[product.id]) {
+      details = `Custom Message: "${giftMessages[product.id]}"`;
     }
     
     setCartItems(prev => [...prev, { 
@@ -63,6 +72,9 @@ export default function StorePage() {
 
     if (product.category === "Passport") {
       setPassportRefs(prev => ({ ...prev, [product.id]: "" }));
+    }
+    if (product.category === "Gift") {
+      setGiftMessages(prev => ({ ...prev, [product.id]: "" }));
     }
   };
 
@@ -78,6 +90,7 @@ export default function StorePage() {
     { id: "frames", label: "Custom Frames", icon: <Package className="w-4 h-4" /> },
     { id: "passport", label: "Passport Photos", icon: <Camera className="w-4 h-4" /> },
     { id: "gifts", label: "Birthday Gifts", icon: <Gift className="w-4 h-4" /> },
+    { id: "collages", label: "Photo Collages", icon: <Camera className="w-4 h-4" /> },
   ];
 
   return (
@@ -165,8 +178,50 @@ export default function StorePage() {
                   <div className="p-5">
                     <h3 className="font-bold text-lg text-zinc-900 dark:text-white mb-1">{gift.name}</h3>
                     <p className="text-amber-600 dark:text-amber-500 font-semibold mb-4">₹{gift.price}</p>
+                    
+                    <div className="mb-4">
+                      <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1 block">
+                        Custom Text / Name (Optional)
+                      </label>
+                      <input 
+                        type="text" 
+                        placeholder="e.g. Happy Birthday!" 
+                        value={giftMessages[gift.id] || ""}
+                        onChange={(e) => setGiftMessages(prev => ({...prev, [gift.id]: e.target.value}))}
+                        className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+
                     <button 
                       onClick={() => addToCart(gift)}
+                      className="w-full bg-zinc-900 dark:bg-white text-white dark:text-black py-2 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+                    >
+                      Add to Order
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </AnimatedSection>
+          )}
+          {activeTab === "collages" && (
+            <AnimatedSection className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {COLLAGE_PACKAGES.map((pkg) => (
+                <div key={pkg.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:border-amber-400 transition-colors group">
+                  <div className="h-48 overflow-hidden">
+                    <img src={pkg.image} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-bold text-lg text-zinc-900 dark:text-white mb-1">{pkg.name}</h3>
+                    <p className="text-amber-600 dark:text-amber-500 font-semibold mb-4">₹{pkg.price}</p>
+                    
+                    <div className="mb-4">
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">
+                        * You can upload multiple photos for this item in the cart!
+                      </p>
+                    </div>
+
+                    <button 
+                      onClick={() => addToCart(pkg)}
                       className="w-full bg-zinc-900 dark:bg-white text-white dark:text-black py-2 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
                     >
                       Add to Order

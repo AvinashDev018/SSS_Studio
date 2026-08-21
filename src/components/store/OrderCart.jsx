@@ -22,16 +22,31 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
   const hasPhotoItem = items.some(item => item.hasCustomPhoto);
 
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file && activeUploadId) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        onUpdateItem(activeUploadId, { 
-          image: reader.result, 
-          hasCustomPhoto: true, 
+    const files = Array.from(e.target.files);
+    if (files.length > 0 && activeUploadId) {
+      if (files.length === 1) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          onUpdateItem(activeUploadId, { 
+            image: reader.result, 
+            hasCustomPhoto: true, 
+            collageImages: null
+          });
+        };
+        reader.readAsDataURL(files[0]);
+      } else {
+        Promise.all(files.map(file => new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        }))).then(results => {
+          onUpdateItem(activeUploadId, {
+            image: results[0],
+            collageImages: results,
+            hasCustomPhoto: true
+          });
         });
-      };
-      reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -52,14 +67,24 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
     let processedItems = [...items];
     for (let i = 0; i < processedItems.length; i++) {
       let item = processedItems[i];
-      if (item.hasCustomPhoto && item.image && item.image.startsWith('data:image')) {
-        const result = await uploadImageToCloud(item.image);
-        if (result.success) {
-          item.image = result.url; // Replace base64 string with the public URL
-        } else {
-          console.warn("Failed to upload image for", item.name, result.error);
-          // If it fails, we leave it as base64 and it will just be stored in the DB, 
-          // but won't look great in WhatsApp (it'll be too long).
+      if (item.hasCustomPhoto) {
+        if (item.collageImages && item.collageImages.length > 0) {
+          const uploadedUrls = [];
+          for (const b64 of item.collageImages) {
+             if (b64.startsWith('data:image')) {
+                const res = await uploadImageToCloud(b64);
+                if (res.success) uploadedUrls.push(res.url);
+             } else {
+                uploadedUrls.push(b64);
+             }
+          }
+          item.collageImages = uploadedUrls;
+          item.image = uploadedUrls[0] || item.image;
+        } else if (item.image && item.image.startsWith('data:image')) {
+          const result = await uploadImageToCloud(item.image);
+          if (result.success) {
+            item.image = result.url;
+          }
         }
       }
     }
@@ -127,7 +152,7 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
 
       {/* Cart Items */}
       <div className="p-6 space-y-4">
-        <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" />
+        <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" multiple />
         <AnimatePresence>
           {items.length === 0 ? (
             <motion.div 
@@ -154,7 +179,7 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
                       <ImageIcon className="w-6 h-6" />
                     </div>
                   )}
-                  {item.category === "Frame" && (
+                  {['Frame', 'Collage'].includes(item.category) && (
                     <button 
                       onClick={() => triggerUpload(item.cartId)}
                       className="absolute -bottom-2 -right-2 bg-amber-500 text-white p-1.5 rounded-full shadow-md hover:bg-amber-600 transition-colors"
