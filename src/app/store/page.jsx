@@ -33,6 +33,7 @@ export default function StorePage() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [passportRefs, setPassportRefs] = useState({});
   const [giftMessages, setGiftMessages] = useState({});
+  const [giftImages, setGiftImages] = useState({});
 
   // Load cart from local storage on mount
   useEffect(() => {
@@ -59,8 +60,16 @@ export default function StorePage() {
     let details = product.details || "";
     if (product.category === "Passport" && passportRefs[product.id]) {
       details = `Studio Reference No: ${passportRefs[product.id].toUpperCase()}`;
-    } else if (product.category === "Gift" && giftMessages[product.id]) {
-      details = `Custom Message: "${giftMessages[product.id]}"`;
+    } else if (product.category === "Gift") {
+      const msg = giftMessages[product.id];
+      const img = giftImages[product.id];
+      if (msg && img) {
+        details = `Message: "${msg}" | Photo: ${img}`;
+      } else if (msg) {
+        details = `Message: "${msg}"`;
+      } else if (img) {
+        details = `Photo: ${img}`;
+      }
     }
     
     setCartItems(prev => [...prev, { 
@@ -75,6 +84,7 @@ export default function StorePage() {
     }
     if (product.category === "Gift") {
       setGiftMessages(prev => ({ ...prev, [product.id]: "" }));
+      setGiftImages(prev => ({ ...prev, [product.id]: null }));
     }
   };
 
@@ -180,9 +190,22 @@ export default function StorePage() {
                     <p className="text-amber-600 dark:text-amber-500 font-semibold mb-4">₹{gift.price}</p>
                     
                     <div className="mb-4">
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-2 font-bold italic text-amber-600">
-                        * You can upload a custom photo for this gift in the cart!
-                      </p>
+                      <div className="mb-3">
+                        <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1 block">
+                          Upload Custom Photo (Optional)
+                        </label>
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              setGiftImages(prev => ({...prev, [gift.id]: file.name}));
+                            }
+                          }}
+                          className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500 text-zinc-500 dark:text-zinc-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100"
+                        />
+                      </div>
                       <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1 block">
                         Custom Text / Name (Optional)
                       </label>
@@ -267,6 +290,7 @@ export default function StorePage() {
           </button>
         </div>
       )}
+      </div>
     </div>
   );
 }
