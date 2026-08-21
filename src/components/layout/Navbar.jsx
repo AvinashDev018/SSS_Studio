@@ -90,6 +90,15 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
+            <div className="pt-4 pb-2">
+              <Link
+                href="/book"
+                onClick={() => setIsOpen(false)}
+                className="block text-center w-full bg-gradient-to-r from-amber-400 to-yellow-600 text-black px-5 py-3 rounded-xl text-base font-bold shadow-[0_0_15px_rgba(251,191,36,0.3)] active:scale-95 transition-all duration-300 mt-2"
+              >
+                Book a Session
+              </Link>
+            </div>
           </div>
         </div>
       )}
