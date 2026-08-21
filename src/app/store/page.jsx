@@ -58,23 +58,33 @@ export default function StorePage() {
 
   const addToCart = (product) => {
     let details = product.details || "";
+    let hasCustomPhoto = false;
+    let image = null;
+
     if (product.category === "Passport" && passportRefs[product.id]) {
       details = `Studio Reference No: ${passportRefs[product.id].toUpperCase()}`;
     } else if (product.category === "Gift") {
       const msg = giftMessages[product.id];
-      const img = giftImages[product.id];
-      if (msg && img) {
-        details = `Message: "${msg}" | Photo: ${img}`;
+      const imgObj = giftImages[product.id];
+      const imgName = imgObj ? imgObj.name : null;
+      if (msg && imgName) {
+        details = `Message: "${msg}" | Photo: ${imgName}`;
       } else if (msg) {
         details = `Message: "${msg}"`;
-      } else if (img) {
-        details = `Photo: ${img}`;
+      } else if (imgName) {
+        details = `Photo: ${imgName}`;
+      }
+
+      if (imgObj && imgObj.dataUrl) {
+        hasCustomPhoto = true;
+        image = imgObj.dataUrl;
       }
     }
     
     setCartItems(prev => [...prev, { 
       ...product, 
       details,
+      ...(hasCustomPhoto && { hasCustomPhoto, image }),
       cartId: Math.random().toString(36).substr(2, 9) 
     }]);
     setIsCartOpen(true);
@@ -200,7 +210,11 @@ export default function StorePage() {
                           onChange={(e) => {
                             const file = e.target.files[0];
                             if (file) {
-                              setGiftImages(prev => ({...prev, [gift.id]: file.name}));
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setGiftImages(prev => ({...prev, [gift.id]: { name: file.name, dataUrl: reader.result }}));
+                              };
+                              reader.readAsDataURL(file);
                             }
                           }}
                           className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500 text-zinc-500 dark:text-zinc-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100"

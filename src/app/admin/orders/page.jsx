@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getOrders, updateOrderStatus } from "@/app/actions/orders";
-import { ShoppingBag, Package, Truck, CheckCircle2, Clock, Search, ExternalLink } from "lucide-react";
+import { ShoppingBag, Package, Truck, CheckCircle2, Clock, Search, ExternalLink, Image as ImageIcon } from "lucide-react";
 import AdminNav from "@/components/admin/AdminNav";
 
 export default function AdminOrders() {
@@ -148,6 +148,21 @@ export default function AdminOrders() {
                       <div className="flex flex-col gap-1">
                         <span className="font-bold text-amber-600 dark:text-amber-500">₹{order.totalAmount}</span>
                         <span className="text-xs text-zinc-500">{order.items.length} items</span>
+                        <div className="mt-2 flex flex-col gap-1">
+                          {order.items.map((item, idx) => (
+                            item.image && (
+                              <a 
+                                key={idx} 
+                                href={item.image} 
+                                target="_blank" 
+                                rel="noreferrer" 
+                                className="text-xs flex items-center gap-1.5 text-blue-600 dark:text-blue-400 hover:underline bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded w-fit"
+                              >
+                                <ImageIcon className="w-3 h-3" /> Photo: {item.name}
+                              </a>
+                            )
+                          ))}
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">

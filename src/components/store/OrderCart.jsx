@@ -113,7 +113,7 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
       return line;
     }).join("\n\n");
 
-    let textMessage = `*New Store Order Request!* 🛍️\n\n*Customer Details:*\nName: ${name}\nPhone: ${phone}\n\n*Order Details:*\n${orderDetails}\n\n*Delivery Option:* ${deliveryOption === "HOME" ? "Home Delivery (₹50)" : "Collect from Studio (Free)"}\n*Total Amount:* ₹${totalAmount}\n`;
+    let textMessage = `*New Store Order Request!* 🛍️\n\n*Order ID:* ${res.orderId}\n\n*Customer Details:*\nName: ${name}\nPhone: ${phone}\n\n*Order Details:*\n${orderDetails}\n\n*Delivery Option:* ${deliveryOption === "HOME" ? "Home Delivery (₹50)" : "Collect from Studio (Free)"}\n*Total Amount:* ₹${totalAmount}\n`;
     
     if (deliveryOption === "HOME") {
       textMessage += `\n*Delivery Address:*\n${address}\n`;

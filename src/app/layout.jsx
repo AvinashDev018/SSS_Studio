@@ -1,6 +1,5 @@
 import { Inter, Playfair_Display } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import "./globals.css";
 
@@ -45,7 +44,6 @@ export default function RootLayout({ children }) {
           <div className="relative z-10 flex flex-col min-h-screen">
             <Navbar />
             <main className="flex-grow">{children}</main>
-            <Footer />
             <WhatsAppButton />
           </div>
         </ThemeProvider>
