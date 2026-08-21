@@ -180,6 +180,9 @@ export default function StorePage() {
                     <p className="text-amber-600 dark:text-amber-500 font-semibold mb-4">₹{gift.price}</p>
                     
                     <div className="mb-4">
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-2 font-bold italic text-amber-600">
+                        * You can upload a custom photo for this gift in the cart!
+                      </p>
                       <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1 block">
                         Custom Text / Name (Optional)
                       </label>

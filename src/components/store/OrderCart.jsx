@@ -179,7 +179,7 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
                       <ImageIcon className="w-6 h-6" />
                     </div>
                   )}
-                  {['Frame', 'Collage'].includes(item.category) && (
+                  {['Frame', 'Collage', 'Gift'].includes(item.category) && (
                     <button 
                       onClick={() => triggerUpload(item.cartId)}
                       className="absolute -bottom-2 -right-2 bg-amber-500 text-white p-1.5 rounded-full shadow-md hover:bg-amber-600 transition-colors"
