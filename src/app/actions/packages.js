@@ -5,6 +5,30 @@ import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
+const FALLBACK_PACKAGES = [
+  {
+    id: "pkg_1",
+    name: "Essential Portrait",
+    price: "₹1,500",
+    description: "Perfect for quick, professional solo portraits. Includes 5 edited high-res digital photos.",
+    popular: false
+  },
+  {
+    id: "pkg_2",
+    name: "Signature Family Session",
+    price: "₹4,500",
+    description: "A beautiful session for the whole family. Includes 15 edited photos and 1 large physical print.",
+    popular: true
+  },
+  {
+    id: "pkg_3",
+    name: "Premium Event Coverage",
+    price: "₹15,000+",
+    description: "Full event coverage (birthdays, small functions). Includes a full album and cinematic highlight video.",
+    popular: false
+  }
+];
+
 export async function getPackages() {
   try {
     const packages = await prisma.package.findMany({
@@ -15,35 +39,13 @@ export async function getPackages() {
     
     // Fallback packages if DB is empty
     if (!packages || packages.length === 0) {
-      return [
-        {
-          id: "pkg_1",
-          name: "Essential Portrait",
-          price: "₹1,500",
-          description: "Perfect for quick, professional solo portraits. Includes 5 edited high-res digital photos.",
-          popular: false
-        },
-        {
-          id: "pkg_2",
-          name: "Signature Family Session",
-          price: "₹4,500",
-          description: "A beautiful session for the whole family. Includes 15 edited photos and 1 large physical print.",
-          popular: true
-        },
-        {
-          id: "pkg_3",
-          name: "Premium Event Coverage",
-          price: "₹15,000+",
-          description: "Full event coverage (birthdays, small functions). Includes a full album and cinematic highlight video.",
-          popular: false
-        }
-      ];
+      return FALLBACK_PACKAGES;
     }
     
     return packages;
   } catch (error) {
     console.error("Error fetching packages:", error);
-    return [];
+    return FALLBACK_PACKAGES; // Return fallback on DB error too
   }
 }
 
