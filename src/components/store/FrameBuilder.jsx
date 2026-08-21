@@ -154,23 +154,26 @@ export default function FrameBuilder({ onAddToCart }) {
           {/* Size Selection */}
           <div className="space-y-3">
             <h3 className="font-semibold text-sm text-zinc-900 dark:text-white">2. Select Dimensions</h3>
-            <div className="space-y-2">
-              {FRAME_SIZES.map(size => (
-                <button
-                  key={size.id}
-                  onClick={() => setSelectedSize(size)}
-                  className={`w-full flex justify-between items-center px-4 py-2.5 rounded-xl border-2 transition-all ${
-                    selectedSize.id === size.id
-                      ? "border-amber-500 bg-amber-50 dark:bg-amber-900/20"
-                      : "border-zinc-200 dark:border-zinc-800 hover:border-amber-400/50"
-                  }`}
-                >
-                  <span className="font-medium text-sm text-zinc-800 dark:text-zinc-200">{size.name}</span>
-                  <span className="text-amber-600 dark:text-amber-500 font-bold text-sm">
-                    ₹{Math.round(size.basePrice * selectedType.multiplier)}
-                  </span>
-                </button>
-              ))}
+            <div className="relative">
+              <select
+                value={selectedSize.id}
+                onChange={(e) => {
+                  const newSize = FRAME_SIZES.find(s => s.id === e.target.value);
+                  if (newSize) setSelectedSize(newSize);
+                }}
+                className="w-full appearance-none bg-white dark:bg-zinc-950 border-2 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white font-medium text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-amber-500 transition-colors cursor-pointer shadow-sm"
+              >
+                {FRAME_SIZES.map(size => (
+                  <option key={size.id} value={size.id} className="bg-white dark:bg-zinc-900">
+                    {size.name} — ₹{Math.round(size.basePrice * selectedType.multiplier)}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
             </div>
           </div>
 
