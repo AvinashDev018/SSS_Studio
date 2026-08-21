@@ -61,9 +61,9 @@ export default function FrameBuilder({ onAddToCart }) {
         <Frame className="text-amber-500" /> Build Your Custom Frame
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         {/* Left: Preview */}
-        <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-6 flex flex-col items-center justify-center border border-zinc-200 dark:border-zinc-800 min-h-[300px]">
+        <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-6 flex flex-col items-center justify-center border border-zinc-200 dark:border-zinc-800 min-h-[300px] md:sticky md:top-24 z-10">
           <div 
             className="relative shadow-2xl transition-all duration-500 flex items-center justify-center overflow-hidden"
             style={{
