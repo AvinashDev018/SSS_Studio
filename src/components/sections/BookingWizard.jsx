@@ -153,7 +153,7 @@ Please confirm if you are available.`;
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 p-6 sm:p-10 relative overflow-hidden">
+      <div className="flex-1 p-6 sm:p-10 relative overflow-hidden flex flex-col min-h-0">
         <AnimatePresence mode="wait">
           
           {/* STEP 1: Package Selection */}
@@ -163,7 +163,7 @@ Please confirm if you are available.`;
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="space-y-6 h-full flex flex-col"
+              className="space-y-6 flex-1 flex flex-col w-full h-full"
             >
               <div>
                 <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">Choose a Package</h2>
@@ -222,7 +222,7 @@ Please confirm if you are available.`;
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="space-y-8 h-full flex flex-col"
+              className="space-y-8 flex-1 flex flex-col w-full h-full"
             >
               <div>
                 <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">Select Date & Time</h2>
@@ -312,7 +312,7 @@ Please confirm if you are available.`;
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="space-y-6 h-full flex flex-col"
+              className="space-y-6 flex-1 flex flex-col w-full h-full"
             >
               <div>
                 <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">Your Details</h2>
