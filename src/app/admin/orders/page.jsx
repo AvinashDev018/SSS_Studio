@@ -43,6 +43,7 @@ export default function AdminOrders() {
 
   const getStatusColor = (status) => {
     switch (status) {
+      case 'UNCONFIRMED': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500';
       case 'PENDING': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500';
       case 'PROCESSING': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500';
       case 'SHIPPED': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-500';
@@ -83,6 +84,7 @@ export default function AdminOrders() {
             className="bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-amber-500 text-sm font-medium"
           >
             <option value="ALL">All Statuses</option>
+            <option value="UNCONFIRMED">Unconfirmed</option>
             <option value="PENDING">Pending</option>
             <option value="PROCESSING">Processing</option>
             <option value="SHIPPED">Shipped</option>
@@ -116,9 +118,13 @@ export default function AdminOrders() {
                 filteredOrders.map((order) => (
                   <tr key={order.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
                     <td className="px-6 py-4">
-                      <span className="font-bold text-zinc-900 dark:text-white font-mono bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded">
-                        {order.orderId}
-                      </span>
+                      {order.status === "UNCONFIRMED" ? (
+                        <span className="font-medium text-red-500 text-sm">ID Hidden</span>
+                      ) : (
+                        <span className="font-bold text-zinc-900 dark:text-white font-mono bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded select-all cursor-pointer">
+                          {order.orderId}
+                        </span>
+                      )}
                       <p className="text-xs text-zinc-500 mt-2">
                         {new Date(order.createdAt).toLocaleDateString()}
                       </p>
@@ -142,16 +148,25 @@ export default function AdminOrders() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <select
-                        value={order.status}
-                        onChange={(e) => handleStatusUpdate(order.orderId, e.target.value)}
-                        className="bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 text-xs font-semibold text-zinc-700 dark:text-zinc-300"
-                      >
-                        <option value="PENDING">Pending</option>
-                        <option value="PROCESSING">Processing</option>
-                        <option value="SHIPPED">Shipped</option>
-                        <option value="DELIVERED">Delivered</option>
-                      </select>
+                      {order.status === "UNCONFIRMED" ? (
+                        <button
+                          onClick={() => handleStatusUpdate(order.orderId, "PROCESSING")}
+                          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-colors"
+                        >
+                          Accept Order
+                        </button>
+                      ) : (
+                        <select
+                          value={order.status}
+                          onChange={(e) => handleStatusUpdate(order.orderId, e.target.value)}
+                          className="bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 text-xs font-semibold text-zinc-700 dark:text-zinc-300"
+                        >
+                          <option value="PENDING">Pending</option>
+                          <option value="PROCESSING">Processing</option>
+                          <option value="SHIPPED">Shipped</option>
+                          <option value="DELIVERED">Delivered</option>
+                        </select>
+                      )}
                     </td>
                   </tr>
                 ))

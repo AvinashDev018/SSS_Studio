@@ -26,6 +26,7 @@ export async function createOrder(data) {
         address: data.address,
         items: data.items,
         totalAmount: data.totalAmount,
+        status: "UNCONFIRMED",
       }
     });
     revalidatePath("/admin/orders");

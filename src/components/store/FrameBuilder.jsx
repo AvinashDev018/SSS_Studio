@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Image as ImageIcon, Frame, Plus } from "lucide-react";
+import { useState, useRef } from "react";
+import { Image as ImageIcon, Frame, Plus, Upload } from "lucide-react";
 
 const FRAME_TYPES = [
   { id: "synthetic_wood", name: "Synthetic Wood", multiplier: 1.2, image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=200&auto=format&fit=crop" },
@@ -20,9 +20,22 @@ const FRAME_SIZES = [
 export default function FrameBuilder({ onAddToCart }) {
   const [selectedType, setSelectedType] = useState(FRAME_TYPES[0]);
   const [selectedSize, setSelectedSize] = useState(FRAME_SIZES[0]);
+  const [previewImage, setPreviewImage] = useState(null);
+  const fileInputRef = useRef(null);
 
   // Calculate final price based on base size price * material multiplier
   const finalPrice = Math.round(selectedSize.basePrice * selectedType.multiplier);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleAddToCart = () => {
     onAddToCart({
@@ -30,8 +43,9 @@ export default function FrameBuilder({ onAddToCart }) {
       name: `Custom Frame (${selectedSize.name})`,
       category: "Frame",
       price: finalPrice,
-      details: `Material: ${selectedType.name}`,
-      image: selectedType.image
+      details: `Material: ${selectedType.name}${previewImage ? ' (Custom Photo)' : ''}`,
+      image: previewImage || selectedType.image,
+      hasCustomPhoto: !!previewImage
     });
   };
 
@@ -43,20 +57,40 @@ export default function FrameBuilder({ onAddToCart }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Left: Preview */}
-        <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-8 flex items-center justify-center border border-zinc-200 dark:border-zinc-800 min-h-[300px]">
+        <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-8 flex flex-col items-center justify-center border border-zinc-200 dark:border-zinc-800 min-h-[300px]">
           <div 
-            className="relative bg-white shadow-2xl transition-all duration-500 flex items-center justify-center"
+            className="relative shadow-2xl transition-all duration-500 flex items-center justify-center overflow-hidden"
             style={{
               width: selectedSize.id === '8x12' ? '120px' : selectedSize.id === '12x18' ? '180px' : selectedSize.id === '16x20' ? '200px' : selectedSize.id === '20x30' ? '240px' : '280px',
               height: selectedSize.id === '8x12' ? '180px' : selectedSize.id === '12x18' ? '270px' : selectedSize.id === '16x20' ? '250px' : selectedSize.id === '20x30' ? '360px' : '420px',
               border: selectedType.id === 'premium_matte' ? '12px solid #18181b' : selectedType.id === 'classic_gold' ? '12px solid #d4af37' : '12px solid #8b5a2b',
+              backgroundColor: previewImage ? '#fff' : '#fff',
             }}
           >
-            <div className="absolute inset-2 border border-dashed border-zinc-300 dark:border-zinc-700 flex flex-col items-center justify-center text-zinc-400">
-              <ImageIcon className="w-8 h-8 mb-2 opacity-50" />
-              <span className="text-xs font-medium text-center px-2">Your Photo Here</span>
-            </div>
+            {previewImage ? (
+              <img src={previewImage} alt="Custom Preview" className="w-full h-full object-cover" />
+            ) : (
+              <div className="absolute inset-2 border border-dashed border-zinc-300 dark:border-zinc-700 flex flex-col items-center justify-center text-zinc-400">
+                <ImageIcon className="w-8 h-8 mb-2 opacity-50" />
+                <span className="text-xs font-medium text-center px-2">Your Photo Here</span>
+              </div>
+            )}
           </div>
+          
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handleImageUpload} 
+            accept="image/*" 
+            className="hidden" 
+          />
+          <button 
+            onClick={() => fileInputRef.current?.click()}
+            className="mt-8 flex items-center gap-2 text-amber-600 dark:text-amber-500 font-medium hover:text-amber-700 transition-colors bg-amber-50 dark:bg-amber-900/20 px-4 py-2 rounded-lg"
+          >
+            <Upload className="w-4 h-4" /> 
+            {previewImage ? "Change Photo" : "Upload Your Photo"}
+          </button>
         </div>
 
         {/* Right: Controls */}

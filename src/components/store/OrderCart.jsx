@@ -9,14 +9,18 @@ export default function OrderCart({ items, onRemove, isOpen }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [deliveryOption, setDeliveryOption] = useState("STUDIO");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  const totalAmount = items.reduce((sum, item) => sum + item.price, 0);
+  const itemTotal = items.reduce((sum, item) => sum + item.price, 0);
+  const deliveryCharge = deliveryOption === "HOME" ? 50 : 0;
+  const totalAmount = itemTotal + deliveryCharge;
+  const hasPhotoItem = items.some(item => item.hasCustomPhoto);
 
   const handleWhatsAppOrder = async () => {
-    if (!name || !phone || !address) {
-      setError("Please fill in all details (Name, Phone, Address).");
+    if (!name || !phone || (deliveryOption === "HOME" && !address)) {
+      setError(deliveryOption === "HOME" ? "Please fill in all details including address." : "Please fill in Name and Phone.");
       return;
     }
     setError("");
@@ -26,7 +30,7 @@ export default function OrderCart({ items, onRemove, isOpen }) {
     const res = await createOrder({
       customerName: name,
       customerPhone: phone,
-      address,
+      address: deliveryOption === "HOME" ? address : "Collect from Studio",
       items,
       totalAmount
     });
@@ -37,14 +41,23 @@ export default function OrderCart({ items, onRemove, isOpen }) {
       return;
     }
 
-    const orderId = res.orderId;
-
     // 2. Format the cart items for WhatsApp
     let orderDetails = items.map((item, index) => 
       `${index + 1}. ${item.name} ${item.details ? `(${item.details})` : ""} - ₹${item.price}`
     ).join("\n");
 
-    const textMessage = `*New Store Order!* 🛍️\n\n*Order ID:* ${orderId}\n\n*Customer Details:*\nName: ${name}\nPhone: ${phone}\n\n*Order Details:*\n${orderDetails}\n\n*Total Amount:* ₹${totalAmount}\n\n*Delivery Address:*\n${address}\n\nPlease confirm my order.`;
+    let textMessage = `*New Store Order Request!* 🛍️\n\n*Customer Details:*\nName: ${name}\nPhone: ${phone}\n\n*Order Details:*\n${orderDetails}\n\n*Delivery Option:* ${deliveryOption === "HOME" ? "Home Delivery (₹50)" : "Collect from Studio (Free)"}\n*Total Amount:* ₹${totalAmount}\n`;
+    
+    if (deliveryOption === "HOME") {
+      textMessage += `\n*Delivery Address:*\n${address}\n`;
+    }
+
+    textMessage += `\nPlease let me know how to pay so my order can be confirmed!`;
+
+    if (hasPhotoItem) {
+      textMessage += `\n\n*(Note: I am sending my selected photo(s) along with this message!)*`;
+      alert("Important: Please remember to attach your chosen photo(s) in WhatsApp before sending the message!");
+    }
 
     const whatsappUrl = `https://wa.me/916383565425?text=${encodeURIComponent(textMessage)}`;
     
@@ -53,7 +66,6 @@ export default function OrderCart({ items, onRemove, isOpen }) {
 
     setTimeout(() => {
       window.open(whatsappUrl, "_blank");
-      // Optional: you could clear the cart state here if you passed a clearCart function from parent
       setIsSubmitting(false);
     }, 500);
   };
@@ -148,18 +160,48 @@ export default function OrderCart({ items, onRemove, isOpen }) {
             />
           </div>
 
-          <div>
-            <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 flex items-center gap-2 mb-1">
-              <Truck className="w-3 h-3" /> Delivery Address
-            </label>
-            <textarea
-              rows={2}
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="Full address for courier delivery..."
-              className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 text-sm"
-            />
+          <div className="space-y-3">
+            <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Delivery Method</label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setDeliveryOption("STUDIO")}
+                className={`p-3 border-2 rounded-xl text-left transition-colors flex flex-col gap-1 ${
+                  deliveryOption === "STUDIO" 
+                    ? "border-amber-500 bg-amber-50 dark:bg-amber-900/20" 
+                    : "border-zinc-200 dark:border-zinc-800 hover:border-amber-200"
+                }`}
+              >
+                <span className="font-semibold text-sm text-zinc-900 dark:text-white">Collect from Studio</span>
+                <span className="text-xs text-amber-600 dark:text-amber-500 font-medium">Free</span>
+              </button>
+              <button
+                onClick={() => setDeliveryOption("HOME")}
+                className={`p-3 border-2 rounded-xl text-left transition-colors flex flex-col gap-1 ${
+                  deliveryOption === "HOME" 
+                    ? "border-amber-500 bg-amber-50 dark:bg-amber-900/20" 
+                    : "border-zinc-200 dark:border-zinc-800 hover:border-amber-200"
+                }`}
+              >
+                <span className="font-semibold text-sm text-zinc-900 dark:text-white">Home Delivery</span>
+                <span className="text-xs text-amber-600 dark:text-amber-500 font-medium">+₹50 Courier</span>
+              </button>
+            </div>
           </div>
+
+          {deliveryOption === "HOME" && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="pt-2">
+              <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 flex items-center gap-2 mb-1">
+                <Truck className="w-3 h-3" /> Delivery Address
+              </label>
+              <textarea
+                rows={2}
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Full address for courier delivery..."
+                className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 text-sm"
+              />
+            </motion.div>
+          )}
 
           <div className="flex justify-between items-center py-2 border-t border-zinc-200 dark:border-zinc-800">
             <span className="text-zinc-500 font-medium">Total Amount</span>
