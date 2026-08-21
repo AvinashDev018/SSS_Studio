@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Image as ImageIcon, Frame, Plus, Upload } from "lucide-react";
+import { Image as ImageIcon, Frame, Plus, Upload, RotateCw } from "lucide-react";
 
 const FRAME_TYPES = [
   { id: "synthetic_wood", name: "Synthetic Wood", multiplier: 1.2, image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=200&auto=format&fit=crop" },
@@ -21,6 +21,7 @@ export default function FrameBuilder({ onAddToCart }) {
   const [selectedType, setSelectedType] = useState(FRAME_TYPES[0]);
   const [selectedSize, setSelectedSize] = useState(FRAME_SIZES[0]);
   const [previewImage, setPreviewImage] = useState(null);
+  const [rotation, setRotation] = useState(0);
   const fileInputRef = useRef(null);
 
   // Calculate final price based on base size price * material multiplier
@@ -32,9 +33,14 @@ export default function FrameBuilder({ onAddToCart }) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result);
+        setRotation(0); // Reset rotation for new image
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleRotate = () => {
+    setRotation((prev) => (prev + 90) % 360);
   };
 
   const handleAddToCart = () => {
@@ -55,9 +61,9 @@ export default function FrameBuilder({ onAddToCart }) {
         <Frame className="text-amber-500" /> Build Your Custom Frame
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Left: Preview */}
-        <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-8 flex flex-col items-center justify-center border border-zinc-200 dark:border-zinc-800 min-h-[300px]">
+        <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-6 flex flex-col items-center justify-center border border-zinc-200 dark:border-zinc-800 min-h-[300px]">
           <div 
             className="relative shadow-2xl transition-all duration-500 flex items-center justify-center overflow-hidden"
             style={{
@@ -68,7 +74,12 @@ export default function FrameBuilder({ onAddToCart }) {
             }}
           >
             {previewImage ? (
-              <img src={previewImage} alt="Custom Preview" className="w-full h-full object-cover" />
+              <img 
+                src={previewImage} 
+                alt="Custom Preview" 
+                className="w-full h-full object-cover transition-transform duration-300" 
+                style={{ transform: `rotate(${rotation}deg)` }}
+              />
             ) : (
               <div className="absolute inset-2 border border-dashed border-zinc-300 dark:border-zinc-700 flex flex-col items-center justify-center text-zinc-400">
                 <ImageIcon className="w-8 h-8 mb-2 opacity-50" />
@@ -84,55 +95,66 @@ export default function FrameBuilder({ onAddToCart }) {
             accept="image/*" 
             className="hidden" 
           />
-          <button 
-            onClick={() => fileInputRef.current?.click()}
-            className="mt-8 flex items-center gap-2 text-amber-600 dark:text-amber-500 font-medium hover:text-amber-700 transition-colors bg-amber-50 dark:bg-amber-900/20 px-4 py-2 rounded-lg"
-          >
-            <Upload className="w-4 h-4" /> 
-            {previewImage ? "Change Photo" : "Upload Your Photo"}
-          </button>
+          <div className="flex gap-3 mt-6">
+            <button 
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-2 text-amber-600 dark:text-amber-500 font-medium hover:text-amber-700 transition-colors bg-amber-50 dark:bg-amber-900/20 px-3 py-1.5 rounded-lg text-sm"
+            >
+              <Upload className="w-4 h-4" /> 
+              {previewImage ? "Change Photo" : "Upload"}
+            </button>
+            {previewImage && (
+              <button 
+                onClick={handleRotate}
+                className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 font-medium hover:text-zinc-900 dark:hover:text-white transition-colors bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-3 py-1.5 rounded-lg text-sm"
+              >
+                <RotateCw className="w-4 h-4" /> 
+                Rotate
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Right: Controls */}
-        <div className="space-y-8">
+        <div className="space-y-6">
           
           {/* Frame Type Selection */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-zinc-900 dark:text-white">1. Select Frame Material</h3>
-            <div className="grid grid-cols-3 gap-3">
+          <div className="space-y-3">
+            <h3 className="font-semibold text-sm text-zinc-900 dark:text-white">1. Select Frame Material</h3>
+            <div className="grid grid-cols-3 gap-2">
               {FRAME_TYPES.map(type => (
                 <button
                   key={type.id}
                   onClick={() => setSelectedType(type)}
-                  className={`flex flex-col items-center p-3 rounded-xl border-2 transition-all ${
+                  className={`flex flex-col items-center p-2 rounded-xl border-2 transition-all ${
                     selectedType.id === type.id
                       ? "border-amber-500 bg-amber-50 dark:bg-amber-900/20"
                       : "border-zinc-200 dark:border-zinc-800 hover:border-amber-400/50"
                   }`}
                 >
-                  <img src={type.image} alt={type.name} className="w-12 h-12 rounded-full object-cover mb-2 border border-zinc-200 dark:border-zinc-700" />
-                  <span className="text-xs font-medium text-center text-zinc-700 dark:text-zinc-300">{type.name}</span>
+                  <img src={type.image} alt={type.name} className="w-8 h-8 rounded-full object-cover mb-1.5 border border-zinc-200 dark:border-zinc-700" />
+                  <span className="text-[10px] font-medium text-center text-zinc-700 dark:text-zinc-300 leading-tight">{type.name}</span>
                 </button>
               ))}
             </div>
           </div>
 
           {/* Size Selection */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-zinc-900 dark:text-white">2. Select Dimensions</h3>
+          <div className="space-y-3">
+            <h3 className="font-semibold text-sm text-zinc-900 dark:text-white">2. Select Dimensions</h3>
             <div className="space-y-2">
               {FRAME_SIZES.map(size => (
                 <button
                   key={size.id}
                   onClick={() => setSelectedSize(size)}
-                  className={`w-full flex justify-between items-center p-4 rounded-xl border-2 transition-all ${
+                  className={`w-full flex justify-between items-center px-4 py-2.5 rounded-xl border-2 transition-all ${
                     selectedSize.id === size.id
                       ? "border-amber-500 bg-amber-50 dark:bg-amber-900/20"
                       : "border-zinc-200 dark:border-zinc-800 hover:border-amber-400/50"
                   }`}
                 >
-                  <span className="font-medium text-zinc-800 dark:text-zinc-200">{size.name}</span>
-                  <span className="text-amber-600 dark:text-amber-500 font-bold">
+                  <span className="font-medium text-sm text-zinc-800 dark:text-zinc-200">{size.name}</span>
+                  <span className="text-amber-600 dark:text-amber-500 font-bold text-sm">
                     ₹{Math.round(size.basePrice * selectedType.multiplier)}
                   </span>
                 </button>
@@ -141,16 +163,16 @@ export default function FrameBuilder({ onAddToCart }) {
           </div>
 
           {/* Add to Cart */}
-          <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+          <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
             <div>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">Total Price</p>
-              <p className="text-3xl font-bold text-zinc-900 dark:text-white">₹{finalPrice}</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">Total Price</p>
+              <p className="text-2xl font-bold text-zinc-900 dark:text-white">₹{finalPrice}</p>
             </div>
             <button
               onClick={handleAddToCart}
-              className="flex items-center gap-2 bg-gradient-to-r from-amber-400 to-yellow-600 text-black px-6 py-3 rounded-full font-bold hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all"
+              className="flex items-center gap-2 bg-gradient-to-r from-amber-400 to-yellow-600 text-black px-5 py-2.5 rounded-full font-bold hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all text-sm"
             >
-              <Plus className="w-5 h-5" /> Add to Order
+              <Plus className="w-4 h-4" /> Add to Order
             </button>
           </div>
 

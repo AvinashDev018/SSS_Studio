@@ -1,22 +1,44 @@
 "use client";
 
-import { useState } from "react";
-import { ShoppingBag, X, MessageCircle, Truck, User, Phone } from "lucide-react";
+import { useState, useRef } from "react";
+import { ShoppingBag, X, MessageCircle, Truck, User, Phone, Upload, Image as ImageIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createOrder } from "@/app/actions/orders";
+import { uploadImageToCloud } from "@/app/actions/upload";
 
-export default function OrderCart({ items, onRemove, isOpen }) {
+export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [deliveryOption, setDeliveryOption] = useState("STUDIO");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [activeUploadId, setActiveUploadId] = useState(null);
+  const fileInputRef = useRef(null);
 
   const itemTotal = items.reduce((sum, item) => sum + item.price, 0);
   const deliveryCharge = deliveryOption === "HOME" ? 50 : 0;
   const totalAmount = itemTotal + deliveryCharge;
   const hasPhotoItem = items.some(item => item.hasCustomPhoto);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file && activeUploadId) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onUpdateItem(activeUploadId, { 
+          image: reader.result, 
+          hasCustomPhoto: true, 
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerUpload = (cartId) => {
+    setActiveUploadId(cartId);
+    fileInputRef.current?.click();
+  };
 
   const handleWhatsAppOrder = async () => {
     if (!name || !phone || (deliveryOption === "HOME" && !address)) {
@@ -26,12 +48,28 @@ export default function OrderCart({ items, onRemove, isOpen }) {
     setError("");
     setIsSubmitting(true);
     
-    // 1. Save to Database first
+    // 1. Upload custom photos to cloud (ImgBB)
+    let processedItems = [...items];
+    for (let i = 0; i < processedItems.length; i++) {
+      let item = processedItems[i];
+      if (item.hasCustomPhoto && item.image && item.image.startsWith('data:image')) {
+        const result = await uploadImageToCloud(item.image);
+        if (result.success) {
+          item.image = result.url; // Replace base64 string with the public URL
+        } else {
+          console.warn("Failed to upload image for", item.name, result.error);
+          // If it fails, we leave it as base64 and it will just be stored in the DB, 
+          // but won't look great in WhatsApp (it'll be too long).
+        }
+      }
+    }
+
+    // 2. Save to Database
     const res = await createOrder({
       customerName: name,
       customerPhone: phone,
       address: deliveryOption === "HOME" ? address : "Collect from Studio",
-      items,
+      items: processedItems,
       totalAmount
     });
 
@@ -41,10 +79,14 @@ export default function OrderCart({ items, onRemove, isOpen }) {
       return;
     }
 
-    // 2. Format the cart items for WhatsApp
-    let orderDetails = items.map((item, index) => 
-      `${index + 1}. ${item.name} ${item.details ? `(${item.details})` : ""} - ₹${item.price}`
-    ).join("\n");
+    // 3. Format the cart items for WhatsApp
+    let orderDetails = processedItems.map((item, index) => {
+      let line = `${index + 1}. ${item.name} ${item.details ? `(${item.details})` : ""} - ₹${item.price}`;
+      if (item.hasCustomPhoto && item.image && item.image.startsWith('http')) {
+        line += `\n   📷 Photo: ${item.image}`;
+      }
+      return line;
+    }).join("\n\n");
 
     let textMessage = `*New Store Order Request!* 🛍️\n\n*Customer Details:*\nName: ${name}\nPhone: ${phone}\n\n*Order Details:*\n${orderDetails}\n\n*Delivery Option:* ${deliveryOption === "HOME" ? "Home Delivery (₹50)" : "Collect from Studio (Free)"}\n*Total Amount:* ₹${totalAmount}\n`;
     
@@ -55,8 +97,7 @@ export default function OrderCart({ items, onRemove, isOpen }) {
     textMessage += `\nPlease let me know how to pay so my order can be confirmed!`;
 
     if (hasPhotoItem) {
-      textMessage += `\n\n*(Note: I am sending my selected photo(s) along with this message!)*`;
-      alert("Important: Please remember to attach your chosen photo(s) in WhatsApp before sending the message!");
+      textMessage += `\n\n*(Note: Custom photos are attached as links above!)*`;
     }
 
     const whatsappUrl = `https://wa.me/916383565425?text=${encodeURIComponent(textMessage)}`;
@@ -73,9 +114,9 @@ export default function OrderCart({ items, onRemove, isOpen }) {
   if (!isOpen && items.length === 0) return null;
 
   return (
-    <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[calc(100vh-8rem)]">
+    <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl overflow-y-auto shadow-2xl flex flex-col max-h-[calc(100vh-6rem)] relative">
       {/* Cart Header */}
-      <div className="p-6 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex items-center justify-between">
+      <div className="p-6 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex items-center justify-between sticky top-0 z-20">
         <h2 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
           <ShoppingBag className="w-5 h-5 text-amber-500" /> Your Order
         </h2>
@@ -85,7 +126,8 @@ export default function OrderCart({ items, onRemove, isOpen }) {
       </div>
 
       {/* Cart Items */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div className="p-6 space-y-4">
+        <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" />
         <AnimatePresence>
           {items.length === 0 ? (
             <motion.div 
@@ -104,9 +146,24 @@ export default function OrderCart({ items, onRemove, isOpen }) {
                 exit={{ opacity: 0, x: -20 }}
                 className="flex gap-4 items-center bg-zinc-50 dark:bg-zinc-950/50 p-3 rounded-2xl border border-zinc-100 dark:border-zinc-800/50 relative group"
               >
-                {item.image && (
-                  <img src={item.image} alt={item.name} className="w-16 h-16 rounded-xl object-cover shrink-0" />
-                )}
+                <div className="relative shrink-0">
+                  {item.image ? (
+                    <img src={item.image} alt={item.name} className="w-16 h-16 rounded-xl object-cover" />
+                  ) : (
+                    <div className="w-16 h-16 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-400">
+                      <ImageIcon className="w-6 h-6" />
+                    </div>
+                  )}
+                  {item.category === "Frame" && (
+                    <button 
+                      onClick={() => triggerUpload(item.cartId)}
+                      className="absolute -bottom-2 -right-2 bg-amber-500 text-white p-1.5 rounded-full shadow-md hover:bg-amber-600 transition-colors"
+                      title="Upload/Change Photo"
+                    >
+                      <Upload className="w-3 h-3" />
+                    </button>
+                  )}
+                </div>
                 <div className="flex-1 pr-6">
                   <h4 className="font-semibold text-zinc-900 dark:text-white text-sm line-clamp-1">{item.name}</h4>
                   {item.details && <p className="text-xs text-zinc-500 line-clamp-1">{item.details}</p>}

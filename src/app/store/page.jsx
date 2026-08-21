@@ -56,6 +56,10 @@ export default function StorePage() {
     setCartItems(prev => prev.filter(item => item.cartId !== cartId));
   };
 
+  const updateCartItem = (cartId, updates) => {
+    setCartItems(prev => prev.map(item => item.cartId === cartId ? { ...item, ...updates } : item));
+  };
+
   const tabs = [
     { id: "frames", label: "Custom Frames", icon: <Package className="w-4 h-4" /> },
     { id: "passport", label: "Passport Photos", icon: <Camera className="w-4 h-4" /> },
@@ -152,6 +156,7 @@ export default function StorePage() {
             <OrderCart 
               items={cartItems} 
               onRemove={removeFromCart} 
+              onUpdateItem={updateCartItem}
               isOpen={isCartOpen}
             />
           </div>
