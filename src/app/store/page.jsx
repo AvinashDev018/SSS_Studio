@@ -138,9 +138,10 @@ export default function StorePage() {
       </AnimatedSection>
 
       {/* Tabs */}
-      <div className="flex justify-center mb-12 relative z-10">
-        <div className="bg-black/40 backdrop-blur-md p-1.5 rounded-full inline-flex border border-white/10 shadow-2xl">
-          {tabs.map(tab => (
+      <div className="w-full overflow-x-auto no-scrollbar mb-12 relative z-10 pb-4">
+        <div className="flex sm:justify-center min-w-max px-4">
+          <div className="bg-black/40 backdrop-blur-md p-1.5 rounded-full inline-flex border border-white/10 shadow-2xl">
+            {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -153,6 +154,7 @@ export default function StorePage() {
               {tab.icon} {tab.label}
             </button>
           ))}
+          </div>
         </div>
       </div>
 
