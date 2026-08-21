@@ -109,7 +109,7 @@ export default function CollageBuilder({ onAddToCart }) {
       />
 
       {/* Left Column: Preview Canvas */}
-      <div className="lg:col-span-8 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-4 sm:p-8 flex items-center justify-center min-h-[400px] lg:min-h-[600px] sticky top-24">
+      <div className="lg:col-span-8 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-4 sm:p-8 flex items-center justify-center min-h-[400px] lg:min-h-[600px] lg:sticky lg:top-24">
         <div className="w-full max-w-2xl aspect-[4/3] bg-white dark:bg-zinc-950 shadow-2xl p-4 rounded-xl">
           <div className={`grid gap-2 w-full h-full ${selectedLayout.gridClass}`}>
             {Array.from({ length: selectedLayout.slots }).map((_, i) => (
