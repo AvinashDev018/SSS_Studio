@@ -16,11 +16,31 @@ export default async function AdminDashboard() {
     redirect("/admin/login");
   }
 
-  const bookings = await prisma.booking.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  let bookings = [];
+  try {
+    bookings = await prisma.booking.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  } catch (error) {
+    console.error("Failed to load bookings from database:", error);
+    // Provide a dummy booking so the admin can at least see the UI structure
+    bookings = [
+      {
+        id: "demo-booking-1",
+        name: "Demo User (Database Error)",
+        phone: "+91 9876543210",
+        eventType: "Wedding",
+        date: new Date(),
+        timeSlot: "10:00 AM",
+        location: "Studio",
+        requirements: "Database connection failed. Showing demo data.",
+        status: "PENDING",
+        createdAt: new Date()
+      }
+    ];
+  }
 
   return (
     <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen">
