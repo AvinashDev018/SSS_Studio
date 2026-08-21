@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import FrameBuilder from "@/components/store/FrameBuilder";
 import OrderCart from "@/components/store/OrderCart";
-import { Package, Camera, Gift } from "lucide-react";
+import { Package, Camera, Gift, ShoppingCart } from "lucide-react";
 
 // Hardcoded store products (can be moved to DB later)
 const GIFTS = [
@@ -234,7 +234,7 @@ export default function StorePage() {
         </div>
 
         {/* Sidebar Cart */}
-        <div className="lg:col-span-4">
+        <div className="lg:col-span-4" id="cart-section">
           <div className="sticky top-24">
             <OrderCart 
               items={cartItems} 
@@ -244,7 +244,26 @@ export default function StorePage() {
             />
           </div>
         </div>
-      </div>
+            {/* Mobile Floating Cart Button */}
+      {cartItems.length > 0 && (
+        <div className="lg:hidden fixed bottom-6 right-6 z-50">
+          <button
+            onClick={() => {
+              const el = document.getElementById('cart-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="bg-amber-500 hover:bg-amber-600 text-white rounded-full p-4 shadow-2xl flex items-center gap-2 transition-transform active:scale-95"
+          >
+            <div className="relative">
+              <ShoppingCart className="w-6 h-6" />
+              <span className="absolute -top-2 -right-2 bg-zinc-900 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-amber-500">
+                {cartItems.length}
+              </span>
+            </div>
+            <span className="font-bold">View Cart</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
