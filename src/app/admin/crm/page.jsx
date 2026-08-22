@@ -210,7 +210,7 @@ export default function CRMDashboard() {
  
  <div className="mb-4">
  <Link href={`/admin/invoice/${order.id}`} className="text-xs text-brand-gradient hover:text-cyan-400 underline decoration-cyan-500/30 underline-offset-4 flex items-center gap-1">
- <Printer className="w-3 h-3" /> View Invoice
+ <Printer className="w-3 h-3" /> View Receipt
  </Link>
  </div>
  

@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Printer, ArrowLeft, Camera } from "lucide-react";
 import Link from "next/link";
 
-export default function InvoicePage() {
+export default function ReceiptPage() {
   const { id } = useParams();
   const router = useRouter();
   const [order, setOrder] = useState(null);
@@ -28,7 +28,7 @@ export default function InvoicePage() {
   if (!order) {
     return (
       <div className="min-h-screen bg-zinc-950 p-12 text-center">
-        <p className="text-zinc-500">Loading invoice or order not found...</p>
+        <p className="text-zinc-500">Loading receipt or order not found...</p>
         <Link href="/admin/crm" className="text-brand-gradient mt-4 block">&larr; Back to CRM</Link>
       </div>
     );
@@ -47,7 +47,7 @@ export default function InvoicePage() {
           <ArrowLeft className="w-5 h-5" /> Back
         </button>
         <button onClick={handlePrint} className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
-          <Printer className="w-5 h-5" /> Print Invoice
+          <Printer className="w-5 h-5" /> Print Receipt
         </button>
       </div>
 
@@ -61,12 +61,12 @@ export default function InvoicePage() {
               <Camera className="w-8 h-8" />
             </div>
             <div>
-              <h1 className="text-3xl font-serif font-bold text-black">Avinash Studio</h1>
+              <h1 className="text-3xl font-serif font-bold text-black">SSS Studio</h1>
               <p className="text-zinc-500">Premium Photography & Frames</p>
             </div>
           </div>
           <div className="text-right">
-            <h2 className="text-4xl font-black text-zinc-200 uppercase tracking-widest">Invoice</h2>
+            <h2 className="text-4xl font-black text-zinc-200 uppercase tracking-widest">Receipt</h2>
             <p className="text-zinc-900 font-bold mt-2">#{order.id}</p>
             <p className="text-zinc-500 text-sm">Date: {order.date}</p>
           </div>
@@ -99,7 +99,7 @@ export default function InvoicePage() {
               <tr className="border-b border-zinc-100">
                 <td className="py-4">
                   <p className="font-bold text-black">Studio Services / Custom Order</p>
-                  <p className="text-sm text-zinc-500 mt-1 whitespace-pre-wrap">{order.message.substring(0, 150)}...</p>
+                  <p className="text-sm text-zinc-500 mt-1 whitespace-pre-wrap">{(order.message || "").substring(0, 150)}{order.message?.length > 150 ? "..." : ""}</p>
                 </td>
                 <td className="py-4 text-right font-bold text-lg text-black">₹{order.total}</td>
               </tr>
@@ -128,7 +128,7 @@ export default function InvoicePage() {
         {/* Footer */}
         <div className="mt-20 pt-8 border-t border-zinc-100 text-center text-sm text-zinc-400">
           <p className="font-bold text-zinc-900 mb-1">Thank you for your business!</p>
-          <p>If you have any questions about this invoice, please contact Avinash Studio.</p>
+          <p>If you have any questions about this receipt, please contact SSS Studio.</p>
         </div>
 
       </div>

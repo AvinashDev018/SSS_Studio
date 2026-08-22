@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { ShoppingBag, ShoppingCart, Lock, Home, X, MessageCircle, Truck, User, Phone, Upload, Image as ImageIcon, Minus, Plus } from "lucide-react";
+import { ShoppingBag, ShoppingCart, Lock, Home, X, MessageCircle, Truck, User, Phone, Upload, Image as ImageIcon, Minus, Plus, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import { createOrder } from "@/app/actions/orders";
 import { uploadImageToCloud } from "@/app/actions/upload";
 
@@ -16,6 +17,8 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  const [activeUploadId, setActiveUploadId] = useState(null);
  const [promoCode, setPromoCode] = useState("");
  const [appliedPromo, setAppliedPromo] = useState(null);
+ const [checkoutSuccess, setCheckoutSuccess] = useState(false);
+ const [createdOrderId, setCreatedOrderId] = useState(null);
  const fileInputRef = useRef(null);
 
  const itemTotal = items.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
@@ -84,7 +87,7 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  fileInputRef.current?.click();
  };
 
- const handleWhatsAppOrder = async () => {
+ const handleCheckout = async () => {
  if (!name || !phone || (deliveryOption === "HOME" && !address)) {
  setError(deliveryOption === "HOME" ? "Please fill in all details including address." : "Please fill in Name and Phone.");
  return;
@@ -133,45 +136,50 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  return;
  }
 
- // 3. Format the cart items for WhatsApp
- let orderDetails = processedItems.map((item, index) => {
- let line = `${index + 1}. ${item.name} x${item.quantity || 1} ${item.details ? `(${item.details})` : ""} - ₹${item.price * (item.quantity || 1)}`;
- if (item.hasCustomPhoto && item.image && item.image.startsWith('http')) {
- line += `\n 📷 Photo: ${item.image}`;
- }
- return line;
- }).join("\n\n");
-
- let textMessage = `*New Store Order Request!* 🛍️\n\n*Customer Details:*\nName: ${name}\nPhone: ${phone}\n\n*Order Details:*\n${orderDetails}\n\n*Subtotal:* ₹${itemTotal}\n`;
- 
- if (appliedPromo) {
- textMessage += `*Discount (${appliedPromo.code}):* -₹${discountAmount}\n`;
- }
-
- textMessage += `*Delivery Option:* ${deliveryOption === "HOME" ? "Home Delivery (₹50)" : "Collect from Studio (Free)"}\n*Total Amount:* ₹${totalAmount}\n`;
- 
- if (deliveryOption === "HOME") {
- textMessage += `\n*Delivery Address:*\n${address}\n`;
- }
-
- textMessage += `\nPlease let me know how to pay so my order can be confirmed!`;
-
- if (hasPhotoItem) {
- textMessage += `\n\n*(Note: Custom photos are attached as links above!)*`;
- }
-
- const whatsappUrl = `https://wa.me/916383565425?text=${encodeURIComponent(textMessage)}`;
- 
  // Clear cart in local storage
  localStorage.removeItem("studioCart");
-
- setTimeout(() => {
- window.open(whatsappUrl, "_blank");
+ setCreatedOrderId(res.orderId);
+ setCheckoutSuccess(true);
  setIsSubmitting(false);
- }, 500);
  };
 
  if (!isOpen && items.length === 0) return null;
+
+ if (checkoutSuccess) {
+ return (
+ <div className={`bg-black/40 backdrop-blur-3xl rounded-3xl p-6 border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-all duration-300 text-center max-w-sm mx-auto`}>
+ <div className="w-20 h-20 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(34,197,94,0.3)]">
+ <CheckCircle2 className="w-10 h-10" />
+ </div>
+ <h2 className="text-2xl font-bold text-white mb-2">Order Confirmed!</h2>
+ <p className="text-zinc-400 text-sm mb-6">Your order <span className="font-bold text-white">{createdOrderId}</span> has been successfully placed.</p>
+ 
+ <div className="bg-white/5 border border-white/10 p-4 rounded-2xl mb-6 text-left">
+ <p className="text-sm text-zinc-400 mb-1">Total Amount</p>
+ <p className="text-2xl font-bold text-brand-gradient mb-4">₹{totalAmount}</p>
+ 
+ {deliveryOption === "HOME" ? (
+ <div className="flex flex-col items-center border-t border-white/10 pt-4 mt-2">
+ <p className="text-xs text-zinc-300 text-center mb-3">Scan QR code to pay securely via UPI</p>
+ <div className="w-32 h-32 bg-white p-2 rounded-xl">
+ <img src="https://images.unsplash.com/photo-1607519539352-035987f2ff83?w=200&auto=format&fit=crop" alt="UPI QR Code" className="w-full h-full object-cover rounded-lg mix-blend-multiply opacity-80" />
+ </div>
+ <p className="text-[10px] text-zinc-500 mt-2">Once paid, your order will be shipped to {address}</p>
+ </div>
+ ) : (
+ <div className="flex flex-col border-t border-white/10 pt-4 mt-2">
+ <p className="text-sm font-medium text-white mb-1"><Home className="w-4 h-4 inline mr-1 text-cyan-400" /> Pay at Studio</p>
+ <p className="text-xs text-zinc-400">Please pay ₹{totalAmount} when you visit the studio to collect your order.</p>
+ </div>
+ )}
+ </div>
+
+ <Link href="/track" onClick={() => onRemove("ALL")} className="block w-full bg-brand-gradient hover-glow-brand text-black py-3 rounded-xl font-bold text-sm hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all">
+ Track Your Order
+ </Link>
+ </div>
+ );
+ }
 
  return (
  <div className={`bg-black/40 backdrop-blur-3xl rounded-3xl p-6 border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-all duration-300 ${!isOpen && 'opacity-50 hover:opacity-100'}`}>
@@ -243,10 +251,10 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  {error && <div className="bg-red-500/20 border border-red-500/30 text-red-400 p-3 rounded-xl text-sm">{error}</div>}
  
  {hasPhotoItem && (
- <div className="bg-brand-gradient hover-glow-brand/10 border border-cyan-500/20 rounded-xl p-3">
- <p className="text-xs text-brand-gradient font-medium flex items-center gap-2">
+ <div className="bg-brand-gradient hover-glow-brand border border-transparent rounded-xl p-3">
+ <p className="text-sm text-black font-bold flex items-center justify-center gap-2">
  <Upload className="w-4 h-4 shrink-0" />
- Upload photos for your customized items.
+ Upload photos for your customized items
  </p>
  </div>
  )}
@@ -307,8 +315,8 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  </div>
  </div>
 
- <button onClick={handleWhatsAppOrder} disabled={isSubmitting} className="w-full bg-brand-gradient hover-glow-brand text-black py-4 rounded-xl font-bold text-lg hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:-translate-y-1 transition-all disabled:opacity-50">
- {isSubmitting ? "Processing..." : "Place Order on WhatsApp"}
+ <button onClick={handleCheckout} disabled={isSubmitting} className="w-full bg-brand-gradient hover-glow-brand text-black py-4 rounded-xl font-bold text-lg hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:-translate-y-1 transition-all disabled:opacity-50">
+ {isSubmitting ? "Processing..." : "Confirm Order"}
  </button>
  
  <p className="text-center text-xs text-zinc-500 mt-4 flex items-center justify-center gap-1">

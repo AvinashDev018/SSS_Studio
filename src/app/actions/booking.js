@@ -47,9 +47,7 @@ export async function createBooking(formData) {
  return { success: true };
  } catch (error) {
  console.error("Failed to create booking:", error);
- // On Vercel, the SQLite DB is read-only and will fail. 
- // We still return success so the frontend redirects the user to WhatsApp!
- return { success: true, fallback: true };
+ return { success: false, error: "Failed to create booking" };
  }
 }
 

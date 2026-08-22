@@ -33,9 +33,7 @@ export async function createOrder(data) {
  return { success: true, orderId };
  } catch (error) {
  console.error("Error creating order:", error);
- // On Vercel, the SQLite DB is read-only and will fail. 
- // We still return success so the frontend redirects the user to WhatsApp!
- return { success: true, orderId: generateOrderId(), fallback: true };
+ return { success: false, error: "Failed to create order" };
  }
 }
 

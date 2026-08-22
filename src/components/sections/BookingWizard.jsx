@@ -81,32 +81,8 @@ export default function BookingWizard() {
  return;
  }
 
- // Success - format WhatsApp message
- const phoneNumber = "916383565425";
- const textMessage = `*New Booking Request!* 📸
-
-*Client Name:* ${formData.name}
-*Phone:* ${formData.phone}
-*Event Type:* ${formData.eventType}
-*Package:* ${formData.packageName}
-*Date:* ${formData.date}
-*Time:* ${formData.timeSlot}
-*Location:* ${formData.location}
-
-*Additional Requirements:*
-${formData.requirements || "None"}
-
-Please confirm if you are available.`;
-
- const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(textMessage)}`;
- 
  setIsSubmitting(false);
  setStep(4); // Move to success step
- 
- // Open WhatsApp after a short delay
- setTimeout(() => {
- window.open(whatsappUrl, "_blank");
- }, 1500);
  };
 
  // Get available time slots for the selected date
@@ -422,16 +398,33 @@ Please confirm if you are available.`;
  key="step4"
  initial={{ opacity: 0, scale: 0.9 }}
  animate={{ opacity: 1, scale: 1 }}
- className="flex flex-col items-center justify-center h-full text-center space-y-6 py-12"
+ className="flex flex-col items-center justify-center h-full text-center space-y-6 py-12 overflow-y-auto pr-2"
  >
- <div className="w-24 h-24 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center">
+ <div className="w-24 h-24 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(34,197,94,0.3)]">
  <CheckCircle2 className="w-12 h-12" />
  </div>
  <div>
  <h2 className="text-3xl font-bold text-zinc-900 dark:text-white mb-2">Booking Requested!</h2>
- <p className="text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
- We've received your request. You are now being redirected to WhatsApp to confirm the details with our team.
+ <p className="text-zinc-500 dark:text-zinc-400 max-w-md mx-auto mb-6">
+ Your request for {formData.date} at {formData.timeSlot} has been received. 
+ To lock in your date, please pay a ₹1,000 token advance.
  </p>
+ </div>
+ 
+ <div className="bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-6 rounded-2xl max-w-sm w-full shadow-lg text-left relative overflow-hidden">
+ <div className="absolute top-0 left-0 w-full h-1 bg-brand-gradient hover-glow-brand" />
+ 
+ <div className="flex flex-col items-center mb-6">
+ <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium mb-3">Scan to pay token advance via UPI</p>
+ <div className="w-40 h-40 bg-white p-2 rounded-xl shadow-inner">
+ <img src="https://images.unsplash.com/photo-1607519539352-035987f2ff83?w=200&auto=format&fit=crop" alt="UPI QR Code" className="w-full h-full object-cover rounded-lg mix-blend-multiply opacity-80" />
+ </div>
+ </div>
+ 
+ <div className="border-t border-zinc-200 dark:border-zinc-800 pt-4 flex flex-col items-center">
+ <p className="text-sm font-bold text-zinc-900 dark:text-white mb-1"><MapPin className="w-4 h-4 inline mr-1 text-cyan-500" /> Prefer to pay in person?</p>
+ <p className="text-xs text-zinc-500 text-center">Visit our studio within 24 hours to pay your advance and confirm your booking.</p>
+ </div>
  </div>
  </motion.div>
  )}
