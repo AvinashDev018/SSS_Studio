@@ -170,7 +170,7 @@ Please confirm if you are available.`;
                 <p className="text-zinc-500 dark:text-zinc-400">Select the service package that best fits your needs.</p>
               </div>
 
-              <div className="flex-1 overflow-y-auto space-y-4 pr-2 pb-4">
+              <div className="flex-1 overflow-y-auto space-y-4 pr-2 pb-24">
                 {isLoading ? (
                   <p className="text-zinc-500 text-center py-8">Loading packages...</p>
                 ) : packages.length === 0 ? (

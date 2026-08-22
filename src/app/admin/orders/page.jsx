@@ -63,12 +63,12 @@ export default function AdminOrders() {
   return (
     <div className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <AdminNav currentPath="/admin/orders" />
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">Store Orders</h1>
           <p className="text-zinc-500 mt-1">Manage physical product orders and track shipments.</p>
         </div>
-        <div className="bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
+        <div className="bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500 px-4 py-2 rounded-xl font-bold flex items-center gap-2 self-start md:self-auto">
           <ShoppingBag className="w-5 h-5" />
           {orders.length} Total Orders
         </div>
