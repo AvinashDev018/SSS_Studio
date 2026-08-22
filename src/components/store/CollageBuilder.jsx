@@ -34,6 +34,7 @@ export default function CollageBuilder({ onAddToCart }) {
   const [images, setImages] = useState({});
   const fileInputRef = useRef(null);
   const [activeSlot, setActiveSlot] = useState(null);
+  const [photoFilter, setPhotoFilter] = useState("none");
 
   const selectedLayout = COLLAGE_LAYOUTS.find(l => l.id === selectedLayoutId);
 
@@ -109,7 +110,7 @@ export default function CollageBuilder({ onAddToCart }) {
       />
 
       {/* Left Column: Preview Canvas */}
-      <div className="lg:col-span-8 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-4 sm:p-8 flex items-center justify-center min-h-[400px] lg:min-h-[600px] lg:sticky lg:top-24">
+      <div className="lg:col-span-8 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-4 sm:p-8 flex flex-col items-center justify-center min-h-[400px] lg:min-h-[600px] lg:sticky lg:top-24">
         <div className="w-full max-w-2xl aspect-[4/3] bg-white dark:bg-zinc-950 shadow-2xl p-4 rounded-xl">
           <div className={`grid gap-2 w-full h-full ${selectedLayout.gridClass}`}>
             {Array.from({ length: selectedLayout.slots }).map((_, i) => (
@@ -123,7 +124,8 @@ export default function CollageBuilder({ onAddToCart }) {
                     <img 
                       src={images[i]} 
                       alt={`Slot ${i+1}`} 
-                      className="w-full h-full object-cover" 
+                      className="w-full h-full object-cover transition-all duration-300"
+                      style={{ filter: photoFilter }}
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                       <p className="text-white font-medium text-sm">Change Photo</p>
@@ -147,6 +149,36 @@ export default function CollageBuilder({ onAddToCart }) {
             ))}
           </div>
         </div>
+        
+        {/* Filter Selection Moved Below Canvas */}
+        {Object.keys(images).length > 0 && (
+          <div className="mt-8 w-full max-w-2xl">
+            <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3 block text-center">
+              Apply Photo Filter
+            </label>
+            <div className="flex flex-wrap gap-2 justify-center">
+              {[
+                { name: "Normal", value: "none" },
+                { name: "B&W", value: "grayscale(100%)" },
+                { name: "Vintage", value: "sepia(80%) contrast(1.2)" },
+                { name: "Vivid", value: "contrast(120%) saturate(150%)" },
+                { name: "Fade", value: "brightness(1.1) contrast(0.9) saturate(0.8)" }
+              ].map(f => (
+                <button
+                  key={f.name}
+                  onClick={() => setPhotoFilter(f.value)}
+                  className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${
+                    photoFilter === f.value
+                      ? "bg-amber-500 text-white shadow-md"
+                      : "bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-700"
+                  }`}
+                >
+                  {f.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Right Column: Controls */}

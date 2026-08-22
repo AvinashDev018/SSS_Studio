@@ -1,25 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import AdminNav from "@/components/admin/AdminNav";
-import { Plus, Trash2, Tag, Percent, IndianRupee } from "lucide-react";
+import { Plus, Trash2, Tag, Percent, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
-export default function AdminPromosPage() {
+export default function PromoDashboard() {
   const [promos, setPromos] = useState([]);
-  const [isAdding, setIsAdding] = useState(false);
-  const [newPromo, setNewPromo] = useState({ code: "", type: "PERCENTAGE", value: 10 });
+  const [newCode, setNewCode] = useState("");
+  const [newDiscount, setNewDiscount] = useState("");
+  const [newType, setNewType] = useState("percentage"); // percentage or fixed
 
   useEffect(() => {
     const saved = localStorage.getItem("studioPromos");
     if (saved) {
       setPromos(JSON.parse(saved));
-    } else {
-      const initial = [
-        { id: "pr-1", code: "WELCOME10", type: "PERCENTAGE", value: 10, active: true },
-        { id: "pr-2", code: "FLAT50", type: "FIXED", value: 50, active: true },
-      ];
-      setPromos(initial);
-      localStorage.setItem("studioPromos", JSON.stringify(initial));
     }
   }, []);
 
@@ -28,161 +22,158 @@ export default function AdminPromosPage() {
     localStorage.setItem("studioPromos", JSON.stringify(newPromos));
   };
 
-  const handleAdd = () => {
-    if (!newPromo.code.trim()) return;
+  const handleAddPromo = (e) => {
+    e.preventDefault();
+    if (!newCode || !newDiscount) return;
+
     const promo = {
-      id: `pr-${Date.now()}`,
-      code: newPromo.code.toUpperCase().trim(),
-      type: newPromo.type,
-      value: Number(newPromo.value),
-      active: true
+      id: Date.now().toString(),
+      code: newCode.toUpperCase(),
+      discount: Number(newDiscount),
+      type: newType,
+      active: true,
+      uses: 0
     };
+
     savePromos([...promos, promo]);
-    setIsAdding(false);
-    setNewPromo({ code: "", type: "PERCENTAGE", value: 10 });
+    setNewCode("");
+    setNewDiscount("");
   };
 
   const handleDelete = (id) => {
-    if (confirm("Are you sure you want to delete this promo code?")) {
+    if (window.confirm("Are you sure you want to delete this promo code?")) {
       savePromos(promos.filter(p => p.id !== id));
     }
   };
 
   const toggleActive = (id) => {
-    const updated = promos.map(p => {
+    savePromos(promos.map(p => {
       if (p.id === id) return { ...p, active: !p.active };
       return p;
-    });
-    savePromos(updated);
+    }));
   };
 
   return (
-    <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen">
-      <AdminNav currentPath="/admin/promos" />
-      
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div>
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white">
-            Promo Codes
-          </h1>
-          <p className="text-zinc-500 mt-2">Create and manage discount codes for your customers.</p>
+    <div className="min-h-screen bg-zinc-950 p-6 sm:p-12 text-zinc-100 font-sans">
+      <div className="max-w-7xl mx-auto space-y-12">
+        
+        {/* Header */}
+        <div className="flex justify-between items-end border-b border-zinc-800 pb-6">
+          <div>
+            <h1 className="text-4xl font-serif font-bold text-white mb-2">Promos & Discounts</h1>
+            <p className="text-zinc-400">Manage offline-first discount codes for your customers.</p>
+          </div>
+          <Link href="/admin">
+            <button className="text-amber-500 hover:text-amber-400 transition-colors text-sm font-medium">
+              &larr; Back to Admin
+            </button>
+          </Link>
         </div>
 
-        <button 
-          onClick={() => setIsAdding(!isAdding)}
-          className="flex items-center gap-2 bg-[#D4AF37] hover:bg-yellow-500 text-black px-4 py-2 rounded-lg text-sm font-bold transition-colors"
-        >
-          <Plus className="w-4 h-4" /> {isAdding ? "Cancel" : "Add Promo Code"}
-        </button>
-      </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Create Promo Form */}
+          <div className="lg:col-span-1">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl sticky top-8">
+              <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                <Plus className="text-amber-500 w-5 h-5" /> Create Promo Code
+              </h2>
+              <form onSubmit={handleAddPromo} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-zinc-400 mb-1">Code Name</label>
+                  <input 
+                    type="text" 
+                    value={newCode}
+                    onChange={(e) => setNewCode(e.target.value.toUpperCase())}
+                    placeholder="e.g. FESTIVAL20"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-white uppercase focus:border-amber-500 focus:outline-none transition-colors"
+                    required
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-400 mb-1">Discount Type</label>
+                    <select 
+                      value={newType}
+                      onChange={(e) => setNewType(e.target.value)}
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-white focus:border-amber-500 focus:outline-none transition-colors appearance-none"
+                    >
+                      <option value="percentage">Percentage (%)</option>
+                      <option value="fixed">Fixed Amount (₹)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-400 mb-1">Value</label>
+                    <input 
+                      type="number" 
+                      value={newDiscount}
+                      onChange={(e) => setNewDiscount(e.target.value)}
+                      placeholder={newType === 'percentage' ? "20" : "500"}
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-white focus:border-amber-500 focus:outline-none transition-colors"
+                      required
+                      min="1"
+                      max={newType === 'percentage' ? "100" : "100000"}
+                    />
+                  </div>
+                </div>
 
-      {isAdding && (
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 rounded-2xl mb-8 shadow-sm animate-in fade-in slide-in-from-top-4">
-          <h3 className="font-bold text-lg mb-4 text-zinc-900 dark:text-white">Create New Promo Code</h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-            <div>
-              <label className="block text-xs font-medium text-zinc-500 mb-1">Promo Code</label>
-              <input 
-                type="text" 
-                value={newPromo.code}
-                onChange={e => setNewPromo({...newPromo, code: e.target.value.toUpperCase()})}
-                placeholder="e.g. SUMMER20"
-                className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 uppercase font-mono"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-zinc-500 mb-1">Discount Type</label>
-              <select 
-                value={newPromo.type}
-                onChange={e => setNewPromo({...newPromo, type: e.target.value})}
-                className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2"
-              >
-                <option value="PERCENTAGE">Percentage (%)</option>
-                <option value="FIXED">Fixed Amount (₹)</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-zinc-500 mb-1">Discount Value</label>
-              <input 
-                type="number" 
-                value={newPromo.value}
-                onChange={e => setNewPromo({...newPromo, value: e.target.value})}
-                placeholder="10"
-                className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2"
-              />
-            </div>
-            <div>
-              <button 
-                onClick={handleAdd}
-                className="w-full bg-zinc-900 dark:bg-white text-white dark:text-black font-bold py-2 rounded-lg"
-              >
-                Save Code
-              </button>
+                <button 
+                  type="submit"
+                  className="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl transition-colors mt-2"
+                >
+                  Generate Code
+                </button>
+              </form>
             </div>
           </div>
-        </div>
-      )}
 
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-sm">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-zinc-50 dark:bg-zinc-950/50 border-b border-zinc-200 dark:border-zinc-800">
-              <th className="p-4 text-zinc-500 font-medium"><div className="flex items-center gap-2"><Tag className="w-4 h-4" /> Code</div></th>
-              <th className="p-4 text-zinc-500 font-medium">Type</th>
-              <th className="p-4 text-zinc-500 font-medium">Discount</th>
-              <th className="p-4 text-zinc-500 font-medium">Status</th>
-              <th className="p-4 text-zinc-500 font-medium text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+          {/* Active Promos List */}
+          <div className="lg:col-span-2 space-y-4">
+            <h2 className="text-2xl font-bold text-white mb-6">Active Codes</h2>
+            
             {promos.length === 0 ? (
-              <tr>
-                <td colSpan="5" className="p-8 text-center text-zinc-500">
-                  No promo codes available.
-                </td>
-              </tr>
+              <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-12 text-center text-zinc-500">
+                <Tag className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                <p>No promo codes created yet.</p>
+              </div>
             ) : (
               promos.map(promo => (
-                <tr key={promo.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-950/50">
-                  <td className="p-4">
-                    <span className="font-mono font-bold bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 px-2 py-1 rounded">
-                      {promo.code}
-                    </span>
-                  </td>
-                  <td className="p-4 text-sm text-zinc-600 dark:text-zinc-400">
-                    {promo.type === "PERCENTAGE" ? "Percentage" : "Fixed Amount"}
-                  </td>
-                  <td className="p-4">
-                    <div className="flex items-center gap-1 font-bold">
-                      {promo.type === "PERCENTAGE" ? <Percent className="w-3 h-3 text-zinc-400" /> : <IndianRupee className="w-3 h-3 text-zinc-400" />}
-                      {promo.value}
+                <div key={promo.id} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 flex items-center justify-between group hover:border-zinc-700 transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${promo.active ? 'bg-amber-500/10 text-amber-500' : 'bg-zinc-800 text-zinc-500'}`}>
+                      {promo.type === 'percentage' ? <Percent className="w-6 h-6" /> : <Tag className="w-6 h-6" />}
                     </div>
-                  </td>
-                  <td className="p-4">
+                    <div>
+                      <h3 className={`text-xl font-mono font-bold ${promo.active ? 'text-white' : 'text-zinc-500 line-through'}`}>
+                        {promo.code}
+                      </h3>
+                      <p className="text-sm text-zinc-400">
+                        {promo.type === 'percentage' ? `${promo.discount}% OFF` : `₹${promo.discount} OFF`}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
                     <button 
                       onClick={() => toggleActive(promo.id)}
-                      className={`text-xs font-bold px-3 py-1 rounded-full ${
-                        promo.active 
-                          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" 
-                          : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
-                      }`}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${promo.active ? 'bg-zinc-800 text-white hover:bg-zinc-700' : 'bg-amber-500 text-black hover:bg-amber-400'}`}
                     >
-                      {promo.active ? "Active" : "Disabled"}
+                      {promo.active ? 'Deactivate' : 'Activate'}
                     </button>
-                  </td>
-                  <td className="p-4 text-right">
-                    <button
+                    <button 
                       onClick={() => handleDelete(promo.id)}
-                      className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 p-2 rounded-lg transition-colors"
+                      className="p-2 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-5 h-5" />
                     </button>
-                  </td>
-                </tr>
+                  </div>
+                </div>
               ))
             )}
-          </tbody>
-        </table>
+          </div>
+
+        </div>
       </div>
     </div>
   );

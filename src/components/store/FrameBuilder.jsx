@@ -23,6 +23,8 @@ export default function FrameBuilder({ onAddToCart }) {
   const [previewImage, setPreviewImage] = useState(null);
   const [rotation, setRotation] = useState(0);
   const [orientation, setOrientation] = useState("Portrait");
+  const [photoFilter, setPhotoFilter] = useState("none");
+  const [zoom, setZoom] = useState(1);
   const fileInputRef = useRef(null);
 
   // Calculate final price based on base size price * material multiplier
@@ -35,6 +37,7 @@ export default function FrameBuilder({ onAddToCart }) {
       reader.onloadend = () => {
         setPreviewImage(reader.result);
         setRotation(0); // Reset rotation for new image
+        setZoom(1); // Reset zoom
       };
       reader.readAsDataURL(file);
     }
@@ -77,7 +80,6 @@ export default function FrameBuilder({ onAddToCart }) {
                   : (selectedSize.id === '8x12' ? '90px' : selectedSize.id === '12x18' ? '120px' : selectedSize.id === '16x20' ? '140px' : selectedSize.id === '20x30' ? '160px' : '180px'),
                 border: selectedType.id === 'premium_matte' ? '12px solid #18181b' : selectedType.id === 'classic_gold' ? '12px solid #d4af37' : '12px solid #8b5a2b',
                 backgroundColor: '#fff',
-                padding: '16px', // Matting (Mount) effect
                 boxShadow: 'inset 0 0 20px rgba(0,0,0,0.4), 0 20px 40px rgba(0,0,0,0.3)',
               }}
             >
@@ -87,8 +89,11 @@ export default function FrameBuilder({ onAddToCart }) {
                   <img 
                     src={previewImage} 
                     alt="Custom Preview" 
-                    className="w-full h-full object-cover transition-transform duration-300" 
-                    style={{ transform: `rotate(${rotation}deg)` }}
+                    className="w-full h-full object-cover transition-all duration-300" 
+                    style={{ 
+                      transform: `scale(${zoom}) rotate(${rotation}deg)`,
+                      filter: photoFilter 
+                    }}
                   />
                 ) : (
                   <div className="absolute inset-2 border border-dashed border-zinc-300 flex flex-col items-center justify-center text-zinc-400">
@@ -139,6 +144,50 @@ export default function FrameBuilder({ onAddToCart }) {
               {orientation}
             </button>
           </div>
+          
+          {/* Zoom / Crop Controls */}
+          {previewImage && (
+            <div className="mt-4 w-full px-6 flex items-center gap-4">
+              <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider shrink-0">Scale</span>
+              <input 
+                type="range" 
+                min="1" max="3" step="0.1" 
+                value={zoom} 
+                onChange={(e) => setZoom(parseFloat(e.target.value))}
+                className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+              />
+            </div>
+          )}
+          
+          {/* Photo Filters */}
+          {previewImage && (
+            <div className="mt-6 w-full">
+              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block text-center">
+                Photo Filters
+              </label>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {[
+                  { name: "Normal", value: "none" },
+                  { name: "B&W", value: "grayscale(100%)" },
+                  { name: "Vintage", value: "sepia(80%) contrast(1.2)" },
+                  { name: "Vivid", value: "contrast(120%) saturate(150%)" },
+                  { name: "Fade", value: "brightness(1.1) contrast(0.9) saturate(0.8)" }
+                ].map(f => (
+                  <button
+                    key={f.name}
+                    onClick={() => setPhotoFilter(f.value)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      photoFilter === f.value
+                        ? "bg-amber-500 text-white shadow-md"
+                        : "bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-700"
+                    }`}
+                  >
+                    {f.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right: Controls */}

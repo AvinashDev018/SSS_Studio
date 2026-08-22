@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import { Search, Package, CheckCircle2, Clock, Truck, Home, Printer } from "lucide-react";
 import Link from "next/link";
-import { getOrder } from "@/app/actions/orders";
 
 const STATUS_STEPS = [
   { id: "PENDING", label: "Order Placed", icon: Clock },
@@ -41,14 +40,30 @@ export default function TrackOrderPage() {
     setSearchQuery(idToSearch.trim());
 
     try {
-      const res = await getOrder(idToSearch.trim());
-
-      if (res.success && res.order) {
-        if (res.order.status === "UNCONFIRMED") {
-           setError("This order is waiting for admin confirmation. Please check back later.");
-           setOrder(null);
+      // Search in Offline CRM LocalStorage
+      const savedOrders = localStorage.getItem("crm_orders");
+      if (savedOrders) {
+        const orders = JSON.parse(savedOrders);
+        const foundOrder = orders.find(o => o.id === idToSearch.trim());
+        
+        if (foundOrder) {
+          setOrder({
+            orderId: foundOrder.id,
+            status: foundOrder.status.toUpperCase(),
+            totalAmount: foundOrder.total,
+            createdAt: foundOrder.date,
+            customerName: foundOrder.name,
+            items: [
+              {
+                name: "Custom Studio Order",
+                quantity: 1,
+                price: foundOrder.total
+              }
+            ]
+          });
         } else {
-           setOrder(res.order);
+          setError(`No order found with ID: ${idToSearch}`);
+          setOrder(null);
         }
       } else {
         setError(`No order found with ID: ${idToSearch}`);

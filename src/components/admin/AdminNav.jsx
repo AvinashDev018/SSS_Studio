@@ -5,7 +5,7 @@ import { logoutAdmin } from "@/app/actions/auth";
 export default function AdminNav({ currentPath }) {
   const links = [
     { name: "Bookings", href: "/admin" },
-    { name: "Orders", href: "/admin/orders" },
+    { name: "CRM (Orders)", href: "/admin/crm" },
     { name: "Gallery", href: "/admin/gallery" },
     { name: "Promos", href: "/admin/promos" },
     { name: "Reviews", href: "/admin/reviews" },

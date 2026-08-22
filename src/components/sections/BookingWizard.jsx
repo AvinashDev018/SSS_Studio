@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, ChevronRight, ChevronLeft, Calendar as CalendarIcon, Clock, Package as PackageIcon, User, MapPin } from "lucide-react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+// Removed react-datepicker
+
 import { getPackages } from "@/app/actions/packages";
 import { getBookedSlots, createBooking } from "@/app/actions/booking";
 
@@ -230,41 +230,68 @@ Please confirm if you are available.`;
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
-                {/* Calendar */}
+                {/* Custom Interactive Calendar */}
                 <div className="flex flex-col gap-3">
                   <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
                     <CalendarIcon className="w-4 h-4" /> Pick a Date
                   </label>
-                  <DatePicker
-                    selected={formData.date ? new Date(formData.date) : null}
-                    onChange={(date) => {
-                      const formattedDate = date ? date.toLocaleDateString('en-CA') : "";
-                      setFormData((prev) => ({ ...prev, date: formattedDate, timeSlot: "" })); // Reset time when date changes
-                    }}
-                    minDate={new Date()}
-                    inline
-                  />
-                  {/* Calendar Styles injected locally */}
-                  <style jsx global>{`
-                    .react-datepicker {
-                      font-family: inherit;
-                      background-color: transparent;
-                      border: 1px solid #27272a;
-                      border-radius: 1rem;
-                      color: inherit;
-                      width: 100%;
-                    }
-                    .react-datepicker__month-container { width: 100%; }
-                    .react-datepicker__header {
-                      background-color: transparent;
-                      border-bottom: 1px solid #27272a;
-                    }
-                    .react-datepicker__day--selected {
-                      background-color: #f59e0b !important;
-                      color: white !important;
-                      border-radius: 0.5rem;
-                    }
-                  `}</style>
+                  
+                  <div className="bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 shadow-inner">
+                    {/* Month/Year Header */}
+                    <div className="flex justify-between items-center mb-4">
+                      <button className="p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-full transition-colors text-zinc-500">
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <div className="font-bold text-zinc-800 dark:text-zinc-200">
+                        {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                      </div>
+                      <button className="p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-full transition-colors text-zinc-500">
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Days of week */}
+                    <div className="grid grid-cols-7 gap-1 mb-2">
+                      {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+                        <div key={day} className="text-center text-xs font-semibold text-zinc-400">
+                          {day}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Dates Grid (Mock 30 days for current month) */}
+                    <div className="grid grid-cols-7 gap-1">
+                      {/* Empty slots for starting day offset (assuming month starts on Wednesday = 3) */}
+                      <div className="aspect-square"></div>
+                      <div className="aspect-square"></div>
+                      <div className="aspect-square"></div>
+                      
+                      {Array.from({ length: 30 }).map((_, i) => {
+                        const day = i + 1;
+                        const dateObj = new Date();
+                        dateObj.setDate(day);
+                        const formattedDate = dateObj.toLocaleDateString('en-CA');
+                        
+                        const isPast = day < new Date().getDate();
+                        const isSelected = formData.date === formattedDate;
+
+                        return (
+                          <button
+                            key={day}
+                            disabled={isPast}
+                            onClick={() => setFormData(prev => ({ ...prev, date: formattedDate, timeSlot: "" }))}
+                            className={`
+                              aspect-square flex items-center justify-center rounded-xl text-sm font-medium transition-all duration-300
+                              ${isPast ? 'text-zinc-300 dark:text-zinc-700 cursor-not-allowed' : 'hover:bg-zinc-200 dark:hover:bg-zinc-800'}
+                              ${isSelected ? 'bg-amber-500 hover:bg-amber-400 text-white shadow-lg shadow-amber-500/30 ring-2 ring-amber-500/50 scale-105' : 'text-zinc-700 dark:text-zinc-300'}
+                            `}
+                          >
+                            {day}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Time Slots */}

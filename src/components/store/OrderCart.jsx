@@ -272,6 +272,29 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
             {deliveryOption === "HOME" && (
               <textarea rows={2} value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Delivery Address..." className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-amber-500 text-sm text-white placeholder-zinc-600" />
             )}
+
+            <div className="pt-2">
+              <label className="text-xs font-medium text-zinc-400 block mb-1">Promo Code (Optional)</label>
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  value={promoCode} 
+                  onChange={(e) => setPromoCode(e.target.value.toUpperCase())} 
+                  placeholder="e.g. FESTIVAL20" 
+                  className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 focus:outline-none focus:border-amber-500 text-sm text-white placeholder-zinc-600 uppercase" 
+                  disabled={appliedPromo !== null}
+                />
+                {!appliedPromo ? (
+                  <button onClick={applyPromo} className="bg-amber-500 text-black px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-amber-400 transition-colors">
+                    Apply
+                  </button>
+                ) : (
+                  <button onClick={() => { setAppliedPromo(null); setPromoCode(""); }} className="bg-red-500/20 text-red-500 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-red-500/30 transition-colors">
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="flex flex-col gap-1 py-4 border-t border-white/10">
