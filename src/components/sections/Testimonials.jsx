@@ -50,10 +50,17 @@ export default function Testimonials() {
         </p>
       </AnimatedSection>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {displayTestimonials.map((t, idx) => (
-          <AnimatedSection key={t.id || idx} delay={idx * 0.2}>
-            <div className="bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800/50 p-10 rounded-3xl h-full flex flex-col hover:border-amber-500/50 dark:hover:border-amber-500/30 transition-colors shadow-xl">
+      {/* Marquee Container */}
+      <div className="relative w-full overflow-hidden mt-10">
+        
+        {/* Fade Masks */}
+        <div className="absolute inset-y-0 left-0 w-12 md:w-32 bg-gradient-to-r from-zinc-50 dark:from-zinc-950 to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute inset-y-0 right-0 w-12 md:w-32 bg-gradient-to-l from-zinc-50 dark:from-zinc-950 to-transparent z-10 pointer-events-none"></div>
+
+        {/* Scrolling Content */}
+        <div className="flex w-max animate-marquee gap-8 py-4">
+          {[...displayTestimonials, ...displayTestimonials].map((t, idx) => (
+            <div key={`${t.id}-${idx}`} className="w-[300px] md:w-[450px] shrink-0 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800/50 p-10 rounded-3xl flex flex-col hover:border-amber-500/50 dark:hover:border-amber-500/30 transition-colors shadow-xl">
               <div className="flex gap-1 mb-8">
                 {[...Array(t.rating || 5)].map((_, i) => (
                   <Star key={i} className="w-5 h-5 fill-amber-500 text-amber-500" />
@@ -65,8 +72,8 @@ export default function Testimonials() {
                 <p className="text-amber-600 dark:text-amber-500/80 text-sm font-medium tracking-wide uppercase">{t.event}</p>
               </div>
             </div>
-          </AnimatedSection>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

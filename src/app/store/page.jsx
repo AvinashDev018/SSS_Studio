@@ -206,7 +206,7 @@ export default function StorePage() {
                     <h3 className="font-serif font-bold text-xl text-white mb-1">{pkg.name}</h3>
                     <p className="text-amber-500 font-bold text-lg mb-4">₹{pkg.price}</p>
                     
-                    <div className="mt-auto transform md:translate-y-4 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 transition-all duration-300">
+                    <div className="mt-auto pt-4">
                       <div className="mb-4">
                         <label className="text-xs font-medium text-zinc-400 mb-1 block">
                           Old Studio Photo? (Optional)
@@ -245,7 +245,7 @@ export default function StorePage() {
                     <h3 className="font-serif font-bold text-xl text-white mb-1">{gift.name}</h3>
                     <p className="text-amber-500 font-bold text-lg mb-4">₹{gift.price}</p>
                     
-                    <div className="mt-auto transform md:translate-y-4 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 transition-all duration-300">
+                    <div className="mt-auto pt-4">
                       <div className="mb-4">
                         <div className="mb-3">
                           <label className="text-xs font-medium text-zinc-400 mb-1 block">

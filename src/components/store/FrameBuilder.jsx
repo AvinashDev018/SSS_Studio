@@ -65,32 +65,46 @@ export default function FrameBuilder({ onAddToCart }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         {/* Left: Preview */}
         <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-6 flex flex-col items-center justify-center border border-zinc-200 dark:border-zinc-800 min-h-[300px] md:sticky md:top-24 z-10">
-          <div 
-            className="relative shadow-2xl transition-all duration-500 flex items-center justify-center overflow-hidden"
-            style={{
-              width: orientation === "Portrait" 
-                ? (selectedSize.id === '8x12' ? '90px' : selectedSize.id === '12x18' ? '120px' : selectedSize.id === '16x20' ? '140px' : selectedSize.id === '20x30' ? '160px' : '180px')
-                : (selectedSize.id === '8x12' ? '135px' : selectedSize.id === '12x18' ? '180px' : selectedSize.id === '16x20' ? '175px' : selectedSize.id === '20x30' ? '240px' : '270px'),
-              height: orientation === "Portrait"
-                ? (selectedSize.id === '8x12' ? '135px' : selectedSize.id === '12x18' ? '180px' : selectedSize.id === '16x20' ? '175px' : selectedSize.id === '20x30' ? '240px' : '270px')
-                : (selectedSize.id === '8x12' ? '90px' : selectedSize.id === '12x18' ? '120px' : selectedSize.id === '16x20' ? '140px' : selectedSize.id === '20x30' ? '160px' : '180px'),
-              border: selectedType.id === 'premium_matte' ? '12px solid #18181b' : selectedType.id === 'classic_gold' ? '12px solid #d4af37' : '12px solid #8b5a2b',
-              backgroundColor: previewImage ? '#fff' : '#fff',
-            }}
-          >
-            {previewImage ? (
-              <img 
-                src={previewImage} 
-                alt="Custom Preview" 
-                className="w-full h-full object-cover transition-transform duration-300" 
-                style={{ transform: `rotate(${rotation}deg)` }}
-              />
-            ) : (
-              <div className="absolute inset-2 border border-dashed border-zinc-300 dark:border-zinc-700 flex flex-col items-center justify-center text-zinc-400">
-                <ImageIcon className="w-8 h-8 mb-2 opacity-50" />
-                <span className="text-xs font-medium text-center px-2">Your Photo Here</span>
+          <div className="relative group">
+            <div 
+              className="relative shadow-2xl transition-all duration-500 flex items-center justify-center overflow-hidden"
+              style={{
+                width: orientation === "Portrait" 
+                  ? (selectedSize.id === '8x12' ? '90px' : selectedSize.id === '12x18' ? '120px' : selectedSize.id === '16x20' ? '140px' : selectedSize.id === '20x30' ? '160px' : '180px')
+                  : (selectedSize.id === '8x12' ? '135px' : selectedSize.id === '12x18' ? '180px' : selectedSize.id === '16x20' ? '175px' : selectedSize.id === '20x30' ? '240px' : '270px'),
+                height: orientation === "Portrait"
+                  ? (selectedSize.id === '8x12' ? '135px' : selectedSize.id === '12x18' ? '180px' : selectedSize.id === '16x20' ? '175px' : selectedSize.id === '20x30' ? '240px' : '270px')
+                  : (selectedSize.id === '8x12' ? '90px' : selectedSize.id === '12x18' ? '120px' : selectedSize.id === '16x20' ? '140px' : selectedSize.id === '20x30' ? '160px' : '180px'),
+                border: selectedType.id === 'premium_matte' ? '12px solid #18181b' : selectedType.id === 'classic_gold' ? '12px solid #d4af37' : '12px solid #8b5a2b',
+                backgroundColor: '#fff',
+                padding: '16px', // Matting (Mount) effect
+                boxShadow: 'inset 0 0 20px rgba(0,0,0,0.4), 0 20px 40px rgba(0,0,0,0.3)',
+              }}
+            >
+              {/* Inner Photo Container (creates the sunken look) */}
+              <div className="relative w-full h-full shadow-[inset_0_0_10px_rgba(0,0,0,0.5)] overflow-hidden bg-zinc-100 flex items-center justify-center">
+                {previewImage ? (
+                  <img 
+                    src={previewImage} 
+                    alt="Custom Preview" 
+                    className="w-full h-full object-cover transition-transform duration-300" 
+                    style={{ transform: `rotate(${rotation}deg)` }}
+                  />
+                ) : (
+                  <div className="absolute inset-2 border border-dashed border-zinc-300 flex flex-col items-center justify-center text-zinc-400">
+                    <ImageIcon className="w-8 h-8 mb-2 opacity-50" />
+                    <span className="text-xs font-medium text-center px-2">Your Photo Here</span>
+                  </div>
+                )}
+                
+                {/* Glass Glare Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 pointer-events-none opacity-60 mix-blend-overlay"></div>
+                <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-white/10 to-transparent pointer-events-none transform -skew-x-12 translate-x-4 opacity-50"></div>
               </div>
-            )}
+            </div>
+            
+            {/* Wall Shadow cast by Frame */}
+            <div className="absolute -bottom-4 left-4 right-4 h-8 bg-black/20 blur-xl rounded-[100%] -z-10 group-hover:bg-black/30 transition-all duration-500"></div>
           </div>
           
           <input 
