@@ -142,7 +142,7 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
       return line;
     }).join("\n\n");
 
-    let textMessage = `*New Store Order Request!* 🛍️\n\n*Order ID:* ${res.orderId}\n\n*Customer Details:*\nName: ${name}\nPhone: ${phone}\n\n*Order Details:*\n${orderDetails}\n\n*Subtotal:* ₹${itemTotal}\n`;
+    let textMessage = `*New Store Order Request!* 🛍️\n\n*Customer Details:*\nName: ${name}\nPhone: ${phone}\n\n*Order Details:*\n${orderDetails}\n\n*Subtotal:* ₹${itemTotal}\n`;
     
     if (appliedPromo) {
       textMessage += `*Discount (${appliedPromo.code}):* -₹${discountAmount}\n`;

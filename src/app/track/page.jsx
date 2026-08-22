@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import { Search, Package, CheckCircle2, Clock, Truck, Home, Printer } from "lucide-react";
 import Link from "next/link";
+import { getOrder } from "@/app/actions/orders";
 
 const STATUS_STEPS = [
   { id: "PENDING", label: "Order Placed", icon: Clock },
@@ -29,7 +30,7 @@ export default function TrackOrderPage() {
     }
   }, []);
 
-  const handleSearch = (idToSearch = orderId) => {
+  const handleSearch = async (idToSearch = orderId) => {
     if (!idToSearch.trim()) {
       setError("Please enter a valid Order ID");
       return;
@@ -39,30 +40,24 @@ export default function TrackOrderPage() {
     setError("");
     setSearchQuery(idToSearch.trim());
 
-    // Simulate network request
-    setTimeout(() => {
-      try {
-        const savedOrders = JSON.parse(localStorage.getItem("studioOrders") || "[]");
-        const foundOrder = savedOrders.find(
-          o => o.orderId.toLowerCase() === idToSearch.toLowerCase().trim()
-        );
+    try {
+      const res = await getOrder(idToSearch.trim());
 
-        if (foundOrder) {
-          if (foundOrder.status === "UNCONFIRMED") {
-             setError("This order is waiting for admin confirmation. Please check back later.");
-             setOrder(null);
-          } else {
-             setOrder(foundOrder);
-          }
+      if (res.success && res.order) {
+        if (res.order.status === "UNCONFIRMED") {
+           setError("This order is waiting for admin confirmation. Please check back later.");
+           setOrder(null);
         } else {
-          setError(`No order found with ID: ${idToSearch}`);
-          setOrder(null);
+           setOrder(res.order);
         }
-      } catch (err) {
-        setError("Error fetching order. Please try again.");
+      } else {
+        setError(`No order found with ID: ${idToSearch}`);
+        setOrder(null);
       }
-      setIsSearching(false);
-    }, 600);
+    } catch (err) {
+      setError("Error fetching order. Please try again.");
+    }
+    setIsSearching(false);
   };
 
   const getCurrentStepIndex = (status) => {

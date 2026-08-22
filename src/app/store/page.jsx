@@ -47,7 +47,34 @@ export default function StorePage() {
   // Save cart to local storage whenever it changes
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem("studioCart", JSON.stringify(cartItems));
+      try {
+        localStorage.setItem("studioCart", JSON.stringify(cartItems));
+      } catch (error) {
+        if (error.name === 'QuotaExceededError' || error.message.includes('quota')) {
+          console.warn("Storage quota exceeded. Stripping base64 images to save cart.");
+          // Strip large base64 strings so we don't crash the browser
+          const strippedCart = cartItems.map(item => {
+            const newItem = { ...item };
+            if (newItem.image && newItem.image.startsWith('data:image')) {
+              newItem.image = null;
+              newItem.imageStripped = true;
+            }
+            if (newItem.collageImages) {
+              newItem.collageImages = newItem.collageImages.map(img => 
+                img.startsWith('data:image') ? null : img
+              ).filter(Boolean);
+            }
+            return newItem;
+          });
+          
+          try {
+            localStorage.setItem("studioCart", JSON.stringify(strippedCart));
+            // We don't alert here because it would trigger on every render if state is updated
+          } catch (e) {
+            console.error("Failed to save cart even after stripping images", e);
+          }
+        }
+      }
     }
   }, [cartItems, isLoaded]);
 
