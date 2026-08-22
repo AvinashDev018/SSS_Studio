@@ -7,102 +7,102 @@ const prisma = new PrismaClient();
 
 // Generate a random Order ID like ORD-1A2B
 function generateOrderId() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let result = 'ORD-';
-  for (let i = 0; i < 6; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
+ const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+ let result = 'ORD-';
+ for (let i = 0; i < 6; i++) {
+ result += chars.charAt(Math.floor(Math.random() * chars.length));
+ }
+ return result;
 }
 
 export async function createOrder(data) {
-  try {
-    const orderId = generateOrderId();
-    const order = await prisma.order.create({
-      data: {
-        orderId,
-        customerName: data.customerName,
-        customerPhone: data.customerPhone,
-        address: data.address,
-        items: data.items,
-        totalAmount: data.totalAmount,
-        status: "UNCONFIRMED",
-      }
-    });
-    revalidatePath("/admin/orders");
-    return { success: true, orderId };
-  } catch (error) {
-    console.error("Error creating order:", error);
-    // On Vercel, the SQLite DB is read-only and will fail. 
-    // We still return success so the frontend redirects the user to WhatsApp!
-    return { success: true, orderId: generateOrderId(), fallback: true };
-  }
+ try {
+ const orderId = generateOrderId();
+ const order = await prisma.order.create({
+ data: {
+ orderId,
+ customerName: data.customerName,
+ customerPhone: data.customerPhone,
+ address: data.address,
+ items: data.items,
+ totalAmount: data.totalAmount,
+ status: "UNCONFIRMED",
+ }
+ });
+ revalidatePath("/admin/orders");
+ return { success: true, orderId };
+ } catch (error) {
+ console.error("Error creating order:", error);
+ // On Vercel, the SQLite DB is read-only and will fail. 
+ // We still return success so the frontend redirects the user to WhatsApp!
+ return { success: true, orderId: generateOrderId(), fallback: true };
+ }
 }
 
 export async function getOrder(orderId) {
-  try {
-    const order = await prisma.order.findUnique({
-      where: { orderId }
-    });
-    
-    if (!order && orderId.startsWith("ORD-") && orderId.length === 10) {
-      // Fallback for demo without database
-      return { 
-        success: true, 
-        order: { 
-          orderId, 
-          status: "PROCESSING", 
-          customerName: "Customer", 
-          createdAt: new Date(),
-          items: [],
-          totalAmount: 0
-        } 
-      };
-    }
-    
-    return { success: true, order };
-  } catch (error) {
-    console.error("Error fetching order:", error);
-    if (orderId.startsWith("ORD-") && orderId.length === 10) {
-      return { 
-        success: true, 
-        order: { 
-          orderId, 
-          status: "PROCESSING", 
-          customerName: "Customer", 
-          createdAt: new Date(),
-          items: [],
-          totalAmount: 0
-        } 
-      };
-    }
-    return { success: false, error: "Failed to fetch order" };
-  }
+ try {
+ const order = await prisma.order.findUnique({
+ where: { orderId }
+ });
+ 
+ if (!order && orderId.startsWith("ORD-") && orderId.length === 10) {
+ // Fallback for demo without database
+ return { 
+ success: true, 
+ order: { 
+ orderId, 
+ status: "PROCESSING", 
+ customerName: "Customer", 
+ createdAt: new Date(),
+ items: [],
+ totalAmount: 0
+ } 
+ };
+ }
+ 
+ return { success: true, order };
+ } catch (error) {
+ console.error("Error fetching order:", error);
+ if (orderId.startsWith("ORD-") && orderId.length === 10) {
+ return { 
+ success: true, 
+ order: { 
+ orderId, 
+ status: "PROCESSING", 
+ customerName: "Customer", 
+ createdAt: new Date(),
+ items: [],
+ totalAmount: 0
+ } 
+ };
+ }
+ return { success: false, error: "Failed to fetch order" };
+ }
 }
 
 export async function getOrders() {
-  try {
-    const orders = await prisma.order.findMany({
-      orderBy: { createdAt: "desc" }
-    });
-    return { success: true, orders };
-  } catch (error) {
-    console.error("Error fetching orders:", error);
-    return { success: false, error: "Failed to fetch orders" };
-  }
+ try {
+ const orders = await prisma.order.findMany({
+ orderBy: { createdAt: "desc" }
+ });
+ return { success: true, orders };
+ } catch (error) {
+ console.error("Error fetching orders:", error);
+ return { success: false, error: "Failed to fetch orders" };
+ }
 }
 
 export async function updateOrderStatus(orderId, newStatus) {
-  try {
-    const order = await prisma.order.update({
-      where: { orderId },
-      data: { status: newStatus }
-    });
-    revalidatePath("/admin/orders");
-    revalidatePath("/track"); // in case they are tracking it
-    return { success: true, order };
-  } catch (error) {
-    console.error("Error updating order:", error);
-    return { success: false, error: "Failed to update order status" };
-  }
+ try {
+ const order = await prisma.order.update({
+ where: { orderId },
+ data: { status: newStatus }
+ });
+ revalidatePath("/admin/orders");
+ revalidatePath("/track"); // in case they are tracking it
+ return { success: true, order };
+ } catch (error) {
+ console.error("Error updating order:", error);
+ return { success: false, error: "Failed to update order status" };
+ }
 }
