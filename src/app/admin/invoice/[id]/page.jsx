@@ -4,31 +4,41 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Printer, ArrowLeft, Camera } from "lucide-react";
 import Link from "next/link";
+import { getOrder } from "@/app/actions/orders";
 
 export default function ReceiptPage() {
   const { id } = useParams();
   const router = useRouter();
   const [order, setOrder] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const saved = localStorage.getItem("crm_orders");
-    if (saved) {
-      const orders = JSON.parse(saved);
-      const found = orders.find(o => o.id === id);
-      if (found) {
-        setOrder(found);
+    async function fetchOrder() {
+      const res = await getOrder(id);
+      if (res.success && res.order) {
+        setOrder(res.order);
       }
+      setIsLoading(false);
     }
+    fetchOrder();
   }, [id]);
 
   const handlePrint = () => {
     window.print();
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-zinc-950 p-12 text-center flex items-center justify-center">
+        <p className="text-zinc-500">Loading receipt...</p>
+      </div>
+    );
+  }
+
   if (!order) {
     return (
       <div className="min-h-screen bg-zinc-950 p-12 text-center">
-        <p className="text-zinc-500">Loading receipt or order not found...</p>
+        <p className="text-zinc-500">Receipt or order not found.</p>
         <Link href="/admin/crm" className="text-brand-gradient mt-4 block">&larr; Back to CRM</Link>
       </div>
     );
@@ -36,7 +46,11 @@ export default function ReceiptPage() {
 
   // A simple QR code generator using a public API for demonstration
   // In a real app, use a dedicated library like qrcode.react
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://localhost:3000/track?id=${order.id}`;
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://localhost:3000/track?id=${order.orderId}`;
+  
+  // Format the date if it's a DB date object
+  const formattedDate = order.createdAt ? new Date(order.createdAt).toLocaleDateString() : order.date;
+  const itemsText = order.items ? JSON.stringify(order.items, null, 2) : order.message || "";
 
   return (
     <div className="min-h-screen bg-zinc-100 print:bg-white text-zinc-900 font-sans p-6 sm:p-12">
@@ -67,8 +81,8 @@ export default function ReceiptPage() {
           </div>
           <div className="text-right">
             <h2 className="text-4xl font-black text-zinc-200 uppercase tracking-widest">Receipt</h2>
-            <p className="text-zinc-900 font-bold mt-2">#{order.id}</p>
-            <p className="text-zinc-500 text-sm">Date: {order.date}</p>
+            <p className="text-zinc-900 font-bold mt-2">#{order.orderId || order.id}</p>
+            <p className="text-zinc-500 text-sm">Date: {formattedDate}</p>
           </div>
         </div>
 
@@ -76,8 +90,8 @@ export default function ReceiptPage() {
         <div className="grid grid-cols-2 gap-12 mb-12">
           <div>
             <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-2">Billed To</h3>
-            <p className="font-bold text-lg text-black">{order.name}</p>
-            <p className="text-zinc-600">WhatsApp Order</p>
+            <p className="font-bold text-lg text-black">{order.customerName || order.name}</p>
+            <p className="text-zinc-600">Ph: {order.customerPhone || order.phone}</p>
           </div>
           <div className="text-right flex flex-col items-end">
             <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-2">Track Order</h3>
@@ -99,9 +113,9 @@ export default function ReceiptPage() {
               <tr className="border-b border-zinc-100">
                 <td className="py-4">
                   <p className="font-bold text-black">Studio Services / Custom Order</p>
-                  <p className="text-sm text-zinc-500 mt-1 whitespace-pre-wrap">{(order.message || "").substring(0, 150)}{order.message?.length > 150 ? "..." : ""}</p>
+                  <p className="text-sm text-zinc-500 mt-1 whitespace-pre-wrap">{itemsText.substring(0, 150)}{itemsText.length > 150 ? "..." : ""}</p>
                 </td>
-                <td className="py-4 text-right font-bold text-lg text-black">₹{order.total}</td>
+                <td className="py-4 text-right font-bold text-lg text-black">₹{order.totalAmount || order.total}</td>
               </tr>
             </tbody>
           </table>

@@ -13,20 +13,13 @@ export default function GalleryPage() {
  const [galleryItems, setGalleryItems] = useState([]);
 
  useEffect(() => {
- const saved = localStorage.getItem("studioGallery");
- if (saved) {
- setGalleryItems(JSON.parse(saved));
- } else {
- // Fallback demo data
- setGalleryItems([
- { id: 1, category: "Weddings", src: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&auto=format&fit=crop", aspect: "aspect-[3/4]" },
- { id: 2, category: "Portraits", src: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800&auto=format&fit=crop", aspect: "aspect-square" },
- { id: 3, category: "Events", src: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&auto=format&fit=crop", aspect: "aspect-video" },
- { id: 4, category: "Weddings", src: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?w=800&auto=format&fit=crop", aspect: "aspect-square" },
- { id: 5, category: "Birthdays", src: "https://images.unsplash.com/photo-1530103862676-de88b394145b?w=800&auto=format&fit=crop", aspect: "aspect-[4/3]" },
- { id: 6, category: "Portraits", src: "https://images.unsplash.com/photo-1506863530036-1efed7e9fa59?w=800&auto=format&fit=crop", aspect: "aspect-[3/4]" },
- ]);
- }
+   setGalleryItems([
+     { id: 1, category: "Weddings", src: "/gallery/media_1787333837436.jpg", aspect: "aspect-[3/4]" },
+     { id: 2, category: "Portraits", src: "/gallery/media_1787333920863.jpg", aspect: "aspect-square" },
+     { id: 3, category: "Events", src: "/gallery/media_1787334223339.jpg", aspect: "aspect-video" },
+     { id: 4, category: "Weddings", src: "/gallery/media_1787334273212.jpg", aspect: "aspect-square" },
+     { id: 5, category: "Birthdays", src: "/gallery/media_1787334744035.jpg", aspect: "aspect-[4/3]" }
+   ]);
  }, []);
 
  const filteredItems = activeCategory === "All" 
