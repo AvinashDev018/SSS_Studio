@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { ShoppingBag, ShoppingCart, Lock, Home, X, MessageCircle, Truck, User, Phone, Upload, Image as ImageIcon, Minus, Plus, CheckCircle2 } from "lucide-react";
+import { ShoppingBag, ShoppingCart, Lock, Home, X, MessageCircle, Truck, User, Phone, Upload, Image as ImageIcon, Minus, Plus, CheckCircle2, CreditCard } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,13 +9,23 @@ import { createOrder } from "@/app/actions/orders";
 import { uploadImageToCloud } from "@/app/actions/upload";
 import { useSession } from "next-auth/react";
 
+const loadScript = (src) => {
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
+
 export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  const { data: session } = useSession();
  const router = useRouter();
  const [name, setName] = useState("");
  const [phone, setPhone] = useState("");
  const [address, setAddress] = useState("");
- const [deliveryOption, setDeliveryOption] = useState("STUDIO");
+ const [orderMode, setOrderMode] = useState("STUDIO_CASH");
  const [isSubmitting, setIsSubmitting] = useState(false);
  const [error, setError] = useState("");
 
@@ -33,7 +43,7 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  const fileInputRef = useRef(null);
 
  const itemTotal = items.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
- const deliveryCharge = deliveryOption === "HOME" ? 50 : 0;
+ const deliveryCharge = orderMode === "HOME_UPI" ? 50 : 0;
  
  let discountAmount = 0;
  if (appliedPromo) {
@@ -104,10 +114,16 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  return;
  }
 
- if (!name || !phone || (deliveryOption === "HOME" && !address)) {
- setError(deliveryOption === "HOME" ? "Please fill in all details including address." : "Please fill in Name and Phone.");
+ if (!name || !phone) {
+ setError("Please fill in Name and Phone.");
  return;
  }
+ 
+ if (orderMode === "HOME_UPI" && !address) {
+ setError("Please provide a delivery address");
+ return;
+ }
+
  setError("");
  setIsSubmitting(true);
  
@@ -137,27 +153,102 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  }
  }
 
- // 2. Save to Database
- const res = await createOrder({
- customerName: name,
- customerPhone: phone,
- address: deliveryOption === "HOME" ? address : "Collect from Studio",
- items: processedItems,
- totalAmount
- });
+  // 2. Load Razorpay Script
+  const resScript = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+  if (!resScript) {
+    setError("Failed to load Razorpay SDK. Please check your internet connection.");
+    setIsSubmitting(false);
+    return;
+  }
 
- if (!res.success) {
- setError("Failed to create order. Please try again.");
- setIsSubmitting(false);
- return;
- }
+  // 3. Create Order on Backend
+  try {
+    const orderData = await fetch("/api/payment/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amount: totalAmount,
+        customerName: name,
+        customerPhone: phone,
+        address: orderMode === "HOME_UPI" ? address : "Collect from Studio",
+        items: processedItems,
+        paymentMode: orderMode === "STUDIO_CASH" ? "CASH" : "UPI",
+      }),
+    }).then((t) => t.json());
 
- // Clear cart in local storage
- localStorage.removeItem("studioCart");
- setCreatedOrderId(res.orderId);
- setCheckoutSuccess(true);
- setIsSubmitting(false);
- };
+    if (!orderData.success) {
+      setError("Failed to create order on server.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // 4. Handle Cash Payment directly
+    if (orderData.isCash) {
+      localStorage.removeItem("studioCart");
+      setCreatedOrderId(orderData.dbOrderId); 
+      setCheckoutSuccess(true);
+      setIsSubmitting(false);
+      return;
+    }
+
+    // 5. Open Razorpay Checkout Widget for UPI/Online
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_placeholder",
+      amount: orderData.order.amount,
+      currency: "INR",
+      name: "SSS Studio",
+      description: "Photo Studio Store Checkout",
+      order_id: orderData.order.id,
+      handler: async function (response) {
+        // 5. Verify Signature on Backend
+        const verifyRes = await fetch("/api/payment/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            dbOrderId: orderData.dbOrderId,
+          }),
+        }).then((t) => t.json());
+
+        if (verifyRes.success) {
+          localStorage.removeItem("studioCart");
+          setCreatedOrderId(orderData.dbOrderId); // Short db ID for user
+          setCheckoutSuccess(true);
+        } else {
+          setError("Payment verification failed! Please contact support.");
+        }
+        setIsSubmitting(false);
+      },
+      prefill: {
+        name: name,
+        contact: phone,
+        email: session?.user?.email || "",
+      },
+      theme: {
+        color: "#06b6d4", // Cyan
+      },
+    };
+
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.on("payment.failed", function (response) {
+      setError(response.error.description);
+      setIsSubmitting(false);
+    });
+    
+    // Fallback if users close the popup without paying
+    paymentObject.on("modal.closed", function () {
+      setIsSubmitting(false);
+    });
+
+    paymentObject.open();
+
+  } catch (err) {
+    setError("An unexpected error occurred during checkout.");
+    setIsSubmitting(false);
+  }
+  };
 
  if (!isOpen && items.length === 0) return null;
 
@@ -174,7 +265,7 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  <p className="text-sm text-zinc-400 mb-1">Total Amount</p>
  <p className="text-2xl font-bold text-brand-gradient mb-4">₹{totalAmount}</p>
  
- {deliveryOption === "HOME" ? (
+ {orderMode === "HOME_UPI" ? (
  <div className="flex flex-col items-center border-t border-white/10 pt-4 mt-2">
  <p className="text-xs text-zinc-300 text-center mb-3">Scan QR code to pay securely via UPI</p>
  <div className="w-32 h-32 bg-white p-2 rounded-xl">
@@ -285,18 +376,6 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 9876543210" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500 text-sm text-white placeholder-zinc-600" />
  </div>
 
- <div className="pt-2 border-t border-white/10">
- <label className="text-xs font-medium text-zinc-400 block mb-3">Delivery Option</label>
- <div className="flex gap-2 bg-black/50 p-1 rounded-xl border border-white/10">
- <button onClick={() => setDeliveryOption("STUDIO")} className={`flex-1 flex justify-center items-center gap-2 py-2 text-sm font-medium rounded-lg transition-all ${deliveryOption === "STUDIO" ? "bg-white/10 text-white shadow-sm" : "text-zinc-500 hover:text-white"}`}><Home className="w-4 h-4" /> Pick Up</button>
- <button onClick={() => setDeliveryOption("HOME")} className={`flex-1 flex justify-center items-center gap-2 py-2 text-sm font-medium rounded-lg transition-all ${deliveryOption === "HOME" ? "bg-white/10 text-white shadow-sm" : "text-zinc-500 hover:text-white"}`}><Truck className="w-4 h-4" /> Delivery (+₹50)</button>
- </div>
- </div>
-
- {deliveryOption === "HOME" && (
- <textarea rows={2} value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Delivery Address..." className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500 text-sm text-white placeholder-zinc-600" />
- )}
-
  <div className="pt-2">
  <label className="text-xs font-medium text-zinc-400 block mb-1">Promo Code (Optional)</label>
  <div className="flex gap-2">
@@ -319,6 +398,34 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  )}
  </div>
  </div>
+
+ <div className="pt-2 border-t border-white/10">
+    <label className="text-xs font-medium text-zinc-400 block mb-3">Order & Payment Option</label>
+    <div className="flex flex-col gap-2">
+      <button onClick={() => setOrderMode("STUDIO_CASH")} className={`w-full flex justify-between items-center px-4 py-3 text-sm font-medium rounded-xl transition-all border ${orderMode === "STUDIO_CASH" ? "bg-white/10 text-white border-cyan-500/50 shadow-sm" : "bg-black/50 text-zinc-400 border-white/5 hover:text-white"}`}>
+        <div className="flex items-center gap-3"><Home className="w-4 h-4 text-cyan-400" /> Pick Up (Pay at Studio)</div>
+        {orderMode === "STUDIO_CASH" && <CheckCircle2 className="w-4 h-4 text-cyan-400" />}
+      </button>
+      
+      <button onClick={() => setOrderMode("STUDIO_UPI")} className={`w-full flex justify-between items-center px-4 py-3 text-sm font-medium rounded-xl transition-all border ${orderMode === "STUDIO_UPI" ? "bg-white/10 text-white border-cyan-500/50 shadow-sm" : "bg-black/50 text-zinc-400 border-white/5 hover:text-white"}`}>
+        <div className="flex items-center gap-3"><CreditCard className="w-4 h-4 text-cyan-400" /> Pick Up (Pay via UPI)</div>
+        {orderMode === "STUDIO_UPI" && <CheckCircle2 className="w-4 h-4 text-cyan-400" />}
+      </button>
+
+      <button onClick={() => setOrderMode("HOME_UPI")} className={`w-full flex justify-between items-center px-4 py-3 text-sm font-medium rounded-xl transition-all border ${orderMode === "HOME_UPI" ? "bg-white/10 text-white border-cyan-500/50 shadow-sm" : "bg-black/50 text-zinc-400 border-white/5 hover:text-white"}`}>
+        <div className="flex items-center gap-3"><Truck className="w-4 h-4 text-cyan-400" /> Courier Delivery (Pay via UPI)</div>
+        <div className="flex items-center gap-2">
+           <span className="text-xs bg-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded-full">+₹50</span>
+           {orderMode === "HOME_UPI" && <CheckCircle2 className="w-4 h-4 text-cyan-400" />}
+        </div>
+      </button>
+    </div>
+  </div>
+
+  {orderMode === "HOME_UPI" && (
+    <textarea rows={2} value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Delivery Address..." className="w-full mt-2 bg-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500 text-sm text-white placeholder-zinc-600" />
+  )}
+
  </div>
 
  <div className="flex flex-col gap-1 py-4 border-t border-white/10">
