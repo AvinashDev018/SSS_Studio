@@ -25,25 +25,25 @@ export default function Services() {
       title: "Portrait Sessions",
       description: "Professional solo, couple, and family portraits taken in our studio or at a location of your choice.",
       icon: <Users className="w-8 h-8 text-white drop-shadow-md" />,
-      image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=2550&auto=format&fit=crop"
+      image: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787505156/zkdnc0ojyronxvs9ju61.jpg"
     },
     {
       title: "Birthday Functions",
       description: "Fun, vibrant coverage of birthday parties and family events, ensuring you never forget a moment.",
       icon: <Sparkles className="w-8 h-8 text-white drop-shadow-md" />,
-      image: "https://images.unsplash.com/photo-1530103862676-de3c9de59f9e?q=80&w=2070&auto=format&fit=crop"
+      image: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787505207/rm2cysblt45dofw4myda.jpg"
     },
     {
       title: "Corporate Events",
       description: "Professional documentation of seminars, product launches, and corporate get-togethers.",
       icon: <Briefcase className="w-8 h-8 text-white drop-shadow-md" />,
-      image: "https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=2069&auto=format&fit=crop"
+      image: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787505160/eyjrkwxibelkaybtdsxj.jpg"
     },
     {
       title: "Real Estate & Architecture",
       description: "High-quality, wide-angle photography highlighting the best features of properties and architecture.",
       icon: <Building className="w-8 h-8 text-white drop-shadow-md" />,
-      image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075&auto=format&fit=crop"
+      image: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787505161/yoibaxbg0hd4epzqgoou.jpg"
     }
   ];
 
