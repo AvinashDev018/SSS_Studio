@@ -126,7 +126,7 @@ export default function ReceiptPage() {
           <div className="w-64">
             <div className="flex justify-between items-center mb-2">
               <span className="text-zinc-500 font-medium">Subtotal</span>
-              <span className="font-bold text-black">₹{order.total}</span>
+              <span className="font-bold text-black">₹{order.totalAmount}</span>
             </div>
             <div className="flex justify-between items-center mb-4">
               <span className="text-zinc-500 font-medium">Tax / VAT (0%)</span>
@@ -134,7 +134,7 @@ export default function ReceiptPage() {
             </div>
             <div className="flex justify-between items-center border-t border-zinc-200 pt-4">
               <span className="text-xl font-black text-black">Total</span>
-              <span className="text-2xl font-black text-black">₹{order.total}</span>
+              <span className="text-2xl font-black text-black">₹{order.totalAmount}</span>
             </div>
           </div>
         </div>

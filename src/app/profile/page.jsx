@@ -100,7 +100,7 @@ export default async function ProfilePage() {
                     </div>
                     <div className="flex items-center gap-6">
                       <div className="text-right">
-                        <p className="text-white font-bold text-lg">₹{order.total}</p>
+                        <p className="text-white font-bold text-lg">₹{order.totalAmount}</p>
                         <span className={`text-xs px-2 py-1 rounded-full ${
                           order.status === 'PENDING' ? 'bg-yellow-500/10 text-yellow-500' :
                           order.status === 'PAID' ? 'bg-green-500/10 text-green-500' :

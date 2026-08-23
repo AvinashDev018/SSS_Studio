@@ -32,7 +32,7 @@ export default function AnalyticsDashboard() {
  orders.forEach(order => {
  // Only count delivered orders in revenue for realistic metrics
  if (order.status === "Delivered") {
- revenue += parseInt(order.total) || 0;
+ revenue += parseInt(order.totalAmount) || 0;
  delivered++;
  }
  if (order.status === "Pending") {

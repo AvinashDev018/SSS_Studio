@@ -8,9 +8,11 @@ import AnimatedSection from "@/components/ui/AnimatedSection";
 import Testimonials from "@/components/sections/Testimonials";
 
 const HERO_IMAGES = [
- "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop",
- "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop",
- "https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=1000&auto=format&fit=crop"
+ "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504208/iydxdch0gcdo1vuea56q.jpg",
+ "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504209/y4t69imuaktbevg8re57.jpg",
+ "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504211/tqb10uvuzmqdkuxyqmps.jpg",
+ "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504212/ksq2vkwzniqlgsly5k6p.jpg",
+ "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504214/eill2s5uvoq7wwabeunx.jpg"
 ];
 
 export default function Home() {
@@ -45,28 +47,36 @@ export default function Home() {
  </AnimatePresence>
  </div>
  
- <AnimatedSection className="relative z-20 text-center px-4 max-w-5xl mx-auto" yOffset={40}>
- <h1 className="font-serif text-6xl md:text-8xl font-bold tracking-tight mb-6 text-white drop-shadow-2xl">
- Capturing Your Special Moments
- </h1>
- <p className="text-xl md:text-3xl text-zinc-100 dark:text-zinc-200 mb-10 max-w-3xl mx-auto font-light leading-relaxed">
- Premium Photography & Videography for Weddings, Events, and Portraits in Madurai.
- </p>
- <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
- <Link 
- href="/book" 
- className="group bg-brand-gradient hover-glow-brand text-black px-10 py-5 rounded-full text-lg font-bold hover:shadow-[0_0_40px_rgba(6,182,212,0.4)] hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto flex items-center justify-center gap-2"
- >
- Book a Session <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
- </Link>
- <Link 
- href="/gallery" 
- className="bg-white/10 backdrop-blur-xl text-white border border-white/20 px-10 py-5 rounded-full text-lg font-medium hover:bg-white/20 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto"
- >
- View Portfolio
- </Link>
- </div>
- </AnimatedSection>
+  <AnimatedSection className="relative z-20 text-center px-4 max-w-5xl mx-auto" yOffset={40}>
+  
+  <div className="inline-block mb-6 px-5 py-2 rounded-full border border-white/20 bg-white/5 backdrop-blur-md">
+    <span className="text-xs md:text-sm font-medium tracking-[0.2em] text-zinc-300 uppercase">Premium Photography</span>
+  </div>
+
+  <h1 className="font-serif text-5xl md:text-7xl font-medium tracking-wide mb-6 text-white drop-shadow-lg leading-tight">
+  Capturing Your <br className="hidden md:block" /> Special Moments
+  </h1>
+  
+  <p className="text-lg md:text-2xl text-zinc-300 mb-12 max-w-2xl mx-auto font-light leading-relaxed tracking-wide">
+  Timeless Photography & Videography for Weddings, Events, and Portraits in Madurai.
+  </p>
+  
+  <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+  <Link 
+  href="/book" 
+  className="group bg-white text-black px-10 py-4 rounded-full text-sm md:text-base font-semibold tracking-widest uppercase hover:bg-zinc-200 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto flex items-center justify-center gap-3"
+  >
+  Book a Session <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+  </Link>
+  <Link 
+  href="/gallery" 
+  className="bg-black/20 backdrop-blur-md text-white border border-white/30 px-10 py-4 rounded-full text-sm md:text-base font-semibold tracking-widest uppercase hover:bg-white/10 hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto"
+  >
+  View Portfolio
+  </Link>
+  </div>
+  
+  </AnimatedSection>
  </section>
 
  {/* Services Overview - Modern Bento Box */}
@@ -144,16 +154,16 @@ export default function Home() {
  ))}
  </ul>
  </AnimatedSection>
- <AnimatedSection className="grid grid-cols-2 gap-4" delay={0.2}>
- <div className="group overflow-hidden rounded-3xl border border-white/10 shadow-2xl h-72 w-full relative">
- <img src="https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=1000&auto=format&fit=crop" alt="Studio Setup" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
- <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
- </div>
- <div className="group overflow-hidden rounded-3xl border border-white/10 shadow-2xl h-72 w-full mt-12 relative">
- <img src="https://images.unsplash.com/photo-1554048612-b9a35e985871?q=80&w=1000&auto=format&fit=crop" alt="Camera Lens" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
- <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
- </div>
- </AnimatedSection>
+  <AnimatedSection className="grid grid-cols-2 gap-4" delay={0.2}>
+  <div className="group overflow-hidden rounded-3xl border border-white/10 shadow-2xl h-72 w-full relative">
+  <img src="https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504208/iydxdch0gcdo1vuea56q.jpg" alt="Studio Setup" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+  </div>
+  <div className="group overflow-hidden rounded-3xl border border-white/10 shadow-2xl h-72 w-full mt-12 relative">
+  <img src="https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504215/da4knrrkqpznhaip7xx4.jpg" alt="Camera Lens" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+  </div>
+  </AnimatedSection>
  </div>
  </div>
  </section>

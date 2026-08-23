@@ -110,6 +110,7 @@ model Order {
   items         Json
   totalAmount   Float
   status        String   @default("PENDING")
+  courierTrackingId String?
   razorpayOrderId   String?  @unique
   razorpayPaymentId String?  @unique
   razorpaySignature String?

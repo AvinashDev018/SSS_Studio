@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { ShoppingBag, ShoppingCart, Lock, Home, X, MessageCircle, Truck, User, Phone, Upload, Image as ImageIcon, Minus, Plus, CheckCircle2, CreditCard } from "lucide-react";
+import { ShoppingBag, ShoppingCart, Lock, Home, X, MessageCircle, Truck, User, Phone, Upload, Image as ImageIcon, Minus, Plus, CheckCircle2, CreditCard, Store } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -281,9 +281,13 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  )}
  </div>
 
- <Link href="/track" onClick={() => onRemove("ALL")} className="block w-full bg-brand-gradient hover-glow-brand text-black py-3 rounded-xl font-bold text-sm hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all">
- Track Your Order
- </Link>
+  <Link href={`/track?id=${createdOrderId}`} onClick={() => onRemove("ALL")} className="w-full bg-brand-gradient hover-glow-brand text-black py-3 rounded-xl font-bold text-sm hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all flex items-center justify-center gap-2">
+    {orderMode === "HOME_UPI" ? (
+      <><Truck className="w-4 h-4" /> Track Courier Status</>
+    ) : (
+      <><Store className="w-4 h-4" /> Check Order Status</>
+    )}
+  </Link>
  </div>
  );
  }

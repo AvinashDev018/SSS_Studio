@@ -41,7 +41,7 @@ export async function createOrder(data) {
         address: data.address,
         items: data.items,
         totalAmount: data.totalAmount,
-        status: "UNCONFIRMED",
+        status: "PENDING",
         userId: userId, // associate if logged in
       }
     });
@@ -58,9 +58,21 @@ export async function createOrder(data) {
 
 export async function getOrder(orderId) {
  try {
- const order = await prisma.order.findUnique({
- where: { orderId }
- });
+  const order = await prisma.order.findFirst({
+    where: { 
+      OR: [
+        {
+          orderId: {
+            equals: orderId,
+            mode: 'insensitive'
+          }
+        },
+        {
+          id: orderId.toLowerCase()
+        }
+      ]
+    }
+  });
  
  if (!order && orderId.startsWith("ORD-") && orderId.length === 10) {
  // Fallback for demo without database
@@ -121,5 +133,20 @@ export async function updateOrderStatus(orderId, newStatus) {
  } catch (error) {
  console.error("Error updating order:", error);
  return { success: false, error: "Failed to update order status" };
+ }
+}
+
+export async function updateOrderTrackingId(orderId, trackingId) {
+ try {
+ const order = await prisma.order.update({
+ where: { orderId },
+ data: { courierTrackingId: trackingId }
+ });
+ revalidatePath("/admin/orders");
+ revalidatePath("/track");
+ return { success: true, order };
+ } catch (error) {
+ console.error("Error updating tracking ID:", error);
+ return { success: false, error: "Failed to update tracking ID" };
  }
 }

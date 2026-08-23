@@ -5,11 +5,20 @@ import AnimatedSection from "@/components/ui/AnimatedSection";
 import { Search, Package, CheckCircle2, Clock, Truck, Home, Printer } from "lucide-react";
 import Link from "next/link";
 
-const STATUS_STEPS = [
- { id: "PENDING", label: "Order Placed", icon: Clock },
- { id: "PROCESSING", label: "Processing", icon: Package },
- { id: "SHIPPED", label: "Shipped", icon: Truck },
- { id: "DELIVERED", label: "Delivered", icon: Home },
+import { getOrder } from "@/app/actions/orders";
+
+const COURIER_STEPS = [
+  { id: "PENDING", label: "Order Placed", icon: Clock },
+  { id: "PROCESSING", label: "Processing", icon: Package },
+  { id: "SHIPPED", label: "Shipped", icon: Truck },
+  { id: "DELIVERED", label: "Delivered", icon: Home },
+];
+
+const PICKUP_STEPS = [
+  { id: "PENDING", label: "Order Placed", icon: Clock },
+  { id: "PROCESSING", label: "Processing", icon: Package },
+  { id: "READY_FOR_PICKUP", label: "Ready for Pickup", icon: Home },
+  { id: "PICKED_UP", label: "Picked Up", icon: CheckCircle2 },
 ];
 
 export default function TrackOrderPage() {
@@ -40,44 +49,36 @@ export default function TrackOrderPage() {
  setSearchQuery(idToSearch.trim());
 
  try {
- // Search in Offline CRM LocalStorage
- const savedOrders = localStorage.getItem("crm_orders");
- if (savedOrders) {
- const orders = JSON.parse(savedOrders);
- const foundOrder = orders.find(o => o.id === idToSearch.trim());
- 
- if (foundOrder) {
- setOrder({
- orderId: foundOrder.id,
- status: foundOrder.status.toUpperCase(),
- totalAmount: foundOrder.total,
- createdAt: foundOrder.date,
- customerName: foundOrder.name,
- items: [
- {
- name: "Custom Studio Order",
- quantity: 1,
- price: foundOrder.total
- }
- ]
- });
- } else {
- setError(`No order found with ID: ${idToSearch}`);
- setOrder(null);
- }
- } else {
- setError(`No order found with ID: ${idToSearch}`);
- setOrder(null);
- }
- } catch (err) {
- setError("Error fetching order. Please try again.");
- }
+      const res = await getOrder(idToSearch.trim());
+      if (res.success && res.order) {
+        setOrder({
+          orderId: res.order.orderId,
+          status: res.order.status.toUpperCase() === 'UNCONFIRMED' ? 'PENDING' : res.order.status.toUpperCase(),
+          totalAmount: res.order.totalAmount,
+          createdAt: res.order.createdAt,
+          customerName: res.order.customerName,
+          address: res.order.address,
+          courierTrackingId: res.order.courierTrackingId,
+          items: typeof res.order.items === 'string' ? JSON.parse(res.order.items) : res.order.items,
+        });
+      } else {
+        setError(`No order found with ID: ${idToSearch}`);
+        setOrder(null);
+      }
+    } catch (err) {
+      setError("Error fetching order. Please try again.");
+    }
  setIsSearching(false);
  };
 
- const getCurrentStepIndex = (status) => {
- return STATUS_STEPS.findIndex(step => step.id === status);
- };
+  const getActiveSteps = () => {
+    return order?.address === "Collect from Studio" ? PICKUP_STEPS : COURIER_STEPS;
+  };
+
+  const getCurrentStepIndex = (status) => {
+    const steps = getActiveSteps();
+    return steps.findIndex(step => step.id === status);
+  };
 
  const handlePrint = () => {
  window.print();
@@ -148,6 +149,12 @@ export default function TrackOrderPage() {
  )}
  </div>
  <p className="text-zinc-500 mt-1">Placed on {new Date(order.createdAt).toLocaleDateString()}</p>
+ {order.courierTrackingId && (
+    <div className="mt-4 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-xl inline-block">
+      <p className="text-xs text-cyan-600 dark:text-cyan-400 font-bold uppercase mb-1">Courier Tracking ID</p>
+      <p className="text-lg font-mono font-bold text-zinc-900 dark:text-white select-all">{order.courierTrackingId}</p>
+    </div>
+  )}
  </div>
  <div className="mt-4 md:mt-0 text-left md:text-right">
  <p className="text-sm font-bold text-zinc-500 uppercase tracking-wider mb-1">Total Amount</p>
@@ -160,11 +167,11 @@ export default function TrackOrderPage() {
  <div className="absolute top-1/2 left-0 w-full h-1.5 bg-zinc-100 dark:bg-zinc-800 -translate-y-1/2 rounded-full hidden sm:block" />
  
  <div className="absolute top-1/2 left-0 h-1.5 bg-brand-gradient hover-glow-brand text-white border-transparent -translate-y-1/2 rounded-full hidden sm:block transition-all duration-1000" 
- style={{ width: `${(getCurrentStepIndex(order.status) / (STATUS_STEPS.length - 1)) * 100}%` }} 
+ style={{ width: `${(getCurrentStepIndex(order.status) / (getActiveSteps().length - 1)) * 100}%` }} 
  />
 
  <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8 sm:gap-0">
- {STATUS_STEPS.map((step, index) => {
+ {getActiveSteps().map((step, index) => {
  const currentIdx = getCurrentStepIndex(order.status);
  const isCompleted = index <= currentIdx;
  const isCurrent = index === currentIdx;
@@ -182,7 +189,7 @@ export default function TrackOrderPage() {
  </div>
  
  {/* Vertical line for mobile */}
- {index < STATUS_STEPS.length - 1 && (
+ {index < getActiveSteps().length - 1 && (
  <div className={`absolute top-12 left-6 w-0.5 h-12 -ml-0.25 sm:hidden ${index < currentIdx ? 'bg-brand-gradient hover-glow-brand text-white border-transparent' : 'bg-zinc-100 dark:bg-zinc-800'}`} />
  )}
 

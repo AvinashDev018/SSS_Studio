@@ -16,7 +16,7 @@ export default function About() {
  <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-32">
  <AnimatedSection>
  <img 
- src="https://images.unsplash.com/photo-1554046920-90dcac824c03?q=80&w=2071&auto=format&fit=crop" 
+ src="https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504718/r4r0skhi4uc1pkoinj9a.jpg" 
  alt="Photographer at work" 
  className="rounded-3xl shadow-2xl border border-zinc-200 dark:border-zinc-800/50 object-cover h-[500px] w-full"
  />
@@ -54,13 +54,13 @@ export default function About() {
 
  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-32">
  <AnimatedSection delay={0.1}>
- <img src="https://images.unsplash.com/photo-1588693822177-8393b4e339de?q=80&w=2070&auto=format&fit=crop" alt="Studio Lighting" className="rounded-3xl h-64 w-full object-cover shadow-lg border border-zinc-200 dark:border-zinc-800/50" />
+ <img src="https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504511/uihydxccixt0qki0udgt.jpg" alt="Studio Lighting" className="rounded-3xl h-64 w-full object-cover shadow-lg border border-zinc-200 dark:border-zinc-800/50" />
  </AnimatedSection>
  <AnimatedSection delay={0.2}>
- <img src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=2070&auto=format&fit=crop" alt="Camera Details" className="rounded-3xl h-64 w-full object-cover shadow-lg border border-zinc-200 dark:border-zinc-800/50" />
+ <img src="https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504512/whmygefmhfnmghgezcwv.jpg" alt="Camera Details" className="rounded-3xl h-64 w-full object-cover shadow-lg border border-zinc-200 dark:border-zinc-800/50" />
  </AnimatedSection>
  <AnimatedSection delay={0.3}>
- <img src="https://images.unsplash.com/photo-1622340356269-e74187e02eaf?q=80&w=1969&auto=format&fit=crop" alt="Editing Process" className="rounded-3xl h-64 w-full object-cover shadow-lg border border-zinc-200 dark:border-zinc-800/50" />
+ <img src="https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504514/e59l6lbsaio6zhrhwnkb.jpg" alt="Editing Process" className="rounded-3xl h-64 w-full object-cover shadow-lg border border-zinc-200 dark:border-zinc-800/50" />
  </AnimatedSection>
  </div>
  </div>

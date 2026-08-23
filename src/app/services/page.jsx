@@ -8,38 +8,44 @@ export const metadata = {
 };
 
 export default function Services() {
- const services = [
- {
- title: "Wedding Photography",
- description: "Comprehensive coverage of your special day, capturing every emotion from preparation to the grand reception.",
- icon: <Camera className="w-8 h-8 text-white" />
- },
- {
- title: "Cinematic Videography",
- description: "Beautifully edited highlight reels and full-length wedding films that tell your unique love story.",
- icon: <Video className="w-8 h-8 text-white" />
- },
- {
- title: "Portrait Sessions",
- description: "Professional solo, couple, and family portraits taken in our studio or at a location of your choice.",
- icon: <Users className="w-8 h-8 text-white" />
- },
- {
- title: "Birthday Functions",
- description: "Fun, vibrant coverage of birthday parties and family events, ensuring you never forget a moment.",
- icon: <Sparkles className="w-8 h-8 text-white" />
- },
- {
- title: "Corporate Events",
- description: "Professional documentation of seminars, product launches, and corporate get-togethers.",
- icon: <Briefcase className="w-8 h-8 text-white" />
- },
- {
- title: "Real Estate & Architecture",
- description: "High-quality, wide-angle photography highlighting the best features of properties and architecture.",
- icon: <Building className="w-8 h-8 text-white" />
- }
- ];
+  const services = [
+    {
+      title: "Wedding Photography",
+      description: "Comprehensive coverage of your special day, capturing every emotion from preparation to the grand reception.",
+      icon: <Camera className="w-8 h-8 text-white drop-shadow-md" />,
+      image: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504972/kllcuquwxjltq88cmb5n.jpg"
+    },
+    {
+      title: "Cinematic Videography",
+      description: "Beautifully edited highlight reels and full-length wedding films that tell your unique love story.",
+      icon: <Video className="w-8 h-8 text-white drop-shadow-md" />,
+      image: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504974/zsttc9iwgpwvwtipukq0.jpg"
+    },
+    {
+      title: "Portrait Sessions",
+      description: "Professional solo, couple, and family portraits taken in our studio or at a location of your choice.",
+      icon: <Users className="w-8 h-8 text-white drop-shadow-md" />,
+      image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=2550&auto=format&fit=crop"
+    },
+    {
+      title: "Birthday Functions",
+      description: "Fun, vibrant coverage of birthday parties and family events, ensuring you never forget a moment.",
+      icon: <Sparkles className="w-8 h-8 text-white drop-shadow-md" />,
+      image: "https://images.unsplash.com/photo-1530103862676-de3c9de59f9e?q=80&w=2070&auto=format&fit=crop"
+    },
+    {
+      title: "Corporate Events",
+      description: "Professional documentation of seminars, product launches, and corporate get-togethers.",
+      icon: <Briefcase className="w-8 h-8 text-white drop-shadow-md" />,
+      image: "https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=2069&auto=format&fit=crop"
+    },
+    {
+      title: "Real Estate & Architecture",
+      description: "High-quality, wide-angle photography highlighting the best features of properties and architecture.",
+      icon: <Building className="w-8 h-8 text-white drop-shadow-md" />,
+      image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075&auto=format&fit=crop"
+    }
+  ];
 
  return (
  <div className="py-24 max-w-7xl mx-auto min-h-screen">
@@ -53,15 +59,33 @@ export default function Services() {
 
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
  {services.map((service, idx) => (
- <AnimatedSection key={idx} delay={idx * 0.1}>
- <div className="bg-white dark:bg-zinc-900/50 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800/50 p-10 rounded-3xl hover:border-cyan-500/50 dark:hover:border-cyan-500/30 transition-all duration-300 shadow-xl h-full group">
- <div className="bg-brand-gradient hover-glow-brand w-16 h-16 rounded-2xl flex items-center justify-center mb-8 shadow-lg group-hover:scale-110 transition-transform duration-300">
- {service.icon}
- </div>
- <h3 className="font-serif text-3xl font-bold mb-4 text-zinc-900 dark:text-white group-hover:text-brand-gradient dark:group-hover:text-brand-gradient transition-colors">{service.title}</h3>
- <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed text-lg">{service.description}</p>
- </div>
- </AnimatedSection>
+        <AnimatedSection key={idx} delay={idx * 0.1} className="h-[450px]">
+          <div className="relative overflow-hidden rounded-3xl h-full group border border-zinc-200 dark:border-zinc-800/80 shadow-xl">
+            {/* Background Image */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+              style={{ backgroundImage: `url(${service.image})` }}
+            />
+            
+            {/* Overlay Gradients */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/10 group-hover:from-black/100 group-hover:via-black/70 transition-colors duration-500" />
+            
+            {/* Content */}
+            <div className="relative h-full flex flex-col justify-end p-8 z-10">
+              <div className="mb-6 transform group-hover:-translate-y-2 transition-transform duration-500">
+                <div className="bg-white/10 backdrop-blur-md w-16 h-16 rounded-2xl flex items-center justify-center border border-white/20 shadow-lg group-hover:bg-brand-gradient group-hover:border-transparent transition-all duration-300">
+                  {service.icon}
+                </div>
+              </div>
+              <h3 className="font-serif text-3xl font-bold mb-4 text-white group-hover:text-cyan-300 transition-colors duration-300">
+                {service.title}
+              </h3>
+              <p className="text-zinc-300 leading-relaxed text-lg line-clamp-3">
+                {service.description}
+              </p>
+            </div>
+          </div>
+        </AnimatedSection>
  ))}
  </div>
  </div>
