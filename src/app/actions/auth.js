@@ -24,7 +24,44 @@ export async function loginAdmin(formData) {
 }
 
 export async function logoutAdmin() {
- const cookieStore = await cookies();
- cookieStore.delete("admin_session");
- redirect("/admin/login");
+  const cookieStore = await cookies();
+  cookieStore.delete("admin_session");
+  redirect("/admin/login");
+}
+
+import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
+
+export async function registerUser(data) {
+  try {
+    const { name, email, password, phone } = data;
+
+    if (!name || !email || !password) {
+      return { success: false, error: "Missing required fields" };
+    }
+
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return { success: false, error: "Email already exists" };
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        phone: phone || null,
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error registering user:", error);
+    return { success: false, error: "Something went wrong during registration" };
+  }
 }

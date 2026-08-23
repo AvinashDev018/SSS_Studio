@@ -15,26 +15,45 @@ function generateOrderId() {
  return result;
 }
 
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
 export async function createOrder(data) {
- try {
- const orderId = generateOrderId();
- const order = await prisma.order.create({
- data: {
- orderId,
- customerName: data.customerName,
- customerPhone: data.customerPhone,
- address: data.address,
- items: data.items,
- totalAmount: data.totalAmount,
- status: "UNCONFIRMED",
- }
- });
- revalidatePath("/admin/orders");
- return { success: true, orderId };
- } catch (error) {
- console.error("Error creating order:", error);
- return { success: false, error: "Failed to create order" };
- }
+  try {
+    const session = await getServerSession(authOptions);
+    let userId = null;
+
+    if (session?.user?.email) {
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email }
+      });
+      if (user) {
+        userId = user.id;
+      }
+    }
+
+    const orderId = generateOrderId();
+    const order = await prisma.order.create({
+      data: {
+        orderId,
+        customerName: data.customerName,
+        customerPhone: data.customerPhone,
+        address: data.address,
+        items: data.items,
+        totalAmount: data.totalAmount,
+        status: "UNCONFIRMED",
+        userId: userId, // associate if logged in
+      }
+    });
+    revalidatePath("/admin/orders");
+    if (userId) {
+      revalidatePath("/profile");
+    }
+    return { success: true, orderId };
+  } catch (error) {
+    console.error("Error creating order:", error);
+    return { success: false, error: "Failed to create order" };
+  }
 }
 
 export async function getOrder(orderId) {

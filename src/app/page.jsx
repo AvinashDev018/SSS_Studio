@@ -54,7 +54,7 @@ export default function Home() {
  </p>
  <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
  <Link 
- href="/contact" 
+ href="/book" 
  className="group bg-brand-gradient hover-glow-brand text-black px-10 py-5 rounded-full text-lg font-bold hover:shadow-[0_0_40px_rgba(6,182,212,0.4)] hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto flex items-center justify-center gap-2"
  >
  Book a Session <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

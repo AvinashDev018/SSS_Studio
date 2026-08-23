@@ -1,6 +1,7 @@
 import { Inter, Playfair_Display } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import { Providers } from "@/components/Providers";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
@@ -39,8 +40,10 @@ export default function RootLayout({ children }) {
   </div>
  
  <div className="relative z-10 flex flex-col min-h-screen">
+ <Providers>
  <Navbar />
  <main className="flex-grow">{children}</main>
+ </Providers>
  <WhatsAppButton />
  </div>
  </body>

@@ -1,19 +1,30 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ShoppingBag, ShoppingCart, Lock, Home, X, MessageCircle, Truck, User, Phone, Upload, Image as ImageIcon, Minus, Plus, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createOrder } from "@/app/actions/orders";
 import { uploadImageToCloud } from "@/app/actions/upload";
+import { useSession } from "next-auth/react";
 
 export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
+ const { data: session } = useSession();
+ const router = useRouter();
  const [name, setName] = useState("");
  const [phone, setPhone] = useState("");
  const [address, setAddress] = useState("");
  const [deliveryOption, setDeliveryOption] = useState("STUDIO");
  const [isSubmitting, setIsSubmitting] = useState(false);
  const [error, setError] = useState("");
+
+ useEffect(() => {
+   if (session?.user) {
+     if (!name) setName(session.user.name || "");
+     if (!phone && session.user.phone) setPhone(session.user.phone);
+   }
+ }, [session]);
  const [activeUploadId, setActiveUploadId] = useState(null);
  const [promoCode, setPromoCode] = useState("");
  const [appliedPromo, setAppliedPromo] = useState(null);
@@ -88,6 +99,11 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  };
 
  const handleCheckout = async () => {
+ if (!session?.user) {
+ router.push("/login?callbackUrl=/store");
+ return;
+ }
+
  if (!name || !phone || (deliveryOption === "HOME" && !address)) {
  setError(deliveryOption === "HOME" ? "Please fill in all details including address." : "Please fill in Name and Phone.");
  return;

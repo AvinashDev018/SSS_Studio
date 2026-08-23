@@ -1,13 +1,22 @@
 import BookingWizard from "@/components/sections/BookingWizard";
 import AnimatedSection from "@/components/ui/AnimatedSection";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
 
 export const metadata = {
- title: 'Book a Session',
- description: 'Secure your date and time with SSS Studio instantly.',
+  title: 'Book a Session',
+  description: 'Secure your date and time with SSS Studio instantly.',
 };
 
-export default function BookPage() {
- return (
+export default async function BookPage() {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect("/login?callbackUrl=/book");
+  }
+
+  return (
  <div className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-[90vh] flex flex-col justify-center relative">
  {/* Background Styling */}
  <div className="absolute inset-0 z-0">
