@@ -91,7 +91,7 @@ export default function Home() {
  {/* Main large card */}
  <AnimatedSection delay={0.1} className="md:col-span-2 md:row-span-2 relative group overflow-hidden rounded-3xl border border-zinc-800/50">
  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors z-10 duration-500" />
- <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Weddings" />
+ <img src="https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504972/kllcuquwxjltq88cmb5n.jpg" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Weddings" />
  <div className="absolute bottom-0 left-0 p-8 z-20 w-full bg-gradient-to-t from-black/90 to-transparent">
  <h3 className="font-serif text-3xl font-bold text-white mb-2">Weddings</h3>
  <p className="text-zinc-300">Timeless elegance and candid joy captured perfectly.</p>
@@ -101,7 +101,7 @@ export default function Home() {
  {/* Top right small card */}
  <AnimatedSection delay={0.2} className="relative group overflow-hidden rounded-3xl border border-zinc-800/50">
  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors z-10 duration-500" />
- <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1964&auto=format&fit=crop" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Portraits" />
+ <img src="https://res.cloudinary.com/e5pnwpo5/image/upload/v1787505577/iqimm503wxxauaksjjzt.jpg" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Portraits" />
  <div className="absolute bottom-0 left-0 p-6 z-20 w-full bg-gradient-to-t from-black/90 to-transparent">
  <h3 className="font-serif text-2xl font-bold text-white">Portraits</h3>
  </div>
@@ -110,7 +110,7 @@ export default function Home() {
  {/* Bottom right small card */}
  <AnimatedSection delay={0.3} className="relative group overflow-hidden rounded-3xl border border-zinc-800/50">
  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors z-10 duration-500" />
- <img src="https://images.unsplash.com/photo-1530103862676-de88b394145b?q=80&w=2070&auto=format&fit=crop" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Birthdays" />
+ <img src="https://res.cloudinary.com/e5pnwpo5/image/upload/v1787505207/rm2cysblt45dofw4myda.jpg" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Birthdays" />
  <div className="absolute bottom-0 left-0 p-6 z-20 w-full bg-gradient-to-t from-black/90 to-transparent">
  <h3 className="font-serif text-2xl font-bold text-white">Birthday Functions</h3>
  </div>

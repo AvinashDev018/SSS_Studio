@@ -25,7 +25,7 @@ export default function Services() {
       title: "Portrait Sessions",
       description: "Professional solo, couple, and family portraits taken in our studio or at a location of your choice.",
       icon: <Users className="w-8 h-8 text-white drop-shadow-md" />,
-      image: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787505156/zkdnc0ojyronxvs9ju61.jpg"
+      image: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787505577/iqimm503wxxauaksjjzt.jpg"
     },
     {
       title: "Birthday Functions",
