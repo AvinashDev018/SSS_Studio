@@ -1,36 +1,47 @@
 "use server";
 
+import crypto from 'crypto';
+
 export async function uploadImageToCloud(base64Image) {
- try {
- // Remove the data:image/jpeg;base64, prefix so ImgBB can process it
- const base64Data = base64Image.split(',')[1];
- 
- // We need an API key. We will use a public env variable or tell the user to provide one.
- const apiKey = process.env.IMGBB_API_KEY;
- 
- if (!apiKey) {
- console.warn("IMGBB_API_KEY is missing. Returning the base64 string instead (which will break WhatsApp links). Please add it to your .env file.");
- return { success: false, error: "Missing API Key" };
- }
+  try {
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    const apiKey = process.env.CLOUDINARY_API_KEY;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
- const formData = new FormData();
- formData.append("image", base64Data);
+    if (!cloudName || !apiKey || !apiSecret) {
+      console.warn("Cloudinary credentials are missing. Please add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET to your .env file.");
+      return { success: false, error: "Missing Cloudinary Credentials" };
+    }
 
- const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
- method: "POST",
- body: formData,
- });
+    const timestamp = Math.round(new Date().getTime() / 1000);
+    
+    // Cloudinary requires the signature string to be sorted alphabetically by parameter name.
+    // Since we only have timestamp, it's just timestamp=<value>
+    const signatureString = `timestamp=${timestamp}${apiSecret}`;
+    const signature = crypto.createHash('sha1').update(signatureString).digest('hex');
 
- const data = await response.json();
+    const formData = new FormData();
+    // Cloudinary accepts the full data URI (e.g., data:image/jpeg;base64,...)
+    formData.append("file", base64Image);
+    formData.append("api_key", apiKey);
+    formData.append("timestamp", timestamp.toString());
+    formData.append("signature", signature);
 
- if (data.success) {
- return { success: true, url: data.data.url };
- } else {
- console.error("ImgBB Upload Error:", data);
- return { success: false, error: "Failed to upload image to cloud." };
- }
- } catch (error) {
- console.error("Error in uploadImageToCloud:", error);
- return { success: false, error: error.message };
- }
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.secure_url) {
+      return { success: true, url: data.secure_url };
+    } else {
+      console.error("Cloudinary Upload Error:", data);
+      return { success: false, error: data.error?.message || "Failed to upload image to Cloudinary." };
+    }
+  } catch (error) {
+    console.error("Error in uploadImageToCloud:", error);
+    return { success: false, error: error.message };
+  }
 }

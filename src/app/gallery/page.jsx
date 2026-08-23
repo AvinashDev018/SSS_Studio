@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import { X, ZoomIn, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getPhotos } from "@/app/actions/gallery";
 
 const CATEGORIES = ["All", "Weddings", "Portraits", "Birthdays", "Events"];
 
@@ -13,13 +14,16 @@ export default function GalleryPage() {
  const [galleryItems, setGalleryItems] = useState([]);
 
  useEffect(() => {
-   setGalleryItems([
-     { id: 1, category: "Weddings", src: "/gallery/media_1787333837436.jpg", aspect: "aspect-[3/4]" },
-     { id: 2, category: "Portraits", src: "/gallery/media_1787333920863.jpg", aspect: "aspect-square" },
-     { id: 3, category: "Events", src: "/gallery/media_1787334223339.jpg", aspect: "aspect-video" },
-     { id: 4, category: "Weddings", src: "/gallery/media_1787334273212.jpg", aspect: "aspect-square" },
-     { id: 5, category: "Birthdays", src: "/gallery/media_1787334744035.jpg", aspect: "aspect-[4/3]" }
-   ]);
+   const loadPhotos = async () => {
+     try {
+       const photos = await getPhotos();
+       // map url to src for the UI
+       setGalleryItems(photos.map(p => ({ ...p, src: p.url })));
+     } catch (error) {
+       console.error("Failed to load photos", error);
+     }
+   };
+   loadPhotos();
  }, []);
 
  const filteredItems = activeCategory === "All" 
