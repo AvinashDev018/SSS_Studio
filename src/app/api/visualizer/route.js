@@ -111,7 +111,7 @@ function getMockRecommendation(shootType, stylePreference = "Feminine") {
       avoidReason: isMasculine ? "These colors distract focus from the details of the wedding backdrop." : "These colors either wash out or create harsh contrasts under wedding lighting.",
       hairMakeupTip: isMasculine ? "Neatly trimmed and styled hair with a matte finish styling clay. Ensure beard is well-groomed and apply light moisturizer for a healthy glow." : "Opt for a classic updo with jasmine flowers or a side-swept style with soft curls. Use warm-toned makeup with a subtle shimmer highlighter.",
       accessoryTip: isMasculine ? "A classic watch, a royal brooch on the sherwani lapel, or a traditional safa/turban for the main ceremony." : "Layer temple jewellery or kundan sets. A maang tikka and matching bangles complete the bridal look perfectly.",
-      generalTip: "Stand straight to keep the structure of the sherwani or jacket crisp in portrait shots."
+      generalTip: "Stand straight to keep the structure of the sherwani or jacket crisp in wedding photos."
     },
     Portrait: {
       palette: ["#2C3E50", "#ECF0F1", "#3498DB"],

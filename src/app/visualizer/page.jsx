@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Wand2, Upload, Sparkles, X, CheckCircle2, ChevronDown } from "lucide-react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import Link from "next/link";
@@ -19,8 +19,29 @@ export default function VisualizerPage() {
   const [stylePreference, setStylePreference] = useState("Feminine");
   const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
+
+  const loadingTexts = [
+    "Uploading photo to SSS Studio AI...",
+    "Scanning facial structure & skin tone...",
+    "Selecting premium palette combinations...",
+    "Analyzing style preference config...",
+    "Curating custom dress recommendations...",
+    "Adding expert photography tips..."
+  ];
+
+  useEffect(() => {
+    let interval;
+    if (isLoading) {
+      setLoadingStep(0);
+      interval = setInterval(() => {
+        setLoadingStep((prev) => (prev < loadingTexts.length - 1 ? prev + 1 : prev));
+      }, 2000);
+    }
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   const handleFile = useCallback((file) => {
     if (!file || !file.type.startsWith("image/")) return;
@@ -92,7 +113,7 @@ export default function VisualizerPage() {
             >
               {imagePreview ? (
                 <div className="relative">
-                  <img src={imagePreview} alt="Preview" className="w-full h-72 object-cover rounded-3xl" />
+                  <img src={imagePreview} alt="Preview" className="w-full h-72 object-contain bg-zinc-900/50 rounded-3xl" />
                   <div className="absolute inset-0 bg-black/20 rounded-3xl" />
                   <button
                     onClick={(e) => { e.stopPropagation(); setImage(null); setImagePreview(null); setResult(null); }}
@@ -211,8 +232,8 @@ export default function VisualizerPage() {
                     <Sparkles className="w-5 h-5 text-cyan-400" />
                   </div>
                 </div>
-                <p className="text-zinc-300 font-semibold text-lg mb-2">Analyzing your photo...</p>
-                <p className="text-zinc-500 text-sm">Our AI is crafting your personalized style guide</p>
+                <p className="text-zinc-300 font-semibold text-lg mb-2">{loadingTexts[loadingStep]}</p>
+                <p className="text-zinc-500 text-sm">Please wait while the AI finishes its analysis (usually takes 5-10 seconds)</p>
               </div>
             )}
 
