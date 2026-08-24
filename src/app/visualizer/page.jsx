@@ -16,6 +16,7 @@ export default function VisualizerPage() {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [shootType, setShootType] = useState("Portrait");
+  const [stylePreference, setStylePreference] = useState("Feminine");
   const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -44,6 +45,7 @@ export default function VisualizerPage() {
       const formData = new FormData();
       formData.append("image", image);
       formData.append("shootType", shootType);
+      formData.append("stylePreference", stylePreference);
 
       const res = await fetch("/api/visualizer", { method: "POST", body: formData });
       const data = await res.json();
@@ -114,6 +116,33 @@ export default function VisualizerPage() {
               )}
             </div>
             <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
+
+            {/* Style Preference */}
+            <div>
+              <p className="text-zinc-300 font-semibold mb-3">Preferred Outfit Style</p>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setStylePreference("Feminine")}
+                  className={`p-3 rounded-2xl border text-center font-medium transition-all duration-300 text-sm ${
+                    stylePreference === "Feminine"
+                      ? "border-cyan-500 bg-cyan-500/10 text-white"
+                      : "border-zinc-800 bg-zinc-900/30 text-zinc-400 hover:border-zinc-700"
+                  }`}
+                >
+                  🙋‍♀️ Women's Wear / Feminine
+                </button>
+                <button
+                  onClick={() => setStylePreference("Masculine")}
+                  className={`p-3 rounded-2xl border text-center font-medium transition-all duration-300 text-sm ${
+                    stylePreference === "Masculine"
+                      ? "border-cyan-500 bg-cyan-500/10 text-white"
+                      : "border-zinc-800 bg-zinc-900/30 text-zinc-400 hover:border-zinc-700"
+                  }`}
+                >
+                  🙋‍♂️ Men's Wear / Masculine
+                </button>
+              </div>
+            </div>
 
             {/* Shoot Type Selection */}
             <div>
