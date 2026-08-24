@@ -58,54 +58,28 @@ export async function createOrder(data) {
 
 export async function getOrder(orderId) {
  try {
+  // Sanitize input — trim spaces and uppercase for consistent matching
+  const cleanId = orderId.trim().toUpperCase();
+
+  // Only match by orderId field (exact match, case-insensitive)
   const order = await prisma.order.findFirst({
     where: { 
-      OR: [
-        {
-          orderId: {
-            equals: orderId,
-            mode: 'insensitive'
-          }
-        },
-        {
-          id: orderId.toLowerCase()
-        }
-      ]
+      orderId: {
+        equals: cleanId,
+        mode: 'insensitive'
+      }
     }
   });
  
- if (!order && orderId.startsWith("ORD-") && orderId.length === 10) {
- // Fallback for demo without database
- return { 
- success: true, 
- order: { 
- orderId, 
- status: "PROCESSING", 
- customerName: "Customer", 
- createdAt: new Date(),
- items: [],
- totalAmount: 0
- } 
- };
- }
- 
- return { success: true, order };
+  if (!order) {
+    // Order genuinely not found — return clear error, NOT fake data
+    return { success: false, error: `No order found with ID: ${cleanId}` };
+  }
+  
+  return { success: true, order };
  } catch (error) {
- console.error("Error fetching order:", error);
- if (orderId.startsWith("ORD-") && orderId.length === 10) {
- return { 
- success: true, 
- order: { 
- orderId, 
- status: "PROCESSING", 
- customerName: "Customer", 
- createdAt: new Date(),
- items: [],
- totalAmount: 0
- } 
- };
- }
- return { success: false, error: "Failed to fetch order" };
+  console.error("Error fetching order:", error);
+  return { success: false, error: "Database error. Please try again." };
  }
 }
 

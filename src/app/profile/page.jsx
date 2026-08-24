@@ -93,9 +93,15 @@ export default async function ProfilePage() {
             ) : (
               <div className="space-y-4">
                 {user.orders.map((order) => (
-                  <div key={order.id} className="p-4 rounded-2xl bg-black/40 border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <Link 
+                    key={order.id} 
+                    href={`/track?id=${order.orderId}`}
+                    className="p-4 rounded-2xl bg-black/40 border border-white/5 hover:border-cyan-500/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-300 group cursor-pointer block"
+                  >
                     <div>
-                      <p className="text-white font-medium mb-1">Order #{order.id.substring(0, 8).toUpperCase()}</p>
+                      <p className="text-white font-medium mb-1 group-hover:text-cyan-400 transition-colors">
+                        Order #{order.orderId || order.id.substring(0, 8).toUpperCase()}
+                      </p>
                       <p className="text-sm text-zinc-400">{new Date(order.createdAt).toLocaleDateString()} &middot; {order.items.length} items</p>
                     </div>
                     <div className="flex items-center gap-6">
@@ -111,7 +117,7 @@ export default async function ProfilePage() {
                         </span>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}

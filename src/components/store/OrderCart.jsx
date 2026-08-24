@@ -28,6 +28,7 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  const [orderMode, setOrderMode] = useState("STUDIO_CASH");
  const [isSubmitting, setIsSubmitting] = useState(false);
  const [error, setError] = useState("");
+ const [fieldErrors, setFieldErrors] = useState({ name: false, phone: false, address: false });
 
  useEffect(() => {
    if (session?.user) {
@@ -114,14 +115,17 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  return;
  }
 
- if (!name || !phone) {
- setError("Please fill in Name and Phone.");
- return;
+ const newFieldErrors = { name: !name.trim(), phone: !phone.trim(), address: orderMode === "HOME_UPI" && !address.trim() };
+ setFieldErrors(newFieldErrors);
+
+ if (!name.trim() || !phone.trim()) {
+  setError("Please fill in all required fields highlighted below.");
+  return;
  }
- 
- if (orderMode === "HOME_UPI" && !address) {
- setError("Please provide a delivery address");
- return;
+  
+ if (orderMode === "HOME_UPI" && !address.trim()) {
+  setError("Please provide a delivery address.");
+  return;
  }
 
  setError("");
@@ -359,7 +363,6 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  {/* Checkout Section */}
  {items.length > 0 && (
  <div className="mt-6 space-y-4">
- {error && <div className="bg-red-500/20 border border-red-500/30 text-red-400 p-3 rounded-xl text-sm">{error}</div>}
  
  {hasPhotoItem && (
  <div className="bg-brand-gradient hover-glow-brand border border-transparent rounded-xl p-3">
@@ -372,12 +375,34 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
 
  <div className="space-y-4">
  <div>
- <label className="text-xs font-medium text-zinc-400 block mb-1">Full Name</label>
- <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500 text-sm text-white placeholder-zinc-600" />
+  <label className="text-xs font-medium text-zinc-400 block mb-1">
+   Full Name <span className="text-red-400">*</span>
+  </label>
+  <input
+   type="text"
+   value={name}
+   onChange={(e) => { setName(e.target.value); if(e.target.value.trim()) setFieldErrors(prev => ({...prev, name: false})); }}
+   placeholder="John Doe"
+   className={`w-full bg-black/50 rounded-xl px-4 py-3 focus:outline-none text-sm text-white placeholder-zinc-600 border ${
+    fieldErrors.name ? 'border-red-500/70 focus:border-red-500' : 'border-white/10 focus:border-cyan-500'
+   }`}
+  />
+  {fieldErrors.name && <p className="text-red-400 text-xs mt-1 flex items-center gap-1">⚠ Name is required</p>}
  </div>
  <div>
- <label className="text-xs font-medium text-zinc-400 block mb-1">WhatsApp Number</label>
- <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 9876543210" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500 text-sm text-white placeholder-zinc-600" />
+  <label className="text-xs font-medium text-zinc-400 block mb-1">
+   WhatsApp Number <span className="text-red-400">*</span>
+  </label>
+  <input
+   type="tel"
+   value={phone}
+   onChange={(e) => { setPhone(e.target.value); if(e.target.value.trim()) setFieldErrors(prev => ({...prev, phone: false})); }}
+   placeholder="+91 9876543210"
+   className={`w-full bg-black/50 rounded-xl px-4 py-3 focus:outline-none text-sm text-white placeholder-zinc-600 border ${
+    fieldErrors.phone ? 'border-red-500/70 focus:border-red-500' : 'border-white/10 focus:border-cyan-500'
+   }`}
+  />
+  {fieldErrors.phone && <p className="text-red-400 text-xs mt-1 flex items-center gap-1">⚠ Phone is required</p>}
  </div>
 
  <div className="pt-2">
@@ -427,7 +452,18 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
   </div>
 
   {orderMode === "HOME_UPI" && (
-    <textarea rows={2} value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Delivery Address..." className="w-full mt-2 bg-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500 text-sm text-white placeholder-zinc-600" />
+   <div className="mt-2">
+    <textarea
+     rows={2}
+     value={address}
+     onChange={(e) => { setAddress(e.target.value); if(e.target.value.trim()) setFieldErrors(prev => ({...prev, address: false})); }}
+     placeholder="Delivery Address..."
+     className={`w-full bg-black/50 rounded-xl px-4 py-3 focus:outline-none text-sm text-white placeholder-zinc-600 border ${
+      fieldErrors.address ? 'border-red-500/70 focus:border-red-500' : 'border-white/10 focus:border-cyan-500'
+     }`}
+    />
+    {fieldErrors.address && <p className="text-red-400 text-xs mt-1 flex items-center gap-1">⚠ Delivery address is required</p>}
+   </div>
   )}
 
  </div>
@@ -442,8 +478,14 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  </div>
  </div>
 
+ {error && (
+  <div className="bg-red-500/10 border border-red-500/40 text-red-400 px-4 py-3 rounded-xl text-sm flex items-start gap-2">
+   <span className="text-lg leading-none mt-0.5">⚠</span>
+   <span>{error}</span>
+  </div>
+ )}
  <button onClick={handleCheckout} disabled={isSubmitting} className="w-full bg-brand-gradient hover-glow-brand text-black py-4 rounded-xl font-bold text-lg hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:-translate-y-1 transition-all disabled:opacity-50">
- {isSubmitting ? "Processing..." : "Confirm Order"}
+  {isSubmitting ? "Processing..." : "Confirm Order"}
  </button>
  
  <p className="text-center text-xs text-zinc-500 mt-4 flex items-center justify-center gap-1">

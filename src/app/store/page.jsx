@@ -9,10 +9,10 @@ import { Package, Camera, Gift, ShoppingCart, Plus } from "lucide-react";
 
 // Hardcoded store products (can be moved to DB later)
 const GIFTS = [
- { id: "g1", name: "Magic Mug", price: 350, category: "Gift", image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=500&auto=format&fit=crop" },
- { id: "g2", name: "Crystal Photo Cube", price: 850, category: "Gift", image: "https://images.unsplash.com/photo-1610444585149-aebaa465ccde?w=500&auto=format&fit=crop" },
- { id: "g3", name: "Custom Keychain", price: 150, category: "Gift", image: "https://images.unsplash.com/photo-1627993466185-5b87ec1b6a15?w=500&auto=format&fit=crop" },
- { id: "g4", name: "LED Photo Lamp", price: 1200, category: "Gift", image: "https://images.unsplash.com/photo-1517658797914-1fbc5b36916a?w=500&auto=format&fit=crop" },
+ { id: "g1", name: "Magic Mug", price: 350, category: "Gift", image: "https://res.cloudinary.com/e5pnwpo5/image/upload/f_auto,q_auto/sss-store/magic-mug" },
+ { id: "g2", name: "Crystal Photo Cube", price: 850, category: "Gift", image: "https://res.cloudinary.com/e5pnwpo5/image/upload/f_auto,q_auto/sss-store/crystal-cube" },
+ { id: "g3", name: "Custom Keychain", price: 150, category: "Gift", image: "https://res.cloudinary.com/e5pnwpo5/image/upload/f_auto,q_auto/sss-store/custom-keychain" },
+ { id: "g4", name: "LED Photo Lamp", price: 1200, category: "Gift", image: "https://res.cloudinary.com/e5pnwpo5/image/upload/f_auto,q_auto/sss-store/led-photo-lamp" },
 ];
 
 const PASSPORT_PACKAGES = [

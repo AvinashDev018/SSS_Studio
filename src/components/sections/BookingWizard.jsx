@@ -389,19 +389,31 @@ export default function BookingWizard() {
 
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
  <div>
- <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-400 mb-1">Event Type</label>
- <select 
- name="eventType"
- value={formData.eventType}
- onChange={handleChange}
- className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500"
- >
- <option value="Wedding">Wedding</option>
- <option value="Portrait">Portrait</option>
- <option value="Birthday Function">Birthday Function</option>
- <option value="Maternity">Maternity</option>
- <option value="Product Shoot">Product Shoot</option>
- </select>
+  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-400 mb-2">Event Type</label>
+  <div className="grid grid-cols-2 gap-2">
+   {[
+    { value: "Wedding", icon: "💍" },
+    { value: "Portrait", icon: "🎭" },
+    { value: "Birthday Function", icon: "🎂" },
+    { value: "Maternity", icon: "🌸" },
+    { value: "Product Shoot", icon: "📦" },
+    { value: "Event", icon: "🎉" },
+   ].map(({ value, icon }) => (
+    <button
+     key={value}
+     type="button"
+     onClick={() => setFormData(prev => ({ ...prev, eventType: value }))}
+     className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-all ${
+      formData.eventType === value
+       ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.2)]'
+       : 'bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:border-zinc-300 hover:border-cyan-400/50 hover:text-zinc-900 dark:hover:text-white'
+     }`}
+    >
+     <span className="text-base">{icon}</span>
+     <span className="leading-tight">{value}</span>
+    </button>
+   ))}
+  </div>
  </div>
  <div>
  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-400 mb-1">Location</label>

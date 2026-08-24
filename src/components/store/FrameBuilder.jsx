@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { Image as ImageIcon, Frame, Plus, Upload, RotateCw, MonitorSmartphone } from "lucide-react";
+import { useState, useRef, useCallback } from "react";
+import { Image as ImageIcon, Frame, Plus, Upload, RotateCw, MonitorSmartphone, Move } from "lucide-react";
 
 const FRAME_TYPES = [
  { id: "synthetic_wood", name: "Synthetic Wood", multiplier: 1.2, image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=200&auto=format&fit=crop" },
@@ -24,7 +24,36 @@ export default function FrameBuilder({ onAddToCart }) {
  const [rotation, setRotation] = useState(0);
  const [orientation, setOrientation] = useState("Portrait");
  const [zoom, setZoom] = useState(1);
+ const [offset, setOffset] = useState({ x: 0, y: 0 });
  const fileInputRef = useRef(null);
+ const isDragging = useRef(false);
+ const lastPos = useRef({ x: 0, y: 0 });
+
+ // --- Drag to Pan Handlers ---
+ const onDragStart = useCallback((clientX, clientY) => {
+  if (zoom <= 1) return;
+  isDragging.current = true;
+  lastPos.current = { x: clientX, y: clientY };
+ }, [zoom]);
+
+ const onDragMove = useCallback((clientX, clientY) => {
+  if (!isDragging.current) return;
+  const dx = clientX - lastPos.current.x;
+  const dy = clientY - lastPos.current.y;
+  lastPos.current = { x: clientX, y: clientY };
+  setOffset(prev => ({ x: prev.x + dx, y: prev.y + dy }));
+ }, []);
+
+ const onDragEnd = useCallback(() => {
+  isDragging.current = false;
+ }, []);
+
+ const handleMouseDown = (e) => { e.preventDefault(); onDragStart(e.clientX, e.clientY); };
+ const handleMouseMove = (e) => { onDragMove(e.clientX, e.clientY); };
+ const handleMouseUp = () => { onDragEnd(); };
+ const handleTouchStart = (e) => { const t = e.touches[0]; onDragStart(t.clientX, t.clientY); };
+ const handleTouchMove = (e) => { const t = e.touches[0]; onDragMove(t.clientX, t.clientY); };
+ const handleTouchEnd = () => { onDragEnd(); };
 
  // Calculate final price based on base size price * material multiplier
  const finalPrice = Math.round(selectedSize.basePrice * selectedType.multiplier);
@@ -35,8 +64,9 @@ export default function FrameBuilder({ onAddToCart }) {
  const reader = new FileReader();
  reader.onloadend = () => {
  setPreviewImage(reader.result);
- setRotation(0); // Reset rotation for new image
- setZoom(1); // Reset zoom
+ setRotation(0);
+ setZoom(1);
+ setOffset({ x: 0, y: 0 }); // Reset pan position
  };
  reader.readAsDataURL(file);
  }
@@ -82,15 +112,29 @@ export default function FrameBuilder({ onAddToCart }) {
  boxShadow: 'inset 0 0 20px rgba(0,0,0,0.4), 0 20px 40px rgba(0,0,0,0.3)',
  }}
  >
- {/* Inner Photo Container (creates the sunken look) */}
- <div className="relative w-full h-full shadow-[inset_0_0_10px_rgba(0,0,0,0.5)] overflow-hidden bg-zinc-100 flex items-center justify-center">
+  {/* Inner Photo Container — drag to reposition when zoomed */}
+ <div
+ className="relative w-full h-full shadow-[inset_0_0_10px_rgba(0,0,0,0.5)] overflow-hidden bg-zinc-100 flex items-center justify-center"
+ style={{ cursor: zoom > 1 ? (isDragging.current ? 'grabbing' : 'grab') : 'default' }}
+ onMouseDown={handleMouseDown}
+ onMouseMove={handleMouseMove}
+ onMouseUp={handleMouseUp}
+ onMouseLeave={handleMouseUp}
+ onTouchStart={handleTouchStart}
+ onTouchMove={handleTouchMove}
+ onTouchEnd={handleTouchEnd}
+ >
  {previewImage ? (
  <img 
  src={previewImage} 
  alt="Custom Preview" 
- className="w-full h-full object-cover transition-all duration-300" 
+ className="w-full h-full object-cover"
+ draggable={false}
  style={{ 
- transform: `scale(${zoom}) rotate(${rotation}deg)`
+ transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom}) rotate(${rotation}deg)`,
+ transformOrigin: 'center center',
+ userSelect: 'none',
+ pointerEvents: 'none',
  }}
  />
  ) : (
@@ -100,6 +144,13 @@ export default function FrameBuilder({ onAddToCart }) {
  </div>
  )}
  
+ {/* Drag hint overlay — shows when zoomed in */}
+ {previewImage && zoom > 1 && (
+ <div className="absolute bottom-1 left-1/2 -translate-x-1/2 bg-black/60 text-white text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1 pointer-events-none">
+ <Move className="w-2.5 h-2.5" /> Drag to align
+ </div>
+ )}
+
  {/* Glass Glare Overlay */}
  <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 pointer-events-none opacity-60 mix-blend-overlay"></div>
  <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-white/10 to-transparent pointer-events-none transform -skew-x-12 translate-x-4 opacity-50"></div>
@@ -143,17 +194,25 @@ export default function FrameBuilder({ onAddToCart }) {
  </button>
  </div>
  
- {/* Zoom / Crop Controls */}
+  {/* Zoom / Crop Controls */}
  {previewImage && (
- <div className="mt-4 w-full px-6 flex items-center gap-4">
+ <div className="mt-4 w-full px-6 space-y-3">
+ <div className="flex items-center gap-4">
  <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider shrink-0">Scale</span>
  <input 
  type="range" 
  min="1" max="3" step="0.1" 
  value={zoom} 
- onChange={(e) => setZoom(parseFloat(e.target.value))}
+ onChange={(e) => { setZoom(parseFloat(e.target.value)); if (parseFloat(e.target.value) === 1) setOffset({ x: 0, y: 0 }); }}
  className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-cyan-500"
  />
+ </div>
+ {zoom > 1 && (
+ <p className="text-[10px] text-cyan-500 flex items-center gap-1">
+ <Move className="w-3 h-3" />
+ Drag the photo in the frame above to align your face
+ </p>
+ )}
  </div>
  )}
  </div>

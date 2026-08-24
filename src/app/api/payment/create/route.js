@@ -36,7 +36,7 @@ export async function POST(req) {
       return NextResponse.json({
         success: true,
         isCash: true,
-        dbOrderId: dbOrder.id,
+        dbOrderId: dbOrder.orderId,
       });
     }
 
@@ -72,7 +72,7 @@ export async function POST(req) {
     return NextResponse.json({
       success: true,
       order,
-      dbOrderId: dbOrder.id,
+      dbOrderId: dbOrder.orderId,
     });
   } catch (error) {
     console.error("Error creating payment:", error);

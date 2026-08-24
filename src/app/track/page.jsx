@@ -39,17 +39,19 @@ export default function TrackOrderPage() {
  }, []);
 
  const handleSearch = async (idToSearch = orderId) => {
- if (!idToSearch.trim()) {
- setError("Please enter a valid Order ID");
- return;
+ const cleanId = idToSearch.trim().toUpperCase();
+ if (!cleanId) {
+  setError("Please enter a valid Order ID");
+  return;
  }
  
  setIsSearching(true);
  setError("");
- setSearchQuery(idToSearch.trim());
+ setOrder(null);
+ setSearchQuery(cleanId);
 
  try {
-      const res = await getOrder(idToSearch.trim());
+      const res = await getOrder(cleanId);
       if (res.success && res.order) {
         setOrder({
           orderId: res.order.orderId,
@@ -62,7 +64,7 @@ export default function TrackOrderPage() {
           items: typeof res.order.items === 'string' ? JSON.parse(res.order.items) : res.order.items,
         });
       } else {
-        setError(`No order found with ID: ${idToSearch}`);
+        setError(res.error || `No order found with ID: ${cleanId}`);
         setOrder(null);
       }
     } catch (err) {

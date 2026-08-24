@@ -170,19 +170,27 @@ export default function AdminOrders() {
  <div className="flex flex-col gap-1">
  <span className="font-bold text-brand-gradient dark:text-brand-gradient">₹{order.totalAmount}</span>
  <span className="text-xs text-zinc-500">{order.items.length} items</span>
- <div className="mt-2 flex flex-col gap-1">
+ <div className="mt-2 flex flex-col gap-2">
  {order.items.map((item, idx) => (
- item.image && (
- <a 
- key={idx} 
- href={item.image} 
- target="_blank" 
- rel="noreferrer" 
- className="text-xs flex items-center gap-1.5 text-blue-600 dark:text-blue-400 hover:underline bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded w-fit"
- >
- <ImageIcon className="w-3 h-3" /> Photo: {item.name}
- </a>
- )
+  item.hasCustomPhoto && item.image && (
+  <a
+   key={idx}
+   href={item.image}
+   target="_blank"
+   rel="noreferrer"
+   className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 px-2 py-1.5 rounded-lg w-fit hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
+  >
+   <img
+    src={item.image}
+    alt={item.name}
+    className="w-8 h-8 rounded object-cover border border-blue-200 dark:border-blue-700 shrink-0"
+   />
+   <div>
+    <p className="text-xs font-bold text-blue-700 dark:text-blue-300 leading-tight">Customer Photo</p>
+    <p className="text-[10px] text-blue-500 dark:text-blue-400 truncate max-w-[100px]">{item.name}</p>
+   </div>
+  </a>
+  )
  ))}
  </div>
  </div>

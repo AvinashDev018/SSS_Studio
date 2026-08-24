@@ -9,22 +9,22 @@ export async function uploadImageToCloud(base64Image) {
     const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
     if (!cloudName || !apiKey || !apiSecret) {
-      console.warn("Cloudinary credentials are missing. Please add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET to your .env file.");
+      console.warn("Cloudinary credentials are missing.");
       return { success: false, error: "Missing Cloudinary Credentials" };
     }
 
     const timestamp = Math.round(new Date().getTime() / 1000);
-    
-    // Cloudinary requires the signature string to be sorted alphabetically by parameter name.
-    // Since we only have timestamp, it's just timestamp=<value>
-    const signatureString = `timestamp=${timestamp}${apiSecret}`;
+    const folder = "sss-orders";
+
+    // Signature params must be sorted alphabetically
+    const signatureString = `folder=${folder}&timestamp=${timestamp}${apiSecret}`;
     const signature = crypto.createHash('sha1').update(signatureString).digest('hex');
 
     const formData = new FormData();
-    // Cloudinary accepts the full data URI (e.g., data:image/jpeg;base64,...)
     formData.append("file", base64Image);
     formData.append("api_key", apiKey);
     formData.append("timestamp", timestamp.toString());
+    formData.append("folder", folder);
     formData.append("signature", signature);
 
     const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
@@ -38,7 +38,7 @@ export async function uploadImageToCloud(base64Image) {
       return { success: true, url: data.secure_url };
     } else {
       console.error("Cloudinary Upload Error:", data);
-      return { success: false, error: data.error?.message || "Failed to upload image to Cloudinary." };
+      return { success: false, error: data.error?.message || "Failed to upload image." };
     }
   } catch (error) {
     console.error("Error in uploadImageToCloud:", error);
