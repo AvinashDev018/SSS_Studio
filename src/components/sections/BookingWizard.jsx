@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, ChevronRight, ChevronLeft, Calendar as CalendarIcon, Clock, Package as PackageIcon, User, MapPin } from "lucide-react";
-// Removed react-datepicker
+import { CheckCircle2, ChevronRight, ChevronLeft, Calendar as CalendarIcon, Clock, Package as PackageIcon, User, MapPin, Tag } from "lucide-react";
+import { getDatePricing } from "@/lib/pricingEngine";
 
 import { getPackages } from "@/app/actions/packages";
 import { getBookedSlots, createBooking } from "@/app/actions/booking";
@@ -242,30 +242,50 @@ export default function BookingWizard() {
  <div className="aspect-square"></div>
  <div className="aspect-square"></div>
  
- {Array.from({ length: 30 }).map((_, i) => {
- const day = i + 1;
- const dateObj = new Date();
- dateObj.setDate(day);
- const formattedDate = dateObj.toLocaleDateString('en-CA');
+  {Array.from({ length: 30 }).map((_, i) => {
+  const day = i + 1;
+  const dateObj = new Date();
+  dateObj.setDate(day);
+  const formattedDate = dateObj.toLocaleDateString('en-CA');
+  const pricing = getDatePricing(dateObj);
+  
+  const badgeColors = {
+   green: "bg-green-500/20 text-green-400 border-green-500/30",
+   amber: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+   rose: "bg-rose-500/20 text-rose-400 border-rose-500/30",
+   zinc: ""
+  };
+  const tileBg = {
+   green: "hover:bg-green-500/10",
+   amber: "hover:bg-amber-500/10",
+   rose: "hover:bg-rose-500/10",
+   zinc: "hover:bg-zinc-200 dark:hover:bg-zinc-800"
+  };
  
- const isPast = day < new Date().getDate();
- const isSelected = formData.date === formattedDate;
+  const isPast = day < new Date().getDate();
+  const isSelected = formData.date === formattedDate;
 
- return (
- <button
- key={day}
- disabled={isPast}
- onClick={() => setFormData(prev => ({ ...prev, date: formattedDate, timeSlot: "" }))}
- className={`
- aspect-square flex items-center justify-center rounded-xl text-sm font-medium transition-all duration-300
- ${isPast ? 'text-zinc-300 dark:text-zinc-700 cursor-not-allowed' : 'hover:bg-zinc-200 dark:hover:bg-zinc-800'}
- ${isSelected ? 'bg-brand-gradient hover-glow-brand text-white shadow-lg shadow-cyan-500/30 ring-2 ring-cyan-500/50 scale-105' : 'text-zinc-700 dark:text-zinc-300'}
- `}
- >
- {day}
- </button>
- );
- })}
+  return (
+  <button
+  key={day}
+  disabled={isPast}
+  onClick={() => setFormData(prev => ({ ...prev, date: formattedDate, timeSlot: "" }))}
+  title={!isPast ? pricing.label : undefined}
+  className={`
+  relative aspect-square flex flex-col items-center justify-center rounded-xl text-sm font-medium transition-all duration-300
+  ${isPast ? 'text-zinc-300 dark:text-zinc-700 cursor-not-allowed' : tileBg[pricing.badgeColor]}
+  ${isSelected ? 'bg-brand-gradient hover-glow-brand text-white shadow-lg shadow-cyan-500/30 ring-2 ring-cyan-500/50 scale-105' : 'text-zinc-700 dark:text-zinc-300'}
+  `}
+  >
+  {day}
+  {!isPast && !isSelected && pricing.badgeColor !== 'zinc' && (
+   <span className={`absolute bottom-0.5 left-1/2 -translate-x-1/2 text-[7px] font-bold px-1 rounded-sm border ${badgeColors[pricing.badgeColor]} leading-tight`}>
+    {pricing.discount > 0 ? `-${pricing.discount}%` : pricing.label.split(' ')[0]}
+   </span>
+  )}
+  </button>
+  );
+  })}
  </div>
  </div>
  </div>
@@ -305,6 +325,27 @@ export default function BookingWizard() {
  )}
  </div>
  </div>
+
+ {/* Dynamic Pricing Banner */}
+ {formData.date && (() => {
+  const selectedDate = new Date(formData.date + 'T00:00:00');
+  const pricing = getDatePricing(selectedDate);
+  const bannerStyles = {
+   green: "bg-green-500/10 border-green-500/30 text-green-400",
+   amber: "bg-amber-500/10 border-amber-500/30 text-amber-400",
+   rose: "bg-rose-500/10 border-rose-500/30 text-rose-400",
+   zinc: "bg-zinc-800/50 border-zinc-700/50 text-zinc-400",
+  };
+  return (
+   <div className={`flex items-start gap-3 p-4 rounded-2xl border ${bannerStyles[pricing.badgeColor]} transition-all duration-300`}>
+    <Tag className="w-4 h-4 mt-0.5 shrink-0" />
+    <div>
+     <p className="font-semibold text-sm">{pricing.label}</p>
+     <p className="text-xs opacity-80 mt-0.5">{pricing.message}</p>
+    </div>
+   </div>
+  );
+ })()}
  </motion.div>
  )}
 

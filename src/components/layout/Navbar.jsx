@@ -19,6 +19,7 @@ export default function Navbar() {
  { name: "Services", href: "/services" },
  { name: "Gallery", href: "/gallery" },
  { name: "Store", href: "/store" },
+ { name: "AI Stylist", href: "/visualizer" },
  { name: "Track Order", href: "/track" },
  { name: "Contact", href: "/contact" },
  ];

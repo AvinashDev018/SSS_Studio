@@ -1,6 +1,8 @@
-import { Camera, Video, Users, Sparkles, Building, Briefcase } from "lucide-react";
+import { Camera, Video, Users, Sparkles, Building, Briefcase, Wand2 } from "lucide-react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import FAQ from "@/components/sections/FAQ";
+import BeforeAfterSlider from "@/components/ui/BeforeAfterSlider";
+import Link from "next/link";
 
 export const metadata = {
  title: 'Our Services',
@@ -89,6 +91,67 @@ export default function Services() {
  ))}
  </div>
  </div>
+
+  {/* Before / After Section */}
+  <div className="px-4 sm:px-6 lg:px-8 mb-32">
+   <AnimatedSection className="text-center mb-16">
+    <h2 className="font-serif text-4xl md:text-5xl font-bold tracking-tight mb-6 text-zinc-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-br dark:from-cyan-400 dark:to-violet-600">
+     See the Difference
+    </h2>
+    <p className="text-zinc-600 dark:text-zinc-300 text-xl max-w-2xl mx-auto font-light leading-relaxed">
+     Drag the slider to see the magic of professional editing and color grading.
+    </p>
+   </AnimatedSection>
+
+   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <AnimatedSection delay={0.1}>
+     <p className="text-center text-sm font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-4">Portrait Retouching</p>
+     <BeforeAfterSlider
+      beforeSrc="https://res.cloudinary.com/e5pnwpo5/image/upload/e_grayscale,e_brightness:-20,e_contrast:-15/v1787505577/iqimm503wxxauaksjjzt.jpg"
+      afterSrc="https://res.cloudinary.com/e5pnwpo5/image/upload/v1787505577/iqimm503wxxauaksjjzt.jpg"
+      beforeLabel="Raw Shot"
+      afterLabel="Retouched"
+     />
+    </AnimatedSection>
+
+    <AnimatedSection delay={0.2}>
+     <p className="text-center text-sm font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-4">Wedding Color Grading</p>
+     <BeforeAfterSlider
+      beforeSrc="https://res.cloudinary.com/e5pnwpo5/image/upload/e_grayscale,e_brightness:-25,e_saturation:-80/v1787504972/kllcuquwxjltq88cmb5n.jpg"
+      afterSrc="https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504972/kllcuquwxjltq88cmb5n.jpg"
+      beforeLabel="Raw Shot"
+      afterLabel="Color Graded"
+     />
+    </AnimatedSection>
+
+    <AnimatedSection delay={0.3}>
+     <p className="text-center text-sm font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-4">Event Photography</p>
+     <BeforeAfterSlider
+      beforeSrc="https://res.cloudinary.com/e5pnwpo5/image/upload/e_grayscale,e_brightness:-30,e_contrast:-20/v1787505207/rm2cysblt45dofw4myda.jpg"
+      afterSrc="https://res.cloudinary.com/e5pnwpo5/image/upload/v1787505207/rm2cysblt45dofw4myda.jpg"
+      beforeLabel="Raw Shot"
+      afterLabel="Edited"
+     />
+    </AnimatedSection>
+   </div>
+
+   {/* AI Stylist CTA */}
+   <AnimatedSection delay={0.4} className="mt-20 text-center">
+    <div className="inline-flex flex-col items-center gap-4 p-8 rounded-3xl bg-gradient-to-br from-zinc-900 to-zinc-800 border border-cyan-500/20 shadow-2xl shadow-cyan-500/5">
+     <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-400 to-violet-600 flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.4)]">
+      <Wand2 className="w-7 h-7 text-white" />
+     </div>
+     <h3 className="font-serif text-2xl font-bold text-white">Not sure what to wear?</h3>
+     <p className="text-zinc-400 max-w-sm">Let our AI stylist analyze your photo and give you a personalized outfit guide for your shoot.</p>
+     <Link
+      href="/visualizer"
+      className="mt-2 inline-flex items-center gap-2 bg-gradient-to-r from-cyan-400 to-violet-500 text-black font-bold px-6 py-3 rounded-full hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all duration-300"
+     >
+      <Wand2 className="w-4 h-4" /> Try AI Stylist — Free
+     </Link>
+    </div>
+   </AnimatedSection>
+  </div>
 
  <FAQ />
  </div>
