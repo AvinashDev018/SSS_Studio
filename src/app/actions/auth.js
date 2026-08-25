@@ -5,9 +5,14 @@ import { redirect } from "next/navigation";
 
 export async function loginAdmin(formData) {
  const password = formData.get("password");
- const adminPassword = process.env.ADMIN_PASSWORD || "admin";
+ const adminPassword = process.env.ADMIN_PASSWORD;
 
- if (password && adminPassword && password.trim().toLowerCase() === adminPassword.trim().toLowerCase()) {
+ if (!adminPassword) {
+   console.error("ADMIN_PASSWORD environment variable is not set.");
+   return { error: "Internal server error" };
+ }
+
+ if (password && password.trim().toLowerCase() === adminPassword.trim().toLowerCase()) {
  // Set a cookie that expires in 1 day
  const cookieStore = await cookies();
  cookieStore.set("admin_session", "true", {
