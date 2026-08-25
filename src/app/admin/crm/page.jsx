@@ -15,7 +15,23 @@ export default function CRMDashboard() {
     async function fetchOrders() {
       const res = await getOrders();
       if (res.success) {
-        setOrders(res.orders);
+        const parsedOrders = res.orders.map(order => {
+          let parsedItems = [];
+          if (Array.isArray(order.items)) {
+            parsedItems = order.items;
+          } else if (typeof order.items === 'string') {
+            try {
+              parsedItems = JSON.parse(order.items);
+            } catch (e) {
+              parsedItems = [];
+            }
+          }
+          return {
+            ...order,
+            items: parsedItems
+          };
+        });
+        setOrders(parsedOrders);
       }
       setIsLoading(false);
     }
@@ -40,12 +56,7 @@ export default function CRMDashboard() {
   };
 
   const getOrderType = (order) => {
-    let items = [];
-    try {
-      items = Array.isArray(order.items) ? order.items : JSON.parse(order.items);
-    } catch (e) {
-      items = [];
-    }
+    const items = order.items || [];
     const addressStr = order.address || "";
     const isPickup = addressStr.toLowerCase().includes("collect from studio") || addressStr.toLowerCase().includes("pickup");
     const isPassportOnly = items.length > 0 && items.every(item => item.category === 'Passport');
@@ -173,47 +184,43 @@ export default function CRMDashboard() {
                         
                         {/* Show Images */}
                         {(() => {
-                           try {
-                             const items = Array.isArray(order.items) ? order.items : (typeof order.items === 'string' ? JSON.parse(order.items) : []);
-                             const images = items.filter(item => item.image).map(item => item.image);
-                             if (images.length > 0) {
-                               return (
-                                 <div className="flex gap-2 mb-4 overflow-x-auto pb-1 scrollbar-hide pt-1">
-                                   {images.map((img, i) => (
-                                      <div key={i} className="relative group/img shrink-0">
-                                        <a href={img} target="_blank" rel="noopener noreferrer">
-                                          <img src={img} alt="Order Upload" className="w-12 h-12 rounded-lg object-cover border border-zinc-800 hover:border-cyan-500 transition-colors" />
-                                        </a>
-                                        <button 
-                                          onClick={async (e) => {
-                                            e.stopPropagation();
-                                            try {
-                                              const response = await fetch(img);
-                                              const blob = await response.blob();
-                                              const blobUrl = window.URL.createObjectURL(blob);
-                                              const a = document.createElement('a');
-                                              a.href = blobUrl;
-                                              a.download = `${order.orderId}-image-${i + 1}.jpg`;
-                                              document.body.appendChild(a);
-                                              a.click();
-                                              window.URL.revokeObjectURL(blobUrl);
-                                              document.body.removeChild(a);
-                                            } catch (err) {
-                                              window.open(img, '_blank');
-                                            }
-                                          }}
-                                          className="absolute top-1 right-1 bg-brand-gradient text-black p-1 rounded-full shadow-lg opacity-0 group-hover/img:opacity-100 transition-all z-10 hover:scale-110"
-                                          title="Download Image"
-                                        >
-                                          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                        </button>
-                                      </div>
-                                   ))}
-                                 </div>
-                               );
-                             }
-                           } catch (e) {
-                             return null;
+                           const items = order.items || [];
+                           const images = items.filter(item => item.image).map(item => item.image);
+                           if (images.length > 0) {
+                             return (
+                               <div className="flex gap-2 mb-4 overflow-x-auto pb-1 scrollbar-hide pt-1">
+                                 {images.map((img, i) => (
+                                    <div key={i} className="relative group/img shrink-0">
+                                      <a href={img} target="_blank" rel="noopener noreferrer">
+                                        <img src={img} alt="Order Upload" className="w-12 h-12 rounded-lg object-cover border border-zinc-800 hover:border-cyan-500 transition-colors" />
+                                      </a>
+                                      <button
+                                        onClick={async (e) => {
+                                          e.stopPropagation();
+                                          try {
+                                            const response = await fetch(img);
+                                            const blob = await response.blob();
+                                            const blobUrl = window.URL.createObjectURL(blob);
+                                            const a = document.createElement('a');
+                                            a.href = blobUrl;
+                                            a.download = `${order.orderId}-image-${i + 1}.jpg`;
+                                            document.body.appendChild(a);
+                                            a.click();
+                                            window.URL.revokeObjectURL(blobUrl);
+                                            document.body.removeChild(a);
+                                          } catch (err) {
+                                            window.open(img, '_blank');
+                                          }
+                                        }}
+                                        className="absolute top-1 right-1 bg-brand-gradient text-black p-1 rounded-full shadow-lg opacity-0 group-hover/img:opacity-100 transition-all z-10 hover:scale-110"
+                                        title="Download Image"
+                                      >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                      </button>
+                                    </div>
+                                 ))}
+                               </div>
+                             );
                            }
                            return null;
                         })()}
