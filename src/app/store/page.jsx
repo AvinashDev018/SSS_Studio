@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import FrameBuilder from "@/components/store/FrameBuilder";
 import CollageBuilder from "@/components/store/CollageBuilder";
+import PassportPackages from "@/components/store/PassportPackages";
+import Gifts from "@/components/store/Gifts";
 import OrderCart from "@/components/store/OrderCart";
 import { Package, Camera, Gift, ShoppingCart, Plus, Loader2 } from "lucide-react";
 
@@ -15,9 +17,6 @@ export default function StorePage() {
  const [cartItems, setCartItems] = useState([]);
  const [isCartOpen, setIsCartOpen] = useState(false);
  const [isLoaded, setIsLoaded] = useState(false);
- const [passportRefs, setPassportRefs] = useState({});
- const [giftMessages, setGiftMessages] = useState({});
- const [giftImages, setGiftImages] = useState({});
 
  useEffect(() => {
    const fetchProducts = async () => {
@@ -86,30 +85,10 @@ export default function StorePage() {
  }, [cartItems, isLoaded]);
 
  const addToCart = (product) => {
- let details = product.details || "";
- let hasCustomPhoto = false;
- let image = null;
+ const details = product.details || "";
+ const hasCustomPhoto = product.hasCustomPhoto || false;
+ const image = product.image || null;
 
- if (product.category === "Passport" && passportRefs[product.id]) {
- details = `Studio Reference No: ${passportRefs[product.id].toUpperCase()}`;
- } else if (product.category === "Gift") {
- const msg = giftMessages[product.id];
- const imgObj = giftImages[product.id];
- const imgName = imgObj ? imgObj.name : null;
- if (msg && imgName) {
- details = `Message: "${msg}" | Photo: ${imgName}`;
- } else if (msg) {
- details = `Message: "${msg}"`;
- } else if (imgName) {
- details = `Photo: ${imgName}`;
- }
-
- if (imgObj && imgObj.dataUrl) {
- hasCustomPhoto = true;
- image = imgObj.dataUrl;
- }
- }
- 
  setCartItems(prev => {
  const existingItemIndex = prev.findIndex(item => 
  item.id === product.id && 
@@ -135,14 +114,6 @@ export default function StorePage() {
  }
  });
  setIsCartOpen(true);
-
- if (product.category === "Passport") {
- setPassportRefs(prev => ({ ...prev, [product.id]: "" }));
- }
- if (product.category === "Gift") {
- setGiftMessages(prev => ({ ...prev, [product.id]: "" }));
- setGiftImages(prev => ({ ...prev, [product.id]: null }));
- }
  };
 
  const removeFromCart = (cartId) => {
