@@ -119,3 +119,12 @@ model Order {
   userId        String?
   user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
+
+model Product {
+  id        String   @id @default(uuid())
+  name      String
+  price     Float
+  category  String
+  image     String
+  createdAt DateTime @default(now())
+}

@@ -9,11 +9,17 @@ function usingArrayFrom() {
   }
 }
 
+function usingArrayFill() {
+  for (let iter = 0; iter < iterations; iter++) {
+    const arr = Array(slots).fill(null).map((_, i) => i);
+  }
+}
+
 function usingForLoop() {
   for (let iter = 0; iter < iterations; iter++) {
-    const arr = [];
+    const arr = Array(slots);
     for (let i = 0; i < slots; i++) {
-      arr.push(i);
+      arr[i] = i;
     }
   }
 }
@@ -24,8 +30,14 @@ usingArrayFrom();
 const end1 = performance.now();
 console.log(`Array.from took ${end1 - start1} ms`);
 
-console.log("Measuring for loop...");
+console.log("Measuring Array(n).fill...");
 const start2 = performance.now();
-usingForLoop();
+usingArrayFill();
 const end2 = performance.now();
-console.log(`For loop took ${end2 - start2} ms`);
+console.log(`Array(n).fill took ${end2 - start2} ms`);
+
+console.log("Measuring For Loop with preallocated...");
+const start3 = performance.now();
+usingForLoop();
+const end3 = performance.now();
+console.log(`For Loop took ${end3 - start3} ms`);
