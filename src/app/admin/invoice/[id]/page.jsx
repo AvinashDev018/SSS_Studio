@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Printer, ArrowLeft, Camera } from "lucide-react";
 import Link from "next/link";
 import { getOrder } from "@/app/actions/orders";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function ReceiptPage() {
   const { id } = useParams();
@@ -44,9 +45,7 @@ export default function ReceiptPage() {
     );
   }
 
-  // A simple QR code generator using a public API for demonstration
-  // In a real app, use a dedicated library like qrcode.react
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://localhost:3000/track?id=${order.orderId}`;
+  const trackUrl = `http://localhost:3000/track?id=${order.orderId}`;
   
   // Format the date if it's a DB date object
   const formattedDate = order.createdAt ? new Date(order.createdAt).toLocaleDateString() : order.date;
@@ -95,7 +94,7 @@ export default function ReceiptPage() {
           </div>
           <div className="text-right flex flex-col items-end">
             <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-2">Track Order</h3>
-            <img src={qrCodeUrl} alt="Tracking QR Code" className="w-24 h-24 border-2 border-zinc-100 rounded-xl" />
+            <QRCodeSVG value={trackUrl} size={96} className="border-2 border-zinc-100 rounded-xl" />
             <p className="text-xs text-zinc-400 mt-2">Scan to track status</p>
           </div>
         </div>
