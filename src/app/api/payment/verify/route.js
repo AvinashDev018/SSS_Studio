@@ -12,7 +12,15 @@ export async function POST(req) {
       dbOrderId,
     } = body;
 
-    const secret = process.env.RAZORPAY_KEY_SECRET || "rzp_secret_placeholder";
+    const secret = process.env.RAZORPAY_KEY_SECRET;
+
+    if (!secret) {
+      console.error("RAZORPAY_KEY_SECRET is not configured");
+      return NextResponse.json(
+        { error: "Internal server error" },
+        { status: 500 }
+      );
+    }
 
     // Create HMAC hex digest to verify signature
     const generated_signature = crypto
