@@ -25,21 +25,6 @@ export default async function AdminDashboard() {
  });
  } catch (error) {
  console.error("Failed to load bookings from database:", error);
- // Provide a dummy booking so the admin can at least see the UI structure
- bookings = [
- {
- id: "demo-booking-1",
- name: "Demo User (Database Error)",
- phone: "+91 9876543210",
- eventType: "Wedding",
- date: new Date(),
- timeSlot: "10:00 AM",
- location: "Studio",
- requirements: "Database connection failed. Showing demo data.",
- status: "PENDING",
- createdAt: new Date()
- }
- ];
  }
 
  return (
