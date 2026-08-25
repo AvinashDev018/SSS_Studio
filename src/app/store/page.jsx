@@ -17,6 +17,10 @@ export default function StorePage() {
  const [cartItems, setCartItems] = useState([]);
  const [isCartOpen, setIsCartOpen] = useState(false);
  const [isLoaded, setIsLoaded] = useState(false);
+ const [passportRefs, setPassportRefs] = useState({});
+ const [giftMessages, setGiftMessages] = useState({});
+ const [giftImages, setGiftImages] = useState({});
+
 
  useEffect(() => {
    const fetchProducts = async () => {
