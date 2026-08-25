@@ -6,6 +6,7 @@ import { CheckCircle2, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import Testimonials from "@/components/sections/Testimonials";
+import HowItWorks from "@/components/sections/HowItWorks";
 
 const HERO_IMAGES = [
  "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504208/iydxdch0gcdo1vuea56q.jpg",
@@ -124,6 +125,9 @@ export default function Home() {
  </AnimatedSection>
  </div>
  </section>
+
+ {/* How It Works Section */}
+ <HowItWorks />
 
  {/* Why Choose Us */}
  <section className="py-32 relative">
