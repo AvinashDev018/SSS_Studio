@@ -98,6 +98,44 @@ export default function CollageBuilder({ onAddToCart }) {
  setImages({});
  };
 
+  const slots = new Array(selectedLayout.slots);
+  for (let i = 0; i < selectedLayout.slots; i++) {
+    slots[i] = (
+      <div
+        key={i}
+        onClick={() => openFilePicker(i)}
+        className={`relative overflow-hidden bg-zinc-100 dark:bg-zinc-800 rounded flex flex-col items-center justify-center cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors group ${selectedLayout.slotClasses[i]}`}
+      >
+        {images[i] ? (
+          <>
+            <img
+              src={images[i]}
+              alt={`Slot ${i+1}`}
+              className="w-full h-full object-cover transition-all duration-300"
+              style={{ filter: photoFilter }}
+            />
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+              <p className="text-white font-medium text-sm">Change Photo</p>
+            </div>
+            <button
+              onClick={(e) => removeImage(i, e)}
+              className="absolute top-2 right-2 bg-red-500/80 text-white p-1.5 rounded-full hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </>
+        ) : (
+          <div className="text-zinc-400 dark:text-zinc-500 flex flex-col items-center">
+            <div className="bg-white dark:bg-zinc-900 p-3 rounded-full shadow-sm mb-2 group-hover:scale-110 transition-transform">
+              <Plus className="w-6 h-6 text-brand-gradient" />
+            </div>
+            <span className="text-sm font-medium">Add Photo</span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
  return (
  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
  {/* Hidden file input */}
@@ -113,40 +151,7 @@ export default function CollageBuilder({ onAddToCart }) {
  <div className="lg:col-span-8 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-4 sm:p-8 flex flex-col items-center justify-center min-h-[400px] lg:min-h-[600px] lg:sticky lg:top-24">
  <div className="w-full max-w-2xl aspect-[4/3] bg-white dark:bg-zinc-950 shadow-2xl p-4 rounded-xl">
  <div className={`grid gap-2 w-full h-full ${selectedLayout.gridClass}`}>
- {Array.from({ length: selectedLayout.slots }).map((_, i) => (
- <div 
- key={i}
- onClick={() => openFilePicker(i)}
- className={`relative overflow-hidden bg-zinc-100 dark:bg-zinc-800 rounded flex flex-col items-center justify-center cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors group ${selectedLayout.slotClasses[i]}`}
- >
- {images[i] ? (
- <>
- <img 
- src={images[i]} 
- alt={`Slot ${i+1}`} 
- className="w-full h-full object-cover transition-all duration-300"
- style={{ filter: photoFilter }}
- />
- <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
- <p className="text-white font-medium text-sm">Change Photo</p>
- </div>
- <button 
- onClick={(e) => removeImage(i, e)}
- className="absolute top-2 right-2 bg-red-500/80 text-white p-1.5 rounded-full hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
- >
- <X className="w-4 h-4" />
- </button>
- </>
- ) : (
- <div className="text-zinc-400 dark:text-zinc-500 flex flex-col items-center">
- <div className="bg-white dark:bg-zinc-900 p-3 rounded-full shadow-sm mb-2 group-hover:scale-110 transition-transform">
- <Plus className="w-6 h-6 text-brand-gradient" />
- </div>
- <span className="text-sm font-medium">Add Photo</span>
- </div>
- )}
- </div>
- ))}
+            {slots}
  </div>
  </div>
  
