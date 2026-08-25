@@ -5,30 +5,37 @@ import AnimatedSection from "@/components/ui/AnimatedSection";
 import FrameBuilder from "@/components/store/FrameBuilder";
 import CollageBuilder from "@/components/store/CollageBuilder";
 import OrderCart from "@/components/store/OrderCart";
-import { Package, Camera, Gift, ShoppingCart, Plus } from "lucide-react";
-
-// Hardcoded store products (can be moved to DB later)
-const GIFTS = [
- { id: "g1", name: "Magic Mug", price: 350, category: "Gift", image: "https://res.cloudinary.com/e5pnwpo5/image/upload/f_auto,q_auto/sss-store/magic-mug" },
- { id: "g2", name: "Crystal Photo Cube", price: 850, category: "Gift", image: "https://res.cloudinary.com/e5pnwpo5/image/upload/f_auto,q_auto/sss-store/crystal-cube" },
- { id: "g3", name: "Custom Keychain", price: 150, category: "Gift", image: "https://res.cloudinary.com/e5pnwpo5/image/upload/f_auto,q_auto/sss-store/custom-keychain" },
- { id: "g4", name: "LED Photo Lamp", price: 1200, category: "Gift", image: "https://res.cloudinary.com/e5pnwpo5/image/upload/f_auto,q_auto/sss-store/led-photo-lamp" },
-];
-
-const PASSPORT_PACKAGES = [
- { id: "p1", name: "8 Passport Size Photos", price: 100, category: "Passport", image: "https://res.cloudinary.com/e5pnwpo5/image/upload/f_auto,q_auto/passport-mockup" },
- { id: "p2", name: "8 Passport + 8 Stamp Size", price: 150, category: "Passport", image: "https://res.cloudinary.com/e5pnwpo5/image/upload/f_auto,q_auto/passport-mockup" },
- { id: "p3", name: "16 Stamp Size Photos", price: 100, category: "Passport", image: "https://res.cloudinary.com/e5pnwpo5/image/upload/f_auto,q_auto/passport-mockup" },
-];
+import { Package, Camera, Gift, ShoppingCart, Plus, Loader2 } from "lucide-react";
 
 export default function StorePage() {
  const [activeTab, setActiveTab] = useState("frames");
+ const [gifts, setGifts] = useState([]);
+ const [passportPackages, setPassportPackages] = useState([]);
+ const [isLoadingProducts, setIsLoadingProducts] = useState(true);
  const [cartItems, setCartItems] = useState([]);
  const [isCartOpen, setIsCartOpen] = useState(false);
  const [isLoaded, setIsLoaded] = useState(false);
  const [passportRefs, setPassportRefs] = useState({});
  const [giftMessages, setGiftMessages] = useState({});
  const [giftImages, setGiftImages] = useState({});
+
+ useEffect(() => {
+   const fetchProducts = async () => {
+     try {
+       const res = await fetch('/api/products');
+       if (res.ok) {
+         const products = await res.json();
+         setGifts(products.filter(p => p.category === 'Gift'));
+         setPassportPackages(products.filter(p => p.category === 'Passport'));
+       }
+     } catch (error) {
+       console.error("Failed to fetch products:", error);
+     } finally {
+       setIsLoadingProducts(false);
+     }
+   };
+   fetchProducts();
+ }, []);
 
  // Load cart from local storage on mount
  useEffect(() => {
@@ -195,8 +202,13 @@ export default function StorePage() {
  )}
 
  {activeTab === "passport" && (
+  isLoadingProducts ? (
+    <div className="flex justify-center items-center h-48">
+      <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
+    </div>
+  ) : (
  <AnimatedSection className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
- {PASSPORT_PACKAGES.map((pkg) => (
+ {passportPackages.map((pkg) => (
  <div key={pkg.id} className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-500 group flex flex-col h-full relative">
  <div className="h-48 overflow-hidden shrink-0 relative">
  <img src={pkg.image} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
@@ -231,11 +243,17 @@ export default function StorePage() {
  </div>
  ))}
  </AnimatedSection>
+  )
  )}
 
  {activeTab === "gifts" && (
+  isLoadingProducts ? (
+    <div className="flex justify-center items-center h-48">
+      <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
+    </div>
+  ) : (
  <AnimatedSection className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
- {GIFTS.map((gift) => (
+ {gifts.map((gift) => (
  <div key={gift.id} className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-500 group flex flex-col h-full relative">
  <div className="h-48 overflow-hidden shrink-0 relative">
  <img src={gift.image} alt={gift.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
@@ -290,6 +308,7 @@ export default function StorePage() {
  </div>
  ))}
  </AnimatedSection>
+  )
  )}
  {activeTab === "collages" && (
  <AnimatedSection>
