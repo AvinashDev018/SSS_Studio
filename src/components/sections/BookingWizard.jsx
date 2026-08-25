@@ -21,6 +21,7 @@ export default function BookingWizard() {
  const [isSubmitting, setIsSubmitting] = useState(false);
  const [isLoading, setIsLoading] = useState(true);
  const [error, setError] = useState("");
+ const [currentDate, setCurrentDate] = useState(new Date());
 
  const [formData, setFormData] = useState({
  packageId: "",
@@ -212,16 +213,29 @@ export default function BookingWizard() {
  <CalendarIcon className="w-4 h-4" /> Pick a Date
  </label>
  
+ {(() => {
+  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+  const startDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return (
  <div className="bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 shadow-inner">
  {/* Month/Year Header */}
  <div className="flex justify-between items-center mb-4">
- <button className="p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-full transition-colors text-zinc-500">
+ <button
+  onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))}
+  className="p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-full transition-colors text-zinc-500"
+ >
  <ChevronLeft className="w-4 h-4" />
  </button>
  <div className="font-bold text-zinc-800 dark:text-zinc-200">
- {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+ {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
  </div>
- <button className="p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-full transition-colors text-zinc-500">
+ <button
+  onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))}
+  className="p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-full transition-colors text-zinc-500"
+ >
  <ChevronRight className="w-4 h-4" />
  </button>
  </div>
@@ -235,18 +249,23 @@ export default function BookingWizard() {
  ))}
  </div>
 
- {/* Dates Grid (Mock 30 days for current month) */}
+ {/* Dates Grid (Dynamic) */}
  <div className="grid grid-cols-7 gap-1">
- {/* Empty slots for starting day offset (assuming month starts on Wednesday = 3) */}
- <div className="aspect-square"></div>
- <div className="aspect-square"></div>
- <div className="aspect-square"></div>
+ {/* Empty slots for starting day offset */}
+ {Array.from({ length: startDay }).map((_, i) => (
+  <div key={`empty-${i}`} className="aspect-square"></div>
+ ))}
  
-  {Array.from({ length: 30 }).map((_, i) => {
+  {Array.from({ length: daysInMonth }).map((_, i) => {
   const day = i + 1;
-  const dateObj = new Date();
-  dateObj.setDate(day);
-  const formattedDate = dateObj.toLocaleDateString('en-CA');
+  const dateObj = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+
+  // Format as YYYY-MM-DD correctly avoiding timezone shifts
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const d = String(dateObj.getDate()).padStart(2, '0');
+  const formattedDate = `${year}-${month}-${d}`;
+
   const pricing = getDatePricing(dateObj);
   
   const badgeColors = {
@@ -262,7 +281,7 @@ export default function BookingWizard() {
    zinc: "hover:bg-zinc-200 dark:hover:bg-zinc-800"
   };
  
-  const isPast = day < new Date().getDate();
+  const isPast = dateObj < today;
   const isSelected = formData.date === formattedDate;
 
   return (
@@ -288,6 +307,8 @@ export default function BookingWizard() {
   })}
  </div>
  </div>
+  );
+ })()}
  </div>
 
  {/* Time Slots */}

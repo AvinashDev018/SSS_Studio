@@ -7,13 +7,34 @@ import CollageBuilder from "@/components/store/CollageBuilder";
 import PassportPackages from "@/components/store/PassportPackages";
 import Gifts from "@/components/store/Gifts";
 import OrderCart from "@/components/store/OrderCart";
-import { Package, Camera, Gift, ShoppingCart } from "lucide-react";
+import { Package, Camera, Gift, ShoppingCart, Plus, Loader2 } from "lucide-react";
 
 export default function StorePage() {
  const [activeTab, setActiveTab] = useState("frames");
+ const [gifts, setGifts] = useState([]);
+ const [passportPackages, setPassportPackages] = useState([]);
+ const [isLoadingProducts, setIsLoadingProducts] = useState(true);
  const [cartItems, setCartItems] = useState([]);
  const [isCartOpen, setIsCartOpen] = useState(false);
  const [isLoaded, setIsLoaded] = useState(false);
+
+ useEffect(() => {
+   const fetchProducts = async () => {
+     try {
+       const res = await fetch('/api/products');
+       if (res.ok) {
+         const products = await res.json();
+         setGifts(products.filter(p => p.category === 'Gift'));
+         setPassportPackages(products.filter(p => p.category === 'Passport'));
+       }
+     } catch (error) {
+       console.error("Failed to fetch products:", error);
+     } finally {
+       setIsLoadingProducts(false);
+     }
+   };
+   fetchProducts();
+ }, []);
 
  // Load cart from local storage on mount
  useEffect(() => {
@@ -152,11 +173,113 @@ export default function StorePage() {
  )}
 
  {activeTab === "passport" && (
- <PassportPackages onAddToCart={addToCart} />
+  isLoadingProducts ? (
+    <div className="flex justify-center items-center h-48">
+      <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
+    </div>
+  ) : (
+ <AnimatedSection className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+ {passportPackages.map((pkg) => (
+ <div key={pkg.id} className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-500 group flex flex-col h-full relative">
+ <div className="h-48 overflow-hidden shrink-0 relative">
+ <img src={pkg.image} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+ <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500"></div>
+ </div>
+ <div className="p-5 flex flex-col flex-1 relative z-10">
+ <h3 className="font-serif font-bold text-xl text-white mb-1">{pkg.name}</h3>
+ <p className="text-brand-gradient font-bold text-lg mb-4">₹{pkg.price}</p>
+ 
+ <div className="mt-auto pt-4">
+ <div className="mb-4">
+ <label className="text-xs font-medium text-zinc-400 mb-1 block">
+ Old Studio Photo? (Optional)
+ </label>
+ <input 
+ type="text" 
+ placeholder="e.g. A123" 
+ value={passportRefs[pkg.id] || ""}
+ onChange={(e) => setPassportRefs(prev => ({...prev, [pkg.id]: e.target.value}))}
+ className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 uppercase placeholder-zinc-600 transition-colors"
+ />
+ </div>
+
+ <button 
+ onClick={() => addToCart(pkg)}
+ className="w-full bg-brand-gradient hover-glow-brand text-black py-2.5 rounded-xl font-bold hover:bg-brand-gradient hover-glow-brand text-white border-transparent hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all flex items-center justify-center gap-2"
+ >
+ <Plus className="w-4 h-4" /> Add to Order
+ </button>
+ </div>
+ </div>
+ </div>
+ ))}
+ </AnimatedSection>
+  )
  )}
 
  {activeTab === "gifts" && (
- <Gifts onAddToCart={addToCart} />
+  isLoadingProducts ? (
+    <div className="flex justify-center items-center h-48">
+      <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
+    </div>
+  ) : (
+ <AnimatedSection className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+ {gifts.map((gift) => (
+ <div key={gift.id} className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-500 group flex flex-col h-full relative">
+ <div className="h-48 overflow-hidden shrink-0 relative">
+ <img src={gift.image} alt={gift.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+ <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500"></div>
+ </div>
+ <div className="p-5 flex flex-col flex-1 relative z-10">
+ <h3 className="font-serif font-bold text-xl text-white mb-1">{gift.name}</h3>
+ <p className="text-brand-gradient font-bold text-lg mb-4">₹{gift.price}</p>
+ 
+ <div className="mt-auto pt-4">
+ <div className="mb-4">
+ <div className="mb-3">
+ <label className="text-xs font-medium text-zinc-400 mb-1 block">
+ Upload Custom Photo (Optional)
+ </label>
+ <input 
+ type="file" 
+ accept="image/*"
+ onChange={(e) => {
+ const file = e.target.files[0];
+ if (file) {
+ const reader = new FileReader();
+ reader.onloadend = () => {
+ setGiftImages(prev => ({...prev, [gift.id]: { name: file.name, dataUrl: reader.result }}));
+ };
+ reader.readAsDataURL(file);
+ }
+ }}
+ className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-zinc-400 focus:outline-none focus:border-cyan-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-brand-gradient hover-glow-brand file:text-black hover:file:bg-brand-gradient hover-glow-brand text-white border-transparent transition-colors"
+ />
+ </div>
+ <label className="text-xs font-medium text-zinc-400 mb-1 block">
+ Custom Text / Name (Optional)
+ </label>
+ <input 
+ type="text" 
+ placeholder="e.g. Happy Birthday!" 
+ value={giftMessages[gift.id] || ""}
+ onChange={(e) => setGiftMessages(prev => ({...prev, [gift.id]: e.target.value}))}
+ className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 placeholder-zinc-600 transition-colors"
+ />
+ </div>
+
+ <button 
+ onClick={() => addToCart(gift)}
+ className="w-full bg-brand-gradient hover-glow-brand text-black py-2.5 rounded-xl font-bold hover:bg-brand-gradient hover-glow-brand text-white border-transparent hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all flex items-center justify-center gap-2"
+ >
+ <Plus className="w-4 h-4" /> Add to Order
+ </button>
+ </div>
+ </div>
+ </div>
+ ))}
+ </AnimatedSection>
+  )
  )}
  {activeTab === "collages" && (
  <AnimatedSection>
