@@ -98,6 +98,16 @@ export default function CRMDashboard() {
     return <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-white">Loading Orders...</div>;
   }
 
+  const ordersByStatus = activeStatuses.reduce((acc, status) => {
+    acc[status] = [];
+    return acc;
+  }, {});
+  filteredOrders.forEach(order => {
+    if (ordersByStatus[order.status]) {
+      ordersByStatus[order.status].push(order);
+    }
+  });
+
   return (
     <div className="min-h-screen bg-zinc-950 p-6 sm:p-12 text-zinc-100 font-sans">
       <div className="max-w-7xl mx-auto space-y-12">
@@ -134,14 +144,12 @@ export default function CRMDashboard() {
                 <div className="flex items-center justify-between mb-4 px-2">
                   <h3 className="font-bold text-white">{status}</h3>
                   <span className="bg-zinc-800 text-xs px-2 py-1 rounded-full text-zinc-400">
-                    {filteredOrders.filter((o) => o.status === status).length}
+                    {ordersByStatus[status].length}
                   </span>
                 </div>
 
                 <div className="flex-1 space-y-3">
-                  {filteredOrders
-                    .filter((order) => order.status === status)
-                    .map((order) => (
+                  {ordersByStatus[status].map((order) => (
                       <div
                         key={order.orderId}
                         className="bg-zinc-950 border border-zinc-800 hover:border-zinc-700 transition-colors rounded-2xl p-4 group"
