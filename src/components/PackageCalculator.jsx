@@ -272,6 +272,4 @@ export default function PackageCalculator() {
       </div>
     </div>
   );
-    </div>
-  );
 }
