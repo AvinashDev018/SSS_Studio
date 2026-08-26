@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import * as SunCalc from "suncalc";
 import { MapPin, Sun, Upload, Camera } from "lucide-react";
-import { useColor } from "color-thief-react";
 
 // Mock Data for Madurai Locations
 const MADURAI_LOCATIONS = [
@@ -51,20 +50,65 @@ const getColorDistance = (rgb1, rgb2) => {
   );
 };
 
+/**
+ * Extract the dominant color from an image using a hidden canvas.
+ * Returns [r, g, b] or null if it fails.
+ */
+function extractDominantColor(imgSrc, callback) {
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.onload = () => {
+    const canvas = document.createElement("canvas");
+    // Sample from a small version for speed
+    const scale = Math.min(1, 100 / Math.max(img.width, img.height));
+    canvas.width = Math.floor(img.width * scale);
+    canvas.height = Math.floor(img.height * scale);
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+    let rSum = 0, gSum = 0, bSum = 0, count = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      const a = data[i + 3];
+      if (a > 128) { // ignore transparent pixels
+        rSum += data[i];
+        gSum += data[i + 1];
+        bSum += data[i + 2];
+        count++;
+      }
+    }
+    if (count === 0) {
+      callback(null);
+    } else {
+      callback([Math.round(rSum / count), Math.round(gSum / count), Math.round(bSum / count)]);
+    }
+  };
+  img.onerror = () => callback(null);
+  img.src = imgSrc;
+}
+
 export default function AIStylist() {
   const [imageSrc, setImageSrc] = useState(null);
+  const [colorData, setColorData] = useState(null);
+  const [colorLoading, setColorLoading] = useState(false);
   const [bestMatch, setBestMatch] = useState(null);
   const [goldenHour, setGoldenHour] = useState("");
 
-  // Use color-thief-react hook
-  const { data: colorData, loading: colorLoading } = useColor(imageSrc || "", "rgbArray", { crossOrigin: "anonymous" });
-
+  // Extract dominant color whenever a new image is set
   useEffect(() => {
-    if (colorData && colorData.length === 3) {
-      const rgbColor = { r: colorData[0], g: colorData[1], b: colorData[2] };
-      findBestLocationMatch(rgbColor);
+    if (!imageSrc) {
+      setColorData(null);
+      return;
     }
-  }, [colorData]);
+    setColorLoading(true);
+    extractDominantColor(imageSrc, (rgb) => {
+      setColorLoading(false);
+      if (rgb) {
+        setColorData(rgb);
+        findBestLocationMatch({ r: rgb[0], g: rgb[1], b: rgb[2] });
+      }
+    });
+  }, [imageSrc]);
 
   // Calculate Golden Hour for Madurai (9.9252 N, 78.1198 E)
   useEffect(() => {
@@ -94,6 +138,7 @@ export default function AIStylist() {
       reader.onload = (event) => {
         setImageSrc(event.target.result);
         setBestMatch(null);
+        setColorData(null);
       };
       reader.readAsDataURL(file);
     }
@@ -117,42 +162,45 @@ export default function AIStylist() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-4 md:p-8 bg-white rounded-2xl shadow-lg border border-gray-100">
+    <div className="max-w-4xl mx-auto p-6 md:p-8 bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-3xl shadow-2xl text-white">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-3 flex items-center justify-center gap-2">
-          <Camera className="text-pink-500" /> AI Stylist
+        <span className="text-xs uppercase tracking-widest text-violet-400 font-semibold px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 inline-block mb-3">
+          Interactive Stylist
+        </span>
+        <h2 className="text-3xl font-bold font-serif text-white mb-3 flex items-center justify-center gap-2">
+          <Camera className="text-violet-400" /> AI Stylist &amp; Location Matcher
         </h2>
-        <p className="text-gray-600">
-          Upload your outfit, and we'll match it with the perfect Madurai location and find today's Golden Hour.
+        <p className="text-zinc-400 text-sm max-w-lg mx-auto">
+          Upload your outfit, and our color matcher will recommend the perfect backdrop in Madurai, along with the ideal Golden Hour timing.
         </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
         {/* Upload Section */}
-        <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50 hover:bg-gray-100 transition-colors relative overflow-hidden min-h-[300px]">
+        <div className="flex flex-col items-center justify-center border-2 border-dashed border-zinc-800 hover:border-zinc-700 rounded-2xl p-6 bg-zinc-950/40 hover:bg-zinc-950/60 transition-colors relative overflow-hidden min-h-[300px]">
           {imageSrc ? (
             <>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={imageSrc}
                 alt="Uploaded outfit"
-                className="absolute inset-0 w-full h-full object-cover opacity-60"
+                className="absolute inset-0 w-full h-full object-cover opacity-50"
               />
-              <div className="z-10 bg-white/90 p-4 rounded-lg shadow text-center backdrop-blur-sm">
-                <p className="text-sm font-medium text-gray-700 mb-2">Change Image</p>
+              <div className="z-10 bg-zinc-900/90 p-4 rounded-xl shadow-lg text-center backdrop-blur-md border border-zinc-800">
+                <p className="text-sm font-medium text-zinc-300 mb-2">Change Outfit Image</p>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleImageUpload}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100"
+                  className="block w-full text-xs text-zinc-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-violet-500/20 file:text-violet-300 hover:file:bg-violet-500/30"
                 />
               </div>
             </>
           ) : (
             <div className="text-center">
-              <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+              <Upload className="mx-auto h-12 w-12 text-zinc-500 mb-4" />
               <label className="cursor-pointer">
-                <span className="mt-2 block text-sm font-semibold text-gray-900">
+                <span className="mt-2 block text-sm font-semibold text-zinc-200">
                   Upload an image of your outfit
                 </span>
                 <input
@@ -162,7 +210,7 @@ export default function AIStylist() {
                   onChange={handleImageUpload}
                 />
               </label>
-              <p className="mt-2 text-xs text-gray-500">PNG, JPG, JPEG up to 5MB</p>
+              <p className="mt-2 text-xs text-zinc-500">PNG, JPG, JPEG up to 5MB</p>
             </div>
           )}
         </div>
@@ -170,43 +218,43 @@ export default function AIStylist() {
         {/* Results Section */}
         <div className="flex flex-col gap-6">
           {/* Color Analysis */}
-          <div className="bg-gray-50 p-5 rounded-xl border border-gray-100">
-            <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Color Analysis</h3>
+          <div className="bg-zinc-950/40 p-5 rounded-2xl border border-zinc-800/80">
+            <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Color Analysis</h3>
             {colorLoading ? (
-               <p className="text-gray-500 text-sm">Analyzing image...</p>
+               <p className="text-zinc-400 text-sm">Analyzing outfit color palette...</p>
             ) : colorData ? (
               <div className="flex items-center gap-4">
                 <div
-                  className="w-16 h-16 rounded-full shadow-inner border border-gray-200"
+                  className="w-14 h-14 rounded-full shadow-inner border border-zinc-700/60"
                   style={{
                     backgroundColor: `rgb(${colorData[0]}, ${colorData[1]}, ${colorData[2]})`,
                   }}
                 ></div>
                 <div>
-                  <p className="font-medium text-gray-800">Dominant Hue Found</p>
-                  <p className="text-sm text-gray-500">Matching with our database...</p>
+                  <p className="font-semibold text-zinc-200">Dominant Hue Extracted</p>
+                  <p className="text-xs text-zinc-400">R: {colorData[0]} G: {colorData[1]} B: {colorData[2]}</p>
                 </div>
               </div>
             ) : (
-              <p className="text-gray-400 italic text-sm">Upload an image to extract colors.</p>
+              <p className="text-zinc-500 italic text-sm">Upload an image to extract color.</p>
             )}
           </div>
 
           {/* Location Match */}
-          <div className="bg-gray-50 p-5 rounded-xl border border-gray-100 flex-1">
-            <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-              <MapPin size={16} /> Best Location Match
+          <div className="bg-zinc-950/40 p-5 rounded-2xl border border-zinc-800/80 flex-1">
+            <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+              <MapPin size={14} className="text-violet-400" /> Best Location Match
             </h3>
             {bestMatch ? (
-              <div className="bg-white p-4 rounded-lg shadow-sm border border-pink-100 animate-in fade-in zoom-in duration-300">
-                <div className="text-4xl mb-2">{bestMatch.image}</div>
-                <h4 className="font-bold text-lg text-gray-800">{bestMatch.name}</h4>
-                <p className="text-sm text-gray-600 mt-1">{bestMatch.description}</p>
+              <div className="bg-zinc-900/80 p-4 rounded-xl border border-violet-500/20 animate-in fade-in zoom-in duration-300">
+                <div className="text-3xl mb-2">{bestMatch.image}</div>
+                <h4 className="font-bold text-lg text-white">{bestMatch.name}</h4>
+                <p className="text-sm text-zinc-400 mt-1">{bestMatch.description}</p>
                 <div className="mt-3 flex gap-2">
                   {bestMatch.palettes.map((p, i) => (
                     <div
                       key={i}
-                      className="w-6 h-6 rounded-full shadow-sm border border-gray-200"
+                      className="w-6 h-6 rounded-full shadow-sm border border-zinc-800"
                       style={{ backgroundColor: `rgb(${p.r}, ${p.g}, ${p.b})` }}
                       title="Complementary Color"
                     />
@@ -214,22 +262,22 @@ export default function AIStylist() {
                 </div>
               </div>
             ) : (
-              <p className="text-gray-400 italic text-sm">Waiting for upload...</p>
+              <p className="text-zinc-500 italic text-sm">Waiting for outfit image upload...</p>
             )}
           </div>
         </div>
       </div>
 
       {/* Golden Hour Bar */}
-      <div className="mt-8 bg-amber-50 rounded-xl p-4 md:p-6 border border-amber-200 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3 text-amber-800">
+      <div className="mt-8 bg-amber-500/10 rounded-2xl p-4 md:p-6 border border-amber-500/20 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3 text-amber-400">
           <Sun className="h-8 w-8 text-amber-500" />
           <div>
-            <h4 className="font-bold">Today's Golden Hour in Madurai</h4>
-            <p className="text-sm text-amber-700/80">Best lighting for outdoor shoots</p>
+            <h4 className="font-bold text-zinc-100 font-serif">Today&apos;s Golden Hour in Madurai</h4>
+            <p className="text-xs text-zinc-400">Best lighting for outdoor shoots</p>
           </div>
         </div>
-        <div className="text-2xl font-black text-amber-600 bg-white px-6 py-2 rounded-lg shadow-sm">
+        <div className="text-xl font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-6 py-2 rounded-xl">
           {goldenHour}
         </div>
       </div>

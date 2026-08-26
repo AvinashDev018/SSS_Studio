@@ -9,14 +9,15 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Camera, Plane, Users, Video } from "lucide-react";
+import { Camera, Plane, Users, Video, GripVertical, Trash2 } from "lucide-react";
+import Link from "next/link";
 
 // Types/Data
 const VIBES = [
   { id: "candid", label: "Candid & Natural", basePrice: 5000, icon: Camera },
   { id: "traditional", label: "Traditional", basePrice: 3000, icon: Users },
   { id: "cinematic", label: "Cinematic Story", basePrice: 8000, icon: Video },
-  { id: "drone", label: "Plane Sweeps", basePrice: 4000, icon: Plane },
+  { id: "drone", label: "Drone Sweeps", basePrice: 4000, icon: Plane },
 ];
 
 const AVAILABLE_EVENTS = [
@@ -42,18 +43,21 @@ const SortableEvent = ({ id, label, onRemove }) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="flex items-center justify-between p-3 mb-2 bg-white rounded shadow cursor-grab active:cursor-grabbing border border-gray-200"
+      className="flex items-center justify-between p-3 mb-2 bg-zinc-800/80 hover:bg-zinc-800 rounded-xl shadow cursor-grab active:cursor-grabbing border border-zinc-700/60 transition-colors"
     >
-      <span className="font-medium text-gray-700">{label}</span>
+      <div className="flex items-center gap-2">
+        <GripVertical size={16} className="text-zinc-500" />
+        <span className="font-medium text-zinc-200">{label}</span>
+      </div>
       <button
         onClick={(e) => {
           e.stopPropagation();
           onRemove(id);
         }}
-        className="text-red-500 hover:text-red-700 p-1"
+        className="text-zinc-400 hover:text-red-400 p-1 transition-colors"
         aria-label={`Remove ${label}`}
       >
-        ×
+        <Trash2 size={16} />
       </button>
     </div>
   );
@@ -140,20 +144,26 @@ export default function PackageCalculator() {
   const crewSize = calculateCrewSize();
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-6 pb-32 relative min-h-[80vh] bg-gray-50 rounded-xl shadow-sm">
-      <h2 className="text-3xl font-bold mb-2 text-gray-800">
-        Build Your Story
-      </h2>
-      <p className="text-gray-600 mb-8">
-        Select your preferred photography styles and build your event timeline to get an instant estimate.
-      </p>
+    <div className="max-w-4xl mx-auto p-6 md:p-8 mb-16 relative bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-3xl shadow-2xl">
+      <div className="mb-8">
+        <span className="text-xs uppercase tracking-widest text-cyan-400 font-semibold px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 inline-block mb-3">
+          Interactive Tool
+        </span>
+        <h2 className="text-3xl md:text-4xl font-bold font-serif text-white mb-2">
+          Build-Your-Story Calculator
+        </h2>
+        <p className="text-zinc-400 text-sm">
+          Select your preferred photography vibes and drag-and-drop your timeline events to calculate dynamic estimates.
+        </p>
+      </div>
 
       {/* Vibe Selection */}
       <section className="mb-10">
-        <h3 className="text-xl font-semibold mb-4 text-gray-700">
-          1. Select Your Vibes
+        <h3 className="text-lg font-semibold mb-4 text-zinc-200 flex items-center gap-2">
+          <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs font-bold">1</span>
+          Select Your Vibes
         </h3>
-        <div className="flex overflow-x-auto gap-4 pb-4 snap-x hide-scrollbar">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {VIBES.map((vibe) => {
             const isSelected = selectedVibes.includes(vibe.id);
             const Icon = vibe.icon;
@@ -161,13 +171,13 @@ export default function PackageCalculator() {
               <button
                 key={vibe.id}
                 onClick={() => toggleVibe(vibe.id)}
-                className={`snap-start shrink-0 w-40 h-32 p-4 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2 ${
+                className={`p-4 rounded-2xl border transition-all flex flex-col items-center justify-center gap-3 ${
                   isSelected
-                    ? "border-blue-500 bg-blue-50 text-blue-700 shadow-md"
-                    : "border-gray-200 bg-white text-gray-600 hover:border-blue-300"
+                    ? "border-cyan-500 bg-cyan-500/10 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]"
+                    : "border-zinc-800 bg-zinc-800/40 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200"
                 }`}
               >
-                <Icon size={32} className={isSelected ? "text-blue-500" : "text-gray-400"} />
+                <Icon size={28} className={isSelected ? "text-cyan-400" : "text-zinc-400"} />
                 <span className="font-medium text-center text-sm">
                   {vibe.label}
                 </span>
@@ -180,15 +190,16 @@ export default function PackageCalculator() {
       {/* Timeline Builder */}
       <section className="mb-10 grid md:grid-cols-2 gap-8">
         <div>
-          <h3 className="text-xl font-semibold mb-4 text-gray-700">
-            2. Available Events
+          <h3 className="text-lg font-semibold mb-4 text-zinc-200 flex items-center gap-2">
+            <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs font-bold">2</span>
+            Available Events
           </h3>
           <div className="flex flex-wrap gap-2">
             {AVAILABLE_EVENTS.map((event) => (
               <button
                 key={event.id}
                 onClick={() => addEvent(event)}
-                className="px-4 py-2 bg-white border border-gray-300 rounded-full text-sm font-medium hover:bg-gray-100 hover:border-gray-400 transition-colors shadow-sm"
+                className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-cyan-500/50 rounded-full text-sm font-medium text-zinc-200 transition-all shadow-sm"
               >
                 + Add {event.label}
               </button>
@@ -196,13 +207,13 @@ export default function PackageCalculator() {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm min-h-[300px]">
-          <h3 className="text-xl font-semibold mb-4 text-gray-700">
+        <div className="bg-zinc-950/60 p-5 rounded-2xl border border-zinc-800/80 shadow-inner min-h-[260px]">
+          <h3 className="text-xs uppercase tracking-wider text-zinc-400 font-semibold mb-4">
             Your Event Timeline
           </h3>
           {timelineEvents.length === 0 ? (
-            <div className="text-gray-400 italic text-center py-8">
-              Click events to add them to your timeline.
+            <div className="text-zinc-500 italic text-center py-12 text-sm">
+              Click events on the left to add them to your custom timeline.
             </div>
           ) : (
             <DndContext
@@ -230,35 +241,37 @@ export default function PackageCalculator() {
       </section>
 
       {/* Sticky Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] p-4 md:p-6 z-50">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex flex-col sm:flex-row gap-6 items-center">
-            <div className="text-center sm:text-left">
-              <p className="text-sm text-gray-500 uppercase tracking-wide font-semibold">
+      <div className="fixed bottom-0 left-0 right-0 bg-zinc-950/95 border-t border-zinc-800/90 shadow-[0_-10px_30px_rgba(0,0,0,0.8)] p-4 md:px-8 md:py-4 z-50 backdrop-blur-xl">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex flex-row gap-6 sm:gap-10 items-center">
+            <div>
+              <p className="text-xs text-zinc-400 uppercase tracking-widest font-semibold">
                 Estimated Price
               </p>
-              <p className="text-2xl font-bold text-gray-800">
+              <p className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent">
                 ₹{estimate.min.toLocaleString()} - ₹{estimate.max.toLocaleString()}
               </p>
             </div>
-            <div className="hidden sm:block h-10 w-px bg-gray-300"></div>
-            <div className="text-center sm:text-left">
-              <p className="text-sm text-gray-500 uppercase tracking-wide font-semibold">
-                Crew Size
+            <div className="h-8 w-px bg-zinc-800"></div>
+            <div>
+              <p className="text-xs text-zinc-400 uppercase tracking-widest font-semibold">
+                Estimated Crew
               </p>
-              <p className="text-lg font-medium text-gray-700">
+              <p className="text-lg font-semibold text-zinc-200">
                 ~{crewSize} Professionals
               </p>
             </div>
           </div>
-          <button
-            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md transition-colors w-full md:w-auto"
-            onClick={() => alert("Proceed to booking summary!")}
+          <a
+            href="/contact"
+            className="px-6 py-3 bg-gradient-to-r from-cyan-400 to-violet-500 text-black font-bold rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition-all text-center w-full sm:w-auto"
           >
-            Review & Book
-          </button>
+            Review & Book Estimate
+          </a>
         </div>
       </div>
+    </div>
+  );
     </div>
   );
 }
