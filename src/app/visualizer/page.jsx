@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Wand2, Upload, Sparkles, X, CheckCircle2, ChevronDown } from "lucide-react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
+import AIStylist from "@/components/AIStylist";
 import Link from "next/link";
 
 const SHOOT_TYPES = [
@@ -13,6 +14,7 @@ const SHOOT_TYPES = [
 ];
 
 export default function VisualizerPage() {
+  const [activeTab, setActiveTab] = useState("guide"); // "guide" or "stylist"
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [shootType, setShootType] = useState("Portrait");
@@ -139,9 +141,36 @@ export default function VisualizerPage() {
           </p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
-          {/* Left: Upload & Config */}
-          <AnimatedSection delay={0.1} className="space-y-6">
+        {/* Tabs */}
+        <div className="flex gap-4 mb-8">
+          <button
+            onClick={() => setActiveTab("guide")}
+            className={`px-6 py-2 rounded-full font-medium transition-all ${
+              activeTab === "guide"
+                ? "bg-cyan-500 text-black"
+                : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+            }`}
+          >
+            Style Guide
+          </button>
+          <button
+            onClick={() => setActiveTab("stylist")}
+            className={`px-6 py-2 rounded-full font-medium transition-all ${
+              activeTab === "stylist"
+                ? "bg-violet-500 text-white"
+                : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+            }`}
+          >
+            AI Location Stylist
+          </button>
+        </div>
+
+        {activeTab === "stylist" ? (
+          <AIStylist />
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+            {/* Left: Upload & Config */}
+            <AnimatedSection delay={0.1} className="space-y-6">
             {/* Image Upload */}
             <div
               className={`relative border-2 border-dashed rounded-3xl transition-all duration-300 cursor-pointer ${
@@ -355,6 +384,7 @@ export default function VisualizerPage() {
             )}
           </AnimatedSection>
         </div>
+        )}
       </div>
     </div>
   );

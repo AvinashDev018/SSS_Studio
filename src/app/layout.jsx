@@ -1,6 +1,7 @@
 import { Inter, Playfair_Display } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import ChatbotWidget from "@/components/ChatbotWidget";
 import { Providers } from "@/components/Providers";
 import "./globals.css";
 
@@ -43,6 +44,7 @@ export default function RootLayout({ children }) {
  <Providers>
  <Navbar />
  <main className="flex-grow">{children}</main>
+ <ChatbotWidget />
  </Providers>
  <WhatsAppButton />
  </div>
