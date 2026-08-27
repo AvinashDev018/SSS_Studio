@@ -233,7 +233,7 @@ export default function TrackOrderPage() {
  </div>
 
  <div className="mt-8 text-center print:hidden">
- <Link href="/contact" className="text-zinc-500 hover:text-brand-gradient text-sm font-medium underline underline-offset-4">
+ <Link href="/support" className="text-zinc-500 hover:text-brand-gradient text-sm font-medium underline underline-offset-4">
  Need help with your order? Contact Support
  </Link>
  </div>

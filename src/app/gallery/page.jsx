@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import { X, ZoomIn, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,17 +30,27 @@ export default function GalleryPage() {
  ? galleryItems 
  : galleryItems.filter(item => item.category === activeCategory);
 
- // Keyboard navigation for Lightbox
+ const lightboxRef = useRef(null);
+
+ // Keyboard navigation for Lightbox focus management
  useEffect(() => {
- const handleKeyDown = (e) => {
- if (selectedIndex === null) return;
- if (e.key === "Escape") setSelectedIndex(null);
- if (e.key === "ArrowRight") setSelectedIndex((prev) => (prev + 1) % filteredItems.length);
- if (e.key === "ArrowLeft") setSelectedIndex((prev) => (prev - 1 + filteredItems.length) % filteredItems.length);
+   if (selectedIndex !== null && lightboxRef.current) {
+     lightboxRef.current.focus();
+   }
+ }, [selectedIndex]);
+
+ const handleLightboxKeyDown = (e) => {
+   if (e.key === "Escape") {
+     e.stopPropagation();
+     setSelectedIndex(null);
+   } else if (e.key === "ArrowRight") {
+     e.stopPropagation();
+     setSelectedIndex((prev) => (prev + 1) % filteredItems.length);
+   } else if (e.key === "ArrowLeft") {
+     e.stopPropagation();
+     setSelectedIndex((prev) => (prev - 1 + filteredItems.length) % filteredItems.length);
+   }
  };
- window.addEventListener("keydown", handleKeyDown);
- return () => window.removeEventListener("keydown", handleKeyDown);
- }, [selectedIndex, filteredItems.length]);
 
  return (
  <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 pt-32 pb-20">
@@ -81,12 +91,20 @@ export default function GalleryPage() {
  {filteredItems.map((item, idx) => (
  <div 
  key={`${item.id}-${idx}`} 
- className="break-inside-avoid relative group rounded-2xl overflow-hidden cursor-pointer bg-zinc-900 border border-white/10 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-500"
+ role="button"
+ tabIndex={0}
+ className="break-inside-avoid relative group rounded-2xl overflow-hidden cursor-pointer bg-zinc-900 border border-white/10 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-500 focus-visible:ring-2 focus-visible:ring-cyan-500 focus:outline-none"
  onClick={() => setSelectedIndex(idx)}
+ onKeyDown={(e) => {
+   if (e.key === "Enter" || e.key === " ") {
+     e.preventDefault();
+     setSelectedIndex(idx);
+   }
+ }}
  >
  <img 
  src={item.src} 
- alt={item.category} 
+ alt={`${item.category} portfolio photo`}
  className={`w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110`}
  loading="lazy"
  />
@@ -119,16 +137,20 @@ export default function GalleryPage() {
  <AnimatePresence>
  {selectedIndex !== null && (
  <motion.div 
+ ref={lightboxRef}
+ tabIndex={0}
+ onKeyDown={handleLightboxKeyDown}
  initial={{ opacity: 0 }}
  animate={{ opacity: 1 }}
  exit={{ opacity: 0 }}
  transition={{ duration: 0.3 }}
- className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4"
+ className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cyan-500 focus:outline-none"
  onClick={() => setSelectedIndex(null)}
  >
  {/* Close Button */}
  <button 
- className="absolute top-6 right-6 text-white/70 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all z-50 hover:scale-110"
+ aria-label="Close lightbox"
+ className="absolute top-6 right-6 text-white/70 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all z-50 hover:scale-110 focus-visible:ring-2 focus-visible:ring-cyan-500 focus:outline-none"
  onClick={() => setSelectedIndex(null)}
  >
  <X className="w-6 h-6" />
@@ -136,7 +158,8 @@ export default function GalleryPage() {
 
  {/* Prev Button */}
  <button 
- className="absolute left-6 text-white/70 hover:text-white bg-white/5 hover:bg-white/10 p-4 rounded-full transition-all z-50 hover:scale-110 hidden md:block"
+ aria-label="Previous image"
+ className="absolute left-6 text-white/70 hover:text-white bg-white/5 hover:bg-white/10 p-4 rounded-full transition-all z-50 hover:scale-110 hidden md:block focus-visible:ring-2 focus-visible:ring-cyan-500 focus:outline-none"
  onClick={(e) => { e.stopPropagation(); setSelectedIndex((prev) => (prev - 1 + filteredItems.length) % filteredItems.length); }}
  >
  <ChevronLeft className="w-8 h-8" />
@@ -149,14 +172,15 @@ export default function GalleryPage() {
  exit={{ opacity: 0, scale: 0.9 }}
  transition={{ type: "spring", damping: 25, stiffness: 300 }}
  src={filteredItems[selectedIndex]?.src} 
- alt="Fullscreen view" 
+ alt={`Fullscreen view of ${filteredItems[selectedIndex]?.category || 'portfolio'} photo`}
  className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl" 
  onClick={(e) => e.stopPropagation()} 
  />
 
  {/* Next Button */}
  <button 
- className="absolute right-6 text-white/70 hover:text-white bg-white/5 hover:bg-white/10 p-4 rounded-full transition-all z-50 hover:scale-110 hidden md:block"
+ aria-label="Next image"
+ className="absolute right-6 text-white/70 hover:text-white bg-white/5 hover:bg-white/10 p-4 rounded-full transition-all z-50 hover:scale-110 hidden md:block focus-visible:ring-2 focus-visible:ring-cyan-500 focus:outline-none"
  onClick={(e) => { e.stopPropagation(); setSelectedIndex((prev) => (prev + 1) % filteredItems.length); }}
  >
  <ChevronRight className="w-8 h-8" />

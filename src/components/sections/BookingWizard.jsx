@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, ChevronRight, ChevronLeft, Calendar as CalendarIcon, Clock, Package as PackageIcon, User, MapPin, Tag } from "lucide-react";
+import { CheckCircle2, ChevronRight, ChevronLeft, Calendar as CalendarIcon, Clock, Package as PackageIcon, User, MapPin, Tag, Loader2 } from "lucide-react";
 import { getDatePricing } from "@/lib/pricingEngine";
 
 import { getPackages } from "@/app/actions/packages";
@@ -387,23 +387,33 @@ export default function BookingWizard() {
  <div className="space-y-5 flex-1 overflow-y-auto pr-2">
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
  <div>
- <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-400 mb-1">Full Name</label>
+ <label htmlFor="name" className="block text-sm font-medium text-zinc-700 dark:text-zinc-400 mb-1">
+ Full Name <span className="text-red-500">*</span>
+ </label>
  <input 
+ id="name"
  type="text" 
  name="name"
  value={formData.name}
  onChange={handleChange}
- className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500" 
+ required
+ aria-required="true"
+ className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500 focus-visible:ring-2 focus-visible:ring-cyan-500/50"
  />
  </div>
  <div>
- <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-400 mb-1">Phone Number</label>
+ <label htmlFor="phone" className="block text-sm font-medium text-zinc-700 dark:text-zinc-400 mb-1">
+ Phone Number <span className="text-red-500">*</span>
+ </label>
  <input 
+ id="phone"
  type="tel" 
  name="phone"
  value={formData.phone}
  onChange={handleChange}
- className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500" 
+ required
+ aria-required="true"
+ className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500 focus-visible:ring-2 focus-visible:ring-cyan-500/50"
  />
  </div>
  </div>
@@ -437,14 +447,19 @@ export default function BookingWizard() {
   </div>
  </div>
  <div>
- <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-400 mb-1">Location</label>
+ <label htmlFor="location" className="block text-sm font-medium text-zinc-700 dark:text-zinc-400 mb-1">
+ Location <span className="text-red-500">*</span>
+ </label>
  <div className="relative">
  <input 
+ id="location"
  type="text" 
  name="location"
  value={formData.location}
  onChange={handleChange}
- className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-cyan-500" 
+ required
+ aria-required="true"
+ className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-cyan-500 focus-visible:ring-2 focus-visible:ring-cyan-500/50"
  placeholder="City or Venue"
  />
  <MapPin className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" />
@@ -453,13 +468,14 @@ export default function BookingWizard() {
  </div>
 
  <div>
- <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-400 mb-1">Any special requirements? (Optional)</label>
+ <label htmlFor="requirements" className="block text-sm font-medium text-zinc-700 dark:text-zinc-400 mb-1">Any special requirements? (Optional)</label>
  <textarea 
+ id="requirements"
  rows={3}
  name="requirements"
  value={formData.requirements}
  onChange={handleChange}
- className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500" 
+ className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500 focus-visible:ring-2 focus-visible:ring-cyan-500/50"
  />
  </div>
  </div>
@@ -529,9 +545,13 @@ export default function BookingWizard() {
  <button
  onClick={handleSubmit}
  disabled={isSubmitting || !formData.name || !formData.phone || !formData.location}
- className="flex items-center gap-2 px-8 py-3 rounded-full font-bold bg-brand-gradient hover-glow-brand text-black hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all disabled:opacity-50 disabled:hover:scale-100"
+ className="flex items-center justify-center gap-2 px-8 py-3 rounded-full font-bold bg-brand-gradient hover-glow-brand text-black hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all disabled:opacity-50 disabled:hover:scale-100 min-w-[200px]"
  >
- {isSubmitting ? "Processing..." : "Confirm Booking"}
+ {isSubmitting ? (
+ <><Loader2 className="w-5 h-5 animate-spin" /> Processing...</>
+ ) : (
+ "Confirm Booking"
+ )}
  </button>
  )}
  </div>

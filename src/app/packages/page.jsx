@@ -3,6 +3,7 @@ import Footer from "@/components/layout/Footer";
 import { Check } from "lucide-react";
 import Link from "next/link";
 import AnimatedSection from "@/components/ui/AnimatedSection";
+import PackageCalculator from "@/components/PackageCalculator";
 import { getPackages } from "@/app/actions/packages";
 
 export const dynamic = 'force-dynamic';
@@ -65,13 +66,13 @@ export default async function PackagesPage() {
  <div className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
  <div className="text-center mb-16 relative">
  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-brand-gradient hover-glow-brand/20 blur-[100px] rounded-full pointer-events-none" />
- <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white">Pricing Packages</h1>
+ <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white font-serif">Pricing Packages</h1>
  <p className="text-zinc-600 dark:text-zinc-400 text-lg max-w-2xl mx-auto">
  Transparent pricing for our most popular services. Contact us for custom requirements.
  </p>
  </div>
 
- <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+ <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
  {displayPackages.map((pkg, idx) => (
  <AnimatedSection key={pkg.id || idx} delay={idx * 0.2}>
  <div 
@@ -126,6 +127,17 @@ export default async function PackagesPage() {
  </AnimatedSection>
  ))}
  </div>
+
+ {/* Build-Your-Story Calculator Section */}
+ <AnimatedSection delay={0.4} className="mt-16">
+ <div className="text-center mb-12">
+ <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 font-serif">Want a Bespoke Package?</h2>
+ <p className="text-zinc-400 text-sm max-w-xl mx-auto">
+ Mix and match photography vibes, build your custom timeline, and get an instant cost range estimate for your special day.
+ </p>
+ </div>
+ <PackageCalculator />
+ </AnimatedSection>
  </div>
  );
 }
