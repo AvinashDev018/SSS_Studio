@@ -22,36 +22,28 @@ export async function POST(request) {
       return NextResponse.json(getMockRecommendation(shootType, stylePreference));
     }
 
-    const prompt = `You are a professional photography stylist at SSS Studio, a premium photography studio in Madurai, Tamil Nadu, India.
-    
-A client has shared their photo and wants to book a "${shootType}" photoshoot. Analyze their appearance carefully and provide highly personalized outfit and styling recommendations.
+    const prompt = `Role: Pro stylist at SSS Studio (Madurai, India).
+Task: Analyze photo & suggest personalized outfits for a "${shootType}" shoot.
+Style: ${stylePreference} Indian/South Indian traditional or fusion wear (e.g. Kanjivaram/Lehenga for Feminine, Sherwani/Veshti for Masculine).
+Accessories: Traditional Indian accents.
 
-IMPORTANT: The styling recommendations MUST be deeply rooted in Indian culture (especially South Indian styles, silk traditions, and modern Indian fusion fashion). 
-
-The client has selected a preference for "${stylePreference}" outfit styling:
-- If Masculine: Recommend Indian men's wear (like tailored Sherwanis, Bandhgalas, silk Kurtas, traditional South Indian Veshti/Dhoti, Nehru jackets/sadris, or formal suits). Do NOT suggest sarees, lehengas, or gowns.
-- If Feminine: Recommend Indian women's wear (like Kanjivaram silk sarees, designer lehengas, Salwar Kameez, Anarkalis, kurti sets, or Indo-Western fusion wear). Do NOT suggest men's sherwanis or dhotis.
-
-Ensure accessories recommended are traditional Indian accents (e.g., temple jewellery, jhumkas, kundan sets, glass bangles, royal brooches, safas/turbans, or pocket squares).
-
-Return a JSON object with this exact structure (no markdown, just raw JSON):
+Output strictly raw JSON (no markdown):
 {
   "palette": ["#hex1", "#hex2", "#hex3"],
-  "paletteNames": ["Color 1 name", "Color 2 name", "Color 3 name"],
+  "paletteNames": ["Name1", "Name2", "Name3"],
   "outfitRecommendations": [
-    { "outfit": "Outfit name", "description": "Detailed description", "reason": "Why it works for them" },
-    { "outfit": "Outfit name", "description": "Detailed description", "reason": "Why it works for them" },
-    { "outfit": "Outfit name", "description": "Detailed description", "reason": "Why it works for them" }
+    { "outfit": "Name", "description": "Details", "reason": "Why it fits them" },
+    { "outfit": "Name", "description": "Details", "reason": "Why it fits them" },
+    { "outfit": "Name", "description": "Details", "reason": "Why it fits them" }
   ],
-  "avoidColors": ["Color to avoid 1", "Color to avoid 2"],
-  "avoidReason": "Why to avoid these colors",
-  "hairMakeupTip": "Specific hair/grooming and traditional Indian makeup/styling advice",
-  "accessoryTip": "Traditional Indian jewellery and accessory recommendations",
-  "generalTip": "One powerful overall tip for this specific person"
+  "avoidColors": ["Color1", "Color2"],
+  "avoidReason": "Why",
+  "hairMakeupTip": "Specific grooming/makeup advice",
+  "accessoryTip": "Jewelry/accessory advice",
+  "generalTip": "One powerful pro tip"
 }`;
-
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -75,23 +67,26 @@ Return a JSON object with this exact structure (no markdown, just raw JSON):
 
     if (!response.ok) {
       const errorBody = await response.text();
-      console.error("Gemini API error:", errorBody);
-      // Fallback to mock on API error
-      return NextResponse.json(getMockRecommendation(shootType, stylePreference));
+      console.error("Gemini API error:", response.status, errorBody);
+      const fallbackData = getMockRecommendation(shootType, stylePreference);
+      if (response.status === 429) {
+        return NextResponse.json({ ...fallbackData, isFallback: true, fallbackReason: "quota_exceeded" });
+      }
+      return NextResponse.json({ ...fallbackData, isFallback: true, fallbackReason: "api_error" });
     }
 
     const data = await response.json();
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     
     if (!text) {
-      return NextResponse.json(getMockRecommendation(shootType, stylePreference));
+      return NextResponse.json({ ...getMockRecommendation(shootType, stylePreference), isFallback: true, fallbackReason: "empty_response" });
     }
 
     const result = JSON.parse(text);
     return NextResponse.json(result);
   } catch (error) {
     console.error("Visualizer API error:", error);
-    return NextResponse.json(getMockRecommendation("Portrait", "Feminine"));
+    return NextResponse.json({ ...getMockRecommendation(shootType, stylePreference), isFallback: true, fallbackReason: "server_error" });
   }
 }
 

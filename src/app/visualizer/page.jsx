@@ -14,7 +14,7 @@ const SHOOT_TYPES = [
 ];
 
 export default function VisualizerPage() {
-  const [activeTab, setActiveTab] = useState("guide"); // "guide" or "stylist"
+  const [activeTab, setActiveTab] = useState("stylist"); // "guide" or "stylist"
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [shootType, setShootType] = useState("Portrait");
@@ -116,10 +116,17 @@ export default function VisualizerPage() {
       formData.append("stylePreference", stylePreference);
 
       const res = await fetch("/api/visualizer", { method: "POST", body: formData });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        // Fallback if not JSON
+        data = { isFallback: true, fallbackReason: "network_error", palette: ["#2C3E50", "#ECF0F1", "#3498DB"], paletteNames: ["Deep Navy", "Soft White", "Sky Blue"], outfitRecommendations: [], hairMakeupTip: "", accessoryTip: "", generalTip: "" };
+      }
       setResult(data);
     } catch (err) {
       console.error(err);
+      setResult({ isFallback: true, fallbackReason: "network_error", palette: ["#2C3E50", "#ECF0F1", "#3498DB"], paletteNames: ["Deep Navy", "Soft White", "Sky Blue"], outfitRecommendations: [], hairMakeupTip: "", accessoryTip: "", generalTip: "" });
     } finally {
       setIsLoading(false);
     }
@@ -165,9 +172,11 @@ export default function VisualizerPage() {
           </button>
         </div>
 
-        {activeTab === "stylist" ? (
+        <div style={{ display: activeTab === "stylist" ? "block" : "none" }}>
           <AIStylist />
-        ) : (
+        </div>
+
+        <div style={{ display: activeTab === "guide" ? "block" : "none" }}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
             {/* Left: Upload & Config */}
             <AnimatedSection delay={0.1} className="space-y-6">
@@ -313,6 +322,7 @@ export default function VisualizerPage() {
 
             {result && (
               <div className="space-y-5">
+
                 {/* Color Palette */}
                 <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-5">
                   <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
@@ -384,7 +394,7 @@ export default function VisualizerPage() {
             )}
           </AnimatedSection>
         </div>
-        )}
+        </div>
       </div>
     </div>
   );
