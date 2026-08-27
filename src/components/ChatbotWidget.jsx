@@ -5,10 +5,16 @@ import { MessageCircle, X, Send, Paperclip, ChevronRight } from "lucide-react";
 
 const MENU_OPTIONS = [
   { id: "pricing", label: "Pricing & Packages" },
+  { id: "services", label: "Services" },
+  { id: "location", label: "Location & Opening Hours" },
+  { id: "booking", label: "How to Book" },
+  { id: "delivery", label: "Photo Delivery" },
   { id: "track", label: "Track Order" },
   { id: "report", label: "Report Damaged Item" },
   { id: "other", label: "Other Queries" },
 ];
+
+const WHATSAPP_URL = "https://wa.me/916383565425?text=Hi!%20I%27m%20interested%20in%20booking%20a%20photography%20session.";
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,6 +32,7 @@ export default function ChatbotWidget() {
   // Form State for Report Damaged Item
   const [orderId, setOrderId] = useState("");
   const [damageImage, setDamageImage] = useState(null);
+  const [userInput, setUserInput] = useState("");
 
   const messagesEndRef = useRef(null);
 
@@ -63,7 +70,60 @@ export default function ChatbotWidget() {
           {
             id: Date.now(),
             sender: "bot",
-            text: "Our packages start at ₹5,000! You can use our 'Build Your Story' calculator to get a custom estimate.",
+            text: "Our photography packages start at ₹1,500 for an Essential Portrait session. Family sessions start at ₹4,500, and event coverage starts at ₹15,000. Visit Services or contact us for a custom quote.",
+            type: "text",
+          },
+          { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
+        ]);
+      } else if (optionId === "services") {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            sender: "bot",
+            text: "SSS Studio offers wedding photography, portraits, birthday functions, family sessions, corporate photography, albums, frames, and photo gifts.",
+            type: "text",
+          },
+          { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
+        ]);
+      } else if (optionId === "location") {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            sender: "bot",
+            text: "Our studio is at 34, Prasanna New Colony, Avaniyapuram, Madurai. We are open Monday to Sunday, 9:00 AM to 8:00 PM.",
+            type: "text",
+          },
+          { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
+        ]);
+      } else if (optionId === "booking") {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            sender: "bot",
+            text: "To book, sign in, choose a package, select an available date and time, then add your contact details. You can start from the Book Session button or message us on WhatsApp.",
+            type: "text",
+          },
+          {
+            id: Date.now() + 1,
+            sender: "bot",
+            type: "actions",
+            options: [
+              { label: "Book a Session", href: "/book" },
+              { label: "WhatsApp Us", href: WHATSAPP_URL, external: true },
+            ],
+          },
+          { id: Date.now() + 2, sender: "bot", type: "menu", options: MENU_OPTIONS },
+        ]);
+      } else if (optionId === "delivery") {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            sender: "bot",
+            text: "Edited photos are delivered through a secure online gallery. Delivery time depends on your package and event size; our team will confirm it when you book.",
             type: "text",
           },
           { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
@@ -88,7 +148,13 @@ export default function ChatbotWidget() {
             text: "Please hold on, our team will get back to you shortly during working hours (9 AM - 6 PM).",
             type: "text",
           },
-          { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
+          {
+            id: Date.now() + 1,
+            sender: "bot",
+            type: "actions",
+            options: [{ label: "WhatsApp Us", href: WHATSAPP_URL, external: true }],
+          },
+          { id: Date.now() + 2, sender: "bot", type: "menu", options: MENU_OPTIONS },
         ]);
       }
     }, 500);
@@ -134,6 +200,53 @@ export default function ChatbotWidget() {
     }
   };
 
+  const getTextAnswer = (question) => {
+    const normalizedQuestion = question.toLowerCase();
+
+    if (normalizedQuestion.includes("price") || normalizedQuestion.includes("cost") || normalizedQuestion.includes("package")) {
+      return "Our packages start at ₹1,500 for Essential Portrait, ₹4,500 for Signature Family Session, and ₹15,000+ for Premium Event Coverage. Contact us for a custom quote.";
+    }
+    if (normalizedQuestion.includes("where") || normalizedQuestion.includes("location") || normalizedQuestion.includes("address")) {
+      return "We are at 34, Prasanna New Colony, Avaniyapuram, Madurai. We are open Monday to Sunday, 9:00 AM to 8:00 PM.";
+    }
+    if (normalizedQuestion.includes("open") || normalizedQuestion.includes("hour") || normalizedQuestion.includes("time")) {
+      return "Our studio is open Monday to Sunday, 9:00 AM to 8:00 PM.";
+    }
+    if (normalizedQuestion.includes("book") || normalizedQuestion.includes("reserve")) {
+      return "To book, choose a package, select an available date and time, and submit your contact details on the Book Session page. You can also message us on WhatsApp.";
+    }
+    if (normalizedQuestion.includes("deliver") || normalizedQuestion.includes("photo") || normalizedQuestion.includes("album")) {
+      return "Edited photos are delivered through a secure online gallery. Our team will confirm the delivery time based on your package and event size.";
+    }
+    if (normalizedQuestion.includes("service") || normalizedQuestion.includes("offer") || normalizedQuestion.includes("shoot")) {
+      return "We offer wedding, portrait, birthday, family, and corporate photography, plus albums, frames, and photo gifts.";
+    }
+
+    return "I can help with packages, services, location, opening hours, booking, photo delivery, and order tracking. For anything else, please contact our team on WhatsApp.";
+  };
+
+  const handleTextSubmit = (e) => {
+    e.preventDefault();
+    const question = userInput.trim();
+    if (!question || currentState === "report_form") return;
+
+    setMessages((prev) => [
+      ...prev,
+      { id: Date.now(), sender: "user", text: question, type: "text" },
+      {
+        id: Date.now() + 1,
+        sender: "bot",
+        text: getTextAnswer(question),
+        type: "text",
+        actions: question.toLowerCase().includes("book")
+          ? [{ label: "Book a Session", href: "/book" }]
+          : [{ label: "Chat on WhatsApp", href: WHATSAPP_URL, external: true }],
+      },
+      { id: Date.now() + 2, sender: "bot", type: "menu", options: MENU_OPTIONS },
+    ]);
+    setUserInput("");
+  };
+
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {/* Floating Button */}
@@ -148,7 +261,7 @@ export default function ChatbotWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="absolute bottom-20 right-0 w-80 sm:w-96 bg-white rounded-2xl shadow-[0_5px_40px_-15px_rgba(0,0,0,0.3)] border border-gray-100 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-300 origin-bottom-right">
+        <div className="absolute bottom-20 right-0 w-80 sm:w-96 max-h-[calc(100vh-7rem)] bg-white rounded-2xl shadow-[0_5px_40px_-15px_rgba(0,0,0,0.3)] border border-gray-100 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-300 origin-bottom-right">
           {/* Header */}
           <div className="bg-black text-white p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -163,7 +276,7 @@ export default function ChatbotWidget() {
           </div>
 
           {/* Chat Area */}
-          <div className="flex-1 p-4 overflow-y-auto bg-gray-50 h-[400px] flex flex-col gap-4">
+          <div className="flex-1 min-h-0 p-4 overflow-y-auto overscroll-contain bg-gray-50 h-[400px] max-h-[calc(100vh-13rem)] flex flex-col gap-4">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -194,6 +307,23 @@ export default function ChatbotWidget() {
                         {opt.label}
                         <ChevronRight size={16} className="text-gray-400" />
                       </button>
+                    ))}
+                  </div>
+                )}
+
+                {msg.type === "actions" && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {msg.options.map((action) => (
+                      <a
+                        key={action.label}
+                        href={action.href}
+                        target={action.external ? "_blank" : undefined}
+                        rel={action.external ? "noreferrer" : undefined}
+                        className="inline-flex items-center gap-1.5 bg-black text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-gray-800 transition-colors"
+                      >
+                        {action.label}
+                        <ChevronRight size={14} />
+                      </a>
                     ))}
                   </div>
                 )}
@@ -248,20 +378,28 @@ export default function ChatbotWidget() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Bottom Input Area (Visual only for this state machine) */}
-          <div className="p-3 bg-white border-t border-gray-100">
+          {/* Bottom Input Area */}
+          <form onSubmit={handleTextSubmit} className="p-3 bg-white border-t border-gray-100">
             <div className="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2">
               <input
                 type="text"
-                placeholder={currentState === "report_form" ? "Please use the form above" : "Select an option above..."}
-                disabled
-                className="bg-transparent flex-1 text-sm outline-none cursor-not-allowed text-gray-500"
+                value={userInput}
+                onChange={(e) => setUserInput(e.target.value)}
+                placeholder={currentState === "report_form" ? "Please use the form above" : "Ask about our studio..."}
+                disabled={currentState === "report_form"}
+                aria-label="Ask SSS Studio a question"
+                className="bg-transparent flex-1 text-sm outline-none text-gray-700 placeholder:text-gray-400 disabled:cursor-not-allowed"
               />
-              <button disabled className="text-gray-400">
+              <button
+                type="submit"
+                disabled={currentState === "report_form" || !userInput.trim()}
+                aria-label="Send question"
+                className="text-gray-400 enabled:hover:text-black disabled:cursor-not-allowed"
+              >
                 <Send size={18} />
               </button>
             </div>
-          </div>
+          </form>
         </div>
       )}
     </div>
