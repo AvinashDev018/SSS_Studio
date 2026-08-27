@@ -9,12 +9,133 @@ const MENU_OPTIONS = [
   { id: "location", label: "Location & Opening Hours" },
   { id: "booking", label: "How to Book" },
   { id: "delivery", label: "Photo Delivery" },
+  { id: "preparation", label: "How to Prepare" },
+  { id: "outfits", label: "Outfit Suggestions" },
+  { id: "session", label: "Session Details" },
+  { id: "quote", label: "Get a Custom Quote" },
   { id: "track", label: "Track Order" },
   { id: "report", label: "Report Damaged Item" },
   { id: "other", label: "Other Queries" },
 ];
 
 const WHATSAPP_URL = "https://wa.me/916383565425?text=Hi!%20I%27m%20interested%20in%20booking%20a%20photography%20session.";
+
+const FAQ_RESPONSES = {
+  pricing: {
+    title: "Packages and starting prices",
+    text: "Choose a package based on the kind of memories you want to create. Every package can be adjusted for your event.",
+    details: [
+      "Essential Portrait — starts at ₹1,500; includes 5 edited high-resolution digital photos.",
+      "Signature Family Session — starts at ₹4,500; includes 15 edited photos and 1 large physical print.",
+      "Premium Event Coverage — starts at ₹15,000; includes event coverage, an album, and a cinematic highlight video.",
+      "Final pricing depends on the date, event size, location, duration, photos, video, album, and prints you choose.",
+    ],
+    actions: [{ label: "View Services", href: "/services" }, { label: "Request a Quote", href: WHATSAPP_URL, external: true }],
+  },
+  services: {
+    title: "What SSS Studio can create",
+    text: "We cover personal milestones, family memories, professional portraits, and event storytelling.",
+    details: [
+      "Wedding photography and videography for candid and traditional moments.",
+      "Portrait sessions for individuals, couples, families, and professional profiles.",
+      "Birthday and small-function coverage with candid photos and highlight videos.",
+      "Corporate photography for teams, events, branding, and LinkedIn profiles.",
+      "Albums, framed prints, passport photos, collages, and personalized photo gifts are also available in the Studio Store.",
+    ],
+    actions: [{ label: "Explore Services", href: "/services" }, { label: "Open Studio Store", href: "/store" }],
+  },
+  location: {
+    title: "Visit SSS Studio",
+    text: "Here is everything you need before visiting or planning an outdoor session.",
+    details: [
+      "Address: 34, Prasanna New Colony, Avaniyapuram, Madurai.",
+      "Opening hours: Monday to Sunday, 9:00 AM to 8:00 PM.",
+      "Call: +91 63835 65425.",
+      "For outdoor locations, share your preferred area with the team so travel, timing, and permissions can be confirmed.",
+    ],
+    actions: [{ label: "Get Directions", href: "https://maps.google.com/?q=34%2C%20Prasanna%20New%20Colony%2C%20Avaniyapuram%2C%20Madurai", external: true }, { label: "Call the Studio", href: "tel:+916383565425", external: true }],
+  },
+  booking: {
+    title: "How booking works",
+    text: "Booking takes a few simple steps and lets you see available dates and times.",
+    details: [
+      "1. Sign in or create an account.",
+      "2. Select the package that fits your occasion.",
+      "3. Choose an available date and time slot.",
+      "4. Add your name, phone number, event type, location, and requirements.",
+      "5. Submit the booking request. The studio team will confirm the details with you.",
+      "Please contact us before booking if your event needs a custom package, multiple locations, or both photography and video.",
+    ],
+    actions: [{ label: "Book a Session", href: "/book" }, { label: "WhatsApp Us", href: WHATSAPP_URL, external: true }],
+  },
+  delivery: {
+    title: "Photo and video delivery",
+    text: "Your finished memories are prepared and shared according to the selected package.",
+    details: [
+      "Edited photos are delivered through a secure online gallery.",
+      "Album and print delivery depends on selection, design approval, and production time.",
+      "Video delivery time depends on the event size and editing style.",
+      "The team will confirm the expected delivery timeline when your booking is reviewed.",
+      "Keep your gallery link safe and contact us if you need help accessing your order.",
+    ],
+    actions: [{ label: "Track an Order", href: "/track" }],
+  },
+  preparation: {
+    title: "How to prepare for your session",
+    text: "A little preparation helps the session stay relaxed and gives you more variety in your final gallery.",
+    details: [
+      "Arrive 10 to 15 minutes early so you have time to settle in.",
+      "Bring your outfits, footwear, accessories, and any meaningful props.",
+      "Keep outfits freshly pressed and bring one comfortable look plus one statement look.",
+      "For outdoor shoots, carry water, sunscreen, and a small touch-up kit.",
+      "Share important family names, event moments, or must-have photographs with the team before the session.",
+    ],
+  },
+  outfits: {
+    title: "Outfit guidance",
+    text: "Choose clothing that feels like you and photographs clearly against the planned background.",
+    details: [
+      "Portraits: solid colors, clean layers, and minimal distracting patterns keep attention on expressions.",
+      "Weddings: Kanjivaram silk sarees, lehengas, sherwanis, silk kurtas, and veshti create a rich traditional look.",
+      "Families: coordinate colors without wearing identical outfits; choose two or three complementary tones.",
+      "Corporate: pressed formalwear, simple accessories, and calm colors create a confident professional image.",
+      "Bring a backup outfit when possible, especially for long events or outdoor sessions.",
+    ],
+  },
+  session: {
+    title: "What to expect from a session",
+    text: "The team guides you through poses, expressions, backgrounds, and lighting so you do not need to be an experienced model.",
+    details: [
+      "The session length depends on your package, number of people, outfit changes, and location.",
+      "The photographer will suggest natural poses as well as formal portraits.",
+      "You can discuss preferred photos, family combinations, and important event moments in advance.",
+      "Extra time, locations, video coverage, albums, and prints can be discussed as add-ons.",
+    ],
+    actions: [{ label: "See the Portfolio", href: "/gallery" }],
+  },
+  quote: {
+    title: "Get a custom quote",
+    text: "A custom quote is best when your event does not fit one standard package.",
+    details: [
+      "Event type and date.",
+      "Number of people and expected event duration.",
+      "Studio, home, outdoor, or heritage location.",
+      "Photography, video, album, prints, or photo gifts needed.",
+      "Any special moments, themes, outfit changes, or travel requirements.",
+    ],
+    actions: [{ label: "Request on WhatsApp", href: WHATSAPP_URL, external: true }],
+  },
+  track: {
+    title: "Track your order",
+    text: "Use the Track Order page or the link shared with you by the studio.",
+    details: [
+      "Keep your order ID or tracking details ready.",
+      "The order page can show the latest available status for your delivery.",
+      "For a missing link, delayed order, or access problem, contact the studio team directly.",
+    ],
+    actions: [{ label: "Open Track Order", href: "/track" }],
+  },
+};
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -50,6 +171,26 @@ export default function ChatbotWidget() {
       ...prev,
       { id: Date.now(), sender: "user", text: label, type: "text" },
     ]);
+
+    const response = FAQ_RESPONSES[optionId];
+    if (response) {
+      setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            sender: "bot",
+            type: "rich",
+            title: response.title,
+            text: response.text,
+            details: response.details,
+            actions: response.actions,
+          },
+          { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
+        ]);
+      }, 500);
+      return;
+    }
 
     // Handle bot response based on state machine
     setTimeout(() => {
@@ -128,6 +269,56 @@ export default function ChatbotWidget() {
           },
           { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
         ]);
+      } else if (optionId === "preparation") {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            sender: "bot",
+            text: "Please arrive 10 to 15 minutes early, bring your preferred outfits and accessories, and keep outfits freshly pressed. For outdoor shoots, carry water and a small touch-up kit.",
+            type: "text",
+          },
+          { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
+        ]);
+      } else if (optionId === "outfits") {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            sender: "bot",
+            text: "For portraits, solid colors photograph beautifully. For weddings, consider silk sarees, lehengas, sherwanis, silk kurtas, or veshti. Bring one comfortable outfit and one statement look for variety.",
+            type: "text",
+          },
+          { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
+        ]);
+      } else if (optionId === "session") {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            sender: "bot",
+            text: "We photograph portraits, families, weddings, birthdays, and corporate events. Session length depends on your package, number of people, and location. We will confirm the schedule before your booking.",
+            type: "text",
+          },
+          { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
+        ]);
+      } else if (optionId === "quote") {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            sender: "bot",
+            text: "For a custom quote, tell us your event type, preferred date, location, number of people, and whether you need photos, video, an album, or prints.",
+            type: "text",
+          },
+          {
+            id: Date.now() + 1,
+            sender: "bot",
+            type: "actions",
+            options: [{ label: "Request on WhatsApp", href: WHATSAPP_URL, external: true }],
+          },
+          { id: Date.now() + 2, sender: "bot", type: "menu", options: MENU_OPTIONS },
+        ]);
       } else if (optionId === "track") {
         setMessages((prev) => [
           ...prev,
@@ -203,6 +394,9 @@ export default function ChatbotWidget() {
   const getTextAnswer = (question) => {
     const normalizedQuestion = question.toLowerCase();
 
+    if (normalizedQuestion.includes("damage") || normalizedQuestion.includes("damaged") || normalizedQuestion.includes("broken") || normalizedQuestion.includes("cracked") || normalizedQuestion.includes("defect") || normalizedQuestion.includes("frame is")) {
+      return "I am sorry your item arrived damaged. Please use the damage report form below with your Order ID and a photo of the damaged item. Our support team will review it and contact you within 24 hours.";
+    }
     if (normalizedQuestion.includes("price") || normalizedQuestion.includes("cost") || normalizedQuestion.includes("package")) {
       return "Our packages start at ₹1,500 for Essential Portrait, ₹4,500 for Signature Family Session, and ₹15,000+ for Premium Event Coverage. Contact us for a custom quote.";
     }
@@ -215,8 +409,20 @@ export default function ChatbotWidget() {
     if (normalizedQuestion.includes("book") || normalizedQuestion.includes("reserve")) {
       return "To book, choose a package, select an available date and time, and submit your contact details on the Book Session page. You can also message us on WhatsApp.";
     }
+    if (normalizedQuestion.includes("wear") || normalizedQuestion.includes("outfit") || normalizedQuestion.includes("dress")) {
+      return "For portraits, solid colors photograph beautifully. For weddings, consider silk sarees, lehengas, sherwanis, silk kurtas, or veshti. Bring one comfortable outfit and one statement look.";
+    }
+    if (normalizedQuestion.includes("prepare") || normalizedQuestion.includes("bring") || normalizedQuestion.includes("before")) {
+      return "Please arrive 10 to 15 minutes early, bring your outfits and accessories, and keep outfits freshly pressed. For outdoor shoots, carry water and a small touch-up kit.";
+    }
+    if (normalizedQuestion.includes("how long") || normalizedQuestion.includes("duration") || normalizedQuestion.includes("time take")) {
+      return "Session length depends on your package, number of people, and location. We will confirm the schedule before your booking.";
+    }
     if (normalizedQuestion.includes("deliver") || normalizedQuestion.includes("photo") || normalizedQuestion.includes("album")) {
       return "Edited photos are delivered through a secure online gallery. Our team will confirm the delivery time based on your package and event size.";
+    }
+    if (normalizedQuestion.includes("quote") || normalizedQuestion.includes("custom") || normalizedQuestion.includes("video")) {
+      return "For a custom quote, share your event type, preferred date, location, number of people, and whether you need photos, video, an album, or prints. Our team can help on WhatsApp.";
     }
     if (normalizedQuestion.includes("service") || normalizedQuestion.includes("offer") || normalizedQuestion.includes("shoot")) {
       return "We offer wedding, portrait, birthday, family, and corporate photography, plus albums, frames, and photo gifts.";
@@ -229,6 +435,23 @@ export default function ChatbotWidget() {
     e.preventDefault();
     const question = userInput.trim();
     if (!question || currentState === "report_form") return;
+    const isDamageReport = /damage|damaged|broken|cracked|defect|frame is/i.test(question);
+
+    if (isDamageReport) {
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now(), sender: "user", text: question, type: "text" },
+        {
+          id: Date.now() + 1,
+          sender: "bot",
+          text: getTextAnswer(question),
+          type: "text",
+        },
+      ]);
+      setCurrentState("report_form");
+      setUserInput("");
+      return;
+    }
 
     setMessages((prev) => [
       ...prev,
@@ -238,11 +461,16 @@ export default function ChatbotWidget() {
         sender: "bot",
         text: getTextAnswer(question),
         type: "text",
-        actions: question.toLowerCase().includes("book")
+      },
+      {
+        id: Date.now() + 2,
+        sender: "bot",
+        type: "actions",
+        options: question.toLowerCase().includes("book")
           ? [{ label: "Book a Session", href: "/book" }]
           : [{ label: "Chat on WhatsApp", href: WHATSAPP_URL, external: true }],
       },
-      { id: Date.now() + 2, sender: "bot", type: "menu", options: MENU_OPTIONS },
+      { id: Date.now() + 3, sender: "bot", type: "menu", options: MENU_OPTIONS },
     ]);
     setUserInput("");
   };
@@ -293,6 +521,34 @@ export default function ChatbotWidget() {
                     }`}
                   >
                     {msg.text}
+                  </div>
+                )}
+
+                {msg.type === "rich" && (
+                  <div className="p-3 rounded-2xl rounded-tl-sm bg-white border border-gray-200 text-gray-800 shadow-sm text-sm">
+                    <p className="font-bold text-gray-900 mb-1">{msg.title}</p>
+                    <p>{msg.text}</p>
+                    {msg.details?.length > 0 && (
+                      <ul className="mt-3 space-y-2 list-disc pl-4 text-gray-600">
+                        {msg.details.map((detail) => <li key={detail}>{detail}</li>)}
+                      </ul>
+                    )}
+                    {msg.actions?.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {msg.actions.map((action) => (
+                          <a
+                            key={action.label}
+                            href={action.href}
+                            target={action.external ? "_blank" : undefined}
+                            rel={action.external ? "noreferrer" : undefined}
+                            className="inline-flex items-center gap-1.5 bg-black text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-gray-800 transition-colors"
+                          >
+                            {action.label}
+                            <ChevronRight size={14} />
+                          </a>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
 
