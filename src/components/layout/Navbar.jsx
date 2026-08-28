@@ -62,6 +62,9 @@ export default function Navbar() {
       <button 
         onClick={() => setIsProfileOpen(!isProfileOpen)}
         className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+        aria-label="Toggle user profile menu"
+        aria-expanded={isProfileOpen}
+        aria-haspopup="true"
       >
         {session.user.image ? (
           <Image src={session.user.image} alt={session.user.name || "User"} width={32} height={32} className="rounded-full border border-white/20" />
@@ -128,8 +131,9 @@ export default function Navbar() {
  <button
  onClick={() => setIsOpen(!isOpen)}
  className="inline-flex items-center justify-center p-2 rounded-md text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white focus:outline-none"
+ aria-expanded={isOpen}
  >
- <span className="sr-only">Open main menu</span>
+ <span className="sr-only">{isOpen ? "Close main menu" : "Open main menu"}</span>
  {isOpen ? <X className="block h-6 w-6" /> : <Menu className="block h-6 w-6" />}
  </button>
  </div>
