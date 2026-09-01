@@ -3,40 +3,41 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 8, 12, 11;
+  --background-end-rgb: 12, 22, 20;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: #080c0b;
+  font-family: var(--font-inter), sans-serif;
+  overflow-x: hidden;
 }
 
 @layer utilities {
   .text-brand-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-violet-500;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-teal-400 via-emerald-300 to-teal-200;
+  }
+  
+  .text-gold-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#AA7C11];
   }
   
   .bg-brand-gradient {
-    @apply bg-gradient-to-r from-cyan-500 to-violet-500 text-white border-transparent;
+    @apply bg-gradient-to-r from-teal-500 via-[#186b61] to-emerald-600 text-white border-transparent;
   }
   
+  .bg-sss-gradient {
+    background: linear-gradient(135deg, rgba(12, 53, 48, 0.98) 0%, rgba(16, 75, 67, 0.98) 50%, rgba(22, 96, 85, 0.98) 100%);
+  }
+
   .glow-brand {
-    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3), 0 0 40px rgba(139, 92, 246, 0.2);
+    box-shadow: 0 0 25px rgba(24, 107, 97, 0.4), 0 0 50px rgba(16, 185, 129, 0.2);
+  }
+  
+  .glow-gold {
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.35), 0 0 50px rgba(245, 158, 11, 0.2);
   }
   
   .hover-glow-brand {
@@ -44,7 +45,7 @@ body {
   }
   
   .hover-glow-brand:hover {
-    box-shadow: 0 0 25px rgba(6, 182, 212, 0.5), 0 0 50px rgba(139, 92, 246, 0.3);
+    box-shadow: 0 0 30px rgba(24, 107, 97, 0.6), 0 0 60px rgba(16, 185, 129, 0.3);
     transform: translateY(-2px);
   }
 }

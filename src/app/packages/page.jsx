@@ -41,7 +41,7 @@ export default async function PackagesPage() {
  "1 Videographer (Cinematic)",
  "300+ Edited High-Res Photos",
  "Premium Layflat Album (40 Pages)",
- "Drone Coverage (Subject to permission)"
+ "Creative Couple & Bridal Portraits"
  ],
  popular: true
  },

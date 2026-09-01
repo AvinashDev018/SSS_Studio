@@ -1,0 +1,125 @@
+"use client";
+
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { MessageCircle, X, Globe, Sparkles } from "lucide-react";
+
+export default function MultilingualWhatsAppWidget({ whatsappNumber = "917871117875" }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const startChat = (lang) => {
+    let message = "";
+    if (lang === "en") {
+      message = "Hello SSS Photography Studio! I would like to enquire about your photography packages and date availability.";
+    } else if (lang === "ta") {
+      message = "வணக்கம் SSS போட்டோகிராபி! உங்கள் புகைப்பட சேவைகள் மற்றும் கட்டண விவரங்களை அறிய விரும்புகிறேன்.";
+    } else if (lang === "hi") {
+      message = "नमस्ते SSS फोटोग्राफी! मैं आपकी फोटोग्राफी सेवाओं और पैकेज के बारे में पूछताछ करना चाहता हूँ।";
+    }
+
+    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="fixed bottom-6 right-6 z-[90]">
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            className="absolute bottom-20 right-0 w-80 bg-[#0d3430] border border-white/10 text-white rounded-3xl p-5 shadow-2xl overflow-hidden backdrop-blur-md"
+          >
+            {/* Top Glow bar */}
+            <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400" />
+            
+            <div className="flex justify-between items-start mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl font-bold">
+                  <MessageCircle size={20} />
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm tracking-wide">WhatsApp Support</h4>
+                  <p className="text-[10px] text-emerald-400 font-semibold uppercase flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
+                    Online Now
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-gray-400 hover:text-white p-1 rounded-full hover:bg-white/5 transition-colors cursor-pointer focus:outline-none"
+              >
+                <X size={14} />
+              </button>
+            </div>
+
+            <p className="text-gray-300 text-xs mb-4 leading-relaxed">
+              Select your preferred language to start chatting directly on WhatsApp with our team:
+            </p>
+
+            <div className="space-y-2.5">
+              <motion.button
+                whileHover={{ scale: 1.02, x: 2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => startChat("en")}
+                className="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-left px-4 text-xs font-semibold flex justify-between items-center cursor-pointer transition-colors"
+              >
+                <span>Chat in English</span>
+                <span className="text-[10px] text-teal-300 uppercase tracking-widest font-bold font-mono">
+                  EN
+                </span>
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.02, x: 2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => startChat("ta")}
+                className="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-left px-4 text-xs font-semibold flex justify-between items-center cursor-pointer transition-colors"
+              >
+                <span>தமிழில் பேசுக (Tamil)</span>
+                <span className="text-[10px] text-teal-300 uppercase tracking-widest font-bold font-mono">
+                  TA
+                </span>
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.02, x: 2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => startChat("hi")}
+                className="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-left px-4 text-xs font-semibold flex justify-between items-center cursor-pointer transition-colors"
+              >
+                <span>हिंदी में चैट करें (Hindi)</span>
+                <span className="text-[10px] text-teal-300 uppercase tracking-widest font-bold font-mono">
+                  HI
+                </span>
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.button
+        whileHover={{ scale: 1.08 }}
+        whileTap={{ scale: 0.92 }}
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-2xl flex items-center justify-center text-2xl cursor-pointer focus:outline-none relative group border border-emerald-400/20"
+        style={{
+          boxShadow: "0 8px 30px rgba(16, 185, 129, 0.4)",
+        }}
+        aria-label="Chat with studio on WhatsApp"
+      >
+        <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white flex items-center justify-center text-[8px] text-white font-extrabold animate-bounce">
+          1
+        </span>
+        {isOpen ? <X size={20} /> : <MessageCircle size={24} />}
+        
+        <span className="absolute right-16 bg-gray-900/90 text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 pointer-events-none font-medium border border-white/5 shadow-md">
+          Chat With Us 💬
+        </span>
+      </motion.button>
+    </div>
+  );
+}

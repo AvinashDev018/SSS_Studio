@@ -71,7 +71,7 @@ export default async function AdminPackages() {
  <label className="block text-sm font-medium text-zinc-400 mb-2">Features (comma separated)</label>
  <textarea 
  name="features" 
- placeholder="Traditional Photography, Drone Coverage, 2 Albums" 
+ placeholder="Traditional Photography, Cinematic Film, 2 Albums" 
  required 
  rows={3}
  className="w-full bg-black/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500"

@@ -1,70 +1,132 @@
 import Link from "next/link";
-import { Camera, Instagram, Facebook, Mail, MapPin, Phone } from "lucide-react";
+import { Camera, Instagram, Facebook, Mail, MapPin, Phone, Clock, Sparkles, ShieldCheck } from "lucide-react";
 
 export default function Footer() {
- return (
- <footer className="bg-zinc-50 dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-900 pt-16 pb-8 transition-colors duration-500">
- <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
- <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
- <div className="col-span-1 md:col-span-2">
- <div className="flex items-center gap-2 mb-4">
- <Camera className="w-6 h-6 text-zinc-900 dark:text-white" />
- <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">SSS STUDIO</span>
- </div>
- <p className="text-zinc-600 dark:text-zinc-400 max-w-sm mb-6">
- Capturing your special moments with professional photography and videography services. 
- Creating memories that last a lifetime.
- </p>
- <div className="flex space-x-4">
- <a href="#" className="text-zinc-500 dark:text-zinc-400 hover:text-brand-gradient dark:hover:text-white transition-colors">
- <span className="sr-only">Instagram</span>
- <Instagram className="h-6 w-6" />
- </a>
- <a href="#" className="text-zinc-500 dark:text-zinc-400 hover:text-brand-gradient dark:hover:text-white transition-colors">
- <span className="sr-only">Facebook</span>
- <Facebook className="h-6 w-6" />
- </a>
- </div>
- </div>
+  return (
+    <footer className="bg-[#050807] text-white border-t border-teal-500/20 pt-16 pb-10 relative overflow-hidden">
+      {/* Ambient background glow */}
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-teal-500/5 rounded-full blur-[120px] pointer-events-none" />
 
- <div>
- <h3 className="text-sm font-semibold text-zinc-900 dark:text-white tracking-wider uppercase mb-4">Quick Links</h3>
- <ul className="space-y-3">
- <li><Link href="/" className="text-zinc-600 dark:text-zinc-400 hover:text-brand-gradient dark:hover:text-white transition-colors">Home</Link></li>
- <li><Link href="/services" className="text-zinc-600 dark:text-zinc-400 hover:text-brand-gradient dark:hover:text-white transition-colors">Services</Link></li>
- <li><Link href="/gallery" className="text-zinc-600 dark:text-zinc-400 hover:text-brand-gradient dark:hover:text-white transition-colors">Gallery</Link></li>
- <li><Link href="/about" className="text-zinc-600 dark:text-zinc-400 hover:text-brand-gradient dark:hover:text-white transition-colors">About Us</Link></li>
- </ul>
- </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-14">
+          {/* Brand Info */}
+          <div className="col-span-1 md:col-span-2">
+            <Link href="/" className="flex items-center gap-3 mb-4 group inline-flex">
+              <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-500 shadow-md shadow-teal-500/20">
+                <Camera className="w-5 h-5 text-[#080c0b]" strokeWidth={2.5} />
+              </div>
+              <div className="flex flex-col justify-center">
+                <span className="font-serif font-black text-2xl tracking-wider text-white leading-none">
+                  SSS STUDIO
+                </span>
+                <span className="font-sans text-[10px] font-black tracking-[0.35em] text-teal-300 uppercase mt-0.5">
+                  Photography &amp; Films
+                </span>
+              </div>
+            </Link>
 
- <div>
- <h3 className="text-sm font-semibold text-zinc-900 dark:text-white tracking-wider uppercase mb-4">Contact</h3>
- <ul className="space-y-3">
- <li className="flex items-start gap-3 text-zinc-600 dark:text-zinc-400">
- <MapPin className="w-5 h-5 shrink-0 mt-0.5 text-brand-gradient dark:text-zinc-400" />
- <span>34, prasanna new colony, Avaniyapuram, Madurai.</span>
- </li>
- <li className="flex items-center gap-3 text-zinc-600 dark:text-zinc-400">
- <Phone className="w-5 h-5 shrink-0 text-brand-gradient dark:text-zinc-400" />
- <span>+91 63835 65425</span>
- </li>
- <li className="flex items-center gap-3 text-zinc-600 dark:text-zinc-400">
- <Mail className="w-5 h-5 shrink-0 text-brand-gradient dark:text-zinc-400" />
- <span>ajayavinashsss@gmail.com</span>
- </li>
- </ul>
- </div>
- </div>
- 
- <div className="border-t border-zinc-200 dark:border-zinc-900 pt-8 flex flex-col md:flex-row justify-between items-center">
- <p className="text-zinc-500 dark:text-zinc-500 text-sm">
- &copy; {new Date().getFullYear()} SSS Studio. All rights reserved.
- </p>
- <p className="text-zinc-400 dark:text-zinc-600 text-sm mt-2 md:mt-0">
- Designed & Built by Avinash
- </p>
- </div>
- </div>
- </footer>
- );
+            <p className="text-zinc-400 text-sm max-w-md mb-6 font-light leading-relaxed">
+              Premium South Indian wedding storytelling, candid cinematography, newborn portraiture, and luxury bridal makeover studio. Preserving memories with a signature 20-Day Delivery Promise.
+            </p>
+
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-300 text-xs font-bold uppercase tracking-wider mb-6">
+              <ShieldCheck size={14} className="text-teal-400" /> 20-Day Album Delivery Guaranteed
+            </div>
+
+            <div className="flex space-x-4">
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-white/5 hover:bg-teal-500/20 border border-white/10 hover:border-teal-400/40 flex items-center justify-center text-zinc-300 hover:text-teal-300 transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram size={18} />
+              </a>
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-white/5 hover:bg-teal-500/20 border border-white/10 hover:border-teal-400/40 flex items-center justify-center text-zinc-300 hover:text-teal-300 transition-colors"
+                aria-label="Facebook"
+              >
+                <Facebook size={18} />
+              </a>
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h3 className="text-xs font-bold text-teal-300 tracking-widest uppercase mb-5">
+              Explore
+            </h3>
+            <ul className="space-y-3 text-sm">
+              <li>
+                <Link href="/" className="text-zinc-400 hover:text-white transition-colors">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link href="/#portfolio" className="text-zinc-400 hover:text-white transition-colors">
+                  Recent Shoots &amp; Portfolio
+                </Link>
+              </li>
+              <li>
+                <Link href="/#services" className="text-zinc-400 hover:text-white transition-colors">
+                  Wedding &amp; Event Services
+                </Link>
+              </li>
+              <li>
+                <Link href="/packages" className="text-zinc-400 hover:text-white transition-colors">
+                  Build-Your-Story Calculator
+                </Link>
+              </li>
+              <li>
+                <Link href="/store" className="text-zinc-400 hover:text-white transition-colors">
+                  Photo Frames &amp; Gifts Store
+                </Link>
+              </li>
+              <li>
+                <Link href="/visualizer" className="text-zinc-400 hover:text-white transition-colors">
+                  AI Outfit &amp; Pose Stylist
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Details */}
+          <div>
+            <h3 className="text-xs font-bold text-teal-300 tracking-widest uppercase mb-5">
+              Studio Location
+            </h3>
+            <ul className="space-y-3.5 text-sm">
+              <li className="flex items-start gap-3 text-zinc-400">
+                <MapPin className="w-4 h-4 shrink-0 mt-1 text-teal-400" />
+                <span className="font-light">34, Prasanna New Colony, Avaniyapuram, Madurai, TN 625012</span>
+              </li>
+              <li className="flex items-center gap-3 text-zinc-400">
+                <Phone className="w-4 h-4 shrink-0 text-teal-400" />
+                <span className="font-light">+91 78711 17875 / +91 63835 65425</span>
+              </li>
+              <li className="flex items-center gap-3 text-zinc-400">
+                <Mail className="w-4 h-4 shrink-0 text-teal-400" />
+                <span className="font-light">ajayavinashsss@gmail.com</span>
+              </li>
+              <li className="flex items-center gap-3 text-zinc-400">
+                <Clock className="w-4 h-4 shrink-0 text-teal-400" />
+                <span className="font-light">9:00 AM – 9:30 PM (All 7 Days)</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-zinc-500 gap-3">
+          <p>&copy; {new Date().getFullYear()} SSS Studio Photography. All rights reserved.</p>
+          <p className="text-zinc-400">
+            Crafted with Timeless Elegance &bull; Guaranteed 20-Day Album Delivery
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
 }

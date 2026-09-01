@@ -9,23 +9,22 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Camera, Plane, Users, Video, GripVertical, Trash2 } from "lucide-react";
-import Link from "next/link";
+import { Camera, Users, Video, GripVertical, Trash2, Calculator, Send, Sparkles, HeartHandshake } from "lucide-react";
 
 // Types/Data
 const VIBES = [
   { id: "candid", label: "Candid & Natural", basePrice: 5000, icon: Camera },
-  { id: "traditional", label: "Traditional", basePrice: 3000, icon: Users },
-  { id: "cinematic", label: "Cinematic Story", basePrice: 8000, icon: Video },
-  { id: "drone", label: "Drone Sweeps", basePrice: 4000, icon: Plane },
+  { id: "traditional", label: "Traditional Rituals", basePrice: 3000, icon: Users },
+  { id: "cinematic", label: "Cinematic Film", basePrice: 8000, icon: Video },
+  { id: "portraits", label: "Creative Portraits", basePrice: 4000, icon: Sparkles },
 ];
 
 const AVAILABLE_EVENTS = [
   { id: "haldi", label: "Haldi", duration: 3 },
   { id: "mehendi", label: "Mehendi", duration: 4 },
   { id: "sangeet", label: "Sangeet", duration: 5 },
-  { id: "wedding", label: "Wedding Ceremony", duration: 8 },
-  { id: "reception", label: "Reception", duration: 6 },
+  { id: "wedding", label: "Muhurtham / Wedding", duration: 8 },
+  { id: "reception", label: "Grand Reception", duration: 6 },
 ];
 
 const SortableEvent = ({ id, label, onRemove }) => {
@@ -43,18 +42,18 @@ const SortableEvent = ({ id, label, onRemove }) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="flex items-center justify-between p-3 mb-2 bg-zinc-800/80 hover:bg-zinc-800 rounded-xl shadow cursor-grab active:cursor-grabbing border border-zinc-700/60 transition-colors"
+      className="flex items-center justify-between p-3 mb-2 bg-[#0c3530]/80 hover:bg-[#104b43] rounded-2xl shadow cursor-grab active:cursor-grabbing border border-teal-500/20 transition-colors"
     >
       <div className="flex items-center gap-2">
-        <GripVertical size={16} className="text-zinc-500" />
-        <span className="font-medium text-zinc-200">{label}</span>
+        <GripVertical size={16} className="text-teal-400/60" />
+        <span className="font-medium text-zinc-100 text-sm">{label}</span>
       </div>
       <button
         onClick={(e) => {
           e.stopPropagation();
           onRemove(id);
         }}
-        className="text-zinc-400 hover:text-red-400 p-1 transition-colors"
+        className="text-zinc-400 hover:text-red-400 p-1 transition-colors cursor-pointer"
         aria-label={`Remove ${label}`}
       >
         <Trash2 size={16} />
@@ -63,9 +62,12 @@ const SortableEvent = ({ id, label, onRemove }) => {
   );
 };
 
-export default function PackageCalculator() {
-  const [selectedVibes, setSelectedVibes] = useState([]);
-  const [timelineEvents, setTimelineEvents] = useState([]); // Array of objects { uniqueId, eventId, label, duration }
+export default function PackageCalculator({ isEmbedded = false }) {
+  const [selectedVibes, setSelectedVibes] = useState(["candid", "traditional"]);
+  const [timelineEvents, setTimelineEvents] = useState([
+    { id: "wedding", label: "Muhurtham / Wedding", duration: 8, uniqueId: "wedding-init" },
+    { id: "reception", label: "Grand Reception", duration: 6, uniqueId: "reception-init" },
+  ]);
 
   const toggleVibe = (vibeId) => {
     setSelectedVibes((prev) =>
@@ -101,34 +103,29 @@ export default function PackageCalculator() {
   const calculateEstimate = () => {
     let minTotal = 0;
 
-    // Base cost for selected vibes
     const vibesCost = selectedVibes.reduce((acc, vibeId) => {
       const vibe = VIBES.find((v) => v.id === vibeId);
       return acc + (vibe ? vibe.basePrice : 0);
     }, 0);
 
-    // Event cost calculation (simplified: duration * 1000 + vibe markup)
     const eventsCost = timelineEvents.reduce((acc, ev) => {
-      return acc + ev.duration * 1500;
+      return acc + ev.duration * 1800;
     }, 0);
 
-    // Multiplier based on number of events and vibes
-    const multiplier = timelineEvents.length > 0 ? (1 + (selectedVibes.length * 0.1)) : 1;
-
+    const multiplier = timelineEvents.length > 0 ? 1 + selectedVibes.length * 0.1 : 1;
     minTotal = (vibesCost + eventsCost) * multiplier;
 
-    // Ensure some base value if they just clicked around
-    if (minTotal === 0 && selectedVibes.length > 0) minTotal = 5000;
+    if (minTotal === 0 && selectedVibes.length > 0) minTotal = 8000;
 
     return {
       min: Math.floor(minTotal),
-      max: Math.floor(minTotal * 1.3),
+      max: Math.floor(minTotal * 1.25),
     };
   };
 
   const calculateCrewSize = () => {
-    let size = 1; // Base photographer
-    if (selectedVibes.includes("cinematic") || selectedVibes.includes("drone")) {
+    let size = 1;
+    if (selectedVibes.includes("cinematic")) {
       size += 2;
     }
     if (selectedVibes.includes("traditional")) {
@@ -143,25 +140,45 @@ export default function PackageCalculator() {
   const estimate = calculateEstimate();
   const crewSize = calculateCrewSize();
 
+  const handleSendWhatsApp = () => {
+    const vibeLabels = selectedVibes
+      .map((id) => VIBES.find((v) => v.id === id)?.label)
+      .filter(Boolean)
+      .join(", ");
+    const eventLabels = timelineEvents.map((e) => e.label).join(", ");
+
+    const msg = `🧾 *Custom Shoot Estimation Request* 🧾\n` +
+      `--------------------------------\n` +
+      `✨ *Selected Styles:* ${vibeLabels || "None"}\n` +
+      `📅 *Timeline Events:* ${eventLabels || "None"}\n` +
+      `👥 *Estimated Crew:* ~${crewSize} Professionals\n` +
+      `💰 *Estimated Budget:* ₹${estimate.min.toLocaleString()} - ₹${estimate.max.toLocaleString()}\n` +
+      `--------------------------------\n` +
+      `Please check availability for these events!`;
+
+    const url = `https://wa.me/917871117875?text=${encodeURIComponent(msg)}`;
+    window.open(url, "_blank");
+  };
+
   return (
-    <div className="max-w-4xl mx-auto p-6 md:p-8 mb-16 relative bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-3xl shadow-2xl">
-      <div className="mb-8">
-        <span className="text-xs uppercase tracking-widest text-cyan-400 font-semibold px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 inline-block mb-3">
-          Interactive Tool
-        </span>
-        <h2 className="text-3xl md:text-4xl font-bold font-serif text-white mb-2">
-          Build-Your-Story Calculator
+    <div className="max-w-5xl mx-auto p-6 md:p-10 my-16 relative bg-[#0c3530]/50 backdrop-blur-2xl border border-teal-500/20 rounded-3xl shadow-2xl">
+      <div className="mb-10 text-center">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-widest mb-3">
+          <Calculator size={14} /> Interactive Custom Estimator
+        </div>
+        <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-3">
+          Build-Your-Story Package Calculator
         </h2>
-        <p className="text-zinc-400 text-sm">
-          Select your preferred photography vibes and drag-and-drop your timeline events to calculate dynamic estimates.
+        <p className="text-zinc-300 text-sm md:text-base font-light max-w-2xl mx-auto">
+          Customize your shoot coverage by selecting your desired styles and timeline events for an instant quotation.
         </p>
       </div>
 
       {/* Vibe Selection */}
       <section className="mb-10">
-        <h3 className="text-lg font-semibold mb-4 text-zinc-200 flex items-center gap-2">
-          <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs font-bold">1</span>
-          Select Your Vibes
+        <h3 className="text-sm font-bold uppercase tracking-wider text-teal-300 mb-4 flex items-center gap-2">
+          <span className="w-5 h-5 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center text-xs font-bold">1</span>
+          Select Coverage Styles &amp; Vibes
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {VIBES.map((vibe) => {
@@ -171,14 +188,14 @@ export default function PackageCalculator() {
               <button
                 key={vibe.id}
                 onClick={() => toggleVibe(vibe.id)}
-                className={`p-4 rounded-2xl border transition-all flex flex-col items-center justify-center gap-3 ${
+                className={`p-5 rounded-2xl border transition-all flex flex-col items-center justify-center gap-3 cursor-pointer ${
                   isSelected
-                    ? "border-cyan-500 bg-cyan-500/10 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]"
-                    : "border-zinc-800 bg-zinc-800/40 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200"
+                    ? "border-teal-400 bg-gradient-to-br from-teal-500/20 to-emerald-500/20 text-teal-200 shadow-[0_0_20px_rgba(20,184,166,0.25)] scale-[1.02]"
+                    : "border-white/10 bg-white/5 text-zinc-400 hover:border-white/20 hover:text-white"
                 }`}
               >
-                <Icon size={28} className={isSelected ? "text-cyan-400" : "text-zinc-400"} />
-                <span className="font-medium text-center text-sm">
+                <Icon size={26} className={isSelected ? "text-teal-400" : "text-zinc-400"} />
+                <span className="font-semibold text-center text-xs sm:text-sm">
                   {vibe.label}
                 </span>
               </button>
@@ -190,16 +207,16 @@ export default function PackageCalculator() {
       {/* Timeline Builder */}
       <section className="mb-10 grid md:grid-cols-2 gap-8">
         <div>
-          <h3 className="text-lg font-semibold mb-4 text-zinc-200 flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs font-bold">2</span>
-            Available Events
+          <h3 className="text-sm font-bold uppercase tracking-wider text-teal-300 mb-4 flex items-center gap-2">
+            <span className="w-5 h-5 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center text-xs font-bold">2</span>
+            Add Event Occasions
           </h3>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2.5">
             {AVAILABLE_EVENTS.map((event) => (
               <button
                 key={event.id}
                 onClick={() => addEvent(event)}
-                className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-cyan-500/50 rounded-full text-sm font-medium text-zinc-200 transition-all shadow-sm"
+                className="px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-teal-400/40 rounded-full text-xs font-medium text-zinc-200 transition-all cursor-pointer shadow-sm hover:scale-105"
               >
                 + Add {event.label}
               </button>
@@ -207,19 +224,17 @@ export default function PackageCalculator() {
           </div>
         </div>
 
-        <div className="bg-zinc-950/60 p-5 rounded-2xl border border-zinc-800/80 shadow-inner min-h-[260px]">
-          <h3 className="text-xs uppercase tracking-wider text-zinc-400 font-semibold mb-4">
-            Your Event Timeline
+        <div className="bg-[#080c0b]/80 p-5 rounded-2xl border border-teal-500/20 shadow-inner min-h-[220px]">
+          <h3 className="text-xs uppercase tracking-wider text-teal-400 font-bold mb-4 flex items-center justify-between">
+            <span>Your Event Timeline</span>
+            <span className="text-[10px] text-zinc-400 font-normal">Drag to reorder</span>
           </h3>
           {timelineEvents.length === 0 ? (
-            <div className="text-zinc-500 italic text-center py-12 text-sm">
-              Click events on the left to add them to your custom timeline.
+            <div className="text-zinc-500 italic text-center py-10 text-xs">
+              Click event buttons on the left to add them to your schedule.
             </div>
           ) : (
-            <DndContext
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
+            <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
               <SortableContext
                 items={timelineEvents.map((e) => e.uniqueId)}
                 strategy={verticalListSortingStrategy}
@@ -240,35 +255,34 @@ export default function PackageCalculator() {
         </div>
       </section>
 
-      {/* Sticky Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-zinc-950/95 border-t border-zinc-800/90 shadow-[0_-10px_30px_rgba(0,0,0,0.8)] p-4 md:px-8 md:py-4 z-50 backdrop-blur-xl">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="flex flex-row gap-6 sm:gap-10 items-center">
-            <div>
-              <p className="text-xs text-zinc-400 uppercase tracking-widest font-semibold">
-                Estimated Price
-              </p>
-              <p className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent">
-                ₹{estimate.min.toLocaleString()} - ₹{estimate.max.toLocaleString()}
-              </p>
-            </div>
-            <div className="h-8 w-px bg-zinc-800"></div>
-            <div>
-              <p className="text-xs text-zinc-400 uppercase tracking-widest font-semibold">
-                Estimated Crew
-              </p>
-              <p className="text-lg font-semibold text-zinc-200">
-                ~{crewSize} Professionals
-              </p>
-            </div>
+      {/* Summary & Estimate Action */}
+      <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-br from-[#0c3530] via-[#104b43] to-[#166055] border border-teal-400/30 flex flex-col md:flex-row justify-between items-center gap-6 shadow-2xl">
+        <div className="flex flex-row gap-6 md:gap-10 items-center text-left">
+          <div>
+            <p className="text-[11px] text-teal-200 uppercase tracking-widest font-bold">
+              Estimated Package Quote
+            </p>
+            <p className="text-2xl md:text-3xl font-bold font-serif text-white mt-0.5">
+              ₹{estimate.min.toLocaleString()} – ₹{estimate.max.toLocaleString()}
+            </p>
           </div>
-          <a
-            href="/contact"
-            className="px-6 py-3 bg-gradient-to-r from-cyan-400 to-violet-500 text-black font-bold rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition-all text-center w-full sm:w-auto"
-          >
-            Review & Book Estimate
-          </a>
+          <div className="h-10 w-px bg-white/20" />
+          <div>
+            <p className="text-[11px] text-teal-200 uppercase tracking-widest font-bold">
+              Recommended Crew
+            </p>
+            <p className="text-lg md:text-xl font-bold text-white mt-0.5">
+              ~{crewSize} Artists
+            </p>
+          </div>
         </div>
+
+        <button
+          onClick={handleSendWhatsApp}
+          className="w-full md:w-auto px-8 py-4 bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-500 hover:to-emerald-500 text-[#071f1b] font-bold rounded-full shadow-[0_0_25px_rgba(20,184,166,0.4)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 text-xs uppercase tracking-wider cursor-pointer"
+        >
+          <Send size={16} /> Send Custom Quote to WhatsApp
+        </button>
       </div>
     </div>
   );

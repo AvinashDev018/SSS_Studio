@@ -1,6 +1,7 @@
 import { Inter, Playfair_Display } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
-import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import Footer from "@/components/layout/Footer";
+import MultilingualWhatsAppWidget from "@/components/ui/MultilingualWhatsAppWidget";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import { Providers } from "@/components/Providers";
 import "./globals.css";
@@ -9,46 +10,47 @@ const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: '--font-playfair' });
 
 export const metadata = {
- title: {
- template: '%s | SSS Studio Madurai',
- default: 'SSS Studio | Professional Photography in Madurai',
- },
- description: 'Premium photography services in Avaniyapuram, Madurai. Specializing in weddings, portraits, birthday functions, and events.',
- keywords: ['photography', 'madurai', 'wedding photographer', 'photo studio', 'avaniyapuram', 'birthday photography'],
- openGraph: {
- title: 'SSS Studio | Professional Photography in Madurai',
- description: 'Premium photography services in Avaniyapuram, Madurai. Specializing in weddings, portraits, birthday functions, and events.',
- url: 'https://sssstudiomadurai.com',
- siteName: 'SSS Studio',
- locale: 'en_US',
- type: 'website',
- },
- twitter: {
- card: 'summary_large_image',
- title: 'SSS Studio | Professional Photography in Madurai',
- description: 'Premium photography services in Avaniyapuram, Madurai.',
- },
+  title: {
+    template: '%s | SSS Studio Photography',
+    default: 'SSS Studio | Premium Wedding Photography & Films',
+  },
+  description: 'Luxury wedding photography, candid cinematography, newborn & maternity shoots with a guaranteed 20-Day Album Delivery in Madurai and Tamil Nadu.',
+  keywords: ['photography', 'wedding photography', 'cinematic films', 'maternity photoshoot', 'madurai', 'sss studio', 'album delivery'],
+  openGraph: {
+    title: 'SSS Studio | Premium Wedding Photography & Films',
+    description: 'Luxury wedding photography, candid cinematography, and maternity shoots with guaranteed 20-Day Album Delivery.',
+    url: 'https://sssstudiomadurai.com',
+    siteName: 'SSS Studio',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SSS Studio | Premium Wedding Photography & Films',
+    description: 'Luxury wedding photography & films in Madurai.',
+  },
 };
 
 export default function RootLayout({ children }) {
- return (
- <html lang="en" className="dark" suppressHydrationWarning>
- <body className={`${inter.variable} ${playfair.variable} font-sans bg-zinc-950 text-zinc-50 min-h-screen flex flex-col relative antialiased selection:bg-cyan-500/30`}>
- {/* Ambient Global Glow */}
-  <div className="fixed inset-0 z-0 pointer-events-none opacity-40">
-    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-600/30 rounded-full blur-[120px]" />
-    <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-violet-600/30 rounded-full blur-[150px]" />
-  </div>
- 
- <div className="relative z-10 flex flex-col min-h-screen">
- <Providers>
- <Navbar />
- <main className="flex-grow">{children}</main>
- <ChatbotWidget />
- </Providers>
- <WhatsAppButton />
- </div>
- </body>
- </html>
- );
+  return (
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body className={`${inter.variable} ${playfair.variable} font-sans bg-[#080c0b] text-zinc-100 min-h-screen flex flex-col relative antialiased selection:bg-teal-500/30`}>
+        {/* Ambient Global Glow */}
+        <div className="fixed inset-0 z-0 pointer-events-none opacity-30">
+          <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] bg-teal-600/25 rounded-full blur-[140px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-600/20 rounded-full blur-[160px]" />
+        </div>
+
+        <div className="relative z-10 flex flex-col min-h-screen">
+          <Providers>
+            <Navbar />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+            <ChatbotWidget />
+          </Providers>
+          <MultilingualWhatsAppWidget whatsappNumber="917871117875" />
+        </div>
+      </body>
+    </html>
+  );
 }
