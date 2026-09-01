@@ -157,10 +157,12 @@ export default function BookingWizard() {
  </div>
  ) : (
  packages.map((pkg) => (
- <div 
+ <button
  key={pkg.id}
+ type="button"
+ aria-pressed={formData.packageId === pkg.id}
  onClick={() => setFormData({...formData, packageId: pkg.id, packageName: pkg.name})}
- className={`cursor-pointer rounded-2xl p-6 border-2 transition-all duration-300 flex justify-between items-center group ${
+ className={`w-full text-left cursor-pointer rounded-2xl p-6 border-2 transition-all duration-300 flex justify-between items-center group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
  formData.packageId === pkg.id 
  ? "border-cyan-500 bg-cyan-50 dark:bg-brand-gradient hover-glow-brand/10" 
  : "border-zinc-200 dark:border-zinc-800 hover:border-cyan-400/50"
@@ -185,7 +187,7 @@ export default function BookingWizard() {
  }`}>
  <CheckCircle2 className="w-4 h-4" />
  </div>
- </div>
+ </button>
  ))
  )}
  </div>
@@ -288,6 +290,7 @@ export default function BookingWizard() {
   <button
   key={day}
   disabled={isPast}
+  aria-pressed={isSelected}
   onClick={() => setFormData(prev => ({ ...prev, date: formattedDate, timeSlot: "" }))}
   title={!isPast ? pricing.label : undefined}
   className={`
@@ -323,6 +326,7 @@ export default function BookingWizard() {
  getAvailableTimeSlots().map(slot => (
  <button
  key={slot}
+ aria-pressed={formData.timeSlot === slot}
  onClick={() => setFormData(prev => ({...prev, timeSlot: slot}))}
  className={`py-3 px-4 rounded-xl text-sm font-medium transition-all ${
  formData.timeSlot === slot
@@ -433,6 +437,7 @@ export default function BookingWizard() {
     <button
      key={value}
      type="button"
+     aria-pressed={formData.eventType === value}
      onClick={() => setFormData(prev => ({ ...prev, eventType: value }))}
      className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-all ${
       formData.eventType === value
