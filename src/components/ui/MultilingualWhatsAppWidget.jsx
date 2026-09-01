@@ -3,9 +3,11 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Globe, Sparkles } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
-export default function MultilingualWhatsAppWidget({ whatsappNumber = "917871117875" }) {
+export default function MultilingualWhatsAppWidget({ whatsappNumber = "916383565425" }) {
   const [isOpen, setIsOpen] = useState(false);
+  const { changeLanguage } = useLanguage();
 
   const startChat = (lang) => {
     let message = "";
@@ -17,6 +19,7 @@ export default function MultilingualWhatsAppWidget({ whatsappNumber = "917871117
       message = "नमस्ते SSS फोटोग्राफी! मैं आपकी फोटोग्राफी सेवाओं और पैकेज के बारे में पूछताछ करना चाहता हूँ।";
     }
 
+    changeLanguage(lang);
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
     setIsOpen(false);
@@ -41,10 +44,10 @@ export default function MultilingualWhatsAppWidget({ whatsappNumber = "917871117
                   <MessageCircle size={20} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm tracking-wide">WhatsApp Support</h4>
+                  <h4 className="font-bold text-sm tracking-wide">SSS Studio WhatsApp</h4>
                   <p className="text-[10px] text-emerald-400 font-semibold uppercase flex items-center gap-1">
                     <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
-                    Online Now
+                    Online Now (+91 63835 65425)
                   </p>
                 </div>
               </div>
@@ -57,7 +60,7 @@ export default function MultilingualWhatsAppWidget({ whatsappNumber = "917871117
             </div>
 
             <p className="text-gray-300 text-xs mb-4 leading-relaxed">
-              Select your preferred language to start chatting directly on WhatsApp with our team:
+              Select your preferred language to start chatting directly on WhatsApp with SSS Studio:
             </p>
 
             <div className="space-y-2.5">
@@ -79,9 +82,12 @@ export default function MultilingualWhatsAppWidget({ whatsappNumber = "917871117
                 onClick={() => startChat("ta")}
                 className="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-left px-4 text-xs font-semibold flex justify-between items-center cursor-pointer transition-colors"
               >
-                <span>தமிழில் பேசுக (Tamil)</span>
-                <span className="text-[10px] text-teal-300 uppercase tracking-widest font-bold font-mono">
-                  TA
+                <div className="flex flex-col">
+                  <span>தமிழில் உரையாட (Tamil)</span>
+                  <span className="text-[10px] text-emerald-400 font-normal">வணக்கம்! உங்கள் கேள்விகளை கேளுங்கள்</span>
+                </div>
+                <span className="text-[10px] text-emerald-300 uppercase tracking-widest font-bold font-mono">
+                  தமிழ்
                 </span>
               </motion.button>
 
@@ -91,9 +97,12 @@ export default function MultilingualWhatsAppWidget({ whatsappNumber = "917871117
                 onClick={() => startChat("hi")}
                 className="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-left px-4 text-xs font-semibold flex justify-between items-center cursor-pointer transition-colors"
               >
-                <span>हिंदी में चैट करें (Hindi)</span>
-                <span className="text-[10px] text-teal-300 uppercase tracking-widest font-bold font-mono">
-                  HI
+                <div className="flex flex-col">
+                  <span>हिंदी में चैट करें (Hindi)</span>
+                  <span className="text-[10px] text-amber-400 font-normal">नमस्ते! हमसे बात करें</span>
+                </div>
+                <span className="text-[10px] text-amber-300 uppercase tracking-widest font-bold font-mono">
+                  हिंदी
                 </span>
               </motion.button>
             </div>
@@ -101,23 +110,19 @@ export default function MultilingualWhatsAppWidget({ whatsappNumber = "917871117
         )}
       </AnimatePresence>
 
+      {/* Floating Main Button */}
       <motion.button
-        whileHover={{ scale: 1.08 }}
-        whileTap={{ scale: 0.92 }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-2xl flex items-center justify-center text-2xl cursor-pointer focus:outline-none relative group border border-emerald-400/20"
-        style={{
-          boxShadow: "0 8px 30px rgba(16, 185, 129, 0.4)",
-        }}
-        aria-label="Chat with studio on WhatsApp"
+        className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-600 text-white flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.4)] hover:shadow-[0_0_35px_rgba(16,185,129,0.6)] cursor-pointer focus:outline-none relative group"
+        aria-label="Open WhatsApp Chat in 3 Languages"
       >
-        <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white flex items-center justify-center text-[8px] text-white font-extrabold animate-bounce">
-          1
-        </span>
-        {isOpen ? <X size={20} /> : <MessageCircle size={24} />}
+        <div className="absolute inset-0 rounded-full border border-emerald-300/40 animate-ping opacity-30" />
+        <MessageCircle size={28} className="fill-white text-transparent group-hover:scale-110 transition-transform" />
         
-        <span className="absolute right-16 bg-gray-900/90 text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 pointer-events-none font-medium border border-white/5 shadow-md">
-          Chat With Us 💬
+        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#080c0b] shadow-sm">
+          1
         </span>
       </motion.button>
     </div>

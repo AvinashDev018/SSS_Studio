@@ -1,109 +1,173 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Sparkles, ShieldCheck, Star, Award, Video } from "lucide-react";
-
-const HERO_IMAGES = [
-  "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504208/iydxdch0gcdo1vuea56q.jpg",
-  "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504209/y4t69imuaktbevg8re57.jpg",
-  "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504211/tqb10uvuzmqdkuxyqmps.jpg",
-  "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504212/ksq2vkwzniqlgsly5k6p.jpg",
-  "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504214/eill2s5uvoq7wwabeunx.jpg",
-];
+import React, { useMemo } from "react";
+import { motion } from "framer-motion";
+import { Camera, Sparkles, Heart, Film, Award } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function SSSHero({ onOpenBooking, onOpenQuote }) {
-  const [currentIdx, setCurrentIdx] = useState(0);
+  const { t } = useLanguage();
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIdx((prev) => (prev + 1) % HERO_IMAGES.length);
-    }, 5500);
-    return () => clearInterval(timer);
+  // Pre-generate smooth random particle positions
+  const particles = useMemo(() => {
+    return Array.from({ length: 18 }).map((_, i) => ({
+      id: i,
+      x: (i * 5.5 + (i % 3) * 7) % 94 + 3,
+      size: (i % 3 === 0 ? 28 : i % 2 === 0 ? 20 : 14),
+      duration: 12 + (i % 5) * 3,
+      delay: (i * 1.3) % 10,
+      type: i % 4 === 0 ? "camera" : i % 4 === 1 ? "sparkle" : i % 4 === 2 ? "film" : "dot",
+      opacity: 0.15 + (i % 3) * 0.1,
+    }));
   }, []);
 
   return (
-    <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden pt-20 pb-16">
-      {/* Background Image Carousel with Rich Overlays */}
-      <div className="absolute inset-0 z-0 bg-black">
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={currentIdx}
-            src={HERO_IMAGES[currentIdx]}
-            initial={{ opacity: 0, scale: 1.08 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.6, ease: "easeInOut" }}
-            className="absolute inset-0 w-full h-full object-cover object-center"
-            alt="SSS Photography Showcase"
-          />
-        </AnimatePresence>
+    <section className="relative min-h-[85vh] flex flex-col items-center justify-center overflow-hidden pt-12 pb-20 bg-gradient-to-b from-[#f8fafc] via-[#e8f3f1] to-[#f0f9f8] text-[#0c3530] select-none">
+      {/* 1. Animated Floating Particles Background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        {particles.map((p) => (
+          <motion.div
+            key={p.id}
+            initial={{ y: "110vh", x: `${p.x}vw`, opacity: 0, rotate: 0 }}
+            animate={{
+              y: "-15vh",
+              opacity: [0, p.opacity, p.opacity, 0],
+              rotate: [0, 180, 360],
+              x: [`${p.x}vw`, `${p.x + (p.id % 2 === 0 ? 3 : -3)}vw`, `${p.x}vw`],
+            }}
+            transition={{
+              duration: p.duration,
+              repeat: Infinity,
+              delay: p.delay,
+              ease: "linear",
+            }}
+            className="absolute text-teal-800"
+          >
+            {p.type === "camera" && <Camera size={p.size} strokeWidth={1.5} />}
+            {p.type === "sparkle" && <Sparkles size={p.size} strokeWidth={1.5} />}
+            {p.type === "film" && <Film size={p.size} strokeWidth={1.5} />}
+            {p.type === "dot" && (
+              <div
+                style={{ width: p.size / 2, height: p.size / 2 }}
+                className="rounded-full bg-teal-600/30 blur-[1px]"
+              />
+            )}
+          </motion.div>
+        ))}
 
-        {/* Multi-layered cinematic overlays */}
-        <div className="absolute inset-0 bg-black/60 z-10" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#080c0b] via-[#080c0b]/40 to-transparent z-10" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0c3530]/60 via-transparent to-[#0c3530]/60 z-10" />
+        {/* Ambient subtle light glows */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[550px] h-[550px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
       </div>
 
-      {/* Hero Content */}
-      <div className="relative z-20 text-center px-4 max-w-5xl mx-auto flex flex-col items-center">
-        {/* Top Guarantee Pill */}
+      {/* 2. Main Content Container */}
+      <div className="relative z-10 max-w-5xl mx-auto px-4 text-center flex flex-col items-center">
+        {/* 3D Center Floating Studio Card */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-teal-400/30 bg-[#0c3530]/80 backdrop-blur-md mb-6 shadow-lg shadow-teal-900/30"
+          initial={{ opacity: 0, scale: 0.85, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: "easeOut" }}
+          whileHover={{ scale: 1.03, rotateY: 5, rotateX: -3 }}
+          className="relative mb-10 group cursor-pointer"
         >
-          <Sparkles className="w-4 h-4 text-teal-400 animate-pulse" />
-          <span className="text-xs md:text-sm font-semibold tracking-widest text-teal-200 uppercase">
-            ⚡ 20-Day Album Delivery Guarantee
-          </span>
+          {/* Outer glow shadow */}
+          <div className="absolute -inset-2 bg-gradient-to-r from-teal-500/20 via-emerald-500/20 to-teal-600/20 rounded-[32px] blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
+
+          {/* Card Surface */}
+          <div className="relative w-[320px] sm:w-[460px] md:w-[540px] h-[200px] sm:h-[260px] md:h-[290px] rounded-[28px] bg-gradient-to-br from-white via-[#f4f9f8] to-[#e4f1ef] border border-white/80 shadow-[0_20px_50px_rgba(12,53,48,0.18)] p-6 sm:p-8 flex items-center justify-between overflow-hidden backdrop-blur-md">
+            {/* Background Geometric Pattern */}
+            <div className="absolute inset-0 opacity-[0.07] bg-[radial-gradient(#0c3530_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
+            
+            {/* Metallic Light Sweep */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
+
+            {/* Card Left: Stylized Studio Typography */}
+            <div className="flex flex-col items-start z-10">
+              <div className="flex items-center gap-1.5">
+                <span className="font-serif italic font-normal text-4xl sm:text-6xl md:text-7xl text-[#0c3530] tracking-tight leading-none drop-shadow-sm">
+                  SSS
+                </span>
+              </div>
+              <span className="font-sans font-black text-[9px] sm:text-xs tracking-[0.45em] text-[#166055] uppercase mt-2 ml-1">
+                P H O T O G R A P H Y
+              </span>
+            </div>
+
+            {/* Card Right: Silhouette Vector Artwork */}
+            <div className="relative z-10 shrink-0 w-28 sm:w-44 md:w-52 h-full flex items-center justify-end">
+              <svg
+                viewBox="0 0 200 200"
+                className="w-full h-full text-[#166055] drop-shadow-md"
+                fill="currentColor"
+              >
+                <path
+                  d="M120 70 C120 60, 130 55, 140 55 C148 45, 155 45, 165 48 C175 52, 180 60, 180 70 C175 75, 170 78, 160 76 C150 74, 145 78, 140 82 C135 85, 125 80, 120 70 Z"
+                  opacity="0.9"
+                />
+                <path
+                  d="M142 58 Q150 48 160 52 Q168 56 166 65 Q164 72 155 72 Q146 72 142 58 Z"
+                  opacity="0.95"
+                />
+                <rect
+                  x="50"
+                  y="75"
+                  width="95"
+                  height="65"
+                  rx="14"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="6"
+                />
+                <path
+                  d="M75 75 L85 62 L110 62 L120 75 Z"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="5"
+                />
+                <circle
+                  cx="97"
+                  cy="107"
+                  r="24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="6"
+                />
+                <circle
+                  cx="97"
+                  cy="107"
+                  r="12"
+                  fill="currentColor"
+                  opacity="0.25"
+                />
+                <circle cx="130" cy="88" r="4" fill="currentColor" />
+                <path
+                  d="M140 85 C155 90, 165 105, 165 125 L150 145 C140 135, 135 120, 135 110 Z"
+                  opacity="0.85"
+                />
+              </svg>
+            </div>
+          </div>
         </motion.div>
 
-        {/* Main Title */}
+        {/* Big Editorial Heading Matching Exact Reference with Dynamic Translation */}
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.2 }}
-          className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-6 text-white drop-shadow-2xl leading-[1.15]"
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-[#0c3530] mb-4 leading-[1.12]"
         >
-          Capturing Life&apos;s Most <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-emerald-200 to-[#D4AF37]">
-            Beautiful Moments
-          </span>
+          {t.hero.titleLine1} <br />
+          <span className="text-[#104b43] italic font-serif">{t.hero.titleLine2}</span>
         </motion.h1>
 
-        {/* Subtitle */}
+        {/* Sub-Heading Matching Exact Reference */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.4 }}
-          className="text-base sm:text-xl md:text-2xl text-zinc-300 mb-10 max-w-3xl font-light leading-relaxed tracking-wide"
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="text-xs sm:text-sm md:text-base font-bold tracking-[0.25em] sm:tracking-[0.35em] text-[#166055] uppercase mt-2 mb-8"
         >
-          Wedding Stories, Cinematic Films, Candid Portraits, Maternity &amp; Bridal Styling Studio in Madurai &amp; Tamil Nadu.
+          {t.hero.subtitle}
         </motion.p>
-
-        {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.6 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-md sm:max-w-none"
-        >
-          <button
-            onClick={() => onOpenBooking("Wedding & Event Photo Shoot")}
-            className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-500 hover:to-emerald-500 text-[#071f1b] font-bold rounded-full shadow-[0_0_25px_rgba(20,184,166,0.4)] hover:shadow-[0_0_35px_rgba(20,184,166,0.6)] hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer text-sm md:text-base tracking-wider uppercase"
-          >
-            Book a Shoot <ArrowRight size={18} />
-          </button>
-
-          <button
-            onClick={() => onOpenQuote("Wedding & Event Photo Shoot")}
-            className="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md text-white font-semibold rounded-full shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-sm md:text-base tracking-wider uppercase cursor-pointer"
-          >
-            Request a Quote
-          </button>
-        </motion.div>
       </div>
     </section>
   );

@@ -1,4 +1,5 @@
 import { Inter, Playfair_Display } from "next/font/google";
+import SSSAnnouncementBar from "@/components/layout/SSSAnnouncementBar";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import MultilingualWhatsAppWidget from "@/components/ui/MultilingualWhatsAppWidget";
@@ -43,12 +44,13 @@ export default function RootLayout({ children }) {
 
         <div className="relative z-10 flex flex-col min-h-screen">
           <Providers>
+            <SSSAnnouncementBar />
             <Navbar />
             <main className="flex-grow">{children}</main>
             <Footer />
             <ChatbotWidget />
+            <MultilingualWhatsAppWidget whatsappNumber="916383565425" />
           </Providers>
-          <MultilingualWhatsAppWidget whatsappNumber="917871117875" />
         </div>
       </body>
     </html>

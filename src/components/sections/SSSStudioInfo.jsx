@@ -3,8 +3,11 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { MapPin, Phone, Clock, MessageCircle, Calendar } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function SSSStudioInfo({ onOpenBooking }) {
+  const { t } = useLanguage();
+
   return (
     <section id="contact" className="py-24 bg-[#0a100e] relative overflow-hidden border-t border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -12,13 +15,13 @@ export default function SSSStudioInfo({ onOpenBooking }) {
           {/* Left Info Column */}
           <div>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-widest mb-3">
-              Get in Touch
+              {t.contact.tag}
             </div>
             <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-6">
-              Visit SSS Studio or Schedule a Consultation
+              {t.contact.title}
             </h2>
             <p className="text-zinc-400 text-base md:text-lg font-light leading-relaxed mb-8">
-              Whether you are planning a grand South Indian wedding, a destination couple shoot, or a family milestone, our team is ready to craft your story.
+              {t.contact.subtitle}
             </p>
 
             <div className="space-y-6 mb-10">
@@ -29,7 +32,7 @@ export default function SSSStudioInfo({ onOpenBooking }) {
                 <div>
                   <h4 className="text-white font-bold text-base">Studio Address</h4>
                   <p className="text-zinc-400 text-sm font-light mt-0.5">
-                    34, Prasanna New Colony, Avaniyapuram, Madurai, Tamil Nadu 625012
+                    {t.contact.address}
                   </p>
                 </div>
               </div>
@@ -41,7 +44,7 @@ export default function SSSStudioInfo({ onOpenBooking }) {
                 <div>
                   <h4 className="text-white font-bold text-base">Direct Phone &amp; WhatsApp</h4>
                   <p className="text-zinc-400 text-sm font-light mt-0.5">
-                    +91 78711 17875 / +91 63835 65425
+                    +91 63835 65425
                   </p>
                 </div>
               </div>
@@ -53,7 +56,7 @@ export default function SSSStudioInfo({ onOpenBooking }) {
                 <div>
                   <h4 className="text-white font-bold text-base">Working Hours</h4>
                   <p className="text-zinc-400 text-sm font-light mt-0.5">
-                    Monday – Sunday: 9:00 AM – 9:30 PM (All 7 Days)
+                    {t.contact.hours}
                   </p>
                 </div>
               </div>
@@ -64,16 +67,16 @@ export default function SSSStudioInfo({ onOpenBooking }) {
                 onClick={() => onOpenBooking("Wedding & Event Photo Shoot")}
                 className="px-8 py-3.5 bg-gradient-to-r from-teal-400 to-emerald-400 text-[#071f1b] font-bold rounded-full shadow-lg hover:shadow-teal-500/30 transition-all duration-300 flex items-center gap-2 text-xs uppercase tracking-wider cursor-pointer"
               >
-                <Calendar size={16} /> Book Date Availability
+                <Calendar size={16} /> {t.contact.bookSlot}
               </button>
               
               <a
-                href="https://wa.me/917871117875"
+                href="https://wa.me/916383565425"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-8 py-3.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold rounded-full shadow-lg transition-all duration-300 flex items-center gap-2 text-xs uppercase tracking-wider"
               >
-                <MessageCircle size={16} className="text-emerald-400" /> WhatsApp Chat
+                <MessageCircle size={16} className="text-emerald-400" /> {t.contact.chatWhatsApp}
               </a>
             </div>
           </div>

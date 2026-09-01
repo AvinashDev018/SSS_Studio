@@ -3,14 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, Play, X, ChevronLeft, ChevronRight } from "lucide-react";
-
-const CATEGORIES = [
-  { id: "all", label: "All" },
-  { id: "wedding", label: "Wedding" },
-  { id: "pre-wedding", label: "Pre / Post Wedding" },
-  { id: "baby-maternity", label: "Baby & Maternity" },
-  { id: "birthday-events", label: "Birthdays & Events" },
-];
+import { useLanguage } from "@/context/LanguageContext";
 
 const PORTFOLIO_PROJECTS = [
   {
@@ -98,9 +91,18 @@ const parseVideoUrl = (url) => {
 };
 
 export default function SSSPortfolio() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("all");
   const [selectedProject, setSelectedProject] = useState(null);
   const [mediaIndex, setMediaIndex] = useState(0);
+
+  const categories = [
+    { id: "all", label: t.portfolio.all },
+    { id: "wedding", label: t.portfolio.wedding },
+    { id: "pre-wedding", label: t.portfolio.preWedding },
+    { id: "baby-maternity", label: t.portfolio.maternity },
+    { id: "birthday-events", label: t.portfolio.birthday },
+  ];
 
   const filteredProjects = PORTFOLIO_PROJECTS.filter((proj) =>
     activeTab === "all" ? true : proj.category === activeTab
@@ -130,17 +132,17 @@ export default function SSSPortfolio() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-widest mb-3">
-            <Camera size={14} /> SSS Studio Gallery
+            <Camera size={14} /> {t.portfolio.tag}
           </div>
           <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-4">
-            Recent Shoots &amp; Projects
+            {t.portfolio.title}
           </h2>
           <div className="w-20 h-1 bg-gradient-to-r from-teal-400 to-emerald-400 mx-auto rounded-full" />
         </div>
 
         {/* Filter Tabs */}
         <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-12">
-          {CATEGORIES.map((tab) => (
+          {categories.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}

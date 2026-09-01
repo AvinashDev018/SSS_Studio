@@ -8,7 +8,7 @@ import { SHOOT_TYPES } from "./BookingQuoteModal";
 export default function TestimonialModal({
   isOpen,
   onClose,
-  whatsappNumber = "917871117875",
+  whatsappNumber = "916383565425",
 }) {
   const [name, setName] = useState("");
   const [rating, setRating] = useState(5);

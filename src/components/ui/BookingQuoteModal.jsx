@@ -31,7 +31,7 @@ export default function BookingQuoteModal({
   onClose,
   prefilledType = "Wedding & Event Photo Shoot",
   prefilledMode = "booking",
-  whatsappNumber = "917871117875",
+  whatsappNumber = "916383565425",
 }) {
   const [mode, setMode] = useState(prefilledMode);
   const [name, setName] = useState("");

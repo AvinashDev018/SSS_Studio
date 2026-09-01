@@ -63,11 +63,16 @@ const SortableEvent = ({ id, label, onRemove }) => {
 };
 
 export default function PackageCalculator({ isEmbedded = false }) {
+  const [mounted, setMounted] = useState(false);
   const [selectedVibes, setSelectedVibes] = useState(["candid", "traditional"]);
   const [timelineEvents, setTimelineEvents] = useState([
     { id: "wedding", label: "Muhurtham / Wedding", duration: 8, uniqueId: "wedding-init" },
     { id: "reception", label: "Grand Reception", duration: 6, uniqueId: "reception-init" },
   ]);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const toggleVibe = (vibeId) => {
     setSelectedVibes((prev) =>
@@ -156,9 +161,19 @@ export default function PackageCalculator({ isEmbedded = false }) {
       `--------------------------------\n` +
       `Please check availability for these events!`;
 
-    const url = `https://wa.me/917871117875?text=${encodeURIComponent(msg)}`;
+    const url = `https://wa.me/916383565425?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank");
   };
+
+  if (!mounted) {
+    return (
+      <div className="max-w-5xl mx-auto p-6 md:p-10 my-16 bg-[#0c3530]/50 border border-teal-500/20 rounded-3xl min-h-[450px] flex items-center justify-center">
+        <div className="text-teal-400 font-serif flex items-center gap-2 animate-pulse">
+          <Calculator size={20} /> Loading Story Calculator...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto p-6 md:p-10 my-16 relative bg-[#0c3530]/50 backdrop-blur-2xl border border-teal-500/20 rounded-3xl shadow-2xl">
