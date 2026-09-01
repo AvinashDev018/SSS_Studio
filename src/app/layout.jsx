@@ -4,6 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import MultilingualWhatsAppWidget from "@/components/ui/MultilingualWhatsAppWidget";
 import ChatbotWidget from "@/components/ChatbotWidget";
+import CursorGlow from "@/components/ui/CursorGlow";
 import { Providers } from "@/components/Providers";
 import "./globals.css";
 
@@ -15,11 +16,11 @@ export const metadata = {
     template: '%s | SSS Studio Photography',
     default: 'SSS Studio | Premium Wedding Photography & Films',
   },
-  description: 'Luxury wedding photography, candid cinematography, newborn & maternity shoots with a guaranteed 20-Day Album Delivery in Madurai and Tamil Nadu.',
+  description: 'Luxury wedding photography, candid cinematography, newborn & maternity shoots with a guaranteed 1-Month Album Delivery in Madurai and Tamil Nadu.',
   keywords: ['photography', 'wedding photography', 'cinematic films', 'maternity photoshoot', 'madurai', 'sss studio', 'album delivery'],
   openGraph: {
     title: 'SSS Studio | Premium Wedding Photography & Films',
-    description: 'Luxury wedding photography, candid cinematography, and maternity shoots with guaranteed 20-Day Album Delivery.',
+    description: 'Luxury wedding photography, candid cinematography, and maternity shoots with guaranteed 1-Month Album Delivery.',
     url: 'https://sssstudiomadurai.com',
     siteName: 'SSS Studio',
     locale: 'en_US',
@@ -44,6 +45,7 @@ export default function RootLayout({ children }) {
 
         <div className="relative z-10 flex flex-col min-h-screen">
           <Providers>
+            <CursorGlow />
             <SSSAnnouncementBar />
             <Navbar />
             <main className="flex-grow">{children}</main>

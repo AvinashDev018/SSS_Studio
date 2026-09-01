@@ -142,35 +142,38 @@ export default function SSSPortfolio() {
 
         {/* Filter Tabs */}
         <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-12">
-          {categories.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-5 py-2.5 rounded-full text-xs md:text-sm font-semibold tracking-wider uppercase transition-all duration-300 cursor-pointer border ${
-                activeTab === tab.id
-                  ? "bg-gradient-to-r from-teal-400 to-emerald-400 text-[#071f1b] border-transparent font-bold shadow-lg shadow-teal-500/20 scale-105"
-                  : "bg-white/5 text-gray-400 hover:text-white border-white/10 hover:border-white/20"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+          {categories.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`relative px-5 py-2.5 rounded-full text-xs md:text-sm font-semibold tracking-wider uppercase transition-all duration-300 cursor-pointer border ${
+                  isActive
+                    ? "bg-gradient-to-r from-teal-400 to-emerald-400 text-[#071f1b] border-transparent font-bold shadow-lg shadow-teal-500/25 scale-105"
+                    : "bg-white/5 text-gray-400 hover:text-white border-white/10 hover:border-white/20 hover:bg-white/10"
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
 
         {/* Projects Grid */}
         <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          <AnimatePresence>
+          <AnimatePresence mode="popLayout">
             {filteredProjects.map((proj, idx) => (
               <motion.div
                 key={proj.id}
                 layout
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                initial={{ opacity: 0, scale: 0.92, y: 25 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.4, delay: idx * 0.08 }}
-                whileHover={{ y: -8 }}
+                transition={{ duration: 0.45, delay: idx * 0.07 }}
+                whileHover={{ y: -8, scale: 1.01 }}
                 onClick={() => openLightbox(proj)}
-                className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between cursor-pointer group hover:border-teal-400/40 transition-all duration-300"
+                className="bg-[#0c3530]/40 backdrop-blur-xl border border-teal-500/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between cursor-pointer group hover:border-teal-400/50 hover:shadow-[0_20px_50px_rgba(20,184,166,0.15)] transition-all duration-300"
               >
                 <div>
                   <div className="relative h-64 sm:h-72 overflow-hidden bg-zinc-900">
@@ -179,32 +182,35 @@ export default function SSSPortfolio() {
                       alt={proj.title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
 
-                    <span className="absolute top-4 left-4 text-[11px] font-bold text-teal-300 bg-teal-950/80 border border-teal-400/30 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
+                    <span className="absolute top-4 left-4 text-[11px] font-bold text-teal-300 bg-black/70 border border-teal-400/40 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md shadow-md">
                       {proj.categoryLabel}
                     </span>
 
                     {proj.videoUrl && (
-                      <span className="absolute top-4 right-4 text-[10px] font-bold text-emerald-300 bg-emerald-950/80 border border-emerald-400/30 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md flex items-center gap-1">
+                      <span className="absolute top-4 right-4 text-[10px] font-bold text-emerald-300 bg-black/70 border border-emerald-400/40 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md flex items-center gap-1 shadow-md">
                         <Play size={10} className="fill-current" /> Video
                       </span>
                     )}
 
                     {proj.videoUrl && (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-12 h-12 rounded-full bg-teal-400 text-[#071f1b] flex items-center justify-center pl-1 shadow-lg shadow-teal-400/30 group-hover:scale-125 transition-transform duration-300">
-                          <Play size={16} className="fill-current" />
+                        <div className="relative">
+                          <span className="absolute -inset-2 rounded-full bg-teal-400/40 animate-ping" />
+                          <div className="relative w-14 h-14 rounded-full bg-teal-400 text-[#071f1b] flex items-center justify-center pl-1 shadow-2xl shadow-teal-400/50 group-hover:scale-115 transition-transform duration-300">
+                            <Play size={18} className="fill-current" />
+                          </div>
                         </div>
                       </div>
                     )}
                   </div>
 
                   <div className="p-6">
-                    <h3 className="text-xl font-bold font-serif text-white mb-2 group-hover:text-teal-300 transition-colors duration-300">
+                    <h3 className="text-xl font-bold font-serif text-white mb-2 group-hover:text-teal-300 transition-colors">
                       {proj.title}
                     </h3>
-                    <p className="text-gray-400 text-sm leading-relaxed line-clamp-2 font-light">
+                    <p className="text-zinc-300 text-sm line-clamp-2 font-light leading-relaxed">
                       {proj.description}
                     </p>
                   </div>

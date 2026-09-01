@@ -368,7 +368,7 @@ export default function VisualizerPage() {
                 {/* Tips Row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4">
-                    <p className="text-zinc-300 font-semibold text-xs uppercase tracking-widest mb-2">💄 Hair & Makeup</p>
+                    <p className="text-zinc-300 font-semibold text-xs uppercase tracking-widest mb-2">✨ Hair & Grooming</p>
                     <p className="text-zinc-400 text-sm">{result.hairMakeupTip}</p>
                   </div>
                   <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4">

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { Menu, X, Camera, Globe, Tag, Check, ChevronDown } from "lucide-react";
+import { Menu, X, Camera, Globe, Tag, Check, ChevronDown, Sparkles, ArrowRight, MessageCircle } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -59,33 +59,33 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-40 bg-[#080c0b]/92 backdrop-blur-2xl border-b border-teal-500/20 transition-all duration-300 shadow-2xl shadow-black/80">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-20 gap-4">
           
           {/* Left: Brand Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group shrink-0 mr-6">
-            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 to-emerald-500 shadow-[0_0_15px_rgba(20,184,166,0.35)] group-hover:scale-105 transition-all duration-300">
-              <Camera className="w-4 h-4 text-[#080c0b]" strokeWidth={2.5} />
+          <Link href="/" className="flex items-center gap-3 group shrink-0">
+            <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-400 via-emerald-400 to-teal-500 shadow-[0_0_20px_rgba(20,184,166,0.35)] group-hover:scale-105 transition-all duration-300">
+              <Camera className="w-5 h-5 text-[#071f1b]" strokeWidth={2.5} />
             </div>
             <div className="flex items-center gap-1.5 leading-none">
-              <span className="font-serif font-bold text-xl tracking-tight text-white">
+              <span className="font-serif font-black text-2xl tracking-tight text-white">
                 SSS
               </span>
-              <span className="font-serif italic text-lg text-teal-300">
+              <span className="font-serif italic text-lg text-teal-300 font-normal">
                 Photography
               </span>
             </div>
           </Link>
 
-          {/* Center: Desktop Nav Links */}
-          <div className="hidden 2xl:flex items-center space-x-1 lg:space-x-2">
+          {/* Center: Desktop Nav Links with Hover Glass Glow */}
+          <div className="hidden xl:flex items-center space-x-1 lg:space-x-1.5 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-md">
             {links.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
                 className={`px-3 py-1.5 text-xs font-semibold tracking-wide transition-all duration-300 rounded-full whitespace-nowrap ${
                   pathname === link.href
-                    ? "text-teal-300 bg-teal-500/10 font-bold shadow-[0_0_12px_rgba(20,184,166,0.2)]"
-                    : "text-zinc-300 hover:text-white hover:bg-white/5"
+                    ? "text-teal-300 bg-teal-500/15 font-bold shadow-[0_0_12px_rgba(20,184,166,0.2)] border border-teal-500/30"
+                    : "text-zinc-300 hover:text-white hover:bg-white/10"
                 }`}
               >
                 {link.name}
@@ -93,8 +93,9 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Right: Divider & Action CTAs */}
-          <div className="hidden xl:flex items-center gap-2 shrink-0 ml-auto 2xl:ml-6 pl-4 border-l border-white/10">
+          {/* Right: Streamlined Action CTAs */}
+          <div className="hidden lg:flex items-center gap-2.5 shrink-0">
+            
             {/* Interactive 3-Language Selector Dropdown */}
             <div className="relative" ref={desktopLangRef}>
               <button
@@ -103,12 +104,12 @@ export default function Navbar() {
                   e.stopPropagation();
                   setIsDesktopLangOpen((prev) => !prev);
                 }}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-zinc-200 hover:text-white bg-white/5 hover:bg-white/10 border border-white/15 transition-all cursor-pointer whitespace-nowrap"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold text-zinc-200 hover:text-white bg-white/5 hover:bg-white/10 border border-white/15 transition-all cursor-pointer whitespace-nowrap"
                 title="Change Website Language"
               >
-                <Globe size={13} className="text-teal-400" />
+                <Globe size={14} className="text-teal-400" />
                 <span className="font-bold">{translations[currentLang]?.langLabel || "EN"}</span>
-                <ChevronDown size={12} className={`text-zinc-400 transition-transform ${isDesktopLangOpen ? "rotate-180" : ""}`} />
+                <ChevronDown size={12} className={`text-zinc-400 transition-transform duration-200 ${isDesktopLangOpen ? "rotate-180" : ""}`} />
               </button>
 
               {isDesktopLangOpen && (
@@ -147,43 +148,36 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Offer Here Button (Golden Pill) */}
+            {/* Offer Here Button (Gleaming Gold Pill) */}
             <button
-              onClick={() => triggerModal("booking", "Complimentary Pre-Wedding Shoot Offer")}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-[#071f1b] shadow-[0_0_15px_rgba(245,158,11,0.3)] hover:scale-105 transition-all duration-300 cursor-pointer uppercase tracking-wider whitespace-nowrap"
+              onClick={() => triggerModal("offer", "Exclusive Wedding Season Gift Box")}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-[#071f1b] shadow-[0_0_20px_rgba(245,158,11,0.35)] hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] hover:scale-105 transition-all duration-300 cursor-pointer uppercase tracking-wider whitespace-nowrap"
             >
-              <Tag size={13} className="fill-current" />
+              <Sparkles size={13} className="fill-current text-[#071f1b]" />
               <span>{t.nav.offer}</span>
             </button>
 
-            {/* Get Quote (White/Glass Pill) */}
+            {/* Get Quote (Glass Pill) */}
             <button
               onClick={() => triggerModal("quote", "Wedding & Event Photo Shoot")}
-              className="px-3.5 py-1.5 rounded-full text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/15 hover:border-white/30 transition-all duration-300 cursor-pointer whitespace-nowrap"
+              className="px-4 py-2 rounded-full text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/15 hover:border-white/30 transition-all duration-300 cursor-pointer whitespace-nowrap"
             >
               {t.nav.getQuote}
             </button>
 
-            {/* Book Makeup (Mint Pill) */}
-            <button
-              onClick={() => triggerModal("booking", "Makeup Artist Available")}
-              className="px-3.5 py-1.5 rounded-full text-xs font-bold text-[#071f1b] bg-gradient-to-r from-teal-300 to-emerald-300 hover:from-teal-400 hover:to-emerald-400 shadow-[0_0_15px_rgba(45,212,191,0.3)] hover:scale-105 transition-all duration-300 cursor-pointer whitespace-nowrap"
-            >
-              {t.nav.bookMakeup}
-            </button>
-
-            {/* Book Now (Deep Forest Teal Solid Pill) */}
+            {/* Book Now (Glowing Teal Solid CTA) */}
             <button
               onClick={() => triggerModal("booking", "Wedding & Event Photo Shoot")}
-              className="px-4 py-1.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-teal-700 via-teal-800 to-[#0c3530] hover:from-teal-600 hover:to-teal-700 border border-teal-500/40 shadow-lg shadow-teal-950/60 hover:scale-105 transition-all duration-300 cursor-pointer whitespace-nowrap"
+              className="px-5 py-2 rounded-full text-xs font-bold text-white bg-gradient-to-r from-teal-700 via-teal-800 to-[#0c3530] hover:from-teal-600 hover:to-teal-700 border border-teal-500/40 shadow-lg shadow-teal-950/60 hover:scale-105 transition-all duration-300 cursor-pointer uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap"
             >
-              {t.nav.bookNow}
+              <span>{t.nav.bookNow}</span>
+              <ArrowRight size={13} />
             </button>
           </div>
 
-          {/* Mobile / Tablet View Hamburger Controls */}
-          <div className="-mr-1 flex xl:hidden items-center gap-2">
-            {/* Mobile Language Switcher Quick Pill */}
+          {/* Mobile / Tablet View Controls */}
+          <div className="-mr-1 flex lg:hidden items-center gap-2">
+            {/* Quick Language Pill */}
             <div className="relative" ref={mobileLangRef}>
               <button
                 type="button"
@@ -191,9 +185,9 @@ export default function Navbar() {
                   e.stopPropagation();
                   setIsMobileLangOpen((prev) => !prev);
                 }}
-                className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold text-zinc-200 bg-white/5 border border-white/15 cursor-pointer"
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-semibold text-zinc-200 bg-white/5 border border-white/15 cursor-pointer"
               >
-                <Globe size={12} className="text-teal-400" />
+                <Globe size={13} className="text-teal-400" />
                 <span>{translations[currentLang]?.langLabel || "EN"}</span>
               </button>
 
@@ -229,16 +223,18 @@ export default function Navbar() {
               )}
             </div>
 
+            {/* Quick Mobile Offer Button */}
             <button
-              onClick={() => triggerModal("booking", "Complimentary Pre-Wedding Shoot Offer")}
-              className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-gradient-to-r from-amber-400 to-yellow-500 text-[#071f1b] flex items-center gap-1 cursor-pointer"
+              onClick={() => triggerModal("offer", "Exclusive Wedding Season Gift Box")}
+              className="px-3 py-1.5 rounded-full text-[11px] font-bold bg-gradient-to-r from-amber-400 to-yellow-500 text-[#071f1b] flex items-center gap-1 cursor-pointer shadow-md"
             >
-              <Tag size={11} /> {t.nav.offer}
+              <Sparkles size={12} /> {t.nav.offer}
             </button>
 
+            {/* Hamburger Button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-xl text-teal-300 hover:text-white bg-white/5 border border-white/10 focus:outline-none cursor-pointer"
+              className="inline-flex items-center justify-center p-2.5 rounded-2xl text-teal-300 hover:text-white bg-white/5 border border-white/10 focus:outline-none cursor-pointer"
               aria-expanded={isOpen}
             >
               <span className="sr-only">{isOpen ? "Close menu" : "Open menu"}</span>
@@ -249,21 +245,23 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile Drawer Menu */}
       {isOpen && (
-        <div className="2xl:hidden bg-[#080c0b]/98 backdrop-blur-2xl border-b border-teal-500/20 shadow-2xl">
-          <div className="px-4 pt-3 pb-5 space-y-2">
-            {/* Language Selector Mobile in Drawer */}
-            <div className="flex items-center gap-2 pb-2 border-b border-white/10">
-              <Globe size={14} className="text-teal-400" />
-              <span className="text-xs text-zinc-400">Language / மொழி:</span>
+        <div className="lg:hidden bg-[#080c0b]/98 backdrop-blur-2xl border-b border-teal-500/20 shadow-2xl animate-in slide-in-from-top-3 duration-200">
+          <div className="px-5 pt-4 pb-6 space-y-3">
+            {/* Language Selector in Drawer */}
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <Globe size={15} className="text-teal-400" />
+                <span className="text-xs text-zinc-300 font-medium">Select Language / மொழி:</span>
+              </div>
               <div className="flex gap-1.5">
                 {languages.map((lang) => (
                   <button
                     key={lang.code}
                     type="button"
                     onClick={() => changeLanguage(lang.code)}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer transition-all ${
+                    className={`px-3 py-1 rounded-xl text-xs font-bold cursor-pointer transition-all ${
                       currentLang === lang.code
                         ? "bg-teal-400 text-[#071f1b] shadow-md shadow-teal-500/30 font-bold"
                         : "bg-white/10 text-zinc-300 hover:text-white"
@@ -275,39 +273,43 @@ export default function Navbar() {
               </div>
             </div>
 
-            {links.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className={`block px-4 py-2.5 rounded-xl text-sm font-semibold tracking-wider ${
-                  pathname === link.href
-                    ? "bg-teal-500/20 text-teal-300 font-bold border border-teal-500/30"
-                    : "text-zinc-300 hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
+            {/* Nav Links */}
+            <div className="grid grid-cols-2 gap-1.5 pt-1">
+              {links.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`block px-3.5 py-2.5 rounded-xl text-xs font-semibold tracking-wider ${
+                    pathname === link.href
+                      ? "bg-teal-500/20 text-teal-300 font-bold border border-teal-500/30"
+                      : "text-zinc-300 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
 
-            <div className="pt-3 grid grid-cols-2 gap-2">
+            {/* Quick Actions in Drawer */}
+            <div className="pt-2 grid grid-cols-2 gap-2">
               <button
                 onClick={() => {
                   setIsOpen(false);
                   triggerModal("quote", "Wedding & Event Photo Shoot");
                 }}
-                className="w-full py-2.5 rounded-xl text-xs font-semibold text-white bg-white/10 border border-white/15 text-center cursor-pointer"
+                className="w-full py-3 rounded-xl text-xs font-semibold text-white bg-white/10 border border-white/15 text-center cursor-pointer hover:bg-white/15"
               >
                 {t.nav.getQuote}
               </button>
               <button
                 onClick={() => {
                   setIsOpen(false);
-                  triggerModal("booking", "Makeup Artist Available");
+                  triggerModal("offer", "Exclusive Wedding Season Gift Box");
                 }}
-                className="w-full py-2.5 rounded-xl text-xs font-bold text-[#071f1b] bg-gradient-to-r from-teal-300 to-emerald-300 text-center cursor-pointer"
+                className="w-full py-3 rounded-xl text-xs font-bold text-[#071f1b] bg-gradient-to-r from-amber-400 to-yellow-500 text-center cursor-pointer shadow-md"
               >
-                {t.nav.bookMakeup}
+                {t.nav.offer}
               </button>
             </div>
 
@@ -316,7 +318,7 @@ export default function Navbar() {
                 setIsOpen(false);
                 triggerModal("booking", "Wedding & Event Photo Shoot");
               }}
-              className="block text-center w-full bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-5 py-3 rounded-xl text-sm font-bold uppercase tracking-wider shadow-lg shadow-teal-500/20 active:scale-95 transition-all mt-2 cursor-pointer"
+              className="block text-center w-full bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-5 py-3.5 rounded-2xl text-sm font-bold uppercase tracking-wider shadow-xl shadow-teal-500/20 active:scale-95 transition-all mt-2 cursor-pointer"
             >
               {t.nav.bookNow}
             </button>

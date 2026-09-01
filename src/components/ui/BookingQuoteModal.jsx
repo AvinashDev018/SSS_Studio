@@ -2,28 +2,17 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, User, Phone, Calendar, MapPin, Clock, DollarSign, MessageSquare, Sparkles, CheckSquare } from "lucide-react";
+import { X, Send, User, Phone, Calendar, MapPin, Clock, DollarSign, MessageSquare, Sparkles } from "lucide-react";
 
 export const SHOOT_TYPES = [
   "Wedding & Event Photo Shoot",
   "Pre-Wedding & Post Wedding Shoot",
   "Birthday Shoot",
   "School / College Events",
-  "Baby Photo shoot",
+  "Baby Photo Shoot",
   "Maternity Photo Shoot",
   "Cinematic Wedding Shoot",
   "Custom Shoot Session",
-  "Makeup Artist Available",
-];
-
-const MAKEUP_OPTIONS = [
-  { key: "hairstyle", label: "Hairstyle" },
-  { key: "saree", label: "Saree Draping" },
-  { key: "bridesmaid", label: "Bridesmaid Makeup" },
-  { key: "normalMakeup", label: "Normal Makeup" },
-  { key: "semiHd", label: "Semi HD Makeup" },
-  { key: "glossyMakeup", label: "Glossy Makeup" },
-  { key: "hdMakeup", label: "HD Makeup" },
 ];
 
 export default function BookingQuoteModal({
@@ -42,15 +31,6 @@ export default function BookingQuoteModal({
   const [duration, setDuration] = useState("");
   const [budget, setBudget] = useState("");
   const [notes, setNotes] = useState("");
-  const [makeupDetails, setMakeupDetails] = useState({
-    hairstyle: false,
-    saree: false,
-    bridesmaid: false,
-    normalMakeup: false,
-    semiHd: false,
-    glossyMakeup: false,
-    hdMakeup: false,
-  });
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -65,15 +45,6 @@ export default function BookingQuoteModal({
       setBudget("");
       setNotes("");
       setError("");
-      setMakeupDetails({
-        hairstyle: false,
-        saree: false,
-        bridesmaid: false,
-        normalMakeup: false,
-        semiHd: false,
-        glossyMakeup: false,
-        hdMakeup: false,
-      });
     }
   }, [isOpen, prefilledType, prefilledMode]);
 
@@ -95,14 +66,6 @@ export default function BookingQuoteModal({
       return;
     }
 
-    let makeupSummary = "";
-    if (shootType === "Makeup Artist Available") {
-      const activeOptions = MAKEUP_OPTIONS.filter((opt) => makeupDetails[opt.key]).map((opt) => opt.label);
-      if (activeOptions.length > 0) {
-        makeupSummary = `💄 *Makeup Services:* ${activeOptions.join(", ")}\n`;
-      }
-    }
-
     let message = "";
     if (mode === "booking") {
       message = `📸 *New Shoot Booking Request* 📸\n` +
@@ -110,7 +73,6 @@ export default function BookingQuoteModal({
         `👤 *Name:* ${name.trim()}\n` +
         `📞 *Phone:* ${phone.trim()}\n` +
         `💍 *Shoot Type:* ${shootType}\n` +
-        (makeupSummary || "") +
         `📅 *Date:* ${date}\n` +
         `📍 *Location:* ${location.trim()}\n` +
         (notes.trim() ? `💬 *Notes:* ${notes.trim()}\n` : "") +
@@ -122,7 +84,6 @@ export default function BookingQuoteModal({
         `👤 *Name:* ${name.trim()}\n` +
         `📞 *Phone:* ${phone.trim()}\n` +
         `💍 *Shoot Type:* ${shootType}\n` +
-        (makeupSummary || "") +
         `📅 *Proposed Date:* ${date}\n` +
         `📍 *Location:* ${location.trim()}\n` +
         (duration.trim() ? `⏳ *Duration:* ${duration.trim()}\n` : "") +
@@ -270,38 +231,6 @@ export default function BookingQuoteModal({
                   ))}
                 </select>
               </div>
-
-              {/* Conditional Makeup Details */}
-              {shootType === "Makeup Artist Available" && (
-                <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-teal-300 flex items-center gap-1.5">
-                    <CheckSquare size={14} className="text-teal-400" /> Select Required Makeup Services
-                  </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                    {MAKEUP_OPTIONS.map((opt) => (
-                      <label
-                        key={opt.key}
-                        className="flex items-center gap-2.5 cursor-pointer hover:text-teal-300 transition-colors p-2 rounded-lg bg-white/5 border border-white/5 hover:border-teal-400/30"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={makeupDetails[opt.key] || false}
-                          onChange={(e) =>
-                            setMakeupDetails({
-                              ...makeupDetails,
-                              [opt.key]: e.target.checked,
-                            })
-                          }
-                          className="w-4 h-4 rounded border-white/20 text-teal-500 focus:ring-teal-400 accent-teal-400 cursor-pointer"
-                        />
-                        <span className="text-gray-200 hover:text-white transition-colors">
-                          {opt.label}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* Location */}
               <div>

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Clock, Gift, Film, Sparkles, CheckCircle2, ArrowRight } from "lucide-react";
+import { Clock, Gift, Film, Sparkles, CheckCircle2, ArrowRight, ShieldCheck, Box, Palette, Camera } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function SSSGuarantees({ onOpenBooking }) {
@@ -12,9 +12,9 @@ export default function SSSGuarantees({ onOpenBooking }) {
     en: [
       {
         icon: Clock,
-        title: "20-Day Album Delivery Guarantee",
+        title: "1-Month Album Delivery Guarantee",
         badge: "Signature Promise",
-        description: "No more waiting months for your wedding albums. We deliver premium flush-mount, handcrafted photo albums and full digital edits within 20 working days.",
+        description: "No more waiting endless months for your wedding albums. We deliver premium flush-mount, handcrafted photo albums and full digital edits within 1 month (30 days).",
         color: "from-teal-500/20 to-emerald-500/20",
         borderColor: "border-teal-500/30",
         iconColor: "text-teal-400",
@@ -38,10 +38,10 @@ export default function SSSGuarantees({ onOpenBooking }) {
         iconColor: "text-teal-400",
       },
       {
-        icon: Sparkles,
-        title: "Bridal Studio & HD Makeover",
-        badge: "All-In-One Service",
-        description: "Dedicated in-house bridal makeup artists specializing in HD Bridal Makeup, Saree Draping, Hairstyle, and pre-event trials directly at the venue.",
+        icon: Palette,
+        title: "Signature Color Grading & Retouching",
+        badge: "Master Retouching",
+        description: "Every photo and film is meticulously color-graded with custom film profiles, delivering timeless, skin-true, and magazine-quality portraits.",
         color: "from-emerald-500/20 to-teal-500/20",
         borderColor: "border-emerald-500/30",
         iconColor: "text-emerald-400",
@@ -50,9 +50,9 @@ export default function SSSGuarantees({ onOpenBooking }) {
     ta: [
       {
         icon: Clock,
-        title: "20 நாட்களில் ஆல்பம் டெலிவரி உறுதி",
+        title: "1 மாதத்தில் ஆல்பம் டெலிவரி உறுதி",
         badge: "சிறப்பு வாக்குறுதி",
-        description: "உங்கள் திருமண ஆல்பங்களுக்காக மாதக்கணக்கில் காத்திருக்க வேண்டியதில்லை. 20 வேலை நாட்களில் பிரீமியம் ஆல்பங்கள் மற்றும் எடிட் செய்யப்பட்ட புகைப்படங்களை வழங்குகிறோம்.",
+        description: "உங்கள் திருமண ஆல்பங்களுக்காக நீண்ட மாதங்கள் காத்திருக்க வேண்டியதில்லை. 1 மாதத்திற்குள் (30 நாட்களில்) பிரீமியம் ஆல்பங்கள் மற்றும் எடிட் செய்யப்பட்ட புகைப்படங்களை வழங்குகிறோம்.",
         color: "from-teal-500/20 to-emerald-500/20",
         borderColor: "border-teal-500/30",
         iconColor: "text-teal-400",
@@ -76,10 +76,10 @@ export default function SSSGuarantees({ onOpenBooking }) {
         iconColor: "text-teal-400",
       },
       {
-        icon: Sparkles,
-        title: "பிரைடல் ஸ்டுடியோ & HD மேக்கப்",
-        badge: "முழுமையான சேவை",
-        description: "HD பிரைடல் மேக்கப், புடவை கட்டுதல், சிகை அலங்காரம் மற்றும் டிரயல்ஸ் ஆகியவற்றை எங்கள் அனுபவமிக்க கலைஞர்கள் வழங்குகிறார்கள்.",
+        icon: Palette,
+        title: "சினிமாட்டிக் கலர் கிரேடிங் & ரீடச்சிங்",
+        badge: "பிரத்யேக தரம்",
+        description: "ஒவ்வொரு புகைப்படமும் திரைப்படமும் எங்கள் பிரத்யேக வண்ண அமைப்புகளுடன் நுணுக்கமாக எடிட் செய்யப்பட்டு, உன்னதமான ஆல்பங்களாக மாற்றப்படுகின்றன.",
         color: "from-emerald-500/20 to-teal-500/20",
         borderColor: "border-emerald-500/30",
         iconColor: "text-emerald-400",
@@ -88,9 +88,9 @@ export default function SSSGuarantees({ onOpenBooking }) {
     hi: [
       {
         icon: Clock,
-        title: "20 दिनों में एल्बम डिलीवरी गारंटी",
+        title: "1 महीने में एल्बम डिलीवरी गारंटी",
         badge: "खास वादा",
-        description: "अपनी शादी के एल्बम के लिए महीनों इंतज़ार करने की ज़रूरत नहीं। हम 20 दिनों के भीतर प्रीमियम हैंडक्राफ्टेड एल्बम और डिजिटल एडिट्स डिलीवर करते हैं।",
+        description: "अपनी शादी के एल्बम के लिए ज्यादा इंतज़ार करने की ज़रूरत नहीं। हम 1 महीने (30 दिनों) के भीतर प्रीमियम हैंडक्राफ्टेड एल्बम और डिजिटल एडिट्स डिलीवर करते हैं।",
         color: "from-teal-500/20 to-emerald-500/20",
         borderColor: "border-teal-500/30",
         iconColor: "text-teal-400",
@@ -114,10 +114,10 @@ export default function SSSGuarantees({ onOpenBooking }) {
         iconColor: "text-teal-400",
       },
       {
-        icon: Sparkles,
-        title: "ब्राइडल स्टूडियो और HD मेकओवर",
-        badge: "ऑल-इन-वन सेवा",
-        description: "HD ब्राइडल मेकअप, साड़ी ड्रेपिंग, हेयरस्टाइल और वेन्यू पर प्री-इवेंट ट्रायल्स में विशेषज्ञ मेकअप आर्टिस्ट्स।",
+        icon: Palette,
+        title: "सिग्नेचर कलर ग्रेडिंग और रीटचिंग",
+        badge: "मास्टर रीटचिंग",
+        description: "हर फोटो और फिल्म को हमारी कस्टम सिनेमैटिक प्रोफाइल के साथ बारीकी से कलर-ग्रेड किया जाता है, जिससे आपके एल्बम को मैगज़ीन जैसी क्वालिटी मिलती है।",
         color: "from-emerald-500/20 to-teal-500/20",
         borderColor: "border-emerald-500/30",
         iconColor: "text-emerald-400",
@@ -125,17 +125,24 @@ export default function SSSGuarantees({ onOpenBooking }) {
     ]
   };
 
+  const timelineSteps = [
+    { day: "Day 01", title: "Shoot & Dual Backup", desc: "Redundant cloud & NVMe storage", icon: Camera },
+    { day: "Day 07", title: "Private Gallery Link", desc: "Clients choose favorite photos", icon: CheckCircle2 },
+    { day: "Day 18", title: "Fine-Art Color Grading", desc: "10-bit skin tone retouching", icon: Palette },
+    { day: "Day 30", title: "Handcrafted Album Box", desc: "Delivered directly to your door", icon: Box },
+  ];
+
   const guarantees = guaranteesData[currentLang] || guaranteesData.en;
 
   return (
-    <section className="py-20 bg-gradient-to-b from-[#080c0b] via-[#0c3530]/40 to-[#080c0b] relative overflow-hidden">
+    <section className="py-24 bg-gradient-to-b from-[#080c0b] via-[#0c3530]/40 to-[#080c0b] relative overflow-hidden">
       {/* Background ambient light */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-teal-500/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-teal-500/10 rounded-full blur-[150px] pointer-events-none animate-pulse-glow" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-widest mb-3">
-            {t.guarantees.tag}
+            <ShieldCheck size={14} /> {t.guarantees.tag}
           </div>
           <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-4">
             {t.guarantees.title}
@@ -145,7 +152,8 @@ export default function SSSGuarantees({ onOpenBooking }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+        {/* 4 Feature Bento Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-16">
           {guarantees.map((item, idx) => {
             const Icon = item.icon;
             return (
@@ -155,12 +163,12 @@ export default function SSSGuarantees({ onOpenBooking }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
-                whileHover={{ y: -6 }}
-                className={`bg-gradient-to-br ${item.color} bg-[#0c3530]/60 backdrop-blur-xl border ${item.borderColor} p-8 rounded-3xl shadow-xl transition-all duration-300 flex flex-col justify-between group`}
+                whileHover={{ y: -6, scale: 1.01 }}
+                className={`bg-gradient-to-br ${item.color} bg-[#0c3530]/70 backdrop-blur-xl border ${item.borderColor} p-8 rounded-3xl shadow-xl transition-all duration-300 flex flex-col justify-between group hover:border-teal-400/50`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">
-                    <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shadow-inner group-hover:scale-110 group-hover:bg-white/10 transition-all duration-300">
                       <Icon className={`w-7 h-7 ${item.iconColor}`} />
                     </div>
                     <span className="text-xs font-bold px-3 py-1 rounded-full bg-white/10 border border-white/10 text-zinc-300 uppercase tracking-wider">
@@ -191,6 +199,47 @@ export default function SSSGuarantees({ onOpenBooking }) {
             );
           })}
         </div>
+
+        {/* Interactive 1-Month Delivery Timeline Visual */}
+        <motion.div
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="p-8 md:p-10 rounded-3xl bg-[#0c3530]/40 border border-teal-500/20 backdrop-blur-xl relative overflow-hidden"
+        >
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+              <span className="text-teal-400 text-xs font-bold tracking-widest uppercase block mb-1">
+                Guaranteed Workflow
+              </span>
+              <h3 className="text-xl md:text-2xl font-serif font-bold text-white">
+                How We Deliver Your Albums in 1 Month
+              </h3>
+            </div>
+            <div className="px-4 py-2 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 text-[#071f1b] font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-lg shrink-0">
+              <Clock size={14} /> 1 Month (30 Days) Guaranteed
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+            {timelineSteps.map((step, sIdx) => {
+              const StepIcon = step.icon;
+              return (
+                <div key={sIdx} className="relative bg-white/5 border border-white/10 rounded-2xl p-5 hover:border-teal-400/40 transition-colors">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-black px-2.5 py-1 rounded-md bg-teal-500/20 text-teal-300">
+                      {step.day}
+                    </span>
+                    <StepIcon size={18} className="text-teal-400" />
+                  </div>
+                  <h4 className="text-white font-bold text-sm mb-1">{step.title}</h4>
+                  <p className="text-zinc-400 text-xs font-light">{step.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </motion.div>
       </div>
     </section>
   );

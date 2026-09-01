@@ -20,10 +20,10 @@ export default function SSSAnnouncementBar() {
     {
       badge: t.badgeExclusive,
       badgeClass: "bg-gradient-to-r from-amber-400 to-yellow-500 text-[#071f1b]",
-      icon: "💍",
+      icon: "🎁",
       text: t.announcementOffer,
       highlight: t.announcementOfferHighlight,
-      action: () => triggerModal("booking", "Complimentary Pre-Wedding Shoot Offer"),
+      action: () => triggerModal("offer", "Complimentary Pre-Wedding Shoot Offer"),
     },
     {
       badge: t.badgeDelivery,
@@ -31,15 +31,15 @@ export default function SSSAnnouncementBar() {
       icon: "📸",
       text: t.announcementDelivery,
       highlight: t.announcementDeliveryHighlight,
-      action: () => triggerModal("booking", "20-Day Delivery Guarantee Enquiry"),
+      action: () => triggerModal("booking", "1-Month Delivery Guarantee Enquiry"),
     },
     {
       badge: t.badgeExclusive,
       badgeClass: "bg-gradient-to-r from-amber-400 to-yellow-500 text-[#071f1b]",
-      icon: "💍",
+      icon: "🎁",
       text: t.announcementOffer,
       highlight: t.announcementOfferHighlight,
-      action: () => triggerModal("booking", "Complimentary Pre-Wedding Shoot Offer"),
+      action: () => triggerModal("offer", "Complimentary Pre-Wedding Shoot Offer"),
     },
     {
       badge: t.badgeDelivery,
@@ -47,7 +47,7 @@ export default function SSSAnnouncementBar() {
       icon: "📸",
       text: t.announcementDelivery,
       highlight: t.announcementDeliveryHighlight,
-      action: () => triggerModal("booking", "20-Day Delivery Guarantee Enquiry"),
+      action: () => triggerModal("booking", "1-Month Delivery Guarantee Enquiry"),
     },
   ];
 

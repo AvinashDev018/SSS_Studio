@@ -110,21 +110,35 @@ export default function MultilingualWhatsAppWidget({ whatsappNumber = "916383565
         )}
       </AnimatePresence>
 
-      {/* Floating Main Button */}
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-600 text-white flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.4)] hover:shadow-[0_0_35px_rgba(16,185,129,0.6)] cursor-pointer focus:outline-none relative group"
-        aria-label="Open WhatsApp Chat in 3 Languages"
-      >
-        <div className="absolute inset-0 rounded-full border border-emerald-300/40 animate-ping opacity-30" />
-        <MessageCircle size={28} className="fill-white text-transparent group-hover:scale-110 transition-transform" />
-        
-        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#080c0b] shadow-sm">
-          1
-        </span>
-      </motion.button>
+      {/* Floating Main Button & Quick Badge */}
+      <div className="flex items-center gap-3">
+        {!isOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-[#0c3530]/90 backdrop-blur-md border border-emerald-500/30 text-white rounded-full text-xs font-semibold shadow-xl cursor-pointer"
+            onClick={() => setIsOpen(true)}
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>Chat in 3 Languages</span>
+          </motion.div>
+        )}
+
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-600 text-white flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.4)] hover:shadow-[0_0_35px_rgba(16,185,129,0.6)] cursor-pointer focus:outline-none relative group shrink-0"
+          aria-label="Open WhatsApp Chat in 3 Languages"
+        >
+          <div className="absolute inset-0 rounded-full border border-emerald-300/40 animate-ping opacity-30" />
+          <MessageCircle size={28} className="fill-white text-transparent group-hover:scale-110 transition-transform" />
+          
+          <span className="absolute -top-1 -right-1 bg-emerald-400 text-[#071f1b] text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#080c0b] shadow-sm">
+            3
+          </span>
+        </motion.button>
+      </div>
     </div>
   );
 }

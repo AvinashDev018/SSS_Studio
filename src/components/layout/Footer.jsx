@@ -26,11 +26,11 @@ export default function Footer() {
             </Link>
 
             <p className="text-zinc-400 text-sm max-w-md mb-6 font-light leading-relaxed">
-              Premium South Indian wedding storytelling, candid cinematography, newborn portraiture, and luxury bridal makeover studio. Preserving memories with a signature 20-Day Delivery Promise.
+              Premium South Indian wedding storytelling, candid cinematography, newborn portraiture, and luxury bridal makeover studio. Preserving memories with a signature 1-Month Delivery Promise.
             </p>
 
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-300 text-xs font-bold uppercase tracking-wider mb-6">
-              <ShieldCheck size={14} className="text-teal-400" /> 20-Day Album Delivery Guaranteed
+              <ShieldCheck size={14} className="text-teal-400" /> 1-Month Album Delivery Guaranteed
             </div>
 
             <div className="flex space-x-4">
@@ -123,7 +123,7 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-zinc-500 gap-3">
           <p>&copy; {new Date().getFullYear()} SSS Studio Photography. All rights reserved.</p>
           <p className="text-zinc-400">
-            Crafted with Timeless Elegance &bull; Guaranteed 20-Day Album Delivery
+            Crafted with Timeless Elegance &bull; Guaranteed 1-Month Album Delivery
           </p>
         </div>
       </div>

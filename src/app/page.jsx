@@ -4,12 +4,14 @@ import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import SSSHero from "@/components/sections/SSSHero";
 import SSSGuarantees from "@/components/sections/SSSGuarantees";
-import SSSPortfolio from "@/components/sections/SSSPortfolio";
 import SSSServices from "@/components/sections/SSSServices";
+import SSSPortfolio from "@/components/sections/SSSPortfolio";
+import SSSColorGradingComparison from "@/components/sections/SSSColorGradingComparison";
 import SSSTestimonials from "@/components/sections/SSSTestimonials";
 import SSSStudioInfo from "@/components/sections/SSSStudioInfo";
 import BookingQuoteModal from "@/components/ui/BookingQuoteModal";
 import TestimonialModal from "@/components/ui/TestimonialModal";
+import LuckyGiftModal from "@/components/ui/LuckyGiftModal";
 
 const PackageCalculator = dynamic(() => import("@/components/PackageCalculator"), {
   ssr: false,
@@ -20,10 +22,15 @@ export default function Home() {
   const [modalShootType, setModalShootType] = useState("Wedding & Event Photo Shoot");
   const [modalMode, setModalMode] = useState("booking");
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isLuckyGiftOpen, setIsLuckyGiftOpen] = useState(false);
 
   useEffect(() => {
     const handleCustomModal = (e) => {
       const { mode, shootType } = e.detail || {};
+      if (mode === "offer") {
+        setIsLuckyGiftOpen(true);
+        return;
+      }
       if (shootType) setModalShootType(shootType);
       if (mode) setModalMode(mode);
       setIsBookingModalOpen(true);
@@ -49,6 +56,10 @@ export default function Home() {
     setIsReviewModalOpen(true);
   };
 
+  const handleOpenGift = () => {
+    setIsLuckyGiftOpen(true);
+  };
+
   return (
     <div className="bg-[#080c0b] text-white selection:bg-teal-500/30">
       {/* 1. Animated Hero Section with 3D Studio Card & Floating Particles */}
@@ -57,21 +68,24 @@ export default function Home() {
       {/* 2. SSS Studio Guarantees & 20-Day Delivery Promise */}
       <SSSGuarantees onOpenBooking={handleOpenBooking} />
 
-      {/* 3. Complete SSS Services & Bridal Makeup Studio */}
+      {/* 3. Complete SSS Photography & Visual Services */}
       <SSSServices onOpenBooking={handleOpenBooking} />
 
-      {/* 4. Interactive Filterable Portfolio & Fullscreen Lightbox */}
+      {/* 4. Interactive Before / After Color Grading Slider */}
+      <SSSColorGradingComparison onOpenBooking={handleOpenBooking} />
+
+      {/* 5. Interactive Filterable Portfolio & Fullscreen Lightbox */}
       <SSSPortfolio />
 
-      {/* 5. Build-Your-Story Interactive Package Calculator */}
+      {/* 6. Build-Your-Story Interactive Package Calculator */}
       <div className="px-4 sm:px-6 lg:px-8 py-10">
         <PackageCalculator />
       </div>
 
-      {/* 6. SSS Client Love & Real Testimonials */}
+      {/* 7. SSS Client Love & Real Testimonials */}
       <SSSTestimonials onOpenReviewModal={handleOpenReview} />
 
-      {/* 7. SSS Studio Location, Direct Booking & Contact Info */}
+      {/* 8. SSS Studio Location, Direct Booking & Contact Info */}
       <SSSStudioInfo onOpenBooking={handleOpenBooking} />
 
       {/* Interactive Shoot Booking & Quote Modal */}
@@ -86,6 +100,12 @@ export default function Home() {
       <TestimonialModal
         isOpen={isReviewModalOpen}
         onClose={() => setIsReviewModalOpen(false)}
+      />
+
+      {/* Interactive Lucky Surprise Gift Voucher Modal */}
+      <LuckyGiftModal
+        isOpen={isLuckyGiftOpen}
+        onClose={() => setIsLuckyGiftOpen(false)}
       />
     </div>
   );

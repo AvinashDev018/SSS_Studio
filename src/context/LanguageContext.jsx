@@ -10,7 +10,7 @@ const translations = {
     announcementOffer: "Pre Wedding Shoot",
     announcementOfferHighlight: "Absolutely FREE!",
     announcementDelivery: "Album Delivered Within",
-    announcementDeliveryHighlight: "20 Days — Guaranteed!",
+    announcementDeliveryHighlight: "1 Month — Guaranteed!",
     badgeExclusive: "EXCLUSIVE OFFER",
     badgeDelivery: "DELIVERY GUARANTEE",
     nav: {
@@ -24,7 +24,6 @@ const translations = {
       contact: "Contact",
       offer: "Offer Here!",
       getQuote: "Get Quote",
-      bookMakeup: "Book Makeup",
       bookNow: "Book Now",
     },
     hero: {
@@ -43,7 +42,7 @@ const translations = {
     guarantees: {
       tag: "Why SSS Studio is Different",
       title: "Studio Guarantees & Exclusive Perks",
-      subtitle: "We combine high-end cinema equipment with strict timelines so your memories are preserved with perfection and delivered without delay.",
+      subtitle: "We combine high-end cinema equipment with strict timelines so your memories are preserved with perfection and delivered within 1 month.",
       inclusions: "Premium Inclusions",
       enquire: "Enquire Now",
     },
@@ -83,7 +82,7 @@ const translations = {
     announcementOffer: "திருமணத்திற்கு முந்தைய போட்டோஷூட்",
     announcementOfferHighlight: "முற்றிலும் இலவசம்!",
     announcementDelivery: "ஆல்பம் டெலிவரி",
-    announcementDeliveryHighlight: "20 நாட்களில் — உறுதி!",
+    announcementDeliveryHighlight: "1 மாதத்தில் — உறுதி!",
     badgeExclusive: "பிரத்யேக சலுகை",
     badgeDelivery: "டெலிவரி உத்தரவாதம்",
     nav: {
@@ -97,7 +96,6 @@ const translations = {
       contact: "தொடர்பு",
       offer: "சலுகை!",
       getQuote: "விலை விவரம்",
-      bookMakeup: "மேக்கப்",
       bookNow: "முன்பதிவு",
     },
     hero: {
@@ -116,7 +114,7 @@ const translations = {
     guarantees: {
       tag: "SSS ஸ்டுடியோவின் சிறப்பு",
       title: "ஸ்டுடியோ உத்தரவாதங்கள் & சலுகைகள்",
-      subtitle: "20 நாட்களில் ஆல்பம் டெலிவரி மற்றும் தரமான சினிமா உபகரணங்களுடன் கூடிய சிறந்த புகைப்பட அனுபவம்.",
+      subtitle: "1 மாதத்தில் ஆல்பம் டெலிவரி மற்றும் தரமான சினிமா உபகரணங்களுடன் கூடிய சிறந்த புகைப்பட அனுபவம்.",
       inclusions: "சிறப்பு நன்மைகள்",
       enquire: "விவரம் அறிய",
     },
@@ -156,7 +154,7 @@ const translations = {
     announcementOffer: "प्री-वेडिंग शूट",
     announcementOfferHighlight: "बिल्कुल मुफ़्त!",
     announcementDelivery: "एल्बम डिलीवरी",
-    announcementDeliveryHighlight: "20 दिनों के भीतर — गारंटी!",
+    announcementDeliveryHighlight: "1 महीने के भीतर — गारंटी!",
     badgeExclusive: "विशेष ऑफर",
     badgeDelivery: "डिलीवरी गारंटी",
     nav: {
@@ -170,7 +168,6 @@ const translations = {
       contact: "संपर्क",
       offer: "ऑफर!",
       getQuote: "कोटेशन",
-      bookMakeup: "मेकअप",
       bookNow: "बुक करें",
     },
     hero: {
@@ -189,7 +186,7 @@ const translations = {
     guarantees: {
       tag: "SSS स्टूडियो की खासियत",
       title: "स्टूडियो गारंटी और विशेष लाभ",
-      subtitle: "उच्च गुणवत्ता वाले सिनेमा उपकरण और 20 दिनों में एल्बम डिलीवरी की गारंटी।",
+      subtitle: "उच्च गुणवत्ता वाले सिनेमा उपकरण और 1 महीने में एल्बम डिलीवरी की गारंटी।",
       inclusions: "प्रीमियम सुविधाएं",
       enquire: "पूछताछ करें",
     },
