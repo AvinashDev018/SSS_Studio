@@ -171,6 +171,7 @@ export default function CRMDashboard() {
                           </span>
                           <button 
                             onClick={() => deleteOrder(order.orderId)}
+                            aria-label="Hide order"
                             className="text-zinc-600 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
                           >
                             <Trash2 className="w-4 h-4" />
