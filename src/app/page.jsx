@@ -1,21 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
 import SSSHero from "@/components/sections/SSSHero";
 import SSSGuarantees from "@/components/sections/SSSGuarantees";
 import SSSServices from "@/components/sections/SSSServices";
 import SSSPortfolio from "@/components/sections/SSSPortfolio";
+import SSSAbout from "@/components/sections/SSSAbout";
 import SSSColorGradingComparison from "@/components/sections/SSSColorGradingComparison";
 import SSSTestimonials from "@/components/sections/SSSTestimonials";
 import SSSStudioInfo from "@/components/sections/SSSStudioInfo";
 import BookingQuoteModal from "@/components/ui/BookingQuoteModal";
 import TestimonialModal from "@/components/ui/TestimonialModal";
 import LuckyGiftModal from "@/components/ui/LuckyGiftModal";
-
-const PackageCalculator = dynamic(() => import("@/components/PackageCalculator"), {
-  ssr: false,
-});
 
 export default function Home() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -65,7 +61,7 @@ export default function Home() {
       {/* 1. Animated Hero Section with 3D Studio Card & Floating Particles */}
       <SSSHero onOpenBooking={handleOpenBooking} onOpenQuote={handleOpenQuote} />
 
-      {/* 2. SSS Studio Guarantees & 20-Day Delivery Promise */}
+      {/* 2. SSS Studio Guarantees & 1-Month Delivery Promise */}
       <SSSGuarantees onOpenBooking={handleOpenBooking} />
 
       {/* 3. Complete SSS Photography & Visual Services */}
@@ -77,10 +73,8 @@ export default function Home() {
       {/* 5. Interactive Filterable Portfolio & Fullscreen Lightbox */}
       <SSSPortfolio />
 
-      {/* 6. Build-Your-Story Interactive Package Calculator */}
-      <div className="px-4 sm:px-6 lg:px-8 py-10">
-        <PackageCalculator />
-      </div>
+      {/* 6. SSS Studio About & Heritage */}
+      <SSSAbout onOpenBooking={handleOpenBooking} />
 
       {/* 7. SSS Client Love & Real Testimonials */}
       <SSSTestimonials onOpenReviewModal={handleOpenReview} />

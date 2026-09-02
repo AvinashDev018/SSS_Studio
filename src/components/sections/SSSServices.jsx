@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Camera, Heart, Baby, Cake, GraduationCap, ImageIcon, ArrowRight, Check } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -179,12 +179,29 @@ export default function SSSServices({ onOpenBooking }) {
     ]
   };
 
+  const [activeCategory, setActiveCategory] = useState("all");
   const services = servicesData[currentLang] || servicesData.en;
+
+  const filteredServices = activeCategory === "all" 
+    ? services 
+    : services.filter(s => s.category.toLowerCase().includes(activeCategory));
+
+  const filterTabs = [
+    { id: "all", label: "All 6 Services" },
+    { id: "wedding", label: "Weddings" },
+    { id: "pre-wedding", label: "Pre / Post Wedding" },
+    { id: "baby", label: "Baby & Maternity" },
+    { id: "event", label: "Events & College" },
+  ];
 
   return (
     <section id="services" className="py-24 bg-[#0a100e] relative overflow-hidden">
+      {/* Background ambient lighting */}
+      <div className="absolute top-1/3 left-0 w-96 h-96 bg-teal-500/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-10 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-widest mb-3">
             {t.services.tag}
           </div>
@@ -194,20 +211,38 @@ export default function SSSServices({ onOpenBooking }) {
           <p className="text-zinc-400 text-base md:text-lg font-light leading-relaxed">
             {t.services.subtitle}
           </p>
+
+          {/* Animated Category Filter Tabs */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-8 p-1.5 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md max-w-fit mx-auto">
+            {filterTabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveCategory(tab.id)}
+                className={`relative px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 cursor-pointer ${
+                  activeCategory === tab.id
+                    ? "text-black bg-gradient-to-r from-teal-400 to-emerald-400 shadow-md shadow-teal-500/25"
+                    : "text-zinc-400 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, idx) => {
+        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredServices.map((service, idx) => {
             const Icon = service.icon;
             return (
               <motion.div
+                layout
                 key={service.id}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                viewport={{ once: true, amount: 0.05 }}
+                transition={{ duration: 0.5, delay: idx * 0.08 }}
                 whileHover={{ y: -8, scale: 1.01 }}
-                className="bg-[#0c3530]/50 backdrop-blur-xl border border-teal-500/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between group hover:border-teal-400/60 hover:shadow-[0_20px_50px_rgba(20,184,166,0.15)] transition-all duration-300"
+                className="opacity-100 bg-[#0c3530]/50 backdrop-blur-xl border border-teal-500/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between group hover:border-teal-400/60 hover:shadow-[0_20px_50px_rgba(20,184,166,0.15)] transition-all duration-300"
               >
                 <div>
                   <div className="relative h-60 overflow-hidden bg-black/40">
@@ -262,7 +297,7 @@ export default function SSSServices({ onOpenBooking }) {
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

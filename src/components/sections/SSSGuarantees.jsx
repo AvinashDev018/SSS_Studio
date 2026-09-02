@@ -222,22 +222,34 @@ export default function SSSGuarantees({ onOpenBooking }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-            {timelineSteps.map((step, sIdx) => {
-              const StepIcon = step.icon;
-              return (
-                <div key={sIdx} className="relative bg-white/5 border border-white/10 rounded-2xl p-5 hover:border-teal-400/40 transition-colors">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-black px-2.5 py-1 rounded-md bg-teal-500/20 text-teal-300">
-                      {step.day}
-                    </span>
-                    <StepIcon size={18} className="text-teal-400" />
-                  </div>
-                  <h4 className="text-white font-bold text-sm mb-1">{step.title}</h4>
-                  <p className="text-zinc-400 text-xs font-light">{step.desc}</p>
-                </div>
-              );
-            })}
+          {/* Connecting Line with Animated Light Pulse (Desktop) */}
+          <div className="relative">
+            <div className="hidden lg:block absolute top-1/2 left-8 right-8 h-[2px] bg-gradient-to-r from-teal-500/20 via-teal-400/50 to-emerald-500/20 -translate-y-1/2 pointer-events-none z-0" />
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+              {timelineSteps.map((step, sIdx) => {
+                const StepIcon = step.icon;
+                return (
+                  <motion.div 
+                    key={sIdx}
+                    whileHover={{ y: -6, scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className="relative bg-[#081714]/90 border border-teal-500/20 rounded-2xl p-5 hover:border-teal-400/60 transition-all duration-300 shadow-xl group hover:shadow-teal-500/10"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-xs font-black px-2.5 py-1 rounded-md bg-teal-500/20 text-teal-300 border border-teal-500/30 group-hover:bg-teal-400 group-hover:text-black transition-colors">
+                        {step.day}
+                      </span>
+                      <div className="w-8 h-8 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-400 group-hover:scale-110 group-hover:bg-teal-500/20 transition-all">
+                        <StepIcon size={16} />
+                      </div>
+                    </div>
+                    <h4 className="text-white font-bold text-sm mb-1 group-hover:text-teal-300 transition-colors">{step.title}</h4>
+                    <p className="text-zinc-400 text-xs font-light">{step.desc}</p>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         </motion.div>
       </div>

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Camera, Instagram, Facebook, Mail, MapPin, Phone, Clock, Sparkles, ShieldCheck } from "lucide-react";
+import { Instagram, Facebook, Mail, MapPin, Phone, Clock, Sparkles, ShieldCheck } from "lucide-react";
+import StudioLogo from "@/components/ui/StudioLogo";
 
 export default function Footer() {
   return (
@@ -11,22 +12,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-14">
           {/* Brand Info */}
           <div className="col-span-1 md:col-span-2">
-            <Link href="/" className="flex items-center gap-3 mb-4 group inline-flex">
-              <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-500 shadow-md shadow-teal-500/20">
-                <Camera className="w-5 h-5 text-[#080c0b]" strokeWidth={2.5} />
-              </div>
-              <div className="flex flex-col justify-center">
-                <span className="font-serif font-black text-2xl tracking-wider text-white leading-none">
-                  SSS STUDIO
-                </span>
-                <span className="font-sans text-[10px] font-black tracking-[0.35em] text-teal-300 uppercase mt-0.5">
-                  Photography &amp; Films
-                </span>
-              </div>
-            </Link>
+            <div className="mb-4">
+              <StudioLogo size="lg" href="/" />
+            </div>
 
             <p className="text-zinc-400 text-sm max-w-md mb-6 font-light leading-relaxed">
-              Premium South Indian wedding storytelling, candid cinematography, newborn portraiture, and luxury bridal makeover studio. Preserving memories with a signature 1-Month Delivery Promise.
+              Premium South Indian wedding storytelling, candid cinematography, newborn portraiture, and milestone event photography. Preserving memories with our signature 1-Month Delivery Promise.
             </p>
 
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-300 text-xs font-bold uppercase tracking-wider mb-6">

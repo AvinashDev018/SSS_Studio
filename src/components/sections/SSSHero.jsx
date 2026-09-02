@@ -2,13 +2,15 @@
 
 import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, Sparkles, Film, ArrowRight, ShieldCheck, Star, MapPin, Award } from "lucide-react";
+import { Camera, Sparkles, Film, ArrowRight, ShieldCheck, Star, MapPin, Award, CheckCircle2, Zap } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function SSSHero({ onOpenBooking, onOpenQuote }) {
   const { t } = useLanguage();
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isFlashing, setIsFlashing] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
+  const [showSnapBadge, setShowSnapBadge] = useState(false);
 
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -23,22 +25,29 @@ export default function SSSHero({ onOpenBooking, onOpenQuote }) {
 
   const triggerFlash = (callback) => {
     setIsFlashing(true);
+    setClickCount((prev) => prev + 1);
+    setShowSnapBadge(true);
+    
     setTimeout(() => {
       setIsFlashing(false);
+    }, 180);
+
+    setTimeout(() => {
+      setShowSnapBadge(false);
       if (callback) callback();
-    }, 250);
+    }, 1800);
   };
 
   // Pre-generate smooth random particle positions
   const particles = useMemo(() => {
-    return Array.from({ length: 26 }).map((_, i) => ({
+    return Array.from({ length: 28 }).map((_, i) => ({
       id: i,
-      x: (i * 4.2 + (i % 3) * 5) % 94 + 3,
-      size: (i % 3 === 0 ? 24 : i % 2 === 0 ? 18 : 12),
-      duration: 10 + (i % 6) * 2.5,
-      delay: (i * 0.9) % 8,
+      x: (i * 3.6 + (i % 3) * 5) % 94 + 3,
+      size: i % 3 === 0 ? 22 : i % 2 === 0 ? 16 : 10,
+      duration: 8 + (i % 5) * 2.2,
+      delay: (i * 0.8) % 7,
       type: i % 4 === 0 ? "camera" : i % 4 === 1 ? "sparkle" : i % 4 === 2 ? "film" : "dot",
-      opacity: 0.2 + (i % 3) * 0.15,
+      opacity: 0.25 + (i % 3) * 0.15,
     }));
   }, []);
 
@@ -46,27 +55,27 @@ export default function SSSHero({ onOpenBooking, onOpenQuote }) {
     <section 
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative min-h-[88vh] flex flex-col items-center justify-center overflow-hidden pt-12 pb-16 bg-gradient-to-b from-[#080c0b] via-[#09231f] to-[#080c0b] text-white select-none"
+      className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden pt-10 pb-16 bg-gradient-to-b from-[#080c0b] via-[#09231f] to-[#080c0b] text-white select-none"
     >
-      {/* Flash Effect on Action Clicks */}
+      {/* 1. Camera Flash Strobe Effect */}
       <AnimatePresence>
         {isFlashing && (
           <motion.div
-            initial={{ opacity: 0.9 }}
+            initial={{ opacity: 0.95 }}
             animate={{ opacity: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
             className="fixed inset-0 z-50 bg-white pointer-events-none"
           />
         )}
       </AnimatePresence>
 
-      {/* 1. Animated Floating Particles Background */}
+      {/* 2. Animated Floating Particles Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         {particles.map((p) => (
           <motion.div
             key={p.id}
-            initial={{ y: "110vh", x: `${p.x}vw`, opacity: 0, rotate: 0 }}
+            initial={{ y: "105vh", x: `${p.x}vw`, opacity: 0, rotate: 0 }}
             animate={{
               y: "-15vh",
               opacity: [0, p.opacity, p.opacity, 0],
@@ -93,91 +102,105 @@ export default function SSSHero({ onOpenBooking, onOpenQuote }) {
           </motion.div>
         ))}
 
-        {/* Optical Aperture Rotating Ring */}
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] pointer-events-none opacity-25"
-        >
-          <svg viewBox="0 0 100 100" className="w-full h-full text-teal-400">
-            <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 3" />
-            <circle cx="50" cy="50" r="38" fill="none" stroke="currentColor" strokeWidth="0.75" />
-            <path d="M50 4 L50 20 M50 96 L50 80 M4 50 L20 50 M96 50 L80 50" stroke="currentColor" strokeWidth="1" />
-          </svg>
-        </motion.div>
-
-        {/* Counter-Rotating Outer Orbital Ring */}
-        <motion.div
-          animate={{ rotate: -360 }}
-          transition={{ duration: 70, repeat: Infinity, ease: "linear" }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] pointer-events-none opacity-15"
-        >
-          <svg viewBox="0 0 100 100" className="w-full h-full text-amber-400">
-            <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="0.3" strokeDasharray="4 6" />
-          </svg>
-        </motion.div>
-
-        {/* Ambient subtle glowing light orbs */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[650px] h-[650px] bg-teal-500/15 rounded-full blur-[140px] pointer-events-none animate-pulse-glow" />
-        <div className="absolute -top-10 right-10 w-80 h-80 bg-amber-400/10 rounded-full blur-[120px] pointer-events-none" />
+        {/* Dynamic ambient glowing light orbs */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-teal-500/15 rounded-full blur-[140px] pointer-events-none animate-pulse-glow" />
+        <div className="absolute -top-10 right-10 w-96 h-96 bg-amber-400/10 rounded-full blur-[130px] pointer-events-none" />
+        <div className="absolute bottom-10 left-10 w-80 h-80 bg-emerald-500/10 rounded-full blur-[130px] pointer-events-none" />
       </div>
 
-      {/* 2. Main Content Container */}
+      {/* 3. Main Content Container */}
       <div className="relative z-10 max-w-5xl mx-auto px-4 text-center flex flex-col items-center">
         
-        {/* Top Floating Badge */}
+        {/* Top Floating Live Status Badge */}
         <motion.div
-          initial={{ opacity: 0, y: -15 }}
+          initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.06] border border-teal-400/40 shadow-[0_0_20px_rgba(20,184,166,0.25)] backdrop-blur-xl text-teal-300 text-xs font-bold uppercase tracking-widest mb-6 hover:scale-105 transition-transform cursor-pointer"
+          transition={{ duration: 0.5 }}
+          className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-400/30 shadow-[0_0_20px_rgba(20,184,166,0.25)] backdrop-blur-xl text-teal-300 text-xs font-bold uppercase tracking-widest mb-6 hover:scale-105 transition-transform cursor-pointer"
+          onClick={() => triggerFlash()}
         >
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-          <span className="w-2 h-2 rounded-full bg-emerald-400 -ml-3.5" />
-          <span>SSS Photography Studio • Madurai</span>
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+          </span>
+          <span>Open for 2026-27 Bookings • Avaniyapuram, Madurai</span>
         </motion.div>
 
-        {/* 3D Center Floating Studio Card with Optical Viewfinder Corners */}
+        {/* Interactive 3D Floating Studio Card */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.88, y: 30 }}
           animate={{ 
-            opacity: 1, 
-            scale: 1, 
-            y: 0,
             rotateX: -mousePos.y * 14,
             rotateY: mousePos.x * 14,
           }}
           transition={{ type: "spring", stiffness: 120, damping: 18 }}
+          onClick={() => triggerFlash()}
           className="relative mb-8 group cursor-pointer perspective-1000"
         >
-          {/* Viewfinder Focus Brackets */}
-          <div className="absolute -top-4 -left-4 w-6 h-6 border-t-2 border-l-2 border-teal-400/70 rounded-tl-lg pointer-events-none group-hover:scale-125 transition-transform" />
-          <div className="absolute -top-4 -right-4 w-6 h-6 border-t-2 border-r-2 border-teal-400/70 rounded-tr-lg pointer-events-none group-hover:scale-125 transition-transform" />
-          <div className="absolute -bottom-4 -left-4 w-6 h-6 border-b-2 border-l-2 border-teal-400/70 rounded-bl-lg pointer-events-none group-hover:scale-125 transition-transform" />
-          <div className="absolute -bottom-4 -right-4 w-6 h-6 border-b-2 border-r-2 border-teal-400/70 rounded-br-lg pointer-events-none group-hover:scale-125 transition-transform" />
+          {/* Snap feedback floating bubble */}
+          <AnimatePresence>
+            {showSnapBadge && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.6, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: -35 }}
+                exit={{ opacity: 0, scale: 0.8, y: -60 }}
+                transition={{ duration: 0.4 }}
+                className="absolute -top-12 left-1/2 -translate-x-1/2 z-40 px-4 py-1.5 rounded-full bg-gradient-to-r from-teal-400 to-emerald-400 text-black font-black text-xs uppercase tracking-wider shadow-2xl flex items-center gap-1.5 whitespace-nowrap pointer-events-none"
+              >
+                <Sparkles size={14} className="fill-current" />
+                <span>📸 Master Shot #{clickCount} Captured!</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          {/* Highlighted Outer Glow Shadow */}
+          {/* Viewfinder Focus Brackets */}
+          <div className="absolute -top-4 -left-4 w-6 h-6 border-t-2 border-l-2 border-teal-400/80 rounded-tl-lg pointer-events-none group-hover:scale-125 transition-transform" />
+          <div className="absolute -top-4 -right-4 w-6 h-6 border-t-2 border-r-2 border-teal-400/80 rounded-tr-lg pointer-events-none group-hover:scale-125 transition-transform" />
+          <div className="absolute -bottom-4 -left-4 w-6 h-6 border-b-2 border-l-2 border-teal-400/80 rounded-bl-lg pointer-events-none group-hover:scale-125 transition-transform" />
+          <div className="absolute -bottom-4 -right-4 w-6 h-6 border-b-2 border-r-2 border-teal-400/80 rounded-br-lg pointer-events-none group-hover:scale-125 transition-transform" />
+
+          {/* Glowing Shadow */}
           <div className="absolute -inset-2 bg-gradient-to-r from-teal-500/40 via-emerald-500/40 to-amber-500/30 rounded-[36px] blur-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-500" />
 
-          {/* Floating Viewfinder Left Pill */}
+          {/* Floating Viewfinder Left Pill (REC 4K CINEMA) */}
           <motion.div 
             animate={{ y: [0, -6, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -top-3.5 -left-3 sm:-left-6 z-20 hidden sm:flex items-center gap-2 px-4 py-1.5 bg-[#080c0b]/95 border border-teal-400/40 rounded-full text-white text-[11px] font-bold shadow-2xl backdrop-blur-md"
+            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -top-3.5 -left-3 sm:-left-6 z-20 hidden sm:flex items-center gap-2 px-4 py-1.5 bg-[#080c0b]/95 border border-teal-400/40 rounded-full text-white text-[11px] font-bold shadow-2xl backdrop-blur-md hover:scale-105 transition-transform"
           >
             <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
             <span className="text-teal-300 font-black">REC</span>
-            <span className="tracking-wider">4K CINEMA</span>
+            <span className="tracking-wider">4K CINEMA • 120 FPS</span>
+          </motion.div>
+
+          {/* Floating Rating Pill Top Right */}
+          <motion.div 
+            animate={{ y: [0, 6, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -top-3.5 -right-3 sm:-right-6 z-20 hidden sm:flex items-center gap-1.5 px-4 py-1.5 bg-[#080c0b]/95 border border-amber-400/40 rounded-full text-amber-300 text-[11px] font-bold shadow-2xl backdrop-blur-md hover:scale-105 transition-transform"
+          >
+            <Star size={13} className="fill-amber-400 text-amber-400" />
+            <span className="text-white font-extrabold">4.9 ★</span>
+            <span className="text-zinc-400 text-[10px] font-normal">(1,200+ Shoots)</span>
           </motion.div>
 
           {/* Floating Guarantee Right Pill */}
           <motion.div 
             animate={{ y: [0, 6, 0] }}
             transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -bottom-3.5 -right-3 sm:-right-6 z-20 hidden sm:flex items-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-[#071f1b] font-black rounded-full text-[11px] shadow-2xl tracking-wider"
+            className="absolute -bottom-3.5 -right-3 sm:-right-6 z-20 hidden sm:flex items-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-[#071f1b] font-black rounded-full text-[11px] shadow-2xl tracking-wider hover:scale-105 transition-transform"
           >
             <ShieldCheck size={15} className="fill-current" />
             <span>1-MONTH ALBUM GUARANTEE</span>
+          </motion.div>
+
+          {/* Floating Prime Lens Badge Bottom Left */}
+          <motion.div 
+            animate={{ y: [0, -6, 0] }}
+            transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -bottom-3.5 -left-3 sm:-left-6 z-20 hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 bg-[#080c0b]/95 border border-teal-500/40 rounded-full text-teal-300 text-[11px] font-bold shadow-2xl backdrop-blur-md hover:scale-105 transition-transform"
+          >
+            <Zap size={13} className="text-teal-400 fill-teal-400/30" />
+            <span className="text-white tracking-wide">50mm f/1.2 Master Glass</span>
           </motion.div>
 
           {/* Highlighted Gradient Border Frame */}
@@ -187,8 +210,8 @@ export default function SSSHero({ onOpenBooking, onOpenQuote }) {
               {/* Background Geometric Micro-Pattern */}
               <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(#2dd4bf_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
               
-              {/* Metallic Light Sweep */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-teal-400/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
+              {/* Animated Metallic Light Sweep */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-teal-400/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
 
               {/* Card Left: Stylized Studio Typography */}
               <div className="flex flex-col items-start z-10">
@@ -200,13 +223,16 @@ export default function SSSHero({ onOpenBooking, onOpenQuote }) {
                 <span className="font-sans font-black text-[9px] sm:text-xs tracking-[0.45em] text-teal-300/90 uppercase mt-3 ml-1">
                   P H O T O G R A P H Y
                 </span>
+                <span className="text-[10px] text-zinc-400 mt-2 ml-1 flex items-center gap-1">
+                  <span>✨ Tap to test shutter flash</span>
+                </span>
               </div>
 
               {/* Card Right: Clean Professional Cinema DSLR Camera Illustration */}
               <div className="relative z-10 shrink-0 w-28 sm:w-44 md:w-52 h-full flex items-center justify-end">
                 <svg
                   viewBox="0 0 200 200"
-                  className="w-full h-full text-teal-400 drop-shadow-[0_0_20px_rgba(45,212,191,0.35)]"
+                  className="w-full h-full text-teal-400 drop-shadow-[0_0_20px_rgba(45,212,191,0.35)] group-hover:scale-105 transition-transform duration-500"
                   fill="none"
                 >
                   {/* Camera Body Outer Contour */}
@@ -248,39 +274,24 @@ export default function SSSHero({ onOpenBooking, onOpenQuote }) {
                     r="38"
                     stroke="currentColor"
                     strokeWidth="5"
-                    fill="#030d0b"
-                  />
-                  <circle
-                    cx="106"
-                    cy="114"
-                    r="31"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeDasharray="4 2"
-                    opacity="0.8"
+                    fill="#030e0c"
                   />
 
-                  {/* Multi-Coated Optical Glass Lens Elements */}
-                  <circle
-                    cx="106"
-                    cy="114"
-                    r="23"
-                    fill="url(#lensGrad)"
-                    stroke="#2dd4bf"
-                    strokeWidth="3"
-                  />
-
-                  {/* Lens Glass Reflection Arc */}
+                  {/* Lens Glass Elements & Aperture Iris Ring */}
+                  <circle cx="106" cy="114" r="28" stroke="#14b8a6" strokeWidth="2.5" />
+                  <circle cx="106" cy="114" r="18" fill="url(#lensGrad)" />
+                  
+                  {/* Reflection Highlights on Front Glass */}
                   <path
-                    d="M93 99 A 20 20 0 0 1 123 103"
+                    d="M92 98 A20 20 0 0 1 120 98"
                     stroke="#ffffff"
-                    strokeWidth="3.5"
+                    strokeWidth="2.5"
                     strokeLinecap="round"
                     opacity="0.85"
                   />
                   <circle cx="118" cy="126" r="3.5" fill="#ffffff" opacity="0.6" />
 
-                  {/* Lens Gradient Definition */}
+                  {/* Shading Gradients */}
                   <defs>
                     <radialGradient id="lensGrad" cx="40%" cy="35%" r="70%">
                       <stop offset="0%" stopColor="#2dd4bf" stopOpacity="0.8" />
@@ -296,51 +307,36 @@ export default function SSSHero({ onOpenBooking, onOpenQuote }) {
         </motion.div>
 
         {/* Big Editorial Heading */}
-        <motion.h1
-          initial={{ opacity: 0, y: 25 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white mb-4 leading-[1.12]"
-        >
+        <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white mb-4 leading-[1.12]">
           {t.hero.titleLine1} <br />
           <span className="bg-gradient-to-r from-teal-300 via-emerald-300 to-amber-300 bg-clip-text text-transparent italic font-serif">
             {t.hero.titleLine2}
           </span>
-        </motion.h1>
+        </h1>
 
         {/* Sub-Heading */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-xs sm:text-sm md:text-base font-semibold tracking-[0.25em] sm:tracking-[0.35em] text-teal-300/90 uppercase mt-2 mb-8 max-w-3xl"
-        >
+        <p className="text-xs sm:text-sm md:text-base font-semibold tracking-[0.25em] sm:tracking-[0.35em] text-teal-300/90 uppercase mt-2 mb-8 max-w-3xl">
           {t.hero.subtitle}
-        </motion.p>
+        </p>
 
         {/* Hero Interactive Call To Action Buttons with Flash Trigger */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="flex flex-wrap items-center justify-center gap-4"
-        >
+        <div className="flex flex-wrap items-center justify-center gap-4">
           <button
             onClick={() => triggerFlash(() => onOpenBooking("Wedding & Event Photo Shoot"))}
             className="px-8 py-4 rounded-full bg-gradient-to-r from-teal-600 via-teal-700 to-emerald-700 text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-[0_0_25px_rgba(20,184,166,0.4)] hover:shadow-[0_0_35px_rgba(20,184,166,0.6)] hover:scale-105 transition-all duration-300 flex items-center gap-2.5 cursor-pointer border border-teal-400/50 group"
           >
             <span>{t.hero.bookBtn}</span>
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            <ArrowRight size={16} className="group-hover:translate-x-1.5 transition-transform" />
           </button>
 
           <button
             onClick={() => triggerFlash(() => onOpenQuote("Wedding & Event Photo Shoot"))}
-            className="px-8 py-4 rounded-full bg-white/[0.08] hover:bg-white/[0.15] text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 border border-white/20 flex items-center gap-2 cursor-pointer backdrop-blur-md"
+            className="px-8 py-4 rounded-full bg-white/[0.08] hover:bg-white/[0.15] text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 border border-white/20 flex items-center gap-2 cursor-pointer backdrop-blur-md group"
           >
-            <Sparkles size={16} className="text-amber-400" />
+            <Sparkles size={16} className="text-amber-400 group-hover:rotate-12 transition-transform" />
             <span>{t.hero.quoteBtn}</span>
           </button>
-        </motion.div>
+        </div>
 
       </div>
     </section>

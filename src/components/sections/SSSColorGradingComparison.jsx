@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, Sliders, ArrowLeftRight, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -8,9 +8,31 @@ import { useLanguage } from "@/context/LanguageContext";
 export default function SSSColorGradingComparison({ onOpenBooking }) {
   const { currentLang } = useLanguage();
   const [sliderPos, setSliderPos] = useState(50);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const containerRef = useRef(null);
 
+  // Auto-breathe idle animation when not interacting
+  useEffect(() => {
+    if (hasInteracted) return;
+
+    let startTime = null;
+    let animId = null;
+
+    const animate = (time) => {
+      if (!startTime) startTime = time;
+      const elapsed = (time - startTime) / 1000;
+      // Oscillate smoothly between 38% and 62%
+      const newPos = 50 + Math.sin(elapsed * 1.5) * 12;
+      setSliderPos(newPos);
+      animId = requestAnimationFrame(animate);
+    };
+
+    animId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animId);
+  }, [hasInteracted]);
+
   const handleMove = (e) => {
+    if (!hasInteracted) setHasInteracted(true);
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -73,6 +95,7 @@ export default function SSSColorGradingComparison({ onOpenBooking }) {
             ref={containerRef}
             onMouseMove={handleMove}
             onTouchMove={handleMove}
+            onClick={handleMove}
             className="relative h-[360px] sm:h-[480px] md:h-[540px] rounded-3xl overflow-hidden shadow-2xl border border-teal-500/30 cursor-ew-resize select-none group"
           >
             {/* 1. After (Color Graded) Image - Full background */}
@@ -113,15 +136,18 @@ export default function SSSColorGradingComparison({ onOpenBooking }) {
               className="absolute top-0 bottom-0 w-1 bg-gradient-to-b from-teal-300 via-white to-emerald-300 pointer-events-none shadow-[0_0_15px_rgba(255,255,255,0.8)]"
               style={{ left: `${sliderPos}%` }}
             >
-              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-gradient-to-br from-teal-400 to-emerald-400 text-[#071f1b] shadow-2xl flex items-center justify-center border-2 border-white scale-100 group-hover:scale-110 transition-transform">
+              {/* Halo ripple ring */}
+              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-teal-400/20 animate-ping pointer-events-none" />
+              
+              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-gradient-to-br from-teal-400 via-emerald-400 to-teal-300 text-[#071f1b] shadow-2xl flex items-center justify-center border-2 border-white scale-100 group-hover:scale-110 transition-transform">
                 <ArrowLeftRight size={18} strokeWidth={2.5} />
               </div>
             </div>
 
             {/* Top Helper Floating Pill */}
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-zinc-300 text-[11px] font-semibold flex items-center gap-1.5 pointer-events-none">
-              <Sliders size={12} className="text-teal-400" />
-              <span>Drag left/right to compare</span>
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-zinc-300 text-[11px] font-semibold flex items-center gap-1.5 pointer-events-none shadow-lg">
+              <Sliders size={12} className="text-teal-400 animate-pulse" />
+              <span>{hasInteracted ? "Dragging to compare" : "✨ Touch or drag to compare live"}</span>
             </div>
           </div>
 
@@ -129,9 +155,9 @@ export default function SSSColorGradingComparison({ onOpenBooking }) {
           <div className="mt-8 text-center">
             <button
               onClick={() => onOpenBooking("Wedding & Event Photo Shoot")}
-              className="px-8 py-4 bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-300 hover:to-emerald-300 text-[#071f1b] font-bold rounded-full shadow-lg shadow-teal-500/20 hover:scale-105 transition-all duration-300 text-xs sm:text-sm uppercase tracking-wider cursor-pointer inline-flex items-center gap-2"
+              className="px-8 py-4 bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-300 hover:to-emerald-300 text-[#071f1b] font-bold rounded-full shadow-lg shadow-teal-500/20 hover:scale-105 transition-all duration-300 text-xs sm:text-sm uppercase tracking-wider cursor-pointer inline-flex items-center gap-2 group"
             >
-              <Sparkles size={16} />
+              <Sparkles size={16} className="group-hover:rotate-12 transition-transform" />
               <span>{text.cta}</span>
             </button>
           </div>

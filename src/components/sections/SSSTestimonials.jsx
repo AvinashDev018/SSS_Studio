@@ -129,21 +129,24 @@ export default function SSSTestimonials({ onOpenReviewModal }) {
           {testimonials.map((item, idx) => (
             <motion.div
               key={item.id}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.05 }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
-              whileHover={{ y: -6 }}
-              className="bg-[#0c3530]/40 backdrop-blur-xl border border-teal-500/20 rounded-3xl p-8 relative flex flex-col justify-between group shadow-xl hover:border-teal-400/40 transition-all duration-300"
+              whileHover={{ y: -8, scale: 1.02 }}
+              className="bg-[#0c3530]/40 backdrop-blur-xl border border-teal-500/20 rounded-3xl p-8 relative flex flex-col justify-between group shadow-xl hover:border-teal-400/60 hover:shadow-2xl hover:shadow-teal-500/10 transition-all duration-300 overflow-hidden"
             >
+              {/* Shimmer sweep on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-teal-400/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
+
               <div>
-                <Quote className="text-4xl text-teal-400/20 mb-4" />
+                <Quote className="text-4xl text-teal-400/20 mb-4 group-hover:text-teal-400/40 transition-colors" />
                 <div className="flex gap-1 text-amber-400 mb-4">
                   {Array.from({ length: 5 }).map((_, sIdx) => (
                     <Star
                       key={sIdx}
                       size={16}
-                      className={sIdx < item.rating ? "fill-amber-400 text-amber-400" : "text-gray-600"}
+                      className={`${sIdx < item.rating ? "fill-amber-400 text-amber-400" : "text-gray-600"} group-hover:scale-110 transition-transform`}
                     />
                   ))}
                 </div>
@@ -154,11 +157,11 @@ export default function SSSTestimonials({ onOpenReviewModal }) {
 
               <div className="border-t border-white/10 pt-4 flex justify-between items-center mt-auto">
                 <div>
-                  <h4 className="font-bold text-white text-sm md:text-base">{item.name}</h4>
+                  <h4 className="font-bold text-white text-sm md:text-base group-hover:text-teal-300 transition-colors">{item.name}</h4>
                   <p className="text-xs text-teal-300 font-medium mt-0.5">{item.role}</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-[11px] text-zinc-500 block">{item.location}</span>
+                  <span className="text-[11px] text-zinc-400 block">{item.location}</span>
                   <span className="text-[11px] text-zinc-500">{item.date}</span>
                 </div>
               </div>

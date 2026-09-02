@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { Menu, X, Camera, Globe, Tag, Check, ChevronDown, Sparkles, ArrowRight, MessageCircle } from "lucide-react";
+import { Menu, X, Globe, Tag, Check, ChevronDown, Sparkles, ArrowRight, MessageCircle } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
+import StudioLogo from "@/components/ui/StudioLogo";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -62,19 +63,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-20 gap-4">
           
           {/* Left: Brand Logo */}
-          <Link href="/" className="flex items-center gap-3 group shrink-0">
-            <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-400 via-emerald-400 to-teal-500 shadow-[0_0_20px_rgba(20,184,166,0.35)] group-hover:scale-105 transition-all duration-300">
-              <Camera className="w-5 h-5 text-[#071f1b]" strokeWidth={2.5} />
-            </div>
-            <div className="flex items-center gap-1.5 leading-none">
-              <span className="font-serif font-black text-2xl tracking-tight text-white">
-                SSS
-              </span>
-              <span className="font-serif italic text-lg text-teal-300 font-normal">
-                Photography
-              </span>
-            </div>
-          </Link>
+          <StudioLogo size="md" href="/" />
 
           {/* Center: Desktop Nav Links with Hover Glass Glow */}
           <div className="hidden xl:flex items-center space-x-1 lg:space-x-1.5 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-md">
