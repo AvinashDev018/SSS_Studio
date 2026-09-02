@@ -1,139 +1,82 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send, Paperclip, ChevronRight } from "lucide-react";
+import { 
+  MessageCircle, 
+  X, 
+  Send, 
+  Paperclip, 
+  ChevronRight, 
+  Sparkles, 
+  Package, 
+  ShieldCheck, 
+  ExternalLink, 
+  Camera, 
+  Clock, 
+  CheckCircle2, 
+  Search,
+  Loader2
+} from "lucide-react";
 
 const MENU_OPTIONS = [
-  { id: "pricing", label: "Pricing & Packages" },
-  { id: "services", label: "Services" },
-  { id: "location", label: "Location & Opening Hours" },
-  { id: "booking", label: "How to Book" },
-  { id: "delivery", label: "Photo Delivery" },
-  { id: "preparation", label: "How to Prepare" },
-  { id: "outfits", label: "Outfit Suggestions" },
-  { id: "session", label: "Session Details" },
-  { id: "quote", label: "Get a Custom Quote" },
-  { id: "track", label: "Track Order" },
+  { id: "frames_ai", label: "🖼️ Recommend a Frame Size (AI)" },
+  { id: "quote_ai", label: "💍 Calculate Wedding / Event Quote (AI)" },
+  { id: "pricing", label: "Pricing & Standard Packages" },
+  { id: "location", label: "Studio Location & Hours (Avaniyapuram)" },
+  { id: "delivery", label: "1-Month Delivery Guarantee" },
+  { id: "track", label: "📦 Track an Order" },
   { id: "report", label: "Report Damaged Item" },
-  { id: "other", label: "Other Queries" },
 ];
 
-const WHATSAPP_URL = "https://wa.me/916383565425?text=Hi!%20I%27m%20interested%20in%20booking%20a%20photography%20session.";
+const QUICK_SUGGESTIONS = [
+  "🖼️ Recommend frame for sofa wall",
+  "💍 2-Day Wedding with Drone quote",
+  "⚡ What is 1-Month Delivery Guarantee?",
+  "🎁 Birthday gift items & prices",
+  "📍 Studio Location & Timings",
+  "தமிழ் உதவி (Tamil Support)",
+];
+
+const WHATSAPP_URL = "https://wa.me/916383565425?text=Hi!%20I%27m%20interested%20in%20booking%20a%20photography%20session%20with%20SSS%20Studio.";
 
 const FAQ_RESPONSES = {
   pricing: {
     title: "Packages and starting prices",
-    text: "Choose a package based on the kind of memories you want to create. Every package can be adjusted for your event.",
+    text: "Choose a package based on the memories you want to create. Every package includes our 1-Month Delivery Guarantee.",
     details: [
-      "Essential Portrait — starts at ₹1,500; includes 5 edited high-resolution digital photos.",
-      "Signature Family Session — starts at ₹4,500; includes 15 edited photos and 1 large physical print.",
-      "Premium Event Coverage — starts at ₹15,000; includes event coverage, an album, and a cinematic highlight video.",
-      "Final pricing depends on the date, event size, location, duration, photos, video, album, and prints you choose.",
+      "Essential Portrait — starts at ₹1,500 (5 edited digital photos).",
+      "Signature Family Session — starts at ₹4,500 (15 edited photos + 1 large print).",
+      "Premium Event Coverage — starts at ₹15,000 (Full album + cinematic highlights).",
+      "Handcrafted Photo Frames — 13 sizes from ₹349 to ₹4,999 with Sparkle & Matte finishes.",
     ],
-    actions: [{ label: "View Services", href: "/services" }, { label: "Request a Quote", href: WHATSAPP_URL, external: true }],
-  },
-  services: {
-    title: "What SSS Studio can create",
-    text: "We cover personal milestones, family memories, professional portraits, and event storytelling.",
-    details: [
-      "Wedding photography and videography for candid and traditional moments.",
-      "Portrait sessions for individuals, couples, families, and professional profiles.",
-      "Birthday and small-function coverage with candid photos and highlight videos.",
-      "Corporate photography for teams, events, branding, and LinkedIn profiles.",
-      "Albums, framed prints, passport photos, collages, and personalized photo gifts are also available in the Studio Store.",
+    actions: [
+      { label: "View Services", href: "/services" },
+      { label: "View Frame Price List", href: "/#frames" },
+      { label: "Request on WhatsApp", href: WHATSAPP_URL, external: true }
     ],
-    actions: [{ label: "Explore Services", href: "/services" }, { label: "Open Studio Store", href: "/store" }],
   },
   location: {
-    title: "Visit SSS Studio",
-    text: "Here is everything you need before visiting or planning an outdoor session.",
+    title: "Visit SSS Studio in Madurai",
+    text: "Here is everything you need before visiting or planning your session:",
     details: [
-      "Address: 34, Prasanna New Colony, Avaniyapuram, Madurai.",
+      "Address: 34, Prasanna New Colony, Avaniyapuram, Madurai, Tamil Nadu.",
       "Opening hours: Monday to Sunday, 9:00 AM to 8:00 PM.",
-      "Call: +91 63835 65425.",
-      "For outdoor locations, share your preferred area with the team so travel, timing, and permissions can be confirmed.",
+      "Call / WhatsApp: +91 63835 65425.",
     ],
-    actions: [{ label: "Get Directions", href: "https://maps.google.com/?q=34%2C%20Prasanna%20New%20Colony%2C%20Avaniyapuram%2C%20Madurai", external: true }, { label: "Call the Studio", href: "tel:+916383565425", external: true }],
-  },
-  booking: {
-    title: "How booking works",
-    text: "Booking takes a few simple steps and lets you see available dates and times.",
-    details: [
-      "1. Sign in or create an account.",
-      "2. Select the package that fits your occasion.",
-      "3. Choose an available date and time slot.",
-      "4. Add your name, phone number, event type, location, and requirements.",
-      "5. Submit the booking request. The studio team will confirm the details with you.",
-      "Please contact us before booking if your event needs a custom package, multiple locations, or both photography and video.",
+    actions: [
+      { label: "Get Directions", href: "https://maps.google.com/?q=34%2C%20Prasanna%20New%20Colony%2C%20Avaniyapuram%2C%20Madurai", external: true },
+      { label: "Call Studio", href: "tel:+916383565425", external: true }
     ],
-    actions: [{ label: "Book a Session", href: "/book" }, { label: "WhatsApp Us", href: WHATSAPP_URL, external: true }],
   },
   delivery: {
-    title: "Photo and video delivery",
-    text: "Your finished memories are prepared and shared according to the selected package.",
+    title: "1-Month Delivery Guarantee",
+    text: "We respect your time. SSS Photography Studio guarantees your edited master album and photos within 30 days of ceremony selection, or receive ₹1,000 cash credit.",
     details: [
-      "Edited photos are delivered through a secure online gallery.",
-      "Album and print delivery depends on selection, design approval, and production time.",
-      "Video delivery time depends on the event size and editing style.",
-      "The team will confirm the expected delivery timeline when your booking is reviewed.",
-      "Keep your gallery link safe and contact us if you need help accessing your order.",
+      "Standard Studios take 3-6 months; SSS delivers in 30 days.",
+      "High-resolution edited photos accessible on private cloud gallery.",
+      "Direct courier delivery for handcrafted photo frames and albums.",
     ],
-    actions: [{ label: "Track an Order", href: "/track" }],
-  },
-  preparation: {
-    title: "How to prepare for your session",
-    text: "A little preparation helps the session stay relaxed and gives you more variety in your final gallery.",
-    details: [
-      "Arrive 10 to 15 minutes early so you have time to settle in.",
-      "Bring your outfits, footwear, accessories, and any meaningful props.",
-      "Keep outfits freshly pressed and bring one comfortable look plus one statement look.",
-      "For outdoor shoots, carry water, sunscreen, and a small touch-up kit.",
-      "Share important family names, event moments, or must-have photographs with the team before the session.",
-    ],
-  },
-  outfits: {
-    title: "Outfit guidance",
-    text: "Choose clothing that feels like you and photographs clearly against the planned background.",
-    details: [
-      "Portraits: solid colors, clean layers, and minimal distracting patterns keep attention on expressions.",
-      "Weddings: Kanjivaram silk sarees, lehengas, sherwanis, silk kurtas, and veshti create a rich traditional look.",
-      "Families: coordinate colors without wearing identical outfits; choose two or three complementary tones.",
-      "Corporate: pressed formalwear, simple accessories, and calm colors create a confident professional image.",
-      "Bring a backup outfit when possible, especially for long events or outdoor sessions.",
-    ],
-  },
-  session: {
-    title: "What to expect from a session",
-    text: "The team guides you through poses, expressions, backgrounds, and lighting so you do not need to be an experienced model.",
-    details: [
-      "The session length depends on your package, number of people, outfit changes, and location.",
-      "The photographer will suggest natural poses as well as formal portraits.",
-      "You can discuss preferred photos, family combinations, and important event moments in advance.",
-      "Extra time, locations, video coverage, albums, and prints can be discussed as add-ons.",
-    ],
-    actions: [{ label: "See the Portfolio", href: "/gallery" }],
-  },
-  quote: {
-    title: "Get a custom quote",
-    text: "A custom quote is best when your event does not fit one standard package.",
-    details: [
-      "Event type and date.",
-      "Number of people and expected event duration.",
-      "Studio, home, outdoor, or heritage location.",
-      "Photography, video, album, prints, or photo gifts needed.",
-      "Any special moments, themes, outfit changes, or travel requirements.",
-    ],
-    actions: [{ label: "Request on WhatsApp", href: WHATSAPP_URL, external: true }],
-  },
-  track: {
-    title: "Track your order",
-    text: "Use the Track Order page or the link shared with you by the studio.",
-    details: [
-      "Keep your order ID or tracking details ready.",
-      "The order page can show the latest available status for your delivery.",
-      "For a missing link, delayed order, or access problem, contact the studio team directly.",
-    ],
-    actions: [{ label: "Open Track Order", href: "/track" }],
+    actions: [{ label: "Browse Photo Frames", href: "/#frames" }],
   },
 };
 
@@ -143,12 +86,13 @@ export default function ChatbotWidget() {
     {
       id: 1,
       sender: "bot",
-      text: "Hi there! Welcome to SSS Studio. How can we help capture your memories today?",
+      text: "Vanakkam! 🙏 Welcome to SSS Photography Studio. I am your autonomous AI Studio Concierge powered by DeepSeek. How can I assist with your wedding, portrait session, or custom photo frame today?",
       type: "text",
     },
     { id: 2, sender: "bot", type: "menu", options: MENU_OPTIONS },
   ]);
-  const [currentState, setCurrentState] = useState("menu"); // 'menu', 'report_form', 'chat'
+  const [currentState, setCurrentState] = useState("menu");
+  const [isAgentTyping, setIsAgentTyping] = useState(false);
 
   // Form State for Report Damaged Item
   const [orderId, setOrderId] = useState("");
@@ -163,9 +107,89 @@ export default function ChatbotWidget() {
 
   useEffect(() => {
     if (isOpen) scrollToBottom();
-  }, [messages, isOpen]);
+  }, [messages, isOpen, isAgentTyping]);
+
+  const sendToAgent = async (userPrompt) => {
+    // Add user message
+    const userMsg = { id: Date.now(), sender: "user", text: userPrompt, type: "text" };
+    setMessages((prev) => [...prev, userMsg]);
+    setIsAgentTyping(true);
+
+    try {
+      // Build conversation history
+      const history = messages
+        .filter((m) => m.type === "text")
+        .slice(-6)
+        .map((m) => ({
+          role: m.sender === "user" ? "user" : "assistant",
+          content: m.text,
+        }));
+
+      history.push({ role: "user", content: userPrompt });
+
+      const res = await fetch("/api/deepseek", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: history }),
+      });
+
+      const data = await res.json();
+      const botMsgId = Date.now() + 1;
+
+      const newMessages = [
+        {
+          id: botMsgId,
+          sender: "bot",
+          text: data.reply || "Vanakkam! I'm here to help you choose the best frame or photography package.",
+          type: "text",
+        },
+      ];
+
+      // Render agent action cards if any tool was executed
+      if (data.actionCards && data.actionCards.length > 0) {
+        data.actionCards.forEach((card, idx) => {
+          newMessages.push({
+            id: botMsgId + idx + 2,
+            sender: "bot",
+            type: "agent_card",
+            cardData: card,
+          });
+        });
+      }
+
+      setMessages((prev) => [...prev, ...newMessages]);
+    } catch (err) {
+      console.error("Agent chat error:", err);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          sender: "bot",
+          text: "Vanakkam! Our team is available 24/7 on WhatsApp. Feel free to message our master photographer directly:",
+          type: "actions",
+          options: [{ label: "Chat on WhatsApp", href: WHATSAPP_URL, external: true }],
+        },
+      ]);
+    } finally {
+      setIsAgentTyping(false);
+    }
+  };
 
   const handleMenuClick = (optionId, label) => {
+    if (optionId === "frames_ai") {
+      sendToAgent("Recommend a handcrafted photo frame size for my living room wall above a 3-seater sofa.");
+      return;
+    }
+    if (optionId === "quote_ai") {
+      sendToAgent("Calculate quote for a 2-Day traditional wedding with candid photos, 4K video, aerial drone, and master album in Madurai.");
+      return;
+    }
+
+    if (optionId === "track") {
+      sendToAgent("How can I track my photo frame order?");
+      return;
+    }
+
     // Add user message
     setMessages((prev) => [
       ...prev,
@@ -188,182 +212,40 @@ export default function ChatbotWidget() {
           },
           { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
         ]);
-      }, 500);
+      }, 400);
       return;
     }
 
-    // Handle bot response based on state machine
-    setTimeout(() => {
-      if (optionId === "report") {
-        setCurrentState("report_form");
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            sender: "bot",
-            text: "We're sorry to hear that. Please provide your Order ID and a photo of the damaged item.",
-            type: "text",
-          },
-        ]);
-      } else if (optionId === "pricing") {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            sender: "bot",
-            text: "Our photography packages start at ₹1,500 for an Essential Portrait session. Family sessions start at ₹4,500, and event coverage starts at ₹15,000. Visit Services or contact us for a custom quote.",
-            type: "text",
-          },
-          { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
-        ]);
-      } else if (optionId === "services") {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            sender: "bot",
-            text: "SSS Studio offers wedding photography, portraits, birthday functions, family sessions, corporate photography, albums, frames, and photo gifts.",
-            type: "text",
-          },
-          { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
-        ]);
-      } else if (optionId === "location") {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            sender: "bot",
-            text: "Our studio is at 34, Prasanna New Colony, Avaniyapuram, Madurai. We are open Monday to Sunday, 9:00 AM to 8:00 PM.",
-            type: "text",
-          },
-          { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
-        ]);
-      } else if (optionId === "booking") {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            sender: "bot",
-            text: "To book, sign in, choose a package, select an available date and time, then add your contact details. You can start from the Book Session button or message us on WhatsApp.",
-            type: "text",
-          },
-          {
-            id: Date.now() + 1,
-            sender: "bot",
-            type: "actions",
-            options: [
-              { label: "Book a Session", href: "/book" },
-              { label: "WhatsApp Us", href: WHATSAPP_URL, external: true },
-            ],
-          },
-          { id: Date.now() + 2, sender: "bot", type: "menu", options: MENU_OPTIONS },
-        ]);
-      } else if (optionId === "delivery") {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            sender: "bot",
-            text: "Edited photos are delivered through a secure online gallery. Delivery time depends on your package and event size; our team will confirm it when you book.",
-            type: "text",
-          },
-          { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
-        ]);
-      } else if (optionId === "preparation") {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            sender: "bot",
-            text: "Please arrive 10 to 15 minutes early, bring your preferred outfits and accessories, and keep outfits freshly pressed. For outdoor shoots, carry water and a small touch-up kit.",
-            type: "text",
-          },
-          { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
-        ]);
-      } else if (optionId === "outfits") {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            sender: "bot",
-            text: "For portraits, solid colors photograph beautifully. For weddings, consider silk sarees, lehengas, sherwanis, silk kurtas, or veshti. Bring one comfortable outfit and one statement look for variety.",
-            type: "text",
-          },
-          { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
-        ]);
-      } else if (optionId === "session") {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            sender: "bot",
-            text: "We photograph portraits, families, weddings, birthdays, and corporate events. Session length depends on your package, number of people, and location. We will confirm the schedule before your booking.",
-            type: "text",
-          },
-          { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
-        ]);
-      } else if (optionId === "quote") {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            sender: "bot",
-            text: "For a custom quote, tell us your event type, preferred date, location, number of people, and whether you need photos, video, an album, or prints.",
-            type: "text",
-          },
-          {
-            id: Date.now() + 1,
-            sender: "bot",
-            type: "actions",
-            options: [{ label: "Request on WhatsApp", href: WHATSAPP_URL, external: true }],
-          },
-          { id: Date.now() + 2, sender: "bot", type: "menu", options: MENU_OPTIONS },
-        ]);
-      } else if (optionId === "track") {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            sender: "bot",
-            text: "You can track your order using the link sent to your email, or visit the 'Track Order' page on our site.",
-            type: "text",
-          },
-          { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
-        ]);
-      } else {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            sender: "bot",
-            text: "Please hold on, our team will get back to you shortly during working hours (9 AM - 6 PM).",
-            type: "text",
-          },
-          {
-            id: Date.now() + 1,
-            sender: "bot",
-            type: "actions",
-            options: [{ label: "WhatsApp Us", href: WHATSAPP_URL, external: true }],
-          },
-          { id: Date.now() + 2, sender: "bot", type: "menu", options: MENU_OPTIONS },
-        ]);
-      }
-    }, 500);
+    if (optionId === "report") {
+      setCurrentState("report_form");
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          sender: "bot",
+          text: "We're sorry to hear that. Please provide your Order ID and photo of the damaged item.",
+          type: "text",
+        },
+      ]);
+    }
+  };
+
+  const handleTextSubmit = (e) => {
+    e.preventDefault();
+    const q = userInput.trim();
+    if (!q) return;
+
+    setUserInput("");
+    sendToAgent(q);
   };
 
   const handleReportSubmit = (e) => {
     e.preventDefault();
     if (!orderId) return;
 
-    // Simulate submission
     setMessages((prev) => [
       ...prev,
-      {
-        id: Date.now(),
-        sender: "user",
-        text: `Submitted Report for Order ID: ${orderId}`,
-        type: "text",
-      },
+      { id: Date.now(), sender: "user", text: `Submitted Damage Report for Order: ${orderId}`, type: "text" },
     ]);
 
     setOrderId("");
@@ -376,176 +258,251 @@ export default function ChatbotWidget() {
         {
           id: Date.now(),
           sender: "bot",
-          text: "Thank you. Our support team has received your report and will contact you within 24 hours.",
+          text: "Thank you. Our studio support team in Avaniyapuram has received your report and will resolve it within 24 hours.",
           type: "text",
         },
         { id: Date.now() + 1, sender: "bot", type: "menu", options: MENU_OPTIONS },
       ]);
-    }, 1000);
-  };
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setDamageImage(file.name);
-    }
-  };
-
-  const getTextAnswer = (question) => {
-    const normalizedQuestion = question.toLowerCase();
-
-    if (normalizedQuestion.includes("damage") || normalizedQuestion.includes("damaged") || normalizedQuestion.includes("broken") || normalizedQuestion.includes("cracked") || normalizedQuestion.includes("defect") || normalizedQuestion.includes("frame is")) {
-      return "I am sorry your item arrived damaged. Please use the damage report form below with your Order ID and a photo of the damaged item. Our support team will review it and contact you within 24 hours.";
-    }
-    if (normalizedQuestion.includes("price") || normalizedQuestion.includes("cost") || normalizedQuestion.includes("package")) {
-      return "Our packages start at ₹1,500 for Essential Portrait, ₹4,500 for Signature Family Session, and ₹15,000+ for Premium Event Coverage. Contact us for a custom quote.";
-    }
-    if (normalizedQuestion.includes("where") || normalizedQuestion.includes("location") || normalizedQuestion.includes("address")) {
-      return "We are at 34, Prasanna New Colony, Avaniyapuram, Madurai. We are open Monday to Sunday, 9:00 AM to 8:00 PM.";
-    }
-    if (normalizedQuestion.includes("open") || normalizedQuestion.includes("hour") || normalizedQuestion.includes("time")) {
-      return "Our studio is open Monday to Sunday, 9:00 AM to 8:00 PM.";
-    }
-    if (normalizedQuestion.includes("book") || normalizedQuestion.includes("reserve")) {
-      return "To book, choose a package, select an available date and time, and submit your contact details on the Book Session page. You can also message us on WhatsApp.";
-    }
-    if (normalizedQuestion.includes("wear") || normalizedQuestion.includes("outfit") || normalizedQuestion.includes("dress")) {
-      return "For portraits, solid colors photograph beautifully. For weddings, consider silk sarees, lehengas, sherwanis, silk kurtas, or veshti. Bring one comfortable outfit and one statement look.";
-    }
-    if (normalizedQuestion.includes("prepare") || normalizedQuestion.includes("bring") || normalizedQuestion.includes("before")) {
-      return "Please arrive 10 to 15 minutes early, bring your outfits and accessories, and keep outfits freshly pressed. For outdoor shoots, carry water and a small touch-up kit.";
-    }
-    if (normalizedQuestion.includes("how long") || normalizedQuestion.includes("duration") || normalizedQuestion.includes("time take")) {
-      return "Session length depends on your package, number of people, and location. We will confirm the schedule before your booking.";
-    }
-    if (normalizedQuestion.includes("deliver") || normalizedQuestion.includes("photo") || normalizedQuestion.includes("album")) {
-      return "Edited photos are delivered through a secure online gallery. Our team will confirm the delivery time based on your package and event size.";
-    }
-    if (normalizedQuestion.includes("quote") || normalizedQuestion.includes("custom") || normalizedQuestion.includes("video")) {
-      return "For a custom quote, share your event type, preferred date, location, number of people, and whether you need photos, video, an album, or prints. Our team can help on WhatsApp.";
-    }
-    if (normalizedQuestion.includes("service") || normalizedQuestion.includes("offer") || normalizedQuestion.includes("shoot")) {
-      return "We offer wedding, portrait, birthday, family, and corporate photography, plus albums, frames, and photo gifts.";
-    }
-
-    return "I can help with packages, services, location, opening hours, booking, photo delivery, and order tracking. For anything else, please contact our team on WhatsApp.";
-  };
-
-  const handleTextSubmit = (e) => {
-    e.preventDefault();
-    const question = userInput.trim();
-    if (!question || currentState === "report_form") return;
-    const isDamageReport = /damage|damaged|broken|cracked|defect|frame is/i.test(question);
-
-    if (isDamageReport) {
-      setMessages((prev) => [
-        ...prev,
-        { id: Date.now(), sender: "user", text: question, type: "text" },
-        {
-          id: Date.now() + 1,
-          sender: "bot",
-          text: getTextAnswer(question),
-          type: "text",
-        },
-      ]);
-      setCurrentState("report_form");
-      setUserInput("");
-      return;
-    }
-
-    setMessages((prev) => [
-      ...prev,
-      { id: Date.now(), sender: "user", text: question, type: "text" },
-      {
-        id: Date.now() + 1,
-        sender: "bot",
-        text: getTextAnswer(question),
-        type: "text",
-      },
-      {
-        id: Date.now() + 2,
-        sender: "bot",
-        type: "actions",
-        options: question.toLowerCase().includes("book")
-          ? [{ label: "Book a Session", href: "/book" }]
-          : [{ label: "Chat on WhatsApp", href: WHATSAPP_URL, external: true }],
-      },
-      { id: Date.now() + 3, sender: "bot", type: "menu", options: MENU_OPTIONS },
-    ]);
-    setUserInput("");
+    }, 800);
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
-      {/* Floating Button */}
-      <button
-        suppressHydrationWarning
-        onClick={() => setIsOpen(!isOpen)}
-        className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${
-          isOpen ? "bg-red-500 hover:bg-red-600 rotate-90" : "bg-black hover:bg-gray-800"
-        } text-white`}
-      >
-        {isOpen ? <X size={24} /> : <MessageCircle size={28} />}
-      </button>
+    <div className="fixed bottom-6 right-6 z-[95]">
+      {/* Floating Agent Button & Label */}
+      <div className="flex items-center gap-2.5">
+        {!isOpen && (
+          <div
+            onClick={() => setIsOpen(true)}
+            className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 bg-[#051a15]/95 backdrop-blur-md border border-teal-400/40 text-teal-300 rounded-full text-xs font-bold shadow-xl shadow-teal-500/20 cursor-pointer hover:bg-teal-950 transition-all hover:scale-105"
+          >
+            <Sparkles size={13} className="text-teal-400 animate-pulse" />
+            <span>Ask DeepSeek AI (Frames & Quotes)</span>
+          </div>
+        )}
+
+        <button
+          suppressHydrationWarning
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label="Open Studio AI Concierge"
+          className={`relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${
+            isOpen ? "bg-red-500 hover:bg-red-600 rotate-90" : "bg-gradient-to-r from-teal-400 to-emerald-500 hover:scale-105 shadow-teal-500/50 shadow-lg text-black font-bold"
+          } cursor-pointer`}
+        >
+        {isOpen ? (
+          <X size={24} />
+        ) : (
+          <>
+            <MessageCircle size={26} />
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-teal-300 rounded-full border-2 border-zinc-900 animate-pulse flex items-center justify-center">
+              <Sparkles size={8} className="text-black" />
+            </span>
+          </>
+        )}
+        </button>
+      </div>
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="absolute bottom-20 right-0 w-80 sm:w-96 max-h-[calc(100vh-7rem)] bg-white rounded-2xl shadow-[0_5px_40px_-15px_rgba(0,0,0,0.3)] border border-gray-100 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-300 origin-bottom-right">
+        <div className="absolute bottom-20 right-0 w-[90vw] max-w-[420px] max-h-[calc(100vh-6rem)] bg-zinc-950 text-zinc-100 rounded-3xl shadow-[0_15px_60px_-15px_rgba(0,0,0,0.8)] border border-teal-500/30 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-300 origin-bottom-right">
           {/* Header */}
-          <div className="bg-black text-white p-4 flex items-center justify-between">
+          <div className="bg-[#071310] border-b border-teal-500/20 p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                <Camera size={16} className="text-white" />
+              <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-teal-500/20 text-[#071f1b]">
+                <Sparkles size={18} />
               </div>
               <div>
-                <h3 className="font-bold text-sm">SSS Studio Support</h3>
-                <p className="text-xs text-gray-300">We typically reply instantly</p>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-sm text-white">SSS Studio AI Concierge</h3>
+                  <span className="bg-teal-500/20 text-teal-300 text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider border border-teal-400/30">
+                    DeepSeek Agent
+                  </span>
+                </div>
+                <p className="text-[11px] text-teal-400/80 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  Online • Tamil & English Fluent
+                </p>
               </div>
             </div>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
+            >
+              <X size={18} />
+            </button>
+          </div>
+
+          {/* Quick Suggestion Pills */}
+          <div className="bg-[#050b09] px-3 py-2 border-b border-white/5 flex gap-2 overflow-x-auto no-scrollbar">
+            {QUICK_SUGGESTIONS.map((sug, i) => (
+              <button
+                key={i}
+                onClick={() => sendToAgent(sug)}
+                className="shrink-0 text-[11px] bg-teal-950/60 hover:bg-teal-900/80 text-teal-300 border border-teal-500/30 px-3 py-1 rounded-full transition-all hover:scale-102 cursor-pointer"
+              >
+                {sug}
+              </button>
+            ))}
           </div>
 
           {/* Chat Area */}
-          <div className="flex-1 min-h-0 p-4 overflow-y-auto overscroll-contain bg-gray-50 h-[400px] max-h-[calc(100vh-13rem)] flex flex-col gap-4">
+          <div className="flex-1 min-h-0 p-4 overflow-y-auto overscroll-contain bg-[#060e0c] h-[380px] max-h-[calc(100vh-14rem)] flex flex-col gap-3.5">
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`flex flex-col max-w-[85%] ${
+                className={`flex flex-col max-w-[88%] ${
                   msg.sender === "user" ? "self-end items-end" : "self-start items-start"
                 }`}
               >
                 {msg.type === "text" && (
                   <div
-                    className={`p-3 rounded-2xl text-sm ${
+                    className={`p-3.5 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                       msg.sender === "user"
-                        ? "bg-black text-white rounded-tr-sm"
-                        : "bg-white border border-gray-200 text-gray-800 rounded-tl-sm shadow-sm"
+                        ? "bg-gradient-to-r from-teal-500 to-emerald-600 text-black font-semibold rounded-tr-sm shadow-md"
+                        : "bg-[#0b1b17] border border-teal-500/20 text-zinc-100 rounded-tl-sm shadow-sm"
                     }`}
                   >
                     {msg.text}
                   </div>
                 )}
 
+                {/* AGENTIC RICH ACTION CARD */}
+                {msg.type === "agent_card" && (
+                  <div className="w-full mt-1">
+                    {/* Frame Recommendation Tool Output */}
+                    {msg.cardData.action === "RECOMMEND_FRAMES" && (
+                      <div className="bg-[#0a201c] border border-teal-500/40 rounded-2xl p-3.5 shadow-xl text-xs">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-bold text-teal-300 flex items-center gap-1 text-[11px] uppercase tracking-wider">
+                            <Package size={13} /> Recommended Custom Frames
+                          </span>
+                          <span className="text-[10px] text-zinc-400">13 Sizes Available</span>
+                        </div>
+                        <div className="grid grid-cols-1 gap-2 my-2">
+                          {msg.cardData.recommendedFrames?.map((f) => (
+                            <div
+                              key={f.id}
+                              className="flex items-center justify-between bg-black/40 border border-teal-500/20 p-2.5 rounded-xl"
+                            >
+                              <div>
+                                <span className="font-serif font-bold text-sm text-white">{f.size} Inch</span>
+                                {f.tag && (
+                                  <span className="ml-2 text-[9px] bg-teal-500/20 text-teal-300 font-bold px-1.5 py-0.5 rounded border border-teal-400/30">
+                                    {f.tag}
+                                  </span>
+                                )}
+                                <p className="text-[10px] text-zinc-400 mt-0.5">{f.bestFor}</p>
+                              </div>
+                              <span className="font-serif font-bold text-teal-400 text-sm">{f.priceFormatted}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-2.5 pt-2 border-t border-teal-500/20 flex gap-2">
+                          <a
+                            href="/#frames"
+                            onClick={() => setIsOpen(false)}
+                            className="w-full py-2 bg-gradient-to-r from-teal-400 to-emerald-400 text-black font-bold text-[11px] rounded-lg text-center flex items-center justify-center gap-1 hover:brightness-110"
+                          >
+                            Order in Frame Studio →
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Package Quote Calculation Tool Output */}
+                    {msg.cardData.action === "PACKAGE_QUOTE" && (
+                      <div className="bg-[#081d19] border border-teal-400/40 rounded-2xl p-3.5 shadow-xl text-xs">
+                        <div className="flex items-center justify-between mb-2 border-b border-teal-500/20 pb-2">
+                          <div>
+                            <span className="text-[10px] uppercase font-bold text-teal-400 tracking-wider">
+                              Package Quote Estimate
+                            </span>
+                            <h4 className="font-bold text-white capitalize text-sm">
+                              {msg.cardData.eventType} Ceremony ({msg.cardData.days} {msg.cardData.days > 1 ? "Days" : "Day"})
+                            </h4>
+                          </div>
+                          <div className="text-right">
+                            <span className="font-serif font-bold text-base text-teal-300">
+                              {msg.cardData.totalEstimated}
+                            </span>
+                          </div>
+                        </div>
+
+                        <ul className="space-y-1 my-2 text-[11px] text-zinc-300">
+                          {msg.cardData.deliverables?.map((del, i) => (
+                            <li key={i} className="flex items-center gap-1.5">
+                              <CheckCircle2 size={12} className="text-emerald-400 shrink-0" />
+                              <span>{del}</span>
+                            </li>
+                          ))}
+                        </ul>
+
+                        <div className="mt-2.5 pt-2 border-t border-teal-500/20 flex items-center justify-between">
+                          <span className="text-[10px] text-emerald-400 flex items-center gap-1 font-semibold">
+                            <ShieldCheck size={12} /> 1-Month Delivery Guaranteed
+                          </span>
+                          <a
+                            href={`https://wa.me/916383565425?text=${encodeURIComponent(
+                              `Hi SSS Studio! I got an AI package quote for ${msg.cardData.eventType} (${msg.cardData.totalEstimated}). Can we finalize the date?`
+                            )}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="py-1.5 px-3 bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-[11px] rounded-lg transition-colors flex items-center gap-1"
+                          >
+                            Chat on WhatsApp <ExternalLink size={11} />
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Order Tracking Output */}
+                    {msg.cardData.action === "TRACK_ORDER" && (
+                      <div className="bg-[#091b17] border border-teal-500/30 rounded-2xl p-3 shadow-md text-xs">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="font-bold text-teal-300 flex items-center gap-1 text-[11px]">
+                            <Search size={12} /> Order Status
+                          </span>
+                          {msg.cardData.found && (
+                            <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-bold text-[10px]">
+                              {msg.cardData.status}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-zinc-300 text-xs leading-relaxed">{msg.cardData.message}</p>
+                        <div className="mt-2 pt-2 border-t border-white/10 flex justify-end">
+                          <a
+                            href="/track"
+                            onClick={() => setIsOpen(false)}
+                            className="text-teal-400 hover:underline text-[11px] font-semibold"
+                          >
+                            Open Track Page →
+                          </a>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {msg.type === "rich" && (
-                  <div className="p-3 rounded-2xl rounded-tl-sm bg-white border border-gray-200 text-gray-800 shadow-sm text-sm">
-                    <p className="font-bold text-gray-900 mb-1">{msg.title}</p>
-                    <p>{msg.text}</p>
+                  <div className="p-3.5 rounded-2xl rounded-tl-sm bg-[#0a1b17] border border-teal-500/20 text-zinc-100 shadow-sm text-xs sm:text-sm">
+                    <p className="font-bold text-teal-300 mb-1">{msg.title}</p>
+                    <p className="text-zinc-300">{msg.text}</p>
                     {msg.details?.length > 0 && (
-                      <ul className="mt-3 space-y-2 list-disc pl-4 text-gray-600">
-                        {msg.details.map((detail) => <li key={detail}>{detail}</li>)}
+                      <ul className="mt-2.5 space-y-1.5 list-disc pl-4 text-zinc-400 text-xs">
+                        {msg.details.map((detail, i) => <li key={i}>{detail}</li>)}
                       </ul>
                     )}
                     {msg.actions?.length > 0 && (
                       <div className="flex flex-wrap gap-2 mt-3">
-                        {msg.actions.map((action) => (
+                        {msg.actions.map((action, i) => (
                           <a
-                            key={action.label}
+                            key={i}
                             href={action.href}
                             target={action.external ? "_blank" : undefined}
                             rel={action.external ? "noreferrer" : undefined}
-                            className="inline-flex items-center gap-1.5 bg-black text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-gray-800 transition-colors"
+                            className="inline-flex items-center gap-1.5 bg-teal-400 hover:bg-teal-300 text-black px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
                           >
                             {action.label}
-                            <ChevronRight size={14} />
+                            <ChevronRight size={13} />
                           </a>
                         ))}
                       </div>
@@ -554,78 +511,65 @@ export default function ChatbotWidget() {
                 )}
 
                 {msg.type === "menu" && (
-                  <div className="flex flex-col gap-2 mt-2 w-full">
+                  <div className="flex flex-col gap-1.5 mt-2 w-full">
                     {msg.options.map((opt) => (
                       <button
                         key={opt.id}
                         onClick={() => handleMenuClick(opt.id, opt.label)}
-                        className="flex items-center justify-between bg-white border border-gray-200 p-2.5 rounded-lg text-sm text-gray-700 hover:border-black hover:bg-gray-50 transition-colors shadow-sm w-full text-left"
+                        className="flex items-center justify-between bg-[#081714] border border-teal-500/20 p-2.5 rounded-xl text-xs text-zinc-300 hover:border-teal-400 hover:text-white hover:bg-teal-950/40 transition-all shadow-sm w-full text-left cursor-pointer"
                       >
-                        {opt.label}
-                        <ChevronRight size={16} className="text-gray-400" />
+                        <span>{opt.label}</span>
+                        <ChevronRight size={14} className="text-teal-400/60" />
                       </button>
-                    ))}
-                  </div>
-                )}
-
-                {msg.type === "actions" && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {msg.options.map((action) => (
-                      <a
-                        key={action.label}
-                        href={action.href}
-                        target={action.external ? "_blank" : undefined}
-                        rel={action.external ? "noreferrer" : undefined}
-                        className="inline-flex items-center gap-1.5 bg-black text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-gray-800 transition-colors"
-                      >
-                        {action.label}
-                        <ChevronRight size={14} />
-                      </a>
                     ))}
                   </div>
                 )}
               </div>
             ))}
 
+            {/* Agent Typing Indicator */}
+            {isAgentTyping && (
+              <div className="self-start flex items-center gap-2 bg-[#0a1c18] border border-teal-500/30 px-3 py-2 rounded-2xl rounded-tl-sm text-xs text-teal-300">
+                <Loader2 size={13} className="animate-spin text-teal-400" />
+                <span>DeepSeek Agent is consulting studio data...</span>
+              </div>
+            )}
+
             {/* Inline Form for Report Damaged Item */}
             {currentState === "report_form" && (
-              <div className="self-start w-full bg-white border border-gray-200 p-4 rounded-xl shadow-sm mt-2">
-                <h4 className="text-sm font-semibold mb-3 text-gray-800">Submit Damage Report</h4>
-                <form onSubmit={handleReportSubmit} className="flex flex-col gap-3">
+              <div className="self-start w-full bg-[#081714] border border-teal-500/30 p-3.5 rounded-2xl shadow-sm mt-2">
+                <h4 className="text-xs font-bold mb-2.5 text-teal-300">Submit Damage Report</h4>
+                <form onSubmit={handleReportSubmit} className="flex flex-col gap-2.5 text-xs">
                   <div>
-                    <label className="text-xs text-gray-500 mb-1 block">Order ID *</label>
+                    <label className="text-[10px] text-zinc-400 mb-1 block">Order ID *</label>
                     <input
                       type="text"
                       required
                       value={orderId}
                       onChange={(e) => setOrderId(e.target.value)}
                       placeholder="e.g. SSS-12345"
-                      className="w-full text-sm border border-gray-300 rounded-md p-2 focus:outline-none focus:border-black"
+                      className="w-full text-xs bg-black/50 border border-white/10 rounded-lg p-2 text-white focus:outline-none focus:border-teal-400"
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-500 mb-1 block">Photo Evidence</label>
+                    <label className="text-[10px] text-zinc-400 mb-1 block">Photo Evidence</label>
                     <div className="flex items-center gap-2">
-                      <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md border border-gray-300 flex items-center gap-2 text-sm text-gray-700 transition-colors">
-                        <Paperclip size={16} />
+                      <label className="cursor-pointer bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-1.5 text-xs text-zinc-300 transition-colors">
+                        <Paperclip size={13} />
                         Upload
                         <input
                           type="file"
                           accept="image/*"
                           className="hidden"
-                          onChange={handleImageUpload}
+                          onChange={(e) => e.target.files[0] && setDamageImage(e.target.files[0].name)}
                         />
                       </label>
-                      {damageImage && (
-                        <span className="text-xs text-gray-500 truncate w-24">
-                          {damageImage}
-                        </span>
-                      )}
+                      {damageImage && <span className="text-[10px] text-zinc-400 truncate w-24">{damageImage}</span>}
                     </div>
                   </div>
                   <button
                     type="submit"
-                    className="mt-2 w-full bg-black text-white text-sm font-medium py-2 rounded-md hover:bg-gray-800 transition-colors"
+                    className="mt-1 w-full bg-teal-400 text-black text-xs font-bold py-2 rounded-lg hover:bg-teal-300 transition-colors"
                   >
                     Submit Report
                   </button>
@@ -636,49 +580,29 @@ export default function ChatbotWidget() {
           </div>
 
           {/* Bottom Input Area */}
-          <form onSubmit={handleTextSubmit} className="p-3 bg-white border-t border-gray-100">
-            <div className="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2">
+          <form onSubmit={handleTextSubmit} className="p-3 bg-[#071310] border-t border-teal-500/20">
+            <div className="flex items-center gap-2 bg-black/60 border border-teal-500/30 rounded-full px-3.5 py-1.5 focus-within:border-teal-400 transition-colors">
               <input
                 type="text"
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
-                placeholder={currentState === "report_form" ? "Please use the form above" : "Ask about our studio..."}
-                disabled={currentState === "report_form"}
-                aria-label="Ask SSS Studio a question"
-                className="bg-transparent flex-1 text-sm outline-none text-gray-700 placeholder:text-gray-400 disabled:cursor-not-allowed"
+                placeholder={isAgentTyping ? "DeepSeek is typing..." : "Ask in English or தமிழ் (e.g. Frame size)..."}
+                disabled={isAgentTyping || currentState === "report_form"}
+                aria-label="Ask SSS Studio DeepSeek Agent"
+                className="bg-transparent flex-1 text-xs sm:text-sm outline-none text-white placeholder:text-zinc-500 disabled:cursor-not-allowed"
               />
               <button
                 type="submit"
-                disabled={currentState === "report_form" || !userInput.trim()}
+                disabled={isAgentTyping || !userInput.trim() || currentState === "report_form"}
                 aria-label="Send question"
-                className="text-gray-400 enabled:hover:text-black disabled:cursor-not-allowed"
+                className="w-7 h-7 rounded-full bg-teal-400 hover:bg-teal-300 text-black flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
               >
-                <Send size={18} />
+                <Send size={14} />
               </button>
             </div>
           </form>
         </div>
       )}
     </div>
-  );
-}
-
-function Camera(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
-      <circle cx="12" cy="13" r="3" />
-    </svg>
   );
 }

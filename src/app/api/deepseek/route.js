@@ -1,33 +1,31 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
-
-const openai = new OpenAI({
-  apiKey: process.env.NVIDIA_API_KEY || "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",
-  baseURL: "https://integrate.api.nvidia.com/v1",
-});
+import { runStudioAgent } from "@/lib/agent/agentRunner";
 
 export async function POST(req) {
   try {
     const body = await req.json().catch(() => ({}));
-    const prompt = body.prompt || "Write a limerick about the wonders of GPU computing.";
-    const systemPrompt = body.systemPrompt || "You are an intelligent studio assistant for SSS Photography Studio in Madurai.";
+    let messages = body.messages || [];
 
-    const completion = await openai.chat.completions.create({
-      model: "deepseek-ai/deepseek-v4-pro-0813",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: prompt },
-      ],
-      temperature: 0.8,
-      top_p: 0.95,
-      max_tokens: 2048,
-      seed: 42,
-    });
+    if (messages.length === 0 && body.prompt) {
+      messages = [{ role: "user", content: body.prompt }];
+    }
 
-    const reply = completion.choices[0]?.message?.content || "";
-    return NextResponse.json({ reply });
+    if (messages.length === 0) {
+      return NextResponse.json({ error: "No prompt or messages provided" }, { status: 400 });
+    }
+
+    const result = await runStudioAgent({ messages });
+
+    return NextResponse.json(result);
   } catch (error) {
-    console.error("DeepSeek API Error:", error);
-    return NextResponse.json({ error: error?.message || "Failed to query DeepSeek" }, { status: 500 });
+    console.error("Agent Route Error:", error);
+    return NextResponse.json(
+      {
+        reply: "Vanakkam! SSS Studio is ready to assist. You can reach our lead photographer directly on WhatsApp at +91 63835 65425.",
+        actionCards: [],
+        error: error.message,
+      },
+      { status: 200 }
+    );
   }
 }

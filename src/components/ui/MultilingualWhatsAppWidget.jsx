@@ -26,7 +26,7 @@ export default function MultilingualWhatsAppWidget({ whatsappNumber = "916383565
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[90]">
+    <div className="fixed bottom-24 right-6 z-[85]">
       <AnimatePresence>
         {isOpen && (
           <motion.div
