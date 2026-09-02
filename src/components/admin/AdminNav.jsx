@@ -10,60 +10,81 @@ import {
   BarChart3, 
   Star, 
   Package, 
+  Gift,
+  Frame,
   ExternalLink, 
   LogOut,
-  Sparkles
+  Sparkles,
+  ArrowUpRight
 } from "lucide-react";
 import { logoutAdmin } from "@/app/actions/auth";
+import StudioLogo from "@/components/ui/StudioLogo";
 
 export default function AdminNav({ currentPath: propPath }) {
   const pathname = usePathname();
   const currentPath = propPath || pathname;
 
   const links = [
-    { name: "Bookings", href: "/admin", icon: Calendar },
-    { name: "CRM / Orders", href: "/admin/crm", icon: ShoppingBag },
-    { name: "Gallery", href: "/admin/gallery", icon: ImageIcon },
-    { name: "Promos & Vouchers", href: "/admin/promos", icon: Tag },
-    { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
-    { name: "Reviews CMS", href: "/admin/reviews", icon: Star },
-    { name: "Packages", href: "/admin/packages", icon: Package },
+    { name: "Bookings", href: "/admin", icon: Calendar, badge: null },
+    { name: "CRM / Orders", href: "/admin/crm", icon: ShoppingBag, badge: null },
+    { name: "Frames & Gifts", href: "/admin/frames-gifts", icon: Gift, badge: null },
+    { name: "Gallery", href: "/admin/gallery", icon: ImageIcon, badge: null },
+    { name: "Packages", href: "/admin/packages", icon: Package, badge: null },
+    { name: "Promos & Vouchers", href: "/admin/promos", icon: Tag, badge: null },
+    { name: "Reviews CMS", href: "/admin/reviews", icon: Star, badge: null },
+    { name: "Analytics", href: "/admin/analytics", icon: BarChart3, badge: null },
   ];
 
   return (
-    <header className="mb-8 bg-[#0a110f]/90 backdrop-blur-xl border border-teal-500/20 rounded-2xl p-4 sm:p-5 shadow-2xl shadow-black/80">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        {/* Brand & Live Site Link */}
-        <div className="flex items-center justify-between sm:justify-start gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500/20 to-emerald-500/20 border border-teal-500/30 flex items-center justify-center text-teal-400 font-bold shadow-inner">
-              <Sparkles className="w-5 h-5 text-teal-400" />
+    <header className="mb-8 space-y-3">
+      {/* 1. Top Brand & Action Bar */}
+      <div className="bg-[#0c1614]/90 backdrop-blur-xl border border-teal-500/20 rounded-2xl px-5 py-3.5 shadow-2xl flex items-center justify-between gap-4">
+        {/* Left: Studio Identity */}
+        <div className="flex items-center gap-3">
+          <StudioLogo size="sm" />
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-white text-base tracking-wide">SSS Studio</span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/15 border border-teal-500/30 text-teal-300">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                ADMIN PORTAL
+              </span>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-white text-base tracking-wide">SSS Studio</span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-teal-500/10 border border-teal-500/30 text-teal-400">
-                  Admin Panel
-                </span>
-              </div>
-              <p className="text-xs text-zinc-400">Studio Management Suite</p>
-            </div>
+            <p className="text-[11px] text-zinc-400 font-light hidden sm:block">
+              Madurai Studio Management Suite
+            </p>
           </div>
+        </div>
 
+        {/* Right: Friendly Actions (Live Site + Logout) */}
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-teal-300 text-xs font-medium border border-white/10 transition-colors"
+            className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl bg-white/5 hover:bg-teal-500/10 text-zinc-300 hover:text-teal-300 text-xs font-semibold border border-white/10 hover:border-teal-500/30 transition-all duration-200"
             title="Open Live Website in New Tab"
           >
-            <span>Live Site</span>
-            <ExternalLink className="w-3.5 h-3.5" />
+            <span>Live Website</span>
+            <ArrowUpRight className="w-3.5 h-3.5 text-teal-400" />
           </Link>
-        </div>
 
-        {/* Navigation Tabs */}
-        <nav className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <form action={logoutAdmin}>
+            <button
+              type="submit"
+              className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-300 hover:text-red-200 text-xs font-semibold border border-red-500/20 hover:border-red-500/30 transition-all duration-200 cursor-pointer"
+              title="Sign Out of Admin"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {/* 2. Clean Dedicated Navigation Rail (Single Row with Horizontal Scroll on Mobile) */}
+      <nav className="bg-[#080e0c]/80 backdrop-blur-md border border-white/10 rounded-2xl p-1.5 shadow-lg overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-1 min-w-max">
           {links.map((link) => {
             const Icon = link.icon;
             const isActive = currentPath === link.href;
@@ -72,31 +93,19 @@ export default function AdminNav({ currentPath: propPath }) {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
                   isActive
-                    ? "bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-lg shadow-teal-900/40 border border-teal-400/40 scale-[1.02]"
-                    : "bg-white/5 text-zinc-300 hover:text-white hover:bg-white/10 border border-white/5 hover:border-white/10"
+                    ? "bg-gradient-to-r from-teal-500 to-emerald-500 text-[#071f1b] font-bold shadow-lg shadow-teal-500/25 scale-[1.02]"
+                    : "text-zinc-400 hover:text-white hover:bg-white/5"
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? "text-white" : "text-zinc-400"}`} />
+                <Icon className={`w-4 h-4 ${isActive ? "text-[#071f1b]" : "text-zinc-400"}`} />
                 <span>{link.name}</span>
               </Link>
             );
           })}
-        </nav>
-
-        {/* Logout */}
-        <form action={logoutAdmin} className="self-end lg:self-center">
-          <button
-            type="submit"
-            className="flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/20 hover:border-red-500/40 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all"
-            title="Sign out of Admin Panel"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Logout</span>
-          </button>
-        </form>
-      </div>
+        </div>
+      </nav>
     </header>
   );
 }

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, Play, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Camera, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 const PORTFOLIO_PROJECTS = [
@@ -21,11 +21,11 @@ const PORTFOLIO_PROJECTS = [
   },
   {
     id: 2,
-    title: "Cinematic Hills Pre-Wedding Story",
+    title: "Hills Pre-Wedding Story",
     category: "pre-wedding",
     categoryLabel: "Pre / Post Wedding",
     description: "Golden hour romance and scenic landscape vistas captured across tea estates and misty hills.",
-    videoUrl: "https://www.youtube.com/watch?v=ScMzIvxBSi4",
+    videoUrl: "",
     images: [
       "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504211/tqb10uvuzmqdkuxyqmps.jpg",
       "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504212/ksq2vkwzniqlgsly5k6p.jpg",
@@ -81,14 +81,6 @@ const PORTFOLIO_PROJECTS = [
   },
 ];
 
-const parseVideoUrl = (url) => {
-  if (!url) return null;
-  const ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
-  if (ytMatch && ytMatch[1]) {
-    return { type: "youtube", embedUrl: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1` };
-  }
-  return { type: "direct", url };
-};
 
 export default function SSSPortfolio() {
   const { t } = useLanguage();
@@ -117,10 +109,6 @@ export default function SSSPortfolio() {
     setSelectedProject(null);
   };
 
-  const totalMediaCount = (proj) => {
-    if (!proj) return 0;
-    return (proj.videoUrl ? 1 : 0) + (proj.images ? proj.images.length : 0);
-  };
 
   return (
     <section id="portfolio" className="py-24 bg-[#080c0b] text-white relative overflow-hidden">
@@ -188,22 +176,7 @@ export default function SSSPortfolio() {
                       {proj.categoryLabel}
                     </span>
 
-                    {proj.videoUrl && (
-                      <span className="absolute top-4 right-4 text-[10px] font-bold text-emerald-300 bg-black/70 border border-emerald-400/40 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md flex items-center gap-1 shadow-md">
-                        <Play size={10} className="fill-current" /> Video
-                      </span>
-                    )}
 
-                    {proj.videoUrl && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="relative">
-                          <span className="absolute -inset-2 rounded-full bg-teal-400/40 animate-ping" />
-                          <div className="relative w-14 h-14 rounded-full bg-teal-400 text-[#071f1b] flex items-center justify-center pl-1 shadow-2xl shadow-teal-400/50 group-hover:scale-115 transition-transform duration-300">
-                            <Play size={18} className="fill-current" />
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
 
                   <div className="p-6">
@@ -220,7 +193,6 @@ export default function SSSPortfolio() {
                   <div className="border-t border-white/10 pt-4 flex justify-between items-center text-xs text-gray-400 font-semibold uppercase tracking-wider">
                     <span>
                       {proj.images ? `${proj.images.length} Photos` : ""}
-                      {proj.videoUrl ? " + Video Film" : ""}
                     </span>
                     <span className="text-teal-400 group-hover:underline flex items-center gap-1">
                       View Story →
@@ -267,11 +239,11 @@ export default function SSSPortfolio() {
 
             {/* Media Viewer */}
             <div className="flex items-center justify-between w-full max-w-5xl mx-auto h-[60vh] relative my-auto">
-              {totalMediaCount(selectedProject) > 1 && (
+              {(selectedProject.images?.length || 0) > 1 && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    const total = totalMediaCount(selectedProject);
+                    const total = selectedProject.images?.length || 0;
                     setMediaIndex((prev) => (prev === 0 ? total - 1 : prev - 1));
                   }}
                   className="absolute left-0 md:-left-16 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors z-10 focus:outline-none cursor-pointer"
@@ -283,54 +255,26 @@ export default function SSSPortfolio() {
 
               <div className="w-full h-full flex justify-center items-center overflow-hidden px-4">
                 <AnimatePresence mode="wait">
-                  {(() => {
-                    if (selectedProject.videoUrl && mediaIndex === 0) {
-                      const video = parseVideoUrl(selectedProject.videoUrl);
-                      return (
-                        <motion.div
-                          key="video-slide"
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          className="w-full h-full max-w-4xl aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 flex justify-center items-center bg-black"
-                        >
-                          {video?.type === "youtube" ? (
-                            <iframe
-                              src={video.embedUrl}
-                              title={selectedProject.title}
-                              className="w-full h-full"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                            />
-                          ) : (
-                            <video src={video?.url} controls autoPlay className="w-full h-full object-contain bg-black" />
-                          )}
-                        </motion.div>
-                      );
-                    }
-
-                    const imgIndex = selectedProject.videoUrl ? mediaIndex - 1 : mediaIndex;
-                    return selectedProject.images && selectedProject.images[imgIndex] ? (
-                      <motion.img
-                        key={mediaIndex}
-                        src={selectedProject.images[imgIndex]}
-                        alt={selectedProject.title}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
+                  {selectedProject.images && selectedProject.images[mediaIndex] ? (
+                    <motion.img
+                      key={mediaIndex}
+                      src={selectedProject.images[mediaIndex]}
+                      alt={selectedProject.title}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.3 }}
                         className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl border border-white/10"
                       />
-                    ) : null;
-                  })()}
+                  ) : null}
                 </AnimatePresence>
               </div>
 
-              {totalMediaCount(selectedProject) > 1 && (
+              {(selectedProject.images?.length || 0) > 1 && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    const total = totalMediaCount(selectedProject);
+                    const total = selectedProject.images?.length || 0;
                     setMediaIndex((prev) => (prev === total - 1 ? 0 : prev + 1));
                   }}
                   className="absolute right-0 md:-right-16 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors z-10 focus:outline-none cursor-pointer"
@@ -344,43 +288,24 @@ export default function SSSPortfolio() {
             {/* Bottom Thumbnails */}
             <div className="w-full max-w-3xl mx-auto text-center z-10 pb-4">
               <p className="text-gray-400 text-xs mb-3 font-medium">
-                {selectedProject.videoUrl && mediaIndex === 0
-                  ? "Featured Cinematic Film"
-                  : `Photo ${selectedProject.videoUrl ? mediaIndex : mediaIndex + 1} of ${selectedProject.images?.length || 0}`}
+                {`Photo ${mediaIndex + 1} of ${selectedProject.images?.length || 0}`}
               </p>
 
-              {totalMediaCount(selectedProject) > 1 && (
+              {(selectedProject.images?.length || 0) > 1 && (
                 <div className="flex justify-center gap-3 overflow-x-auto py-2">
-                  {selectedProject.videoUrl && (
+                  {selectedProject.images?.map((img, i) => (
                     <button
-                      onClick={() => setMediaIndex(0)}
-                      className={`relative w-16 h-12 md:w-20 md:h-14 rounded-xl overflow-hidden border-2 transition-all duration-300 cursor-pointer flex flex-col justify-center items-center bg-teal-950/60 ${
-                        mediaIndex === 0
+                      key={i}
+                      onClick={() => setMediaIndex(i)}
+                      className={`relative w-16 h-12 md:w-20 md:h-14 rounded-xl overflow-hidden border-2 transition-all duration-300 cursor-pointer ${
+                        mediaIndex === i
                           ? "border-teal-400 scale-105 shadow-md shadow-teal-400/30"
                           : "border-transparent opacity-50 hover:opacity-80"
                       }`}
                     >
-                      <Play size={14} className="text-teal-400 fill-current" />
-                      <span className="text-[8px] uppercase tracking-wider text-teal-300 font-bold mt-1">Video</span>
+                      <img src={img} alt="thumb" className="w-full h-full object-cover" />
                     </button>
-                  )}
-
-                  {selectedProject.images?.map((img, i) => {
-                    const idx = selectedProject.videoUrl ? i + 1 : i;
-                    return (
-                      <button
-                        key={i}
-                        onClick={() => setMediaIndex(idx)}
-                        className={`relative w-16 h-12 md:w-20 md:h-14 rounded-xl overflow-hidden border-2 transition-all duration-300 cursor-pointer ${
-                          mediaIndex === idx
-                            ? "border-teal-400 scale-105 shadow-md shadow-teal-400/30"
-                            : "border-transparent opacity-50 hover:opacity-80"
-                        }`}
-                      >
-                        <img src={img} alt="thumb" className="w-full h-full object-cover" />
-                      </button>
-                    );
-                  })}
+                  ))}
                 </div>
               )}
             </div>

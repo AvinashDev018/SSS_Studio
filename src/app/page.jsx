@@ -7,6 +7,7 @@ import SSSServices from "@/components/sections/SSSServices";
 import SSSPortfolio from "@/components/sections/SSSPortfolio";
 import SSSAbout from "@/components/sections/SSSAbout";
 import SSSColorGradingComparison from "@/components/sections/SSSColorGradingComparison";
+import SSSPhotoFramePricing from "@/components/sections/SSSPhotoFramePricing";
 import SSSTestimonials from "@/components/sections/SSSTestimonials";
 import SSSStudioInfo from "@/components/sections/SSSStudioInfo";
 import BookingQuoteModal from "@/components/ui/BookingQuoteModal";
@@ -73,7 +74,10 @@ export default function Home() {
       {/* 5. Interactive Filterable Portfolio & Fullscreen Lightbox */}
       <SSSPortfolio />
 
-      {/* 6. SSS Studio About & Heritage */}
+      {/* 6. Handcrafted Photo Frame Price List (Sheela Photography inspired) & Custom Orders */}
+      <SSSPhotoFramePricing />
+
+      {/* 7. SSS Studio About & Heritage */}
       <SSSAbout onOpenBooking={handleOpenBooking} />
 
       {/* 7. SSS Client Love & Real Testimonials */}

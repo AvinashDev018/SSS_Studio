@@ -44,9 +44,10 @@ export default function Navbar() {
     { name: t.nav.home, href: "/" },
     { name: t.nav.services, href: "/#services" },
     { name: t.nav.portfolio, href: "/#portfolio" },
-    { name: t.nav.about, href: "/#about" },
+    { name: currentLang === "ta" ? "பிரேம்கள்" : currentLang === "hi" ? "फोटो फ्रेम" : "Frames", href: "/#frames" },
     { name: t.nav.pricing, href: "/packages" },
-    { name: t.nav.gifts, href: "/store" },
+    { name: currentLang === "ta" ? "ஸ்டோர்" : currentLang === "hi" ? "स्टोर" : "Store", href: "/store" },
+    { name: t.nav.about, href: "/#about" },
     { name: t.nav.testimonials, href: "/#testimonials" },
     { name: t.nav.contact, href: "/#contact" },
   ];
@@ -89,6 +90,7 @@ export default function Navbar() {
             <div className="relative" ref={desktopLangRef}>
               <button
                 type="button"
+                suppressHydrationWarning
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsDesktopLangOpen((prev) => !prev);
@@ -97,7 +99,7 @@ export default function Navbar() {
                 title="Change Website Language"
               >
                 <Globe size={14} className="text-teal-400" />
-                <span className="font-bold">{translations[currentLang]?.langLabel || "EN"}</span>
+                <span className="font-bold" suppressHydrationWarning>{translations[currentLang]?.langLabel || "EN"}</span>
                 <ChevronDown size={12} className={`text-zinc-400 transition-transform duration-200 ${isDesktopLangOpen ? "rotate-180" : ""}`} />
               </button>
 
@@ -113,6 +115,7 @@ export default function Navbar() {
                     <button
                       key={lang.code}
                       type="button"
+                      suppressHydrationWarning
                       onMouseDown={(e) => {
                         e.stopPropagation();
                         changeLanguage(lang.code);
@@ -139,27 +142,30 @@ export default function Navbar() {
 
             {/* Offer Here Button (Gleaming Gold Pill) */}
             <button
+              suppressHydrationWarning
               onClick={() => triggerModal("offer", "Exclusive Wedding Season Gift Box")}
               className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-[#071f1b] shadow-[0_0_20px_rgba(245,158,11,0.35)] hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] hover:scale-105 transition-all duration-300 cursor-pointer uppercase tracking-wider whitespace-nowrap"
             >
               <Sparkles size={13} className="fill-current text-[#071f1b]" />
-              <span>{t.nav.offer}</span>
+              <span suppressHydrationWarning>{t.nav.offer}</span>
             </button>
 
             {/* Get Quote (Glass Pill) */}
             <button
+              suppressHydrationWarning
               onClick={() => triggerModal("quote", "Wedding & Event Photo Shoot")}
               className="px-4 py-2 rounded-full text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/15 hover:border-white/30 transition-all duration-300 cursor-pointer whitespace-nowrap"
             >
-              {t.nav.getQuote}
+              <span suppressHydrationWarning>{t.nav.getQuote}</span>
             </button>
 
             {/* Book Now (Glowing Teal Solid CTA) */}
             <button
+              suppressHydrationWarning
               onClick={() => triggerModal("booking", "Wedding & Event Photo Shoot")}
               className="px-5 py-2 rounded-full text-xs font-bold text-white bg-gradient-to-r from-teal-700 via-teal-800 to-[#0c3530] hover:from-teal-600 hover:to-teal-700 border border-teal-500/40 shadow-lg shadow-teal-950/60 hover:scale-105 transition-all duration-300 cursor-pointer uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap"
             >
-              <span>{t.nav.bookNow}</span>
+              <span suppressHydrationWarning>{t.nav.bookNow}</span>
               <ArrowRight size={13} />
             </button>
           </div>
@@ -170,6 +176,7 @@ export default function Navbar() {
             <div className="relative" ref={mobileLangRef}>
               <button
                 type="button"
+                suppressHydrationWarning
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsMobileLangOpen((prev) => !prev);
@@ -177,7 +184,7 @@ export default function Navbar() {
                 className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-semibold text-zinc-200 bg-white/5 border border-white/15 cursor-pointer"
               >
                 <Globe size={13} className="text-teal-400" />
-                <span>{translations[currentLang]?.langLabel || "EN"}</span>
+                <span suppressHydrationWarning>{translations[currentLang]?.langLabel || "EN"}</span>
               </button>
 
               {isMobileLangOpen && (

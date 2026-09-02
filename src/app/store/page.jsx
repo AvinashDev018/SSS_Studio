@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
-import FrameBuilder from "@/components/store/FrameBuilder";
-import CollageBuilder from "@/components/store/CollageBuilder";
 import PassportPackages from "@/components/store/PassportPackages";
 import Gifts from "@/components/store/Gifts";
 import OrderCart from "@/components/store/OrderCart";
+import SSSPhotoFramePricing from "@/components/sections/SSSPhotoFramePricing";
+import BirthdayGiftOrderModal from "@/components/ui/BirthdayGiftOrderModal";
 import { Package, Camera, Gift, ShoppingCart, Plus, Loader2 } from "lucide-react";
 
 export default function StorePage() {
@@ -20,6 +20,7 @@ export default function StorePage() {
  const [passportRefs, setPassportRefs] = useState({});
  const [giftMessages, setGiftMessages] = useState({});
  const [giftImages, setGiftImages] = useState({});
+ const [selectedGiftForOrder, setSelectedGiftForOrder] = useState(null);
 
 
  useEffect(() => {
@@ -128,12 +129,11 @@ export default function StorePage() {
  setCartItems(prev => prev.map(item => item.cartId === cartId ? { ...item, ...updates } : item));
  };
 
- const tabs = [
- { id: "frames", label: "Custom Frames", icon: <Package className="w-4 h-4" /> },
- { id: "passport", label: "Passport Photos", icon: <Camera className="w-4 h-4" /> },
- { id: "gifts", label: "Birthday Gifts", icon: <Gift className="w-4 h-4" /> },
- { id: "collages", label: "Photo Collages", icon: <Camera className="w-4 h-4" /> },
- ];
+  const tabs = [
+    { id: "frames", label: "Photo Frames (13 Sizes)", icon: <Package className="w-4 h-4" /> },
+    { id: "passport", label: "Passport Photos", icon: <Camera className="w-4 h-4" /> },
+    { id: "gifts", label: "Birthday Gifts", icon: <Gift className="w-4 h-4" /> },
+  ];
 
  return (
  <div className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-[90vh] relative">
@@ -169,10 +169,10 @@ export default function StorePage() {
 
  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
  {/* Main Content Area */}
- <div className="lg:col-span-8">
+ <div className={activeTab === "frames" || activeTab === "gifts" ? "lg:col-span-12" : "lg:col-span-8"}>
  {activeTab === "frames" && (
  <AnimatedSection>
- <FrameBuilder onAddToCart={addToCart} />
+   <SSSPhotoFramePricing />
  </AnimatedSection>
  )}
 
@@ -224,87 +224,65 @@ export default function StorePage() {
  {activeTab === "gifts" && (
   isLoadingProducts ? (
     <div className="flex justify-center items-center h-48">
-      <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
+      <Loader2 className="w-8 h-8 animate-spin text-teal-400" />
     </div>
   ) : (
  <AnimatedSection className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
  {gifts.map((gift) => (
- <div key={gift.id} className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-500 group flex flex-col h-full relative">
- <div className="h-48 overflow-hidden shrink-0 relative">
- <img src={gift.image} alt={gift.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
- <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500"></div>
- </div>
- <div className="p-5 flex flex-col flex-1 relative z-10">
- <h3 className="font-serif font-bold text-xl text-white mb-1">{gift.name}</h3>
- <p className="text-brand-gradient font-bold text-lg mb-4">₹{gift.price}</p>
- 
- <div className="mt-auto pt-4">
- <div className="mb-4">
- <div className="mb-3">
- <label className="text-xs font-medium text-zinc-400 mb-1 block">
- Upload Custom Photo (Optional)
- </label>
- <input 
- type="file" 
- accept="image/*"
- onChange={(e) => {
- const file = e.target.files[0];
- if (file) {
- const reader = new FileReader();
- reader.onloadend = () => {
- setGiftImages(prev => ({...prev, [gift.id]: { name: file.name, dataUrl: reader.result }}));
- };
- reader.readAsDataURL(file);
- }
- }}
- className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-zinc-400 focus:outline-none focus:border-cyan-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-brand-gradient hover-glow-brand file:text-black hover:file:bg-brand-gradient hover-glow-brand text-white border-transparent transition-colors"
- />
- </div>
- <label className="text-xs font-medium text-zinc-400 mb-1 block">
- Custom Text / Name (Optional)
- </label>
- <input 
- type="text" 
- placeholder="e.g. Happy Birthday!" 
- value={giftMessages[gift.id] || ""}
- onChange={(e) => setGiftMessages(prev => ({...prev, [gift.id]: e.target.value}))}
- className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 placeholder-zinc-600 transition-colors"
- />
- </div>
-
- <button 
- onClick={() => addToCart(gift)}
- className="w-full bg-brand-gradient hover-glow-brand text-black py-2.5 rounded-xl font-bold hover:bg-brand-gradient hover-glow-brand text-white border-transparent hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all flex items-center justify-center gap-2"
+ <div 
+   key={gift.id} 
+   onClick={() => setSelectedGiftForOrder(gift)}
+   className="bg-black/40 backdrop-blur-xl border border-white/10 hover:border-teal-500/50 rounded-3xl overflow-hidden hover:shadow-[0_0_30px_rgba(20,184,166,0.3)] transition-all duration-500 group flex flex-col h-full relative cursor-pointer"
  >
- <Plus className="w-4 h-4" /> Add to Order
- </button>
- </div>
- </div>
+   <div className="h-52 overflow-hidden shrink-0 relative bg-[#081210]">
+     <img src={gift.image} alt={gift.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-500"></div>
+     <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-teal-300 border border-teal-500/30">
+       Personalized
+     </div>
+   </div>
+   <div className="p-5 flex flex-col flex-1 relative z-10 justify-between">
+     <div>
+       <h3 className="font-serif font-bold text-lg text-white mb-1 group-hover:text-teal-300 transition-colors">{gift.name}</h3>
+       <p className="text-teal-400 font-bold text-base mb-3 font-serif">₹{gift.price}</p>
+       <p className="text-xs text-zinc-400 font-light leading-relaxed mb-4">
+         Includes custom photo mounting, optional luxury gift box, and handwritten wish card.
+       </p>
+     </div>
+
+     <button 
+       type="button"
+       onClick={(e) => {
+         e.stopPropagation();
+         setSelectedGiftForOrder(gift);
+       }}
+       className="w-full py-3 bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-300 hover:to-emerald-300 text-[#071f1b] rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-teal-500/20 hover:scale-[1.02]"
+     >
+       <Gift className="w-4 h-4" /> Personalize &amp; Order Gift
+     </button>
+   </div>
  </div>
  ))}
  </AnimatedSection>
   )
  )}
- {activeTab === "collages" && (
- <AnimatedSection>
- <CollageBuilder onAddToCart={addToCart} />
- </AnimatedSection>
- )}
  </div>
 
- {/* Sidebar Cart */}
- <div className="lg:col-span-4" id="cart-section">
- <div className="sticky top-24">
- <OrderCart 
- items={cartItems} 
- onRemove={removeFromCart} 
- onUpdateItem={updateCartItem}
- isOpen={isCartOpen}
- />
- </div>
- </div>
+  {/* Sidebar Cart for Passport photos */}
+  {activeTab === "passport" && (
+  <div className="lg:col-span-4" id="cart-section">
+  <div className="sticky top-24">
+  <OrderCart 
+  items={cartItems} 
+  onRemove={removeFromCart} 
+  onUpdateItem={updateCartItem}
+  isOpen={isCartOpen}
+  />
+  </div>
+  </div>
+  )}
  {/* Mobile Floating Cart Button */}
- {cartItems.length > 0 && (
+ {cartItems.length > 0 && activeTab === "passport" && (
  <div className="lg:hidden fixed bottom-6 right-6 z-50">
  <button
  onClick={() => {
@@ -324,6 +302,13 @@ export default function StorePage() {
  </div>
  )}
  </div>
+
+ {/* Birthday Gift Order Modal matching user screenshot */}
+ <BirthdayGiftOrderModal
+   isOpen={!!selectedGiftForOrder}
+   onClose={() => setSelectedGiftForOrder(null)}
+   selectedGift={selectedGiftForOrder}
+ />
  </div>
  );
 }

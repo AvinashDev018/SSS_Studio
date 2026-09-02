@@ -479,6 +479,7 @@ export default function ChatbotWidget() {
     <div className="fixed bottom-6 right-6 z-50">
       {/* Floating Button */}
       <button
+        suppressHydrationWarning
         onClick={() => setIsOpen(!isOpen)}
         className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${
           isOpen ? "bg-red-500 hover:bg-red-600 rotate-90" : "bg-black hover:bg-gray-800"

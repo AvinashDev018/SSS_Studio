@@ -128,6 +128,7 @@ export default function MultilingualWhatsAppWidget({ whatsappNumber = "916383565
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsOpen(!isOpen)}
+          suppressHydrationWarning
           className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-600 text-white flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.4)] hover:shadow-[0_0_35px_rgba(16,185,129,0.6)] cursor-pointer focus:outline-none relative group shrink-0"
           aria-label="Open WhatsApp Chat in 3 Languages"
         >

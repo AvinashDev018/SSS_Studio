@@ -2,152 +2,198 @@
 
 import { useState, useEffect } from "react";
 import AdminNav from "@/components/admin/AdminNav";
-import { TrendingUp, Users, DollarSign, Package } from "lucide-react";
+import { TrendingUp, Users, DollarSign, Package, BarChart3, Clock, CheckCheck, ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
 export default function AnalyticsDashboard() {
- const [stats, setStats] = useState({
- totalRevenue: 0,
- totalOrders: 0,
- deliveredOrders: 0,
- pendingOrders: 0,
- });
+  const [stats, setStats] = useState({
+    totalRevenue: 0,
+    totalOrders: 0,
+    deliveredOrders: 0,
+    pendingOrders: 0,
+  });
 
- const [statusData, setStatusData] = useState({
- Pending: 0,
- Processing: 0,
- Shipped: 0,
- Delivered: 0
- });
+  const [statusData, setStatusData] = useState({
+    Pending: 0,
+    Processing: 0,
+    Shipped: 0,
+    Delivered: 0,
+  });
 
- useEffect(() => {
- const saved = localStorage.getItem("crm_orders");
- if (saved) {
- const orders = JSON.parse(saved);
- 
- let revenue = 0;
- let delivered = 0;
- let pending = 0;
- const statusCounts = { Pending: 0, Processing: 0, Shipped: 0, Delivered: 0 };
+  useEffect(() => {
+    const saved = localStorage.getItem("crm_orders");
+    if (saved) {
+      try {
+        const orders = JSON.parse(saved);
 
- orders.forEach(order => {
- // Only count delivered orders in revenue for realistic metrics
- if (order.status === "Delivered") {
- revenue += parseInt(order.totalAmount) || 0;
- delivered++;
- }
- if (order.status === "Pending") {
- pending++;
- }
- 
- if (statusCounts[order.status] !== undefined) {
- statusCounts[order.status]++;
- }
- });
+        let revenue = 0;
+        let delivered = 0;
+        let pending = 0;
+        const statusCounts = { Pending: 0, Processing: 0, Shipped: 0, Delivered: 0 };
 
- setStats({
- totalRevenue: revenue,
- totalOrders: orders.length,
- deliveredOrders: delivered,
- pendingOrders: pending,
- });
- 
- setStatusData(statusCounts);
- }
- }, []);
+        orders.forEach((order) => {
+          if (order.status === "Delivered") {
+            revenue += parseInt(order.totalAmount) || 0;
+            delivered++;
+          }
+          if (order.status === "Pending") {
+            pending++;
+          }
 
- const maxStatusCount = Math.max(...Object.values(statusData), 1);
+          if (statusCounts[order.status] !== undefined) {
+            statusCounts[order.status]++;
+          }
+        });
 
- return (
- <div className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-brand-gradient hover-glow-brand/30">
- <AdminNav />
- 
- <main className="max-w-7xl mx-auto px-6 py-12">
- <header className="mb-12">
- <h1 className="text-4xl font-serif font-bold tracking-tight mb-2">Studio Analytics</h1>
- <p className="text-zinc-400">Track your revenue and order pipeline.</p>
- </header>
+        setStats({
+          totalRevenue: revenue,
+          totalOrders: orders.length,
+          deliveredOrders: delivered,
+          pendingOrders: pending,
+        });
 
- {/* Top KPIs */}
- <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
- 
- <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
- <div className="absolute top-0 right-0 w-32 h-32 bg-brand-gradient hover-glow-brand/10 rounded-full blur-3xl -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-700"></div>
- <div className="relative z-10">
- <div className="flex justify-between items-start mb-4">
- <p className="text-zinc-400 font-medium">Total Revenue</p>
- <DollarSign className="text-brand-gradient w-5 h-5" />
- </div>
- <h3 className="text-3xl font-black">₹{stats.totalRevenue.toLocaleString()}</h3>
- <p className="text-xs text-zinc-500 mt-2">From delivered orders</p>
- </div>
- </div>
+        setStatusData(statusCounts);
+      } catch (e) {
+        console.error("Error parsing crm_orders:", e);
+      }
+    }
+  }, []);
 
- <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
- <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-700"></div>
- <div className="relative z-10">
- <div className="flex justify-between items-start mb-4">
- <p className="text-zinc-400 font-medium">Total Orders</p>
- <Package className="text-blue-500 w-5 h-5" />
- </div>
- <h3 className="text-3xl font-black">{stats.totalOrders}</h3>
- <p className="text-xs text-zinc-500 mt-2">All time</p>
- </div>
- </div>
+  const maxStatusCount = Math.max(...Object.values(statusData), 1);
 
- <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
- <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-3xl -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-700"></div>
- <div className="relative z-10">
- <div className="flex justify-between items-start mb-4">
- <p className="text-zinc-400 font-medium">Completed</p>
- <TrendingUp className="text-green-500 w-5 h-5" />
- </div>
- <h3 className="text-3xl font-black">{stats.deliveredOrders}</h3>
- <p className="text-xs text-zinc-500 mt-2">Successfully delivered</p>
- </div>
- </div>
+  return (
+    <div className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen text-zinc-100 font-sans">
+      <AdminNav currentPath="/admin/analytics" />
 
- <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
- <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-700"></div>
- <div className="relative z-10">
- <div className="flex justify-between items-start mb-4">
- <p className="text-zinc-400 font-medium">Action Required</p>
- <Users className="text-rose-500 w-5 h-5" />
- </div>
- <h3 className="text-3xl font-black">{stats.pendingOrders}</h3>
- <p className="text-xs text-zinc-500 mt-2">Orders waiting for processing</p>
- </div>
- </div>
+      {/* Friendly Section Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 bg-gradient-to-r from-[#0c221e]/80 via-[#0a1815]/60 to-transparent p-6 rounded-3xl border border-teal-500/20 shadow-xl">
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="p-1.5 rounded-xl bg-teal-500/15 text-teal-300 border border-teal-500/30">
+              <BarChart3 className="w-4 h-4" />
+            </span>
+            <span className="text-xs uppercase tracking-wider font-extrabold text-teal-400">
+              Studio Financials & Pipeline
+            </span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white tracking-tight">
+            Studio Performance & Analytics
+          </h1>
+          <p className="text-xs sm:text-sm text-zinc-300 mt-1 font-light max-w-2xl">
+            Real-time tracking of studio revenue, client order delivery pipeline, and photo print fulfillment.
+          </p>
+        </div>
 
- </div>
+        <div className="flex items-center gap-2 self-start sm:self-center px-4 py-2 rounded-2xl bg-teal-500/10 border border-teal-500/30 shrink-0">
+          <span className="text-xs text-zinc-400">Fulfillment Rate:</span>
+          <span className="text-base font-black text-emerald-300">
+            {stats.totalOrders > 0 ? `${Math.round((stats.deliveredOrders / stats.totalOrders) * 100)}%` : "100%"}
+          </span>
+        </div>
+      </div>
 
- {/* Charts Section */}
- <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 shadow-xl">
- <h3 className="text-xl font-bold mb-8">Order Pipeline</h3>
- 
- <div className="flex h-64 items-end gap-4 sm:gap-8">
- {Object.entries(statusData).map(([status, count], idx) => {
- // Calculate height percentage based on max value to make it dynamic
- const heightPercent = count === 0 ? 0 : Math.max(10, (count / maxStatusCount) * 100);
- const colors = ["bg-zinc-700", "bg-blue-500", "bg-purple-500", "bg-green-500"];
- 
- return (
- <div key={status} className="flex-1 flex flex-col items-center justify-end h-full group">
- <div className="mb-2 text-xl font-black opacity-0 group-hover:opacity-100 transition-opacity -translate-y-2 group-hover:translate-y-0 duration-300">
- {count}
- </div>
- <div 
- className={`w-full rounded-t-xl transition-all duration-1000 ease-out ${colors[idx]}`}
- style={{ height: `${heightPercent}%` }}
- ></div>
- <div className="mt-4 text-xs sm:text-sm font-medium text-zinc-400 uppercase tracking-wider text-center">
- {status}
- </div>
- </div>
- );
- })}
- </div>
- </div>
- </main>
- </div>
- );
+      {/* 4 Interactive & Friendly KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {/* Total Revenue */}
+        <div className="bg-[#0b1412] border border-amber-500/20 hover:border-amber-400/50 rounded-2xl p-5 shadow-lg relative overflow-hidden transition-all duration-200 group">
+          <div className="flex justify-between items-start mb-3">
+            <span className="text-amber-300 text-xs sm:text-sm font-semibold">Total Revenue</span>
+            <span className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 group-hover:scale-110 transition-transform">
+              <DollarSign className="w-4 h-4" />
+            </span>
+          </div>
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-amber-300">
+            ₹{stats.totalRevenue.toLocaleString()}
+          </h3>
+          <p className="text-[11px] text-amber-400/70 mt-1.5 font-light">From completed & delivered orders</p>
+        </div>
+
+        {/* Total Orders */}
+        <div className="bg-[#0b1412] border border-teal-500/20 hover:border-teal-400/50 rounded-2xl p-5 shadow-lg relative overflow-hidden transition-all duration-200 group">
+          <div className="flex justify-between items-start mb-3">
+            <span className="text-teal-300 text-xs sm:text-sm font-semibold">Total Orders</span>
+            <span className="p-2 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20 group-hover:scale-110 transition-transform">
+              <Package className="w-4 h-4" />
+            </span>
+          </div>
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-teal-300">{stats.totalOrders}</h3>
+          <p className="text-[11px] text-teal-400/70 mt-1.5 font-light">All-time print & frame orders</p>
+        </div>
+
+        {/* Completed */}
+        <div className="bg-[#0b1412] border border-emerald-500/20 hover:border-emerald-400/50 rounded-2xl p-5 shadow-lg relative overflow-hidden transition-all duration-200 group">
+          <div className="flex justify-between items-start mb-3">
+            <span className="text-emerald-300 text-xs sm:text-sm font-semibold">Delivered Orders</span>
+            <span className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 group-hover:scale-110 transition-transform">
+              <CheckCheck className="w-4 h-4" />
+            </span>
+          </div>
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-emerald-300">{stats.deliveredOrders}</h3>
+          <p className="text-[11px] text-emerald-400/70 mt-1.5 font-light">Successfully handed to clients</p>
+        </div>
+
+        {/* Action Required */}
+        <div className="bg-[#0b1412] border border-rose-500/20 hover:border-rose-400/50 rounded-2xl p-5 shadow-lg relative overflow-hidden transition-all duration-200 group">
+          <div className="flex justify-between items-start mb-3">
+            <span className="text-rose-300 text-xs sm:text-sm font-semibold">Pending Processing</span>
+            <span className="p-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 group-hover:scale-110 transition-transform">
+              <Clock className="w-4 h-4" />
+            </span>
+          </div>
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-rose-300">{stats.pendingOrders}</h3>
+          <p className="text-[11px] text-rose-400/70 mt-1.5 font-light">In laboratory / printing queue</p>
+        </div>
+      </div>
+
+      {/* Pipeline Chart Card */}
+      <div className="bg-[#0a1310] border border-white/10 rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-8">
+          <div>
+            <h3 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-teal-400" />
+              Order Pipeline Distribution
+            </h3>
+            <p className="text-xs text-zinc-400 mt-1">
+              Visual overview of photo frames, prints, and custom photo gifts across production stages.
+            </p>
+          </div>
+          <Link
+            href="/admin/crm"
+            className="text-xs text-teal-300 hover:text-white flex items-center gap-1 font-semibold underline underline-offset-4"
+          >
+            <span>View Orders Board</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <div className="flex h-64 items-end gap-4 sm:gap-8 pt-6 pb-2 border-b border-white/10">
+          {Object.entries(statusData).map(([status, count], idx) => {
+            const heightPercent = count === 0 ? 8 : Math.max(14, (count / maxStatusCount) * 100);
+            const colorGradients = [
+              "from-zinc-600 to-zinc-700 text-zinc-300",
+              "from-teal-500 to-teal-600 text-teal-300",
+              "from-emerald-500 to-emerald-600 text-emerald-300",
+              "from-amber-400 to-yellow-500 text-amber-300",
+            ];
+
+            return (
+              <div key={status} className="flex-1 flex flex-col items-center justify-end h-full group">
+                <div className="mb-2 text-sm sm:text-base font-black text-white group-hover:scale-125 transition-transform duration-200">
+                  {count}
+                </div>
+                <div
+                  className={`w-full max-w-[90px] rounded-t-xl bg-gradient-to-t ${colorGradients[idx % colorGradients.length]} transition-all duration-700 ease-out shadow-lg group-hover:brightness-110`}
+                  style={{ height: `${heightPercent}%` }}
+                />
+                <div className="mt-4 text-[11px] sm:text-xs font-bold text-zinc-300 uppercase tracking-wider text-center">
+                  {status}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
 }

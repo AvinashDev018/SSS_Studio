@@ -90,7 +90,7 @@ export default function StudioLogo({
         {showSubtitle && (
           <div className="flex items-center gap-1.5 mt-1">
             <span className={`font-sans font-bold ${currentSize.tag} text-zinc-400/90 uppercase leading-none`}>
-              STUDIO &amp; CINEMA FILMS
+              PHOTOGRAPHY STUDIO
             </span>
           </div>
         )}

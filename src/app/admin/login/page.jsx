@@ -56,11 +56,13 @@ export default function AdminLogin() {
                   name="password"
                   required
                   autoFocus
+                  suppressHydrationWarning
                   className="w-full px-4 py-3.5 pr-12 rounded-xl bg-[#080c0b] border border-white/10 text-white placeholder-zinc-500 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-all text-sm"
                   placeholder="Enter admin password..."
                 />
                 <button
                   type="button"
+                  suppressHydrationWarning
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors"
                   tabIndex={-1}
@@ -80,9 +82,10 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={loading}
+              suppressHydrationWarning
               className="w-full py-3.5 px-4 rounded-xl font-bold text-sm text-black bg-gradient-to-r from-teal-400 via-teal-300 to-emerald-400 hover:opacity-95 shadow-lg shadow-teal-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
-              {loading ? "Authenticating..." : "Unlock Studio Dashboard"}
+              <span suppressHydrationWarning>{loading ? "Authenticating..." : "Unlock Studio Dashboard"}</span>
             </button>
 
             <div className="text-center pt-2">
