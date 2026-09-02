@@ -128,14 +128,7 @@ export default async function PackagesPage() {
  ))}
  </div>
 
- {/* Build-Your-Story Calculator Section */}
- <AnimatedSection delay={0.4} className="mt-16">
- <div className="text-center mb-12">
- <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 font-serif">Want a Bespoke Package?</h2>
- <p className="text-zinc-400 text-sm max-w-xl mx-auto">
- Mix and match photography vibes, build your custom timeline, and get an instant cost range estimate for your special day.
- </p>
- </div>
+ <AnimatedSection delay={0.4} className="mt-20">
  <PackageCalculator />
  </AnimatedSection>
  </div>

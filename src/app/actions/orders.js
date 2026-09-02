@@ -56,31 +56,141 @@ export async function createOrder(data) {
   }
 }
 
-export async function getOrder(orderId) {
- try {
-  // Sanitize input — trim spaces and uppercase for consistent matching
-  const cleanId = orderId.trim().toUpperCase();
+export async function searchOrdersByPhoneOrId(query) {
+  try {
+    const raw = (query || "").trim();
+    if (!raw) {
+      return { success: false, error: "Please enter a valid Order ID or 10-digit Mobile Number" };
+    }
 
-  // Only match by orderId field (exact match, case-insensitive)
-  const order = await prisma.order.findFirst({
-    where: { 
-      orderId: {
-        equals: cleanId,
-        mode: 'insensitive'
+    const digitsOnly = raw.replace(/\D/g, "");
+    const cleanId = raw.toUpperCase();
+
+    // 1. If it looks like a phone number (at least 7 digits)
+    if (digitsOnly.length >= 7) {
+      const matchPattern = digitsOnly.slice(-10);
+
+      const orders = await prisma.order.findMany({
+        where: {
+          customerPhone: {
+            contains: matchPattern,
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      const bookings = await prisma.booking.findMany({
+        where: {
+          phone: {
+            contains: matchPattern,
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      const totalMatches = orders.length + bookings.length;
+
+      if (totalMatches === 0) {
+        // Fallback: check if the digits happen to match an order ID
+        const orderById = await prisma.order.findFirst({
+          where: { orderId: { equals: cleanId, mode: "insensitive" } },
+        });
+        if (orderById) {
+          return { success: true, multiple: false, order: orderById };
+        }
+        return { success: false, error: `No active orders or shoots found for mobile number ending in ${digitsOnly.slice(-4)}` };
+      }
+
+      if (totalMatches === 1 && orders.length === 1) {
+        return { success: true, multiple: false, order: orders[0] };
+      }
+
+      const unifiedOrders = [
+        ...orders.map((o) => ({
+          type: "product",
+          orderId: o.orderId,
+          customerName: o.customerName,
+          status: o.status,
+          totalAmount: o.totalAmount,
+          createdAt: o.createdAt,
+          items: typeof o.items === "string" ? JSON.parse(o.items) : o.items,
+          courierTrackingId: o.courierTrackingId,
+          address: o.address,
+        })),
+        ...bookings.map((b) => ({
+          type: "booking",
+          orderId: `SHOOT-${b.id.slice(0, 6).toUpperCase()}`,
+          rawId: b.id,
+          customerName: b.name,
+          status: b.status,
+          eventType: b.eventType,
+          date: b.date,
+          location: b.location,
+          createdAt: b.createdAt,
+          totalAmount: 0,
+          address: b.location,
+          items: [{ name: `${b.eventType} Photoshoot Coverage`, quantity: 1, price: 0 }],
+        })),
+      ];
+
+      return {
+        success: true,
+        multiple: true,
+        orders: unifiedOrders,
+      };
+    }
+
+    // 2. Search by exact Order ID
+    const order = await prisma.order.findFirst({
+      where: {
+        orderId: {
+          equals: cleanId,
+          mode: "insensitive",
+        },
+      },
+    });
+
+    if (order) {
+      return { success: true, multiple: false, order };
+    }
+
+    // 3. Search booking by SHOOT-ID or raw UUID
+    if (cleanId.startsWith("SHOOT-")) {
+      const shortId = cleanId.replace("SHOOT-", "");
+      const booking = await prisma.booking.findFirst({
+        where: { id: { startsWith: shortId.toLowerCase() } },
+      });
+      if (booking) {
+        return {
+          success: true,
+          multiple: false,
+          order: {
+            type: "booking",
+            orderId: cleanId,
+            customerName: booking.name,
+            customerPhone: booking.phone,
+            status: booking.status,
+            eventType: booking.eventType,
+            date: booking.date,
+            location: booking.location,
+            createdAt: booking.createdAt,
+            totalAmount: 0,
+            address: booking.location,
+            items: [{ name: `${booking.eventType} Photoshoot Coverage`, quantity: 1, price: 0 }],
+          },
+        };
       }
     }
-  });
- 
-  if (!order) {
-    // Order genuinely not found — return clear error, NOT fake data
+
     return { success: false, error: `No order found with ID: ${cleanId}` };
+  } catch (error) {
+    console.error("Error searching orders:", error);
+    return { success: false, error: "Database error. Please try again." };
   }
-  
-  return { success: true, order };
- } catch (error) {
-  console.error("Error fetching order:", error);
-  return { success: false, error: "Database error. Please try again." };
- }
+}
+
+export async function getOrder(orderId) {
+  return searchOrdersByPhoneOrId(orderId);
 }
 
 export async function getOrders() {

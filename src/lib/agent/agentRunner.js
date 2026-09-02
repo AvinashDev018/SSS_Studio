@@ -172,7 +172,56 @@ export async function runStudioAgent({ messages = [], apiKey = null }) {
     const lastUserMsg = messages[messages.length - 1]?.content || "";
     const lower = lastUserMsg.toLowerCase();
 
-    if (lower.includes("frame") || lower.includes("size") || lower.includes("wall") || lower.includes("photo") || lower.includes("விலை")) {
+    // 1. Raw Photos Policy
+    if (lower.includes("raw") || lower.includes("unedited")) {
+      return {
+        reply: "We do not provide raw or unedited files. Part of our premium service is meticulous culling, color grading, and retouching to ensure every delivered photograph meets SSS Studio's signature excellence.",
+        actionCards: [],
+      };
+    }
+
+    // 2. Travel & Outstation Inquiries
+    if (lower.includes("travel") || lower.includes("outstation") || lower.includes("chennai") || lower.includes("coimbatore") || lower.includes("kodaikanal") || lower.includes("munnar") || lower.includes("பயணம்")) {
+      return {
+        reply: "Yes! While our primary studio is in Avaniyapuram, Madurai, our team travels across Tamil Nadu and all of South India for weddings and destination shoots. Standard travel and lodging fees apply for locations outside Madurai district.",
+        actionCards: [],
+      };
+    }
+
+    // 3. Guarantees & Deliveries
+    if (lower.includes("guarantee") || lower.includes("delivery") || lower.includes("month") || lower.includes("உறுதி") || lower.includes("ஆல்பம்")) {
+      return {
+        reply: "Our signature '1-Month Album Delivery Guarantee' promises your handcrafted flush-mount leather album and master retouched high-res photos within 30 days of photo selection — or you receive a ₹1,000 cash credit! Standard studios take 3–6 months.",
+        actionCards: [],
+      };
+    }
+
+    // 4. Personalized Gifts
+    if (lower.includes("gift") || lower.includes("crystal") || lower.includes("mug") || lower.includes("keychain") || lower.includes("lamp") || lower.includes("பரிசு")) {
+      return {
+        reply: "We craft personalized birthday & anniversary gifts:\n• 3D Crystal Photo Cube with LED base (₹1,499)\n• Custom Wooden Photo Plaque (₹899)\n• Magic Color-Changing Photo Mug (₹449)\n• Acrylic LED Night Lamp (₹1,199)\n• High-Gloss Metal Keychain (₹299)\nYou can order directly with photo upload in our Store section!",
+        actionCards: [],
+      };
+    }
+
+    // 5. Studio Location & Timings
+    if (lower.includes("location") || lower.includes("address") || lower.includes("where") || lower.includes("எங்கே") || lower.includes("நேரம்")) {
+      return {
+        reply: "SSS Photography Studio is located at 34, Prasanna New Colony, Avaniyapuram, Madurai, Tamil Nadu 625012. We are open Monday to Sunday, 9:00 AM to 8:00 PM. Call or WhatsApp us at +91 63835 65425!",
+        actionCards: [],
+      };
+    }
+
+    // 6. Order Tracking
+    if (lower.includes("track") || lower.includes("status") || lower.includes("order")) {
+      return {
+        reply: "You can track your photo frame order or album by entering your 10-digit mobile number or Order ID below:",
+        actionCards: [{ action: "TRACK_ORDER", message: "Enter your 10-digit phone number or Order ID (e.g. SSS-1234) on the Track Order page." }],
+      };
+    }
+
+    // 7. Frames Recommendation & Sizing
+    if (lower.includes("frame") || lower.includes("wall") || lower.includes("size") || lower.includes("framing") || lower.includes("பிரேம்")) {
       const toolRes = await executeAgentTool("query_frames", {
         room_type: lower.includes("sofa") || lower.includes("hall") || lower.includes("living") ? "living room" : "bedroom",
         wall_space: lower,
@@ -183,7 +232,8 @@ export async function runStudioAgent({ messages = [], apiKey = null }) {
       };
     }
 
-    if (lower.includes("quote") || lower.includes("price") || lower.includes("cost") || lower.includes("wedding") || lower.includes("package") || lower.includes("திருமணம்")) {
+    // 8. Package Quotes & Pricing
+    if (lower.includes("quote") || lower.includes("price") || lower.includes("cost") || lower.includes("wedding") || lower.includes("package") || lower.includes("maternity") || lower.includes("baby") || lower.includes("birthday") || lower.includes("திருமணம்") || lower.includes("விலை")) {
       const toolRes = await executeAgentTool("calculate_package_quote", {
         event_type: lower.includes("maternity") ? "maternity" : lower.includes("baby") || lower.includes("birthday") ? "birthday" : "wedding",
         include_drone: lower.includes("drone"),
@@ -192,34 +242,6 @@ export async function runStudioAgent({ messages = [], apiKey = null }) {
       return {
         reply: `Here is the estimated quote for your session with our signature 1-Month Delivery Guarantee! You can tap below to customize or chat directly on WhatsApp:`,
         actionCards: [toolRes],
-      };
-    }
-
-    if (lower.includes("track") || lower.includes("status") || lower.includes("order")) {
-      return {
-        reply: "You can track your photo frame order or album by entering your 10-digit mobile number or Order ID below:",
-        actionCards: [{ action: "TRACK_ORDER", message: "Enter your 10-digit phone number or Order ID (e.g. SSS-1234) on the Track Order page." }],
-      };
-    }
-
-    if (lower.includes("location") || lower.includes("address") || lower.includes("where") || lower.includes("எங்கே") || lower.includes("நேரம்")) {
-      return {
-        reply: "SSS Photography Studio is located at 34, Prasanna New Colony, Avaniyapuram, Madurai, Tamil Nadu 625012. We are open Monday to Sunday, 9:00 AM to 8:00 PM. Call or WhatsApp us at +91 63835 65425!",
-        actionCards: [],
-      };
-    }
-
-    if (lower.includes("guarantee") || lower.includes("delivery") || lower.includes("month") || lower.includes("உறுதி") || lower.includes("ஆல்பம்")) {
-      return {
-        reply: "Our signature '1-Month Album Delivery Guarantee' promises your handcrafted flush-mount leather album and master retouched high-res photos within 30 days of photo selection — or you receive a ₹1,000 cash credit! Standard studios take 3–6 months.",
-        actionCards: [],
-      };
-    }
-
-    if (lower.includes("gift") || lower.includes("crystal") || lower.includes("mug") || lower.includes("keychain") || lower.includes("lamp") || lower.includes("பரிசு")) {
-      return {
-        reply: "We craft personalized birthday & anniversary gifts:\n• 3D Crystal Photo Cube with LED base (₹1,499)\n• Custom Wooden Photo Plaque (₹899)\n• Magic Color-Changing Photo Mug (₹449)\n• Acrylic LED Night Lamp (₹1,199)\n• High-Gloss Metal Keychain (₹299)\nYou can order directly with photo upload in our Store section!",
-        actionCards: [],
       };
     }
 

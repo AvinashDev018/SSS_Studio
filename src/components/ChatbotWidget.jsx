@@ -456,27 +456,88 @@ export default function ChatbotWidget() {
 
                     {/* Order Tracking Output */}
                     {msg.cardData.action === "TRACK_ORDER" && (
-                      <div className="bg-[#091b17] border border-teal-500/30 rounded-2xl p-3 shadow-md text-xs">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="font-bold text-teal-300 flex items-center gap-1 text-[11px]">
-                            <Search size={12} /> Order Status
-                          </span>
+                      <div className="bg-[#071d18] border border-teal-400/40 rounded-2xl p-3.5 shadow-xl text-xs">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-1.5">
+                            <Package size={14} className="text-teal-400" />
+                            <span className="font-mono font-bold text-white text-xs">
+                              {msg.cardData.orderId || "Order Tracking"}
+                            </span>
+                          </div>
                           {msg.cardData.found && (
-                            <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-bold text-[10px]">
+                            <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full font-bold text-[10px] uppercase">
                               {msg.cardData.status}
                             </span>
                           )}
                         </div>
-                        <p className="text-zinc-300 text-xs leading-relaxed">{msg.cardData.message}</p>
-                        <div className="mt-2 pt-2 border-t border-white/10 flex justify-end">
-                          <a
-                            href="/track"
-                            onClick={() => setIsOpen(false)}
-                            className="text-teal-400 hover:underline text-[11px] font-semibold"
-                          >
-                            Open Track Page →
-                          </a>
-                        </div>
+
+                        {msg.cardData.found ? (
+                          <>
+                            {msg.cardData.customerName && (
+                              <p className="text-zinc-300 text-[11px] mb-2">
+                                Client: <strong className="text-white">{msg.cardData.customerName}</strong>
+                                {msg.cardData.eventType && ` • ${msg.cardData.eventType} Shoot`}
+                              </p>
+                            )}
+
+                            {/* Progress bar */}
+                            <div className="my-2.5">
+                              <div className="flex justify-between text-[10px] text-teal-300 font-semibold mb-1">
+                                <span>{msg.cardData.stageLabel || msg.cardData.status}</span>
+                                <span>{msg.cardData.progress || 50}%</span>
+                              </div>
+                              <div className="w-full h-2 bg-black/50 rounded-full overflow-hidden border border-teal-500/20">
+                                <div
+                                  className="h-full bg-gradient-to-r from-teal-400 to-emerald-400 rounded-full transition-all duration-500"
+                                  style={{ width: `${msg.cardData.progress || 50}%` }}
+                                />
+                              </div>
+                              {msg.cardData.stageDesc && (
+                                <p className="text-[10px] text-zinc-400 mt-1">{msg.cardData.stageDesc}</p>
+                              )}
+                            </div>
+
+                            {msg.cardData.courierTrackingId && (
+                              <div className="p-2 bg-black/40 rounded-lg border border-white/5 my-2 text-[10px] flex justify-between items-center">
+                                <span className="text-zinc-400">Courier ID:</span>
+                                <span className="font-mono text-teal-300 font-bold">{msg.cardData.courierTrackingId}</span>
+                              </div>
+                            )}
+
+                            <div className="mt-3 pt-2 border-t border-teal-500/20 flex gap-2">
+                              <a
+                                href={msg.cardData.trackUrl || `/track?id=${msg.cardData.orderId}`}
+                                onClick={() => setIsOpen(false)}
+                                className="flex-1 py-1.5 bg-gradient-to-r from-teal-400 to-emerald-400 text-black font-bold text-[11px] rounded-lg text-center flex items-center justify-center gap-1 hover:brightness-110"
+                              >
+                                View Timeline →
+                              </a>
+                              <a
+                                href={`https://wa.me/916383565425?text=${encodeURIComponent(
+                                  `Hi SSS Studio! Checking on status of order ${msg.cardData.orderId} (${msg.cardData.customerName}).`
+                                )}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="py-1.5 px-3 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[11px] rounded-lg text-center flex items-center justify-center gap-1 hover:bg-emerald-500/30"
+                              >
+                                WhatsApp
+                              </a>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-zinc-300 text-xs leading-relaxed my-2">{msg.cardData.message}</p>
+                            <div className="mt-2 pt-2 border-t border-white/10 flex justify-end">
+                              <a
+                                href="/track"
+                                onClick={() => setIsOpen(false)}
+                                className="text-teal-400 hover:underline text-[11px] font-semibold flex items-center gap-1"
+                              >
+                                Open Track Page <ExternalLink size={10} />
+                              </a>
+                            </div>
+                          </>
+                        )}
                       </div>
                     )}
                   </div>

@@ -44,8 +44,8 @@ const VIBES = [
   },
   { 
     id: "cinematic", 
-    label: "Cinematic 4K Video", 
-    tagline: "120 FPS slow-mo & drone highlights",
+    label: "Signature 4K Video", 
+    tagline: "120 FPS slow-mo & drone aerials",
     basePrice: 10000, 
     icon: Video 
   },
@@ -60,12 +60,12 @@ const VIBES = [
 
 // SSS Studio Real Celebration Occasions
 const AVAILABLE_EVENTS = [
-  { id: "engagement", label: "Engagement / Nichayathartham", duration: 4, icon: "💍" },
-  { id: "wedding", label: "Muhurtham / Wedding Ceremony", duration: 8, icon: "🪔" },
-  { id: "reception", label: "Grand Evening Reception", duration: 6, icon: "✨" },
-  { id: "prewedding", label: "Pre-Wedding Outdoor Shoot", duration: 5, icon: "🌿" },
-  { id: "baby", label: "Baby / 1st Birthday Shoot", duration: 3, icon: "🎂" },
-  { id: "maternity", label: "Outdoor Maternity Session", duration: 3, icon: "🌸" },
+  { id: "engagement", label: "Engagement (Nichayam)", duration: 4, icon: "💍" },
+  { id: "wedding", label: "Muhurtham & Wedding", duration: 8, icon: "🪔" },
+  { id: "reception", label: "Grand Reception", duration: 6, icon: "✨" },
+  { id: "prewedding", label: "Pre-Wedding Shoot", duration: 5, icon: "🌿" },
+  { id: "baby", label: "Baby & 1st Birthday", duration: 3, icon: "🎂" },
+  { id: "maternity", label: "Maternity Session", duration: 3, icon: "🌸" },
 ];
 
 const SortableEvent = ({ id, label, duration, onRemove, index }) => {
@@ -229,11 +229,11 @@ export default function PackageCalculator({ isEmbedded = false }) {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-teal-500/10 blur-[100px] pointer-events-none" />
 
         {/* Header */}
-        <div className="mb-10 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-widest mb-3 shadow-inner">
+        <div className="mb-10 text-center relative z-10 pt-2">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-widest mb-4 shadow-inner">
             <Calculator size={13} /> Instant Custom Estimator
           </div>
-          <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-3 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-white mb-3 tracking-normal leading-[1.2] py-1">
             Build-Your-Story Package Calculator
           </h2>
           <p className="text-zinc-300 text-xs sm:text-sm md:text-base font-light max-w-2xl mx-auto leading-relaxed">
@@ -316,13 +316,13 @@ export default function PackageCalculator({ isEmbedded = false }) {
                 <button
                   key={event.id}
                   onClick={() => addEvent(event)}
-                  className="px-3.5 py-3 bg-[#081210]/80 hover:bg-[#0c1f1a] border border-white/10 hover:border-teal-400/50 rounded-2xl text-xs font-semibold text-zinc-200 transition-all cursor-pointer shadow-sm hover:scale-[1.02] flex items-center justify-between text-left group"
+                  className="px-3.5 py-3 bg-[#081210]/90 hover:bg-[#0c1f1a] border border-white/10 hover:border-teal-400/50 rounded-2xl text-xs font-semibold text-zinc-200 transition-all cursor-pointer shadow-sm hover:scale-[1.02] flex items-center justify-between text-left group gap-1.5"
                 >
-                  <span className="flex items-center gap-2 truncate">
-                    <span>{event.icon}</span>
-                    <span className="truncate">{event.label}</span>
+                  <span className="flex items-center gap-2 min-w-0">
+                    <span className="shrink-0">{event.icon}</span>
+                    <span className="leading-tight text-white/90">{event.label}</span>
                   </span>
-                  <Plus size={14} className="text-teal-400 shrink-0 group-hover:rotate-90 transition-transform" />
+                  <Plus size={14} className="text-teal-400 shrink-0 group-hover:rotate-90 transition-transform ml-1" />
                 </button>
               ))}
             </div>

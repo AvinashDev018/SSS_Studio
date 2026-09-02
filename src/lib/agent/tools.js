@@ -221,48 +221,114 @@ export async function executeAgentTool(name, args) {
       }
 
       case "track_order": {
-        const query = (args.query || "").trim();
+        const rawQuery = (args.query || "").trim();
+        const digitsOnly = rawQuery.replace(/\D/g, "");
         let order = null;
+        let isBooking = false;
 
         try {
-          order = await prisma.order.findFirst({
-            where: {
-              OR: [
-                { orderId: { equals: query, mode: "insensitive" } },
-                { customerPhone: { contains: query } },
-              ],
-            },
-            select: {
-              orderId: true,
-              customerName: true,
-              status: true,
-              totalAmount: true,
-              createdAt: true,
-              courierTrackingId: true,
-            },
-          });
+          if (digitsOnly.length >= 7) {
+            const matchPattern = digitsOnly.slice(-10);
+            order = await prisma.order.findFirst({
+              where: { customerPhone: { contains: matchPattern } },
+              orderBy: { createdAt: "desc" },
+            });
+            if (!order) {
+              const booking = await prisma.booking.findFirst({
+                where: { phone: { contains: matchPattern } },
+                orderBy: { createdAt: "desc" },
+              });
+              if (booking) {
+                isBooking = true;
+                order = {
+                  orderId: `SHOOT-${booking.id.slice(0, 6).toUpperCase()}`,
+                  customerName: booking.name,
+                  status: booking.status,
+                  totalAmount: 0,
+                  createdAt: booking.createdAt,
+                  courierTrackingId: null,
+                  eventType: booking.eventType,
+                };
+              }
+            }
+          } else {
+            order = await prisma.order.findFirst({
+              where: { orderId: { equals: rawQuery.toUpperCase(), mode: "insensitive" } },
+            });
+            if (!order && rawQuery.toUpperCase().startsWith("SHOOT-")) {
+              const shortId = rawQuery.toUpperCase().replace("SHOOT-", "").toLowerCase();
+              const booking = await prisma.booking.findFirst({
+                where: { id: { startsWith: shortId } },
+              });
+              if (booking) {
+                isBooking = true;
+                order = {
+                  orderId: rawQuery.toUpperCase(),
+                  customerName: booking.name,
+                  status: booking.status,
+                  totalAmount: 0,
+                  createdAt: booking.createdAt,
+                  courierTrackingId: null,
+                  eventType: booking.eventType,
+                };
+              }
+            }
+          }
         } catch (dbErr) {
-          console.warn("DB lookup error, using fallback status:", dbErr.message);
+          console.warn("DB lookup error:", dbErr.message);
         }
 
         if (order) {
+          const status = (order.status || "PENDING").toUpperCase();
+          let progress = 25;
+          let stageLabel = "Order Placed & Confirmed";
+          let stageDesc = "Order verified. Sent to Avaniyapuram lab.";
+
+          if (status === "PROCESSING") {
+            progress = 65;
+            stageLabel = isBooking ? "Color Grading & Retouching" : "Fine-Art Printing & Framing";
+            stageDesc = isBooking
+              ? "Master editing on Sony FX3 raw portraits."
+              : "Sparkle / Matte lamination mounting in progress.";
+          } else if (status === "READY_FOR_PICKUP") {
+            progress = 90;
+            stageLabel = "Ready for Studio Pickup";
+            stageDesc = "Ready at Studio: 34, Prasanna New Colony, Avaniyapuram.";
+          } else if (status === "SHIPPED") {
+            progress = 85;
+            stageLabel = "Shipped via Courier";
+            stageDesc = order.courierTrackingId
+              ? `In transit with courier tracking ID: ${order.courierTrackingId}`
+              : "Dispatched with courier partner.";
+          } else if (status === "DELIVERED" || status === "PICKED_UP" || status === "COMPLETED") {
+            progress = 100;
+            stageLabel = "Delivered / Completed";
+            stageDesc = "Handcrafted delivery completed. Thank you!";
+          }
+
           return {
             action: "TRACK_ORDER",
             found: true,
             orderId: order.orderId,
             customerName: order.customerName,
-            status: order.status,
-            totalAmount: `₹${order.totalAmount}`,
-            courierTrackingId: order.courierTrackingId || "In Studio Processing / Lab Print",
-            message: `Order ${order.orderId} is currently ${order.status}. Delivery ETA: Within 1-Month Guarantee.`,
+            status,
+            stageLabel,
+            stageDesc,
+            progress,
+            totalAmount: order.totalAmount ? `₹${order.totalAmount}` : null,
+            courierTrackingId: order.courierTrackingId || null,
+            isBooking,
+            eventType: order.eventType || null,
+            trackUrl: `/track?id=${order.orderId}`,
+            message: `Found ${isBooking ? 'shoot booking' : 'order'} ${order.orderId} for ${order.customerName}. Current status: ${stageLabel}.`,
           };
         }
 
         return {
           action: "TRACK_ORDER",
           found: false,
-          query,
-          message: `No active order found with ID or phone '${query}'. Please verify your phone or contact studio WhatsApp directly at +91 63835 65425.`,
+          query: rawQuery,
+          message: `No active order found for '${rawQuery}'. You can search on our track page or contact studio WhatsApp directly (+91 63835 65425).`,
         };
       }
 
