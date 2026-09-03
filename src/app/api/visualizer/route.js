@@ -16,74 +16,119 @@ export async function POST(request) {
     const base64 = Buffer.from(bytes).toString("base64");
     const mimeType = imageFile.type || "image/jpeg";
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      // If no Gemini key, return a smart mock response
-      return NextResponse.json(getMockRecommendation(shootType, stylePreference));
-    }
+    const prompt = `You are a Master Atelier Stylist at SSS Studio in Madurai, Tamil Nadu, India.
+Task: Analyze the client's photo and provide authentic, high-fashion styling recommendations for a "${shootType}" shoot (${stylePreference} preference).
 
-    const prompt = `Role: Pro stylist at SSS Studio (Madurai, India).
-Task: Analyze photo & suggest personalized outfits for a "${shootType}" shoot.
-Style: ${stylePreference} Indian/South Indian traditional or fusion wear (e.g. Kanjivaram/Lehenga for Feminine, Sherwani/Veshti for Masculine).
-Accessories: Traditional Indian accents.
+Cultural Styling Rules:
+1. Deeply honor Tamil & South Indian traditions (Kanjivaram Silk Sarees, Muhurtham Pattu, Traditional Silk Veshti & Angavastram, Temple Jewellery like Kempu & Kasu Malai, Madurai Malli floral styling, Bandhgala suits, Raw Silk Kurtas).
+2. Balance heritage traditions with modern editorial aesthetics for Tamil community members, Indian clients, and international guests.
+3. Recommend 3 distinct outfit choices with tailored reasons, a 3-color palette (HEX codes), items to avoid, hair/grooming tips (including Madurai Malli/gajra or matte beard clay), and accessory guidance.
 
-Output strictly raw JSON (no markdown):
+Output MUST be strictly raw JSON (no markdown or extra text):
 {
   "palette": ["#hex1", "#hex2", "#hex3"],
-  "paletteNames": ["Name1", "Name2", "Name3"],
+  "paletteNames": ["ColorName1", "ColorName2", "ColorName3"],
   "outfitRecommendations": [
-    { "outfit": "Name", "description": "Details", "reason": "Why it fits them" },
-    { "outfit": "Name", "description": "Details", "reason": "Why it fits them" },
-    { "outfit": "Name", "description": "Details", "reason": "Why it fits them" }
+    { "outfit": "Name", "description": "Details", "reason": "Cultural & Visual reason" },
+    { "outfit": "Name", "description": "Details", "reason": "Cultural & Visual reason" },
+    { "outfit": "Name", "description": "Details", "reason": "Cultural & Visual reason" }
   ],
   "avoidColors": ["Color1", "Color2"],
-  "avoidReason": "Why",
-  "hairMakeupTip": "Specific grooming/makeup advice",
-  "accessoryTip": "Jewelry/accessory advice",
-  "generalTip": "One powerful pro tip"
+  "avoidReason": "Why it clashes with lighting or tradition",
+  "hairMakeupTip": "Hair, beard, or gajra advice",
+  "accessoryTip": "Temple jewellery or watch guidance",
+  "generalTip": "Pro studio lighting tip"
 }`;
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { text: prompt },
-                { inline_data: { mime_type: mimeType, data: base64 } },
-              ],
-            },
-          ],
-          generationConfig: {
-            response_mime_type: "application/json",
-            temperature: 0.7,
-            max_output_tokens: 1024,
+
+    const nvidiaApiKey = process.env.NVIDIA_API_KEY;
+    const geminiApiKey = process.env.GEMINI_API_KEY;
+
+    let responseData = null;
+
+    // 1. Try NVIDIA NIM API (Primary)
+    if (nvidiaApiKey) {
+      try {
+        const nvRes = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${nvidiaApiKey}`,
+            "Content-Type": "application/json",
           },
-        }),
-      }
-    );
+          body: JSON.stringify({
+            model: "meta/llama-3.2-11b-vision-instruct",
+            messages: [
+              {
+                role: "user",
+                content: [
+                  { type: "text", text: prompt },
+                  { type: "image_url", image_url: { url: `data:${mimeType};base64,${base64}` } },
+                ],
+              },
+            ],
+            temperature: 0.7,
+            max_tokens: 1024,
+          }),
+        });
 
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error("Gemini API error:", response.status, errorBody);
+        if (nvRes.ok) {
+          const nvJson = await nvRes.json();
+          const rawContent = nvJson.choices?.[0]?.message?.content;
+          if (rawContent) {
+            const cleanText = rawContent.replace(/```json/g, "").replace(/```/g, "").trim();
+            responseData = JSON.parse(cleanText);
+          }
+        }
+      } catch (nvErr) {
+        console.warn("NVIDIA NIM API attempt failed, falling back:", nvErr);
+      }
+    }
+
+    // 2. Fallback to Gemini API if NVIDIA is unavailable or returned error
+    if (!responseData && geminiApiKey) {
+      try {
+        const geminiRes = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [
+                    { text: prompt },
+                    { inline_data: { mime_type: mimeType, data: base64 } },
+                  ],
+                },
+              ],
+              generationConfig: {
+                response_mime_type: "application/json",
+                temperature: 0.7,
+                max_output_tokens: 1024,
+              },
+            }),
+          }
+        );
+
+        if (geminiRes.ok) {
+          const geminiJson = await geminiRes.json();
+          const text = geminiJson.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) {
+            const cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim();
+            responseData = JSON.parse(cleanText);
+          }
+        }
+      } catch (gErr) {
+        console.warn("Gemini API fallback attempt failed:", gErr);
+      }
+    }
+
+    // 3. Fallback to Smart Studio Styling Engine
+    if (!responseData) {
       const fallbackData = getMockRecommendation(shootType, stylePreference);
-      if (response.status === 429) {
-        return NextResponse.json({ ...fallbackData, isFallback: true, fallbackReason: "quota_exceeded" });
-      }
-      return NextResponse.json({ ...fallbackData, isFallback: true, fallbackReason: "api_error" });
+      return NextResponse.json({ ...fallbackData, isFallback: true, fallbackReason: "rule_engine" });
     }
 
-    const data = await response.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    
-    if (!text) {
-      return NextResponse.json({ ...getMockRecommendation(shootType, stylePreference), isFallback: true, fallbackReason: "empty_response" });
-    }
-
-    const result = JSON.parse(text);
-    return NextResponse.json(result);
+    return NextResponse.json(responseData);
   } catch (error) {
     console.error("Visualizer API error:", error);
     return NextResponse.json({ ...getMockRecommendation(shootType, stylePreference), isFallback: true, fallbackReason: "server_error" });

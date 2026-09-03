@@ -133,42 +133,46 @@ export default function VisualizerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 py-24 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-[#0a0a0a] text-white py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Background ambient lighting */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-[#c5a880]/5 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#c5a880]/5 rounded-full blur-[160px] pointer-events-none" />
+
+      <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
-        <AnimatedSection className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm font-semibold px-4 py-2 rounded-full mb-6">
-            <Sparkles className="w-4 h-4" /> AI-Powered Feature
+        <AnimatedSection className="text-center mb-14">
+          <div className="inline-flex items-center gap-2 bg-white/[0.03] border border-white/10 text-[#c5a880] text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-widest mb-4">
+            <Sparkles className="w-4 h-4 text-[#c5a880]" /> AI-Powered Studio Stylist
           </div>
-          <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-br from-cyan-400 to-violet-600">
-            AI Style Consultant
+          <h1 className="font-serif text-4xl md:text-6xl font-normal tracking-tight mb-4 text-white">
+            AI Outfit &amp; Pose Stylist
           </h1>
-          <p className="text-zinc-400 text-xl max-w-2xl mx-auto font-light leading-relaxed">
-            Upload your photo, choose your shoot type, and get a personalized outfit & styling guide crafted just for you.
+          <p className="text-zinc-400 text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed">
+            Upload your photo, select your shoot theme, and get a personalized outfit palette &amp; pose guide crafted by SSS Studio AI.
           </p>
         </AnimatedSection>
 
-        {/* Tabs */}
-        <div className="flex gap-4 mb-8">
+        {/* Navigation Tabs */}
+        <div className="flex justify-center gap-3 mb-10">
           <button
             onClick={() => setActiveTab("guide")}
-            className={`px-6 py-2 rounded-full font-medium transition-all ${
+            className={`px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 cursor-pointer ${
               activeTab === "guide"
-                ? "bg-cyan-500 text-black"
-                : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+                ? "bg-[#c5a880] text-black shadow-lg"
+                : "bg-white/5 text-zinc-400 border border-white/10 hover:text-white hover:bg-white/10"
             }`}
           >
-            Style Guide
+            Outfit &amp; Pose Guide
           </button>
           <button
             onClick={() => setActiveTab("stylist")}
-            className={`px-6 py-2 rounded-full font-medium transition-all ${
+            className={`px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 cursor-pointer ${
               activeTab === "stylist"
-                ? "bg-violet-500 text-white"
-                : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+                ? "bg-[#c5a880] text-black shadow-lg"
+                : "bg-white/5 text-zinc-400 border border-white/10 hover:text-white hover:bg-white/10"
             }`}
           >
-            AI Location Stylist
+            Location &amp; Golden Hour Stylist
           </button>
         </div>
 
@@ -180,220 +184,223 @@ export default function VisualizerPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
             {/* Left: Upload & Config */}
             <AnimatedSection delay={0.1} className="space-y-6">
-            {/* Image Upload */}
-            <div
-              className={`relative border-2 border-dashed rounded-3xl transition-all duration-300 cursor-pointer ${
-                isDragging
-                  ? "border-cyan-400 bg-cyan-500/10"
-                  : imagePreview
-                  ? "border-zinc-700 bg-zinc-900/50"
-                  : "border-zinc-700 hover:border-cyan-500/50 hover:bg-zinc-900/50 bg-zinc-900/30"
-              }`}
-              onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-              onDragLeave={() => setIsDragging(false)}
-              onDrop={handleDrop}
-              onClick={() => !imagePreview && fileInputRef.current?.click()}
-            >
-              {imagePreview ? (
-                <div className="relative">
-                  <img src={imagePreview} alt="Preview" className="w-full h-72 object-contain bg-zinc-900/50 rounded-3xl" />
-                  <div className="absolute inset-0 bg-black/20 rounded-3xl" />
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setImage(null); setImagePreview(null); setResult(null); }}
-                    className="absolute top-3 right-3 w-8 h-8 bg-black/70 hover:bg-red-500 rounded-full flex items-center justify-center transition-colors"
-                  >
-                    <X className="w-4 h-4 text-white" />
-                  </button>
-                  <div className="absolute bottom-3 left-3 bg-green-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> Photo ready
+              {/* Image Upload Box */}
+              <div
+                className={`relative border-2 border-dashed rounded-2xl transition-all duration-300 cursor-pointer ${
+                  isDragging
+                    ? "border-[#c5a880] bg-[#c5a880]/10"
+                    : imagePreview
+                    ? "border-white/20 bg-[#121212]"
+                    : "border-white/15 hover:border-[#c5a880]/50 bg-[#121212]/50 hover:bg-[#121212]"
+                }`}
+                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={handleDrop}
+                onClick={() => !imagePreview && fileInputRef.current?.click()}
+              >
+                {imagePreview ? (
+                  <div className="relative">
+                    <img src={imagePreview} alt="Preview" className="w-full h-72 object-contain bg-black/40 rounded-2xl" />
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setImage(null); setImagePreview(null); setResult(null); }}
+                      className="absolute top-3 right-3 w-8 h-8 bg-black/80 hover:bg-red-500 rounded-full flex items-center justify-center transition-colors border border-white/20"
+                    >
+                      <X className="w-4 h-4 text-white" />
+                    </button>
+                    <div className="absolute bottom-3 left-3 bg-[#c5a880] text-black text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Photo Loaded
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className="p-12 text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center mx-auto mb-4">
-                    <Upload className="w-7 h-7 text-zinc-400" />
-                  </div>
-                  <p className="text-zinc-300 font-semibold mb-1">Drop your photo here</p>
-                  <p className="text-zinc-500 text-sm">or click to browse</p>
-                  <p className="text-zinc-600 text-xs mt-3">JPG, PNG, WEBP • Max 10MB</p>
-                </div>
-              )}
-            </div>
-            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
-
-            {/* Style Preference */}
-            <div>
-              <p className="text-zinc-300 font-semibold mb-3">Preferred Outfit Style</p>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => setStylePreference("Feminine")}
-                  className={`p-3 rounded-2xl border text-center font-medium transition-all duration-300 text-sm ${
-                    stylePreference === "Feminine"
-                      ? "border-cyan-500 bg-cyan-500/10 text-white"
-                      : "border-zinc-800 bg-zinc-900/30 text-zinc-400 hover:border-zinc-700"
-                  }`}
-                >
-                  🙋‍♀️ Women's Wear / Feminine
-                </button>
-                <button
-                  onClick={() => setStylePreference("Masculine")}
-                  className={`p-3 rounded-2xl border text-center font-medium transition-all duration-300 text-sm ${
-                    stylePreference === "Masculine"
-                      ? "border-cyan-500 bg-cyan-500/10 text-white"
-                      : "border-zinc-800 bg-zinc-900/30 text-zinc-400 hover:border-zinc-700"
-                  }`}
-                >
-                  🙋‍♂️ Men's Wear / Masculine
-                </button>
-              </div>
-            </div>
-
-            {/* Shoot Type Selection */}
-            <div>
-              <p className="text-zinc-300 font-semibold mb-3">Select your shoot type</p>
-              <div className="grid grid-cols-2 gap-3">
-                {SHOOT_TYPES.map((type) => (
-                  <button
-                    key={type.id}
-                    onClick={() => setShootType(type.id)}
-                    className={`p-4 rounded-2xl border-2 text-left transition-all duration-300 ${
-                      shootType === type.id
-                        ? "border-cyan-500 bg-cyan-500/10 shadow-[0_0_20px_rgba(6,182,212,0.15)]"
-                        : "border-zinc-800 bg-zinc-900/50 hover:border-zinc-600"
-                    }`}
-                  >
-                    <span className="text-2xl mb-2 block">{type.emoji}</span>
-                    <p className="font-semibold text-white text-sm">{type.label}</p>
-                    <p className="text-zinc-500 text-xs">{type.desc}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Analyze Button */}
-            <button
-              onClick={handleAnalyze}
-              disabled={!image || isLoading}
-              className="w-full py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-cyan-400 to-violet-500 text-black hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:scale-[1.02] active:scale-[0.98]"
-            >
-              {isLoading ? (
-                <>
-                  <div className="w-5 h-5 rounded-full border-2 border-black/30 border-t-black animate-spin" />
-                  Analyzing your photo...
-                </>
-              ) : (
-                <>
-                  <Wand2 className="w-5 h-5" />
-                  Get My Style Guide
-                </>
-              )}
-            </button>
-
-            <p className="text-zinc-600 text-xs text-center">
-              🔒 Your photo is analyzed privately and never stored on our servers.
-            </p>
-          </AnimatedSection>
-
-          {/* Right: Results */}
-          <AnimatedSection delay={0.2}>
-            {!result && !isLoading && (
-              <div className="h-full min-h-[500px] flex flex-col items-center justify-center text-center p-8 rounded-3xl border border-dashed border-zinc-800 bg-zinc-900/30">
-                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 border border-cyan-500/20 flex items-center justify-center mb-6">
-                  <Wand2 className="w-9 h-9 text-cyan-400/60" />
-                </div>
-                <h3 className="font-serif text-xl font-bold text-zinc-400 mb-2">Your personalized guide will appear here</h3>
-                <p className="text-zinc-600 text-sm max-w-xs">Upload a clear selfie and select your shoot type to get started.</p>
-              </div>
-            )}
-
-            {isLoading && (
-              <div className="h-full min-h-[500px] flex flex-col items-center justify-center text-center p-8">
-                <div className="relative w-20 h-20 mb-6">
-                  <div className="absolute inset-0 rounded-full border-4 border-cyan-500/20 animate-ping" />
-                  <div className="absolute inset-0 rounded-full border-4 border-t-cyan-400 border-r-violet-400 border-b-transparent border-l-transparent animate-spin" />
-                  <div className="absolute inset-3 rounded-full bg-gradient-to-br from-cyan-500/20 to-violet-500/20 flex items-center justify-center">
-                    <Sparkles className="w-5 h-5 text-cyan-400" />
-                  </div>
-                </div>
-                <p className="text-zinc-300 font-semibold text-lg mb-2">{loadingTexts[loadingStep]}</p>
-                <p className="text-zinc-500 text-sm">Please wait while the AI finishes its analysis (usually takes 5-10 seconds)</p>
-              </div>
-            )}
-
-            {result && (
-              <div className="space-y-5">
-
-                {/* Color Palette */}
-                <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-5">
-                  <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-cyan-400" /> Your Perfect Color Palette
-                  </h3>
-                  <div className="flex gap-3">
-                    {result.palette?.map((color, i) => (
-                      <div key={i} className="flex-1 text-center">
-                        <div className="h-12 rounded-xl mb-2 border border-white/10" style={{ backgroundColor: color }} />
-                        <p className="text-xs text-zinc-400">{result.paletteNames?.[i] || color}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Outfit Recommendations */}
-                <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-5">
-                  <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-violet-400" /> Outfit Recommendations
-                  </h3>
-                  <div className="space-y-3">
-                    {result.outfitRecommendations?.map((outfit, i) => (
-                      <div key={i} className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700/50">
-                        <div className="flex items-start justify-between gap-2">
-                          <p className="font-semibold text-white text-sm">{outfit.outfit}</p>
-                          <span className="shrink-0 text-xs bg-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded-full">Option {i + 1}</span>
-                        </div>
-                        <p className="text-zinc-400 text-xs mt-1">{outfit.description}</p>
-                        <p className="text-cyan-400/80 text-xs mt-1.5 italic">✨ {outfit.reason}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Avoid */}
-                {result.avoidColors && (
-                  <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-4">
-                    <p className="text-red-400 font-semibold text-sm mb-1">⚠ Colors to Avoid</p>
-                    <p className="text-zinc-400 text-xs">{result.avoidColors.join(", ")} — {result.avoidReason}</p>
+                ) : (
+                  <div className="p-12 text-center">
+                    <div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-center mx-auto mb-4 text-[#c5a880]">
+                      <Upload className="w-6 h-6" />
+                    </div>
+                    <p className="text-white font-medium text-sm mb-1">Drop your photo here</p>
+                    <p className="text-zinc-500 text-xs">or click to select from your device</p>
+                    <p className="text-zinc-600 text-[11px] mt-3">JPG, PNG, WEBP • Max 10MB</p>
                   </div>
                 )}
-
-                {/* Tips Row */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4">
-                    <p className="text-zinc-300 font-semibold text-xs uppercase tracking-widest mb-2">✨ Hair & Grooming</p>
-                    <p className="text-zinc-400 text-sm">{result.hairMakeupTip}</p>
-                  </div>
-                  <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4">
-                    <p className="text-zinc-300 font-semibold text-xs uppercase tracking-widest mb-2">💎 Accessories</p>
-                    <p className="text-zinc-400 text-sm">{result.accessoryTip}</p>
-                  </div>
-                </div>
-
-                {/* Pro Tip */}
-                <div className="bg-gradient-to-r from-cyan-500/10 to-violet-500/10 border border-cyan-500/20 rounded-2xl p-4">
-                  <p className="text-cyan-400 font-semibold text-xs uppercase tracking-widest mb-2">⭐ Pro Tip</p>
-                  <p className="text-zinc-300 text-sm">{result.generalTip}</p>
-                </div>
-
-                {/* CTA */}
-                <Link
-                  href="/book"
-                  className="block w-full text-center py-4 rounded-2xl bg-gradient-to-r from-cyan-400 to-violet-500 text-black font-bold text-lg hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-300"
-                >
-                  Book Your Session Now →
-                </Link>
               </div>
-            )}
-          </AnimatedSection>
-        </div>
+              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
+
+              {/* Style Preference */}
+              <div>
+                <p className="text-zinc-300 text-xs font-semibold uppercase tracking-wider mb-3">Preferred Outfit Style</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => setStylePreference("Feminine")}
+                    className={`p-3.5 rounded-xl border text-center font-medium transition-all duration-300 text-xs cursor-pointer ${
+                      stylePreference === "Feminine"
+                        ? "border-[#c5a880] bg-[#c5a880]/15 text-[#c5a880]"
+                        : "border-white/10 bg-[#121212] text-zinc-400 hover:border-white/20 hover:text-white"
+                    }`}
+                  >
+                    🙋‍♀️ Women's Wear / Feminine
+                  </button>
+                  <button
+                    onClick={() => setStylePreference("Masculine")}
+                    className={`p-3.5 rounded-xl border text-center font-medium transition-all duration-300 text-xs cursor-pointer ${
+                      stylePreference === "Masculine"
+                        ? "border-[#c5a880] bg-[#c5a880]/15 text-[#c5a880]"
+                        : "border-white/10 bg-[#121212] text-zinc-400 hover:border-white/20 hover:text-white"
+                    }`}
+                  >
+                    🙋‍♂️ Men's Wear / Masculine
+                  </button>
+                </div>
+              </div>
+
+              {/* Shoot Type Selection */}
+              <div>
+                <p className="text-zinc-300 text-xs font-semibold uppercase tracking-wider mb-3">Select Shoot Theme</p>
+                <div className="grid grid-cols-2 gap-3">
+                  {SHOOT_TYPES.map((type) => (
+                    <button
+                      key={type.id}
+                      onClick={() => setShootType(type.id)}
+                      className={`p-4 rounded-xl border text-left transition-all duration-300 cursor-pointer ${
+                        shootType === type.id
+                          ? "border-[#c5a880] bg-[#c5a880]/15 shadow-[0_0_20px_rgba(197,168,128,0.15)]"
+                          : "border-white/10 bg-[#121212] hover:border-white/25"
+                      }`}
+                    >
+                      <span className="text-2xl mb-1.5 block">{type.emoji}</span>
+                      <p className="font-serif font-normal text-white text-sm">{type.label}</p>
+                      <p className="text-zinc-400 text-xs font-light">{type.desc}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Analyze Button */}
+              <button
+                onClick={handleAnalyze}
+                disabled={!image || isLoading}
+                className="w-full py-4 rounded-xl font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-2.5 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed bg-[#c5a880] hover:bg-[#d4af37] text-black shadow-lg hover:shadow-[0_0_25px_rgba(197,168,128,0.35)] cursor-pointer"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-4 h-4 rounded-full border-2 border-black/30 border-t-black animate-spin" />
+                    <span>Analyzing skin tone &amp; outfit options...</span>
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="w-4 h-4" />
+                    <span>Generate AI Style &amp; Pose Guide</span>
+                  </>
+                )}
+              </button>
+
+              <p className="text-zinc-500 text-[11px] text-center font-light">
+                🔒 Your photo is analyzed privately in real-time and never stored on public servers.
+              </p>
+            </AnimatedSection>
+
+            {/* Right: Results Display */}
+            <AnimatedSection delay={0.2}>
+              {!result && !isLoading && (
+                <div className="h-full min-h-[480px] flex flex-col items-center justify-center text-center p-8 rounded-2xl border border-dashed border-white/15 bg-[#121212]/40">
+                  <div className="w-16 h-16 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-center mb-4 text-[#c5a880]">
+                    <Wand2 className="w-7 h-7" />
+                  </div>
+                  <h3 className="font-serif text-xl font-normal text-white mb-2">Your AI Style Guide Will Appear Here</h3>
+                  <p className="text-zinc-400 text-xs max-w-xs font-light leading-relaxed">
+                    Upload a clear photo and select your preferred shoot theme on the left to receive a custom color palette, outfit pairings, and pose suggestions.
+                  </p>
+                </div>
+              )}
+
+              {isLoading && (
+                <div className="h-full min-h-[480px] flex flex-col items-center justify-center text-center p-8 rounded-2xl border border-white/10 bg-[#121212]">
+                  <div className="relative w-16 h-16 mb-6">
+                    <div className="absolute inset-0 rounded-full border-2 border-[#c5a880]/20 animate-ping" />
+                    <div className="absolute inset-0 rounded-full border-2 border-t-[#c5a880] border-r-transparent border-b-transparent border-l-transparent animate-spin" />
+                    <div className="absolute inset-2 rounded-full bg-white/[0.03] flex items-center justify-center">
+                      <Sparkles className="w-5 h-5 text-[#c5a880]" />
+                    </div>
+                  </div>
+                  <p className="text-white font-medium text-sm mb-2">{loadingTexts[loadingStep]}</p>
+                  <p className="text-zinc-500 text-xs font-light">Analyzing facial undertones, contrast ratios, and outfit pairings...</p>
+                </div>
+              )}
+
+              {result && (
+                <div className="space-y-5">
+                  {/* Color Palette */}
+                  <div className="bg-[#121212] border border-white/10 rounded-2xl p-5">
+                    <h3 className="font-serif font-normal text-white text-base mb-3 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-[#c5a880]" /> Recommended Color Palette
+                    </h3>
+                    <div className="flex gap-3">
+                      {result.palette?.map((color, i) => (
+                        <div key={i} className="flex-1 text-center">
+                          <div className="h-12 rounded-xl mb-2 border border-white/10 shadow-inner" style={{ backgroundColor: color }} />
+                          <p className="text-[11px] text-zinc-300 font-medium">{result.paletteNames?.[i] || color}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Outfit Recommendations */}
+                  <div className="bg-[#121212] border border-white/10 rounded-2xl p-5">
+                    <h3 className="font-serif font-normal text-white text-base mb-3 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-[#c5a880]" /> Outfit Recommendations
+                    </h3>
+                    <div className="space-y-3">
+                      {result.outfitRecommendations?.map((outfit, i) => (
+                        <div key={i} className="bg-white/[0.02] rounded-xl p-4 border border-white/10">
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="font-medium text-white text-xs sm:text-sm">{outfit.outfit}</p>
+                            <span className="shrink-0 text-[10px] bg-[#c5a880]/15 text-[#c5a880] border border-[#c5a880]/30 px-2.5 py-0.5 rounded-full font-medium">Option {i + 1}</span>
+                          </div>
+                          <p className="text-zinc-400 text-xs mt-1.5 font-light">{outfit.description}</p>
+                          <p className="text-[#c5a880] text-xs mt-2 italic font-light">✦ {outfit.reason}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Pose Guidance */}
+                  <div className="bg-[#121212] border border-white/10 rounded-2xl p-5">
+                    <h3 className="font-serif font-normal text-white text-base mb-3 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-[#c5a880]" /> Recommended Studio Poses
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="bg-white/[0.02] p-3.5 rounded-xl border border-white/10">
+                        <p className="text-[#c5a880] font-medium text-xs mb-1">Classic Royal Angle</p>
+                        <p className="text-zinc-400 text-xs font-light">Shoulders turned 45°, head straight toward lens with relaxed hands.</p>
+                      </div>
+                      <div className="bg-white/[0.02] p-3.5 rounded-xl border border-white/10">
+                        <p className="text-[#c5a880] font-medium text-xs mb-1">Candid Soft Profile</p>
+                        <p className="text-zinc-400 text-xs font-light">Gaze 30° off-camera toward key light for dramatic shadow contouring.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tips Row */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="bg-[#121212] border border-white/10 rounded-2xl p-4">
+                      <p className="text-[#c5a880] font-medium text-xs uppercase tracking-wider mb-1.5">Hair &amp; Grooming</p>
+                      <p className="text-zinc-400 text-xs font-light leading-relaxed">{result.hairMakeupTip || "Clean styled locks with matte finish for studio lighting."}</p>
+                    </div>
+                    <div className="bg-[#121212] border border-white/10 rounded-2xl p-4">
+                      <p className="text-[#c5a880] font-medium text-xs uppercase tracking-wider mb-1.5">Accessories &amp; Accents</p>
+                      <p className="text-zinc-400 text-xs font-light leading-relaxed">{result.accessoryTip || "Minimalist gold or silver timepieces to complement tones."}</p>
+                    </div>
+                  </div>
+
+                  {/* Direct Booking Link */}
+                  <Link
+                    href="/#contact"
+                    className="block w-full text-center py-3.5 rounded-xl bg-[#c5a880] hover:bg-[#d4af37] text-black font-semibold text-xs uppercase tracking-wider shadow-lg hover:shadow-[0_0_20px_rgba(197,168,128,0.35)] transition-all duration-300"
+                  >
+                    Book Your Studio Session with This Style →
+                  </Link>
+                </div>
+              )}
+            </AnimatedSection>
+          </div>
         </div>
       </div>
     </div>

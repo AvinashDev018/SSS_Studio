@@ -162,22 +162,22 @@ export default function AIStylist() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 md:p-8 bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-3xl shadow-2xl text-white">
+    <div className="max-w-4xl mx-auto p-6 md:p-8 bg-[#121212] border border-white/10 rounded-2xl shadow-2xl text-white">
       <div className="text-center mb-8">
-        <span className="text-xs uppercase tracking-widest text-violet-400 font-semibold px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 inline-block mb-3">
-          Interactive Stylist
+        <span className="text-[11px] uppercase tracking-widest text-[#c5a880] font-semibold px-3.5 py-1 rounded-full bg-white/[0.03] border border-white/10 inline-block mb-3">
+          Location &amp; Sunset Timing
         </span>
-        <h2 className="text-3xl font-bold font-serif text-white mb-3 flex items-center justify-center gap-2">
-          <Camera className="text-violet-400" /> AI Stylist &amp; Location Matcher
+        <h2 className="text-2xl sm:text-3xl font-normal font-serif text-white mb-3 flex items-center justify-center gap-2">
+          <Camera className="text-[#c5a880]" /> AI Location &amp; Golden Hour Stylist
         </h2>
-        <p className="text-zinc-400 text-sm max-w-lg mx-auto">
-          Upload your outfit, and our color matcher will recommend the perfect backdrop in Madurai, along with the ideal Golden Hour timing.
+        <p className="text-zinc-400 text-xs sm:text-sm max-w-lg mx-auto font-light leading-relaxed">
+          Upload your outfit photo, and our color algorithm will recommend the ideal backdrop in Madurai along with today's live Golden Hour window.
         </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
         {/* Upload Section */}
-        <div className="flex flex-col items-center justify-center border-2 border-dashed border-zinc-800 hover:border-zinc-700 rounded-2xl p-6 bg-zinc-950/40 hover:bg-zinc-950/60 transition-colors relative overflow-hidden min-h-[300px]">
+        <div className="flex flex-col items-center justify-center border-2 border-dashed border-white/15 hover:border-[#c5a880]/50 rounded-2xl p-6 bg-[#0a0a0a]/60 hover:bg-[#0a0a0a] transition-all relative overflow-hidden min-h-[300px] cursor-pointer">
           {imageSrc ? (
             <>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -186,21 +186,21 @@ export default function AIStylist() {
                 alt="Uploaded outfit"
                 className="absolute inset-0 w-full h-full object-cover opacity-50"
               />
-              <div className="z-10 bg-zinc-900/90 p-4 rounded-xl shadow-lg text-center backdrop-blur-md border border-zinc-800">
-                <p className="text-sm font-medium text-zinc-300 mb-2">Change Outfit Image</p>
+              <div className="z-10 bg-black/90 p-4 rounded-xl shadow-lg text-center backdrop-blur-md border border-white/15">
+                <p className="text-xs font-medium text-white mb-2">Change Outfit Image</p>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleImageUpload}
-                  className="block w-full text-xs text-zinc-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-violet-500/20 file:text-violet-300 hover:file:bg-violet-500/30"
+                  className="block w-full text-xs text-zinc-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#c5a880]/20 file:text-[#c5a880] hover:file:bg-[#c5a880]/30"
                 />
               </div>
             </>
           ) : (
             <div className="text-center">
-              <Upload className="mx-auto h-12 w-12 text-zinc-500 mb-4" />
+              <Upload className="mx-auto h-10 w-10 text-[#c5a880] mb-3" />
               <label className="cursor-pointer">
-                <span className="mt-2 block text-sm font-semibold text-zinc-200">
+                <span className="block text-xs font-semibold text-white">
                   Upload an image of your outfit
                 </span>
                 <input
@@ -210,7 +210,7 @@ export default function AIStylist() {
                   onChange={handleImageUpload}
                 />
               </label>
-              <p className="mt-2 text-xs text-zinc-500">PNG, JPG, JPEG up to 5MB</p>
+              <p className="mt-2 text-[11px] text-zinc-500 font-light">PNG, JPG, WEBP up to 5MB</p>
             </div>
           )}
         </div>
@@ -218,66 +218,66 @@ export default function AIStylist() {
         {/* Results Section */}
         <div className="flex flex-col gap-6">
           {/* Color Analysis */}
-          <div className="bg-zinc-950/40 p-5 rounded-2xl border border-zinc-800/80">
-            <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Color Analysis</h3>
+          <div className="bg-[#0a0a0a]/60 p-5 rounded-xl border border-white/10">
+            <h3 className="text-[10px] font-semibold text-[#c5a880] uppercase tracking-widest mb-3">Color Analysis</h3>
             {colorLoading ? (
-               <p className="text-zinc-400 text-sm">Analyzing outfit color palette...</p>
+               <p className="text-zinc-400 text-xs">Analyzing outfit color palette...</p>
             ) : colorData ? (
               <div className="flex items-center gap-4">
                 <div
-                  className="w-14 h-14 rounded-full shadow-inner border border-zinc-700/60"
+                  className="w-12 h-12 rounded-full shadow-inner border border-white/20"
                   style={{
                     backgroundColor: `rgb(${colorData[0]}, ${colorData[1]}, ${colorData[2]})`,
                   }}
                 ></div>
                 <div>
-                  <p className="font-semibold text-zinc-200">Dominant Hue Extracted</p>
-                  <p className="text-xs text-zinc-400">R: {colorData[0]} G: {colorData[1]} B: {colorData[2]}</p>
+                  <p className="font-serif text-sm font-normal text-white">Dominant Hue Extracted</p>
+                  <p className="text-xs text-zinc-400 font-light">RGB ({colorData[0]}, {colorData[1]}, {colorData[2]})</p>
                 </div>
               </div>
             ) : (
-              <p className="text-zinc-500 italic text-sm">Upload an image to extract color.</p>
+              <p className="text-zinc-500 italic text-xs font-light">Upload an image to extract color palette.</p>
             )}
           </div>
 
           {/* Location Match */}
-          <div className="bg-zinc-950/40 p-5 rounded-2xl border border-zinc-800/80 flex-1">
-            <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-              <MapPin size={14} className="text-violet-400" /> Best Location Match
+          <div className="bg-[#0a0a0a]/60 p-5 rounded-xl border border-white/10 flex-1">
+            <h3 className="text-[10px] font-semibold text-[#c5a880] uppercase tracking-widest mb-3 flex items-center gap-2">
+              <MapPin size={13} className="text-[#c5a880]" /> Best Location Match
             </h3>
             {bestMatch ? (
-              <div className="bg-zinc-900/80 p-4 rounded-xl border border-violet-500/20 animate-in fade-in zoom-in duration-300">
-                <div className="text-3xl mb-2">{bestMatch.image}</div>
-                <h4 className="font-bold text-lg text-white">{bestMatch.name}</h4>
-                <p className="text-sm text-zinc-400 mt-1">{bestMatch.description}</p>
+              <div className="bg-[#161616] p-4 rounded-xl border border-[#c5a880]/30 animate-in fade-in duration-300">
+                <div className="text-2xl mb-1">{bestMatch.image}</div>
+                <h4 className="font-serif font-normal text-base text-white">{bestMatch.name}</h4>
+                <p className="text-xs text-zinc-400 mt-1 font-light">{bestMatch.description}</p>
                 <div className="mt-3 flex gap-2">
                   {bestMatch.palettes.map((p, i) => (
                     <div
                       key={i}
-                      className="w-6 h-6 rounded-full shadow-sm border border-zinc-800"
+                      className="w-5 h-5 rounded-full shadow-sm border border-white/20"
                       style={{ backgroundColor: `rgb(${p.r}, ${p.g}, ${p.b})` }}
-                      title="Complementary Color"
+                      title="Complementary Backdrop Color"
                     />
                   ))}
                 </div>
               </div>
             ) : (
-              <p className="text-zinc-500 italic text-sm">Waiting for outfit image upload...</p>
+              <p className="text-zinc-500 italic text-xs font-light">Waiting for outfit image upload...</p>
             )}
           </div>
         </div>
       </div>
 
       {/* Golden Hour Bar */}
-      <div className="mt-8 bg-amber-500/10 rounded-2xl p-4 md:p-6 border border-amber-500/20 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3 text-amber-400">
-          <Sun className="h-8 w-8 text-amber-500" />
+      <div className="mt-8 bg-white/[0.02] rounded-xl p-4 md:p-5 border border-[#c5a880]/30 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3 text-[#c5a880]">
+          <Sun className="h-7 w-7 text-[#c5a880]" />
           <div>
-            <h4 className="font-bold text-zinc-100 font-serif">Today&apos;s Golden Hour in Madurai</h4>
-            <p className="text-xs text-zinc-400">Best lighting for outdoor shoots</p>
+            <h4 className="font-serif text-sm text-white">Today&apos;s Golden Hour in Madurai</h4>
+            <p className="text-xs text-zinc-400 font-light">Calculated using SunCalc live astronomical position</p>
           </div>
         </div>
-        <div className="text-xl font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-6 py-2 rounded-xl">
+        <div className="text-sm font-semibold text-[#c5a880] bg-[#c5a880]/10 border border-[#c5a880]/30 px-5 py-2 rounded-xl">
           {goldenHour}
         </div>
       </div>
