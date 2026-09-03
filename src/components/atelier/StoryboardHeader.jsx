@@ -12,10 +12,10 @@ export default function StoryboardHeader({ currentStep, setStep }) {
 
   return (
     <div className="w-full bg-[#0a0a0a] border-b border-white/10 py-6 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         
         {/* Atelier Brand Title */}
-        <div>
+        <div className="shrink-0">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/10 text-[#c5a880] text-[11px] font-semibold uppercase tracking-widest mb-2">
             <Sparkles size={12} className="text-[#c5a880]" />
             <span>SSS Atelier Bespoke Studio</span>
@@ -26,7 +26,7 @@ export default function StoryboardHeader({ currentStep, setStep }) {
         </div>
 
         {/* Interactive Step Navigator */}
-        <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto pb-2 md:pb-0">
+        <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto no-scrollbar pb-1 lg:pb-0 w-full lg:w-auto">
           {steps.map((s, idx) => {
             const isActive = currentStep === s.id;
             const isCompleted = currentStep > s.id;
@@ -35,15 +35,15 @@ export default function StoryboardHeader({ currentStep, setStep }) {
               <React.Fragment key={s.id}>
                 <button
                   onClick={() => setStep(s.id)}
-                  className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl border text-left transition-all duration-300 cursor-pointer shrink-0 ${
+                  className={`flex items-center gap-2.5 px-3.5 sm:px-4 py-2.5 rounded-xl border text-left transition-all duration-300 cursor-pointer shrink-0 ${
                     isActive
                       ? "bg-[#c5a880]/15 border-[#c5a880]/40 text-[#c5a880] shadow-[0_0_15px_rgba(197,168,128,0.15)]"
                       : isCompleted
                       ? "bg-white/[0.04] border-white/20 text-zinc-200"
-                      : "bg-white/[0.02] border-white/10 text-zinc-500 hover:text-zinc-300"
+                      : "bg-white/[0.02] border-white/10 text-zinc-400 hover:text-zinc-200"
                   }`}
                 >
-                  <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold ${
+                  <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
                     isActive
                       ? "bg-[#c5a880] text-black"
                       : isCompleted
@@ -53,18 +53,18 @@ export default function StoryboardHeader({ currentStep, setStep }) {
                     {isCompleted ? <Check size={14} /> : s.number}
                   </span>
 
-                  <div className="flex flex-col">
+                  <div className="flex flex-col min-w-0">
                     <span className="text-xs font-medium uppercase tracking-wider whitespace-nowrap">
                       {s.title}
                     </span>
-                    <span className="text-[10px] text-zinc-400 font-light hidden sm:inline">
+                    <span className="text-[10px] text-zinc-400 font-light truncate hidden sm:inline">
                       {s.sub}
                     </span>
                   </div>
                 </button>
 
                 {idx < steps.length - 1 && (
-                  <div className="w-4 h-px bg-white/10 hidden md:block" />
+                  <div className="w-3 h-px bg-white/10 hidden xl:block shrink-0" />
                 )}
               </React.Fragment>
             );

@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import StoryboardHeader from "@/components/atelier/StoryboardHeader";
 import EventGrid, { EVENTS_DATA } from "@/components/atelier/EventGrid";
 import CrewCustomizer from "@/components/atelier/CrewCustomizer";
@@ -35,12 +33,9 @@ export default function AtelierPage() {
   };
 
   return (
-    <div className="bg-[#0a0a0a] text-white selection:bg-[#c5a880]/30 selection:text-white min-h-screen flex flex-col justify-between">
-      <Navbar />
-
-      <main className="flex-1">
-        {/* Top Header Banner & Step Selector */}
-        <StoryboardHeader currentStep={currentStep} setStep={setCurrentStep} />
+    <div className="bg-[#0a0a0a] text-white selection:bg-[#c5a880]/30 selection:text-white min-h-screen">
+      {/* Top Header Banner & Step Selector */}
+      <StoryboardHeader currentStep={currentStep} setStep={setCurrentStep} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -155,9 +150,6 @@ export default function AtelierPage() {
           prefilledType={bookingShootType}
           prefilledMode="booking"
         />
-      </main>
-
-      <Footer />
     </div>
   );
 }

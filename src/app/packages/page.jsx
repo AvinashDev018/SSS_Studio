@@ -1,5 +1,3 @@
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import { Check } from "lucide-react";
 import Link from "next/link";
 import AnimatedSection from "@/components/ui/AnimatedSection";
