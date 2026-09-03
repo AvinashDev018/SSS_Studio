@@ -19,6 +19,13 @@ module.exports = {
         brandLight: "#e8f1f0",
         deepTeal: "#0b3430",
         forestTeal: "#0c3530",
+        obsidian: "#0a0a0a",
+        graphite: "#141414",
+        champagne: {
+          DEFAULT: "#c5a880",
+          light: "#e6cba8",
+          dark: "#9e7d56",
+        },
       },
       keyframes: {
         marquee: {

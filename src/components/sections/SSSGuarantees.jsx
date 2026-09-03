@@ -135,16 +135,16 @@ export default function SSSGuarantees({ onOpenBooking }) {
   const guarantees = guaranteesData[currentLang] || guaranteesData.en;
 
   return (
-    <section className="py-24 bg-gradient-to-b from-[#080c0b] via-[#0c3530]/40 to-[#080c0b] relative overflow-hidden">
-      {/* Background ambient light */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-teal-500/10 rounded-full blur-[150px] pointer-events-none animate-pulse-glow" />
+    <section className="py-24 bg-[#0a0a0a] relative overflow-hidden border-t border-white/5">
+      {/* Background ambient subtle warm glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#c5a880]/5 rounded-full blur-[160px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-widest mb-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.03] border border-white/10 text-[#c5a880] text-xs font-semibold uppercase tracking-widest mb-3">
             <ShieldCheck size={14} /> {t.guarantees.tag}
           </div>
-          <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-5xl font-serif font-normal text-white mb-4">
             {t.guarantees.title}
           </h2>
           <p className="text-zinc-400 text-base md:text-lg font-light leading-relaxed">
@@ -159,38 +159,38 @@ export default function SSSGuarantees({ onOpenBooking }) {
             return (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 25 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                whileHover={{ y: -6, scale: 1.01 }}
-                className={`bg-gradient-to-br ${item.color} bg-[#0c3530]/70 backdrop-blur-xl border ${item.borderColor} p-8 rounded-3xl shadow-xl transition-all duration-300 flex flex-col justify-between group hover:border-teal-400/50`}
+                transition={{ duration: 0.5, delay: idx * 0.08 }}
+                whileHover={{ y: -4 }}
+                className="bg-[#121212] border border-white/10 p-8 rounded-2xl shadow-2xl transition-all duration-300 flex flex-col justify-between group hover:border-[#c5a880]/40"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">
-                    <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shadow-inner group-hover:scale-110 group-hover:bg-white/10 transition-all duration-300">
-                      <Icon className={`w-7 h-7 ${item.iconColor}`} />
+                    <div className="w-12 h-12 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center group-hover:scale-105 group-hover:border-[#c5a880]/30 transition-all duration-300">
+                      <Icon className="w-6 h-6 text-[#c5a880]" />
                     </div>
-                    <span className="text-xs font-bold px-3 py-1 rounded-full bg-white/10 border border-white/10 text-zinc-300 uppercase tracking-wider">
+                    <span className="text-[11px] font-medium px-3 py-1 rounded-full bg-white/[0.03] border border-white/10 text-zinc-300 uppercase tracking-wider">
                       {item.badge}
                     </span>
                   </div>
 
-                  <h3 className="text-2xl font-serif font-bold text-white mb-3 group-hover:text-teal-300 transition-colors">
+                  <h3 className="text-xl md:text-2xl font-serif font-normal text-white mb-3 group-hover:text-[#c5a880] transition-colors">
                     {item.title}
                   </h3>
-                  <p className="text-zinc-300 text-sm md:text-base leading-relaxed mb-6 font-light">
+                  <p className="text-zinc-400 text-sm md:text-base leading-relaxed mb-6 font-light">
                     {item.description}
                   </p>
                 </div>
 
                 <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                  <span className="text-xs text-teal-300 font-semibold uppercase tracking-wider flex items-center gap-1.5">
-                    <CheckCircle2 size={14} className="text-teal-400" /> {t.guarantees.inclusions}
+                  <span className="text-xs text-zinc-300 font-medium tracking-wider flex items-center gap-1.5">
+                    <CheckCircle2 size={14} className="text-[#c5a880]" /> {t.guarantees.inclusions}
                   </span>
                   <button
                     onClick={() => onOpenBooking(item.title)}
-                    className="text-xs text-white font-bold hover:text-teal-300 transition-colors flex items-center gap-1 group-hover:translate-x-1 duration-200 cursor-pointer"
+                    className="text-xs text-[#c5a880] font-semibold hover:text-[#e6cba8] transition-colors flex items-center gap-1 group-hover:translate-x-1 duration-200 cursor-pointer uppercase tracking-wider"
                   >
                     {t.guarantees.enquire} <ArrowRight size={14} />
                   </button>
@@ -202,22 +202,22 @@ export default function SSSGuarantees({ onOpenBooking }) {
 
         {/* Interactive 1-Month Delivery Timeline Visual */}
         <motion.div
-          initial={{ opacity: 0, y: 25 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="p-8 md:p-10 rounded-3xl bg-[#0c3530]/40 border border-teal-500/20 backdrop-blur-xl relative overflow-hidden"
+          transition={{ duration: 0.6 }}
+          className="p-8 md:p-10 rounded-2xl bg-[#121212] border border-white/10 relative overflow-hidden shadow-2xl"
         >
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
-              <span className="text-teal-400 text-xs font-bold tracking-widest uppercase block mb-1">
+              <span className="text-[#c5a880] text-xs font-semibold tracking-widest uppercase block mb-1">
                 Guaranteed Workflow
               </span>
-              <h3 className="text-xl md:text-2xl font-serif font-bold text-white">
+              <h3 className="text-xl md:text-2xl font-serif font-normal text-white">
                 How We Deliver Your Albums in 1 Month
               </h3>
             </div>
-            <div className="px-4 py-2 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 text-[#071f1b] font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-lg shrink-0">
+            <div className="px-4 py-1.5 rounded-full bg-[#c5a880] text-black font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-md shrink-0">
               <Clock size={14} /> 1 Month (30 Days) Guaranteed
             </div>
           </div>

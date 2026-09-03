@@ -195,17 +195,17 @@ export default function SSSServices({ onOpenBooking }) {
   ];
 
   return (
-    <section id="services" className="py-24 bg-[#0a100e] relative overflow-hidden">
-      {/* Background ambient lighting */}
-      <div className="absolute top-1/3 left-0 w-96 h-96 bg-teal-500/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-10 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none" />
+    <section id="services" className="py-24 bg-[#0a0a0a] relative overflow-hidden border-t border-white/5">
+      {/* Background ambient subtle warm lighting */}
+      <div className="absolute top-1/3 left-0 w-96 h-96 bg-[#c5a880]/5 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute bottom-10 right-0 w-96 h-96 bg-[#c5a880]/5 rounded-full blur-[160px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-widest mb-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.03] border border-white/10 text-[#c5a880] text-xs font-semibold uppercase tracking-widest mb-3">
             {t.services.tag}
           </div>
-          <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-5xl font-serif font-normal text-white mb-4">
             {t.services.title}
           </h2>
           <p className="text-zinc-400 text-base md:text-lg font-light leading-relaxed">
@@ -213,14 +213,14 @@ export default function SSSServices({ onOpenBooking }) {
           </p>
 
           {/* Animated Category Filter Tabs */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mt-8 p-1.5 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md max-w-fit mx-auto">
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-8 p-1.5 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-md max-w-fit mx-auto">
             {filterTabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveCategory(tab.id)}
-                className={`relative px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 cursor-pointer ${
+                className={`relative px-4 py-2 rounded-full text-xs font-medium transition-all duration-300 cursor-pointer ${
                   activeCategory === tab.id
-                    ? "text-black bg-gradient-to-r from-teal-400 to-emerald-400 shadow-md shadow-teal-500/25"
+                    ? "text-black bg-[#c5a880] font-semibold shadow-md"
                     : "text-zinc-400 hover:text-white hover:bg-white/5"
                 }`}
               >
@@ -241,42 +241,42 @@ export default function SSSServices({ onOpenBooking }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.05 }}
                 transition={{ duration: 0.5, delay: idx * 0.08 }}
-                whileHover={{ y: -8, scale: 1.01 }}
-                className="opacity-100 bg-[#0c3530]/50 backdrop-blur-xl border border-teal-500/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between group hover:border-teal-400/60 hover:shadow-[0_20px_50px_rgba(20,184,166,0.15)] transition-all duration-300"
+                whileHover={{ y: -6 }}
+                className="opacity-100 bg-[#121212] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col justify-between group hover:border-[#c5a880]/40 transition-all duration-300"
               >
                 <div>
-                  <div className="relative h-60 overflow-hidden bg-black/40">
+                  <div className="relative h-64 overflow-hidden bg-black/40">
                     <img
                       src={service.image}
                       alt={service.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0c3530] via-[#0c3530]/40 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/30 to-transparent" />
                     
-                    <div className="absolute top-4 right-4 w-11 h-11 rounded-2xl bg-black/70 backdrop-blur-md border border-white/20 flex items-center justify-center text-teal-300 shadow-xl group-hover:scale-110 group-hover:text-teal-200 transition-all duration-300">
-                      <Icon size={20} />
+                    <div className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-black/70 backdrop-blur-md border border-white/15 flex items-center justify-center text-[#c5a880] shadow-xl group-hover:scale-105 transition-all duration-300">
+                      <Icon size={18} />
                     </div>
 
                     {idx === 0 && (
-                      <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 text-[#071f1b] text-[10px] font-black uppercase tracking-wider shadow-lg">
+                      <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-[#c5a880] text-black text-[10px] font-bold uppercase tracking-wider shadow-lg">
                         ★ MOST POPULAR
                       </div>
                     )}
                   </div>
 
                   <div className="p-6">
-                    <h3 className="text-xl font-bold font-serif text-white mb-2 group-hover:text-teal-300 transition-colors">
+                    <h3 className="text-xl font-serif font-normal text-white mb-2 group-hover:text-[#c5a880] transition-colors">
                       {service.title}
                     </h3>
-                    <p className="text-zinc-300 text-sm leading-relaxed mb-6 font-light">
+                    <p className="text-zinc-400 text-sm leading-relaxed mb-6 font-light">
                       {service.description}
                     </p>
 
                     <div className="space-y-2.5 mb-6">
                       {service.features.map((feat, fIdx) => (
-                        <div key={fIdx} className="flex items-center gap-2.5 text-xs text-zinc-300 group-hover:text-zinc-200 transition-colors">
-                          <span className="w-5 h-5 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center shrink-0">
-                            <Check size={12} strokeWidth={3} />
+                        <div key={fIdx} className="flex items-center gap-2.5 text-xs text-zinc-300">
+                          <span className="w-4 h-4 rounded-full bg-[#c5a880]/20 text-[#c5a880] flex items-center justify-center shrink-0">
+                            <Check size={11} strokeWidth={3} />
                           </span>
                           <span>{feat}</span>
                         </div>
@@ -288,7 +288,7 @@ export default function SSSServices({ onOpenBooking }) {
                 <div className="p-6 pt-0">
                   <button
                     onClick={() => onOpenBooking(service.category)}
-                    className="w-full py-3.5 bg-gradient-to-r from-white/10 to-white/5 group-hover:from-teal-400 group-hover:to-emerald-400 text-white group-hover:text-[#071f1b] border border-white/15 group-hover:border-transparent font-bold rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 text-xs uppercase tracking-wider cursor-pointer shadow-lg"
+                    className="w-full py-3 bg-white/[0.04] hover:bg-[#c5a880] text-zinc-200 hover:text-black border border-white/10 hover:border-[#c5a880] font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 text-xs uppercase tracking-wider cursor-pointer shadow-lg"
                   >
                     <span>{t.services.bookBtn}</span>
                     <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />

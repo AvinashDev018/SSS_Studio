@@ -41,13 +41,13 @@ export default function StudioLogo({
       {/* 1. Luxury Camera Aperture Emblem */}
       <div className="relative">
         {/* Luminous Glow */}
-        <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-teal-500/40 via-emerald-400/30 to-teal-600/40 opacity-70 blur-md group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#c5a880]/30 via-[#e6cba8]/20 to-[#c5a880]/30 opacity-60 blur-md group-hover:opacity-100 transition-opacity duration-500" />
 
         {/* Outer Bezel */}
-        <div className={`relative ${currentSize.emblem} rounded-xl sm:rounded-2xl bg-gradient-to-b from-[#0e3b34] to-[#051613] p-[1.5px] shadow-[0_4px_20px_rgba(0,0,0,0.8)] border border-teal-400/30 group-hover:border-teal-300/60 transition-all duration-300 group-hover:scale-105 flex items-center justify-center`}>
+        <div className={`relative ${currentSize.emblem} rounded-xl sm:rounded-2xl bg-gradient-to-b from-[#1c1c1c] to-[#0c0c0c] p-[1.5px] shadow-[0_4px_20px_rgba(0,0,0,0.8)] border border-white/15 group-hover:border-[#c5a880]/60 transition-all duration-300 group-hover:scale-105 flex items-center justify-center`}>
           {/* Inner Shutter Aperture SVG */}
           <svg
-            className={`${currentSize.icon} text-teal-300 group-hover:text-white transition-colors duration-300`}
+            className={`${currentSize.icon} text-[#c5a880] group-hover:text-white transition-colors duration-300`}
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -58,13 +58,13 @@ export default function StudioLogo({
             {/* Camera Body Outer Silhouette */}
             <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
             {/* Precision Aperture Shutter / Lens Blades */}
-            <circle cx="12" cy="13" r="3.5" className="stroke-teal-400" />
-            <path d="M12 9.5l2.5 4.5" className="stroke-teal-300/60" />
-            <path d="M15.5 13l-4.5 2.5" className="stroke-teal-300/60" />
-            <path d="M12 16.5l-2.5-4.5" className="stroke-teal-300/60" />
-            <path d="M8.5 13l4.5-2.5" className="stroke-teal-300/60" />
+            <circle cx="12" cy="13" r="3.5" className="stroke-[#c5a880]" />
+            <path d="M12 9.5l2.5 4.5" className="stroke-[#c5a880]/60" />
+            <path d="M15.5 13l-4.5 2.5" className="stroke-[#c5a880]/60" />
+            <path d="M12 16.5l-2.5-4.5" className="stroke-[#c5a880]/60" />
+            <path d="M8.5 13l4.5-2.5" className="stroke-[#c5a880]/60" />
             {/* Focal Catchlight Dot */}
-            <circle cx="12" cy="13" r="1" className="fill-teal-200 stroke-none" />
+            <circle cx="12" cy="13" r="1" className="fill-[#e6cba8] stroke-none" />
           </svg>
         </div>
       </div>
@@ -78,10 +78,10 @@ export default function StudioLogo({
           </span>
 
           {/* Vertical Fine Divider */}
-          <div className="h-4 w-px bg-gradient-to-b from-transparent via-teal-500/50 to-transparent" />
+          <div className="h-4 w-px bg-gradient-to-b from-transparent via-[#c5a880]/50 to-transparent" />
 
           {/* Brand Name */}
-          <span className={`font-sans font-extrabold ${currentSize.sub} text-teal-300 uppercase leading-none group-hover:text-teal-200 transition-colors`}>
+          <span className={`font-sans font-extrabold ${currentSize.sub} text-[#c5a880] uppercase leading-none group-hover:text-[#e6cba8] transition-colors`}>
             PHOTOGRAPHY
           </span>
         </div>
@@ -89,8 +89,8 @@ export default function StudioLogo({
         {/* Secondary Subtitle Tagline */}
         {showSubtitle && (
           <div className="flex items-center gap-1.5 mt-1">
-            <span className={`font-sans font-bold ${currentSize.tag} text-zinc-400/90 uppercase leading-none`}>
-              PHOTOGRAPHY STUDIO
+            <span className={`font-sans font-medium ${currentSize.tag} text-zinc-400 uppercase tracking-widest leading-none`}>
+              STUDIO & ATELIER
             </span>
           </div>
         )}

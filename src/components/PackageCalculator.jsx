@@ -83,22 +83,22 @@ const SortableEvent = ({ id, label, duration, onRemove, index }) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="flex items-center justify-between p-3.5 mb-2 bg-[#081210]/90 hover:bg-[#0d1e1a] rounded-2xl shadow-md cursor-grab active:cursor-grabbing border border-teal-500/25 transition-all group hover:border-teal-400/60"
+      className="flex items-center justify-between p-3.5 mb-2 bg-[#12141c]/90 hover:bg-[#171924] rounded-2xl shadow-md cursor-grab active:cursor-grabbing border border-white/10 transition-all group hover:border-[#c5a880]/50"
     >
       <div className="flex items-center gap-3">
-        <span className="w-6 h-6 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30 flex items-center justify-center text-[11px] font-bold shrink-0">
+        <span className="w-6 h-6 rounded-full bg-[#c5a880]/20 text-[#e5c590] border border-[#c5a880]/30 flex items-center justify-center text-[11px] font-bold shrink-0">
           {index + 1}
         </span>
         <div>
           <span className="font-bold text-white text-xs sm:text-sm block">{label}</span>
-          <span className="text-[11px] text-teal-400/80 font-light flex items-center gap-1 mt-0.5">
+          <span className="text-[11px] text-[#c5a880]/80 font-light flex items-center gap-1 mt-0.5">
             <Clock size={11} /> ~{duration} Hours Coverage
           </span>
         </div>
       </div>
 
       <div className="flex items-center gap-2">
-        <GripVertical size={16} className="text-zinc-500 group-hover:text-teal-400 transition-colors" />
+        <GripVertical size={16} className="text-zinc-500 group-hover:text-[#c5a880] transition-colors" />
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -118,8 +118,8 @@ export default function PackageCalculator({ isEmbedded = false }) {
   const [mounted, setMounted] = useState(false);
   const [selectedVibes, setSelectedVibes] = useState(["candid", "traditional"]);
   const [timelineEvents, setTimelineEvents] = useState([
-    { id: "wedding", label: "Muhurtham / Wedding Ceremony", duration: 8, uniqueId: "wedding-init" },
-    { id: "reception", label: "Grand Evening Reception", duration: 6, uniqueId: "reception-init" },
+    { id: "wedding", label: "Muhurtham & Wedding", duration: 8, uniqueId: "wedding-init" },
+    { id: "reception", label: "Grand Reception", duration: 6, uniqueId: "reception-init" },
   ]);
 
   useEffect(() => {
@@ -214,8 +214,8 @@ export default function PackageCalculator({ isEmbedded = false }) {
 
   if (!mounted) {
     return (
-      <div className="max-w-5xl mx-auto p-8 my-16 bg-[#0c221e]/40 border border-teal-500/20 rounded-3xl min-h-[420px] flex items-center justify-center">
-        <div className="text-teal-400 font-serif flex items-center gap-2 animate-pulse">
+      <div className="max-w-5xl mx-auto p-8 my-16 bg-[#0e1017]/80 border border-white/10 rounded-3xl min-h-[420px] flex items-center justify-center shadow-2xl">
+        <div className="text-[#e5c590] font-serif flex items-center gap-2 animate-pulse">
           <Calculator size={20} /> Loading Story Calculator...
         </div>
       </div>
@@ -224,19 +224,19 @@ export default function PackageCalculator({ isEmbedded = false }) {
 
   return (
     <section className="max-w-5xl mx-auto my-16 px-4 sm:px-6">
-      <div className="relative bg-gradient-to-b from-[#0c221e]/90 via-[#0a1815]/85 to-[#071310]/95 backdrop-blur-2xl border border-teal-500/30 rounded-[32px] p-6 sm:p-10 shadow-2xl overflow-hidden">
-        {/* Ambient Top Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-teal-500/10 blur-[100px] pointer-events-none" />
+      <div className="relative bg-gradient-to-b from-[#0e1017]/95 via-[#0b0c11]/95 to-[#07080b]/98 backdrop-blur-2xl border border-white/[0.08] rounded-[32px] p-6 sm:p-10 shadow-[0_20px_80px_rgba(0,0,0,0.85)] overflow-hidden">
+        {/* Ambient Warm Gold Glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-36 bg-[#c5a880]/10 blur-[130px] pointer-events-none" />
 
         {/* Header */}
         <div className="mb-10 text-center relative z-10 pt-2">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-widest mb-4 shadow-inner">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#c5a880]/10 border border-[#c5a880]/30 text-[#e5c590] text-xs font-bold uppercase tracking-widest mb-4 shadow-inner">
             <Calculator size={13} /> Instant Custom Estimator
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-white mb-3 tracking-normal leading-[1.2] py-1">
-            Build-Your-Story Package Calculator
+            Package Calculator &amp; Booking Suite
           </h2>
-          <p className="text-zinc-300 text-xs sm:text-sm md:text-base font-light max-w-2xl mx-auto leading-relaxed">
+          <p className="text-zinc-400 text-xs sm:text-sm md:text-base font-light max-w-2xl mx-auto leading-relaxed">
             Choose your signature coverage styles and celebration events to generate an instant, transparent quote customized for your dates.
           </p>
         </div>
@@ -244,11 +244,11 @@ export default function PackageCalculator({ isEmbedded = false }) {
         {/* Step 1: Coverage Style Cards */}
         <div className="mb-10 relative z-10">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-teal-300 flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center text-xs font-bold border border-teal-500/30">
+            <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#e5c590] flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full bg-[#c5a880]/20 text-[#e5c590] flex items-center justify-center text-xs font-bold border border-[#c5a880]/30">
                 1
               </span>
-              Select Coverage Styles &amp; Vibes
+              Select Coverage Styles
             </h3>
             <span className="text-[11px] text-zinc-400 hidden sm:inline">Click to toggle styles</span>
           </div>
@@ -264,20 +264,20 @@ export default function PackageCalculator({ isEmbedded = false }) {
                   onClick={() => toggleVibe(vibe.id)}
                   className={`relative p-5 rounded-2xl border text-left transition-all duration-300 cursor-pointer flex flex-col justify-between group ${
                     isSelected
-                      ? "border-teal-400 bg-gradient-to-br from-teal-500/25 via-emerald-500/15 to-[#0c221e] text-white shadow-[0_0_25px_rgba(20,184,166,0.3)] scale-[1.02]"
-                      : "border-white/10 bg-white/5 text-zinc-300 hover:border-teal-500/30 hover:bg-white/[0.07] hover:text-white"
+                      ? "border-[#c5a880] bg-gradient-to-b from-[#181a24] to-[#11131b] text-white shadow-[0_0_30px_rgba(197,168,128,0.22)] scale-[1.02]"
+                      : "border-white/10 bg-[#0e1017]/80 text-zinc-300 hover:border-[#c5a880]/40 hover:bg-[#13151f]/80 hover:text-white"
                   }`}
                 >
                   {/* Selected Pill Badge */}
                   {isSelected && (
-                    <div className="absolute top-3.5 right-3.5 w-5 h-5 rounded-full bg-teal-400 text-[#071f1b] flex items-center justify-center shadow-sm">
+                    <div className="absolute top-3.5 right-3.5 w-5 h-5 rounded-full bg-[#c5a880] text-black flex items-center justify-center shadow-sm">
                       <Check size={12} strokeWidth={3} />
                     </div>
                   )}
 
                   <div>
                     <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-3.5 transition-transform group-hover:scale-110 ${
-                      isSelected ? "bg-teal-400 text-[#071f1b]" : "bg-white/10 text-teal-300"
+                      isSelected ? "bg-[#c5a880] text-black" : "bg-white/5 text-[#c5a880] border border-white/5"
                     }`}>
                       <Icon size={22} />
                     </div>
@@ -287,8 +287,8 @@ export default function PackageCalculator({ isEmbedded = false }) {
                   </div>
 
                   <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[11px]">
-                    <span className="text-teal-300 font-bold">+₹{vibe.basePrice.toLocaleString()} base</span>
-                    <span className={`text-[10px] font-semibold uppercase ${isSelected ? "text-teal-300" : "text-zinc-500"}`}>
+                    <span className="text-[#e5c590] font-bold">+₹{vibe.basePrice.toLocaleString()} base</span>
+                    <span className={`text-[10px] font-semibold uppercase ${isSelected ? "text-[#e5c590]" : "text-zinc-500"}`}>
                       {isSelected ? "Included" : "Add"}
                     </span>
                   </div>
@@ -303,8 +303,8 @@ export default function PackageCalculator({ isEmbedded = false }) {
           {/* Left: Add Event Occasions */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-teal-300 flex items-center gap-2">
-                <span className="w-5 h-5 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center text-xs font-bold border border-teal-500/30">
+              <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#e5c590] flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-[#c5a880]/20 text-[#e5c590] flex items-center justify-center text-xs font-bold border border-[#c5a880]/30">
                   2
                 </span>
                 Add Celebration Occasions
@@ -316,13 +316,13 @@ export default function PackageCalculator({ isEmbedded = false }) {
                 <button
                   key={event.id}
                   onClick={() => addEvent(event)}
-                  className="px-3.5 py-3 bg-[#081210]/90 hover:bg-[#0c1f1a] border border-white/10 hover:border-teal-400/50 rounded-2xl text-xs font-semibold text-zinc-200 transition-all cursor-pointer shadow-sm hover:scale-[1.02] flex items-center justify-between text-left group gap-1.5"
+                  className="px-3.5 py-3 bg-[#10121a]/90 hover:bg-[#161924] border border-white/10 hover:border-[#c5a880]/50 rounded-2xl text-xs font-semibold text-zinc-200 transition-all cursor-pointer shadow-sm hover:scale-[1.02] flex items-center justify-between text-left group gap-1.5"
                 >
                   <span className="flex items-center gap-2 min-w-0">
-                    <span className="shrink-0">{event.icon}</span>
+                    <span className="shrink-0 text-sm">{event.icon}</span>
                     <span className="leading-tight text-white/90">{event.label}</span>
                   </span>
-                  <Plus size={14} className="text-teal-400 shrink-0 group-hover:rotate-90 transition-transform ml-1" />
+                  <Plus size={14} className="text-[#c5a880] shrink-0 group-hover:rotate-90 transition-transform ml-1" />
                 </button>
               ))}
             </div>
@@ -332,11 +332,11 @@ export default function PackageCalculator({ isEmbedded = false }) {
           </div>
 
           {/* Right: Scheduled Timeline Box */}
-          <div className="bg-[#080f0d]/90 p-5 rounded-3xl border border-teal-500/25 shadow-inner flex flex-col justify-between min-h-[260px]">
+          <div className="bg-[#090a0f]/90 p-5 rounded-3xl border border-white/10 shadow-inner flex flex-col justify-between min-h-[260px]">
             <div>
               <div className="flex items-center justify-between mb-3.5 pb-2.5 border-b border-white/10">
-                <span className="text-xs uppercase tracking-wider text-teal-300 font-bold flex items-center gap-1.5">
-                  <Calendar size={13} className="text-teal-400" />
+                <span className="text-xs uppercase tracking-wider text-[#e5c590] font-bold flex items-center gap-1.5">
+                  <Calendar size={13} className="text-[#c5a880]" />
                   Your Event Timeline ({timelineEvents.length})
                 </span>
                 <span className="text-[10px] text-zinc-400 font-normal">↕ Drag to reorder</span>
@@ -372,7 +372,7 @@ export default function PackageCalculator({ isEmbedded = false }) {
             {timelineEvents.length > 0 && (
               <div className="pt-3 border-t border-white/5 flex items-center justify-between text-[11px] text-zinc-400">
                 <span>Total Scheduled Coverage:</span>
-                <span className="font-bold text-teal-300">
+                <span className="font-bold text-[#e5c590]">
                   ~{timelineEvents.reduce((acc, e) => acc + (e.duration || 4), 0)} Hours
                 </span>
               </div>
@@ -380,46 +380,47 @@ export default function PackageCalculator({ isEmbedded = false }) {
           </div>
         </div>
 
-        {/* Step 3: Redesigned VIP Quote Card & WhatsApp Action */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#0c2a23] via-[#0f3830] to-[#0a201b] border-2 border-teal-400/50 shadow-2xl relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-6">
-          {/* Subtle Decorative Gradient Orb */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-teal-400/10 rounded-full blur-3xl pointer-events-none" />
+        {/* Step 3: Receipt Summary & Investment Card */}
+        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-[#141620]/95 via-[#0e1017]/95 to-[#090a0e]/98 border border-[#c5a880]/30 shadow-2xl relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-6">
+          {/* Subtle Decorative Warm Gold Orb */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#c5a880]/10 rounded-full blur-3xl pointer-events-none" />
 
           {/* Left: Estimate and Crew Details */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-8 text-left w-full lg:w-auto">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-8 text-left w-full lg:w-auto relative z-10">
             <div>
-              <span className="text-[10px] sm:text-[11px] text-teal-300 uppercase tracking-widest font-extrabold block mb-1">
-                Estimated Package Investment
+              <span className="text-[10px] sm:text-[11px] text-[#e5c590] uppercase tracking-widest font-extrabold block mb-1">
+                Receipt Summary &amp; Investment
               </span>
               <div className="text-2xl sm:text-4xl font-serif font-extrabold text-white tracking-tight">
                 ₹{estimate.min.toLocaleString()} – ₹{estimate.max.toLocaleString()}
               </div>
               <p className="text-[11px] text-zinc-300 font-light mt-1 flex items-center gap-1.5">
-                <Sparkles size={12} className="text-teal-400" />
+                <Sparkles size={12} className="text-[#c5a880]" />
                 Includes Master RAW Files + 10-Bit Color Grading
               </p>
             </div>
 
-            <div className="hidden sm:block h-12 w-[1px] bg-teal-500/30" />
+            <div className="hidden sm:block h-12 w-[1px] bg-white/10" />
 
             <div>
-              <span className="text-[10px] sm:text-[11px] text-teal-300 uppercase tracking-widest font-extrabold block mb-1">
+              <span className="text-[10px] sm:text-[11px] text-[#e5c590] uppercase tracking-widest font-extrabold block mb-1">
                 Recommended Crew &amp; Turnaround
               </span>
               <div className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                <Users size={16} className="text-teal-400" />
+                <Users size={16} className="text-[#c5a880]" />
                 ~{crewSize} Dedicated Artists
               </div>
-              <p className="text-[11px] text-amber-300 font-semibold mt-1 flex items-center gap-1">
-                <ShieldCheck size={13} /> 1-Month (30 Days) Album Guarantee
-              </p>
+              <div className="mt-2 inline-flex items-center gap-1.5 bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 px-3 py-1 rounded-full text-[11px] font-semibold">
+                <ShieldCheck size={13} className="text-emerald-400" />
+                <span>1-Month (30 Days) Delivery Guarantee</span>
+              </div>
             </div>
           </div>
 
           {/* Right: Instant Send to WhatsApp Button */}
           <button
             onClick={handleSendWhatsApp}
-            className="w-full lg:w-auto px-8 py-4 bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 hover:from-emerald-300 hover:to-teal-300 text-[#071f1b] font-black rounded-2xl shadow-[0_0_30px_rgba(20,184,166,0.5)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2.5 text-xs sm:text-sm uppercase tracking-wider cursor-pointer shrink-0"
+            className="w-full lg:w-auto px-8 py-4 bg-gradient-to-r from-[#e5c590] via-[#c5a880] to-[#b39369] hover:from-[#edd5a8] hover:to-[#c5a880] text-black font-black rounded-2xl shadow-[0_0_30px_rgba(197,168,128,0.35)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2.5 text-xs sm:text-sm uppercase tracking-wider cursor-pointer shrink-0 relative z-10"
           >
             <Send size={16} className="stroke-[2.5]" />
             <span>Send Custom Quote to WhatsApp</span>

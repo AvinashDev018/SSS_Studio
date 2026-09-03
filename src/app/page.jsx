@@ -58,8 +58,8 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-[#080c0b] text-white selection:bg-teal-500/30">
-      {/* 1. Animated Hero Section with 3D Studio Card & Floating Particles */}
+    <div className="bg-[#0a0a0a] text-white selection:bg-[#c5a880]/30 selection:text-white">
+      {/* 1. Luxury Editorial Hero Section with Cinematic Photography Frame */}
       <SSSHero onOpenBooking={handleOpenBooking} onOpenQuote={handleOpenQuote} />
 
       {/* 2. SSS Studio Guarantees & 1-Month Delivery Promise */}

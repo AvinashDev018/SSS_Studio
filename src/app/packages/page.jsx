@@ -38,7 +38,7 @@ export default async function PackagesPage() {
  features: [
  "Full Day Coverage (12 Hours)",
  "2 Senior Photographers",
- "1 Videographer (Cinematic)",
+ "1 Videographer (4K Signature Video)",
  "300+ Edited High-Res Photos",
  "Premium Layflat Album (40 Pages)",
  "Creative Couple & Bridal Portraits"

@@ -143,11 +143,11 @@ body {
 
 /* Glassmorphism & Glow Cards */
 .glass-card {
-  background: rgba(12, 53, 48, 0.45);
+  background: rgba(18, 18, 18, 0.75);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(20, 184, 166, 0.25);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .glass-card-hover {
@@ -155,9 +155,19 @@ body {
 }
 
 .glass-card-hover:hover {
-  transform: translateY(-8px);
-  border-color: rgba(45, 212, 191, 0.45);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(20, 184, 166, 0.25);
+  transform: translateY(-4px);
+  border-color: rgba(197, 168, 128, 0.35);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 25px rgba(197, 168, 128, 0.15);
+}
+
+.luxury-card {
+  background: #111111;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+}
+
+.luxury-card:hover {
+  border-color: rgba(197, 168, 128, 0.4);
 }
 
 @layer utilities {
@@ -167,6 +177,10 @@ body {
   
   .text-gold-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#AA7C11];
+  }
+
+  .text-champagne-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#F5E6D3] via-[#C5A880] to-[#9E7D56];
   }
   
   .bg-brand-gradient {
