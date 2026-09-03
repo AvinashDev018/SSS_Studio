@@ -44,6 +44,7 @@ export default function Navbar() {
   const desktopLinks = [
     { name: t.nav.services, href: "/#services" },
     { name: t.nav.portfolio, href: "/#portfolio" },
+    { name: currentLang === "ta" ? "அட்லியர்" : currentLang === "hi" ? "एटेलियर" : "Atelier", href: "/atelier" },
     { name: currentLang === "ta" ? "பிரேம்கள்" : currentLang === "hi" ? "फोटो फ्रेम" : "Frames", href: "/#frames" },
     { name: t.nav.pricing, href: "/packages" },
     { name: t.nav.about, href: "/#about" },
@@ -55,6 +56,7 @@ export default function Navbar() {
     { name: t.nav.home, href: "/" },
     { name: t.nav.services, href: "/#services" },
     { name: t.nav.portfolio, href: "/#portfolio" },
+    { name: currentLang === "ta" ? "அட்லியர்" : currentLang === "hi" ? "एटेलियर" : "Atelier Storyboard", href: "/atelier" },
     { name: currentLang === "ta" ? "பிரேம்கள்" : currentLang === "hi" ? "फोटो फ्रेम" : "Frames", href: "/#frames" },
     { name: t.nav.pricing, href: "/packages" },
     { name: currentLang === "ta" ? "ஸ்டோர்" : currentLang === "hi" ? "स्टोर" : "Store", href: "/store" },

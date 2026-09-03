@@ -111,21 +111,21 @@ export default function SSSPortfolio() {
 
 
   return (
-    <section id="portfolio" className="py-24 bg-[#080c0b] text-white relative overflow-hidden">
+    <section id="portfolio" className="py-24 bg-[#0a0a0a] text-white relative overflow-hidden border-t border-white/5">
       {/* Background ambient lighting */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-teal-500/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-[#c5a880]/5 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#c5a880]/5 rounded-full blur-[160px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-widest mb-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.03] border border-white/10 text-[#c5a880] text-xs font-semibold uppercase tracking-widest mb-3">
             <Camera size={14} /> {t.portfolio.tag}
           </div>
-          <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-5xl font-serif font-normal text-white mb-4">
             {t.portfolio.title}
           </h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-teal-400 to-emerald-400 mx-auto rounded-full" />
+          <div className="w-16 h-0.5 bg-[#c5a880]/40 mx-auto rounded-full" />
         </div>
 
         {/* Filter Tabs */}
@@ -136,10 +136,10 @@ export default function SSSPortfolio() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative px-5 py-2.5 rounded-full text-xs md:text-sm font-semibold tracking-wider uppercase transition-all duration-300 cursor-pointer border ${
+                className={`relative px-5 py-2 rounded-full text-xs font-medium tracking-wider uppercase transition-all duration-300 cursor-pointer ${
                   isActive
-                    ? "bg-gradient-to-r from-teal-400 to-emerald-400 text-[#071f1b] border-transparent font-bold shadow-lg shadow-teal-500/25 scale-105"
-                    : "bg-white/5 text-gray-400 hover:text-white border-white/10 hover:border-white/20 hover:bg-white/10"
+                    ? "bg-[#c5a880] text-black font-semibold shadow-md"
+                    : "bg-white/5 text-zinc-400 hover:text-white border border-white/10 hover:border-white/20 hover:bg-white/10"
                 }`}
               >
                 {tab.label}
@@ -155,46 +155,44 @@ export default function SSSPortfolio() {
               <motion.div
                 key={proj.id}
                 layout
-                initial={{ opacity: 0, scale: 0.92, y: 25 }}
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.45, delay: idx * 0.07 }}
-                whileHover={{ y: -8, scale: 1.01 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.4, delay: idx * 0.06 }}
+                whileHover={{ y: -6 }}
                 onClick={() => openLightbox(proj)}
-                className="bg-[#0c3530]/40 backdrop-blur-xl border border-teal-500/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between cursor-pointer group hover:border-teal-400/50 hover:shadow-[0_20px_50px_rgba(20,184,166,0.15)] transition-all duration-300"
+                className="bg-[#121212] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col justify-between cursor-pointer group hover:border-[#c5a880]/40 transition-all duration-300"
               >
                 <div>
                   <div className="relative h-64 sm:h-72 overflow-hidden bg-zinc-900">
                     <img
                       src={proj.images[0]}
                       alt={proj.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-                    <span className="absolute top-4 left-4 text-[11px] font-bold text-teal-300 bg-black/70 border border-teal-400/40 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md shadow-md">
+                    <span className="absolute top-4 left-4 text-[11px] font-medium text-[#c5a880] bg-black/80 border border-white/15 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md shadow-md">
                       {proj.categoryLabel}
                     </span>
-
-
                   </div>
 
                   <div className="p-6">
-                    <h3 className="text-xl font-bold font-serif text-white mb-2 group-hover:text-teal-300 transition-colors">
+                    <h3 className="text-xl font-serif font-normal text-white mb-2 group-hover:text-[#c5a880] transition-colors">
                       {proj.title}
                     </h3>
-                    <p className="text-zinc-300 text-sm line-clamp-2 font-light leading-relaxed">
+                    <p className="text-zinc-400 text-sm line-clamp-2 font-light leading-relaxed">
                       {proj.description}
                     </p>
                   </div>
                 </div>
 
                 <div className="px-6 pb-6 pt-0 mt-auto">
-                  <div className="border-t border-white/10 pt-4 flex justify-between items-center text-xs text-gray-400 font-semibold uppercase tracking-wider">
+                  <div className="border-t border-white/10 pt-4 flex justify-between items-center text-xs text-zinc-400 font-medium uppercase tracking-wider">
                     <span>
                       {proj.images ? `${proj.images.length} Photos` : ""}
                     </span>
-                    <span className="text-teal-400 group-hover:underline flex items-center gap-1">
+                    <span className="text-[#c5a880] group-hover:underline flex items-center gap-1">
                       View Story →
                     </span>
                   </div>
@@ -217,7 +215,7 @@ export default function SSSPortfolio() {
             {/* Top Bar */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full max-w-6xl mx-auto z-10 pt-2 gap-4">
               <div className="text-white">
-                <span className="text-[10px] font-bold text-teal-400 bg-teal-950/80 border border-teal-400/30 px-3 py-1 rounded-full uppercase tracking-wider">
+                <span className="text-[10px] font-semibold text-[#c5a880] bg-[#c5a880]/15 border border-[#c5a880]/30 px-3 py-1 rounded-full uppercase tracking-wider">
                   {selectedProject.categoryLabel}
                 </span>
                 <h3 className="text-2xl md:text-3xl font-serif font-bold mt-2">
@@ -299,7 +297,7 @@ export default function SSSPortfolio() {
                       onClick={() => setMediaIndex(i)}
                       className={`relative w-16 h-12 md:w-20 md:h-14 rounded-xl overflow-hidden border-2 transition-all duration-300 cursor-pointer ${
                         mediaIndex === i
-                          ? "border-teal-400 scale-105 shadow-md shadow-teal-400/30"
+                          ? "border-[#c5a880] scale-105 shadow-md shadow-[#c5a880]/30"
                           : "border-transparent opacity-50 hover:opacity-80"
                       }`}
                     >

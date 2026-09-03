@@ -70,18 +70,18 @@ export default function SSSColorGradingComparison({ onOpenBooking }) {
   const text = titles[currentLang] || titles.en;
 
   return (
-    <section className="py-24 bg-[#080c0b] relative overflow-hidden">
+    <section className="py-24 bg-[#0a0a0a] relative overflow-hidden border-t border-white/5">
       {/* Background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-teal-500/10 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#c5a880]/5 rounded-full blur-[160px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-widest mb-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.03] border border-white/10 text-[#c5a880] text-xs font-semibold uppercase tracking-widest mb-3">
             <Sparkles size={14} /> {text.tag}
           </div>
-          <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-5xl font-serif font-normal text-white mb-4">
             {text.heading}
           </h2>
           <p className="text-zinc-400 text-base md:text-lg font-light leading-relaxed">
@@ -96,17 +96,17 @@ export default function SSSColorGradingComparison({ onOpenBooking }) {
             onMouseMove={handleMove}
             onTouchMove={handleMove}
             onClick={handleMove}
-            className="relative h-[360px] sm:h-[480px] md:h-[540px] rounded-3xl overflow-hidden shadow-2xl border border-teal-500/30 cursor-ew-resize select-none group"
+            className="relative h-[360px] sm:h-[480px] md:h-[540px] rounded-2xl overflow-hidden shadow-2xl border border-white/15 cursor-ew-resize select-none group"
           >
             {/* 1. After (Color Graded) Image - Full background */}
             <div className="absolute inset-0 w-full h-full">
               <img
-                src="https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504972/kllcuquwxjltq88cmb5n.jpg"
+                src="https://res.cloudinary.com/e5pnwpo5/image/upload/v1788426852/sss-hero-wedding.jpg"
                 alt="SSS Master Color Graded"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute bottom-6 right-6 px-4 py-2 rounded-full bg-[#0c3530]/90 backdrop-blur-md border border-teal-400/40 text-teal-300 text-xs sm:text-sm font-bold shadow-xl flex items-center gap-2">
-                <CheckCircle2 size={16} className="text-emerald-400" />
+              <div className="absolute bottom-6 right-6 px-4 py-2 rounded-full bg-black/85 backdrop-blur-md border border-white/15 text-[#c5a880] text-xs sm:text-sm font-semibold shadow-xl flex items-center gap-2">
+                <CheckCircle2 size={16} className="text-[#c5a880]" />
                 <span>{text.gradedLabel}</span>
               </div>
             </div>
@@ -117,7 +117,7 @@ export default function SSSColorGradingComparison({ onOpenBooking }) {
               style={{ width: `${sliderPos}%` }}
             >
               <img
-                src="https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504972/kllcuquwxjltq88cmb5n.jpg"
+                src="https://res.cloudinary.com/e5pnwpo5/image/upload/v1788426852/sss-hero-wedding.jpg"
                 alt="RAW Flat Profile"
                 className="absolute inset-0 w-full h-full object-cover max-w-none"
                 style={{
@@ -126,28 +126,28 @@ export default function SSSColorGradingComparison({ onOpenBooking }) {
                   filter: "saturate(0.55) contrast(0.82) brightness(0.92)",
                 }}
               />
-              <div className="absolute bottom-6 left-6 px-4 py-2 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-zinc-300 text-xs sm:text-sm font-bold shadow-xl">
+              <div className="absolute bottom-6 left-6 px-4 py-2 rounded-full bg-black/85 backdrop-blur-md border border-white/15 text-zinc-300 text-xs sm:text-sm font-medium shadow-xl">
                 <span>{text.rawLabel}</span>
               </div>
             </div>
 
             {/* 3. Slider Handle Line & Knob */}
             <div
-              className="absolute top-0 bottom-0 w-1 bg-gradient-to-b from-teal-300 via-white to-emerald-300 pointer-events-none shadow-[0_0_15px_rgba(255,255,255,0.8)]"
+              className="absolute top-0 bottom-0 w-0.5 bg-[#c5a880] pointer-events-none shadow-[0_0_15px_rgba(197,168,128,0.8)]"
               style={{ left: `${sliderPos}%` }}
             >
               {/* Halo ripple ring */}
-              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-teal-400/20 animate-ping pointer-events-none" />
+              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-14 h-14 rounded-full bg-[#c5a880]/20 animate-ping pointer-events-none" />
               
-              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-gradient-to-br from-teal-400 via-emerald-400 to-teal-300 text-[#071f1b] shadow-2xl flex items-center justify-center border-2 border-white scale-100 group-hover:scale-110 transition-transform">
-                <ArrowLeftRight size={18} strokeWidth={2.5} />
+              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-[#c5a880] text-black shadow-2xl flex items-center justify-center border-2 border-white scale-100 group-hover:scale-105 transition-transform">
+                <ArrowLeftRight size={16} strokeWidth={2.5} />
               </div>
             </div>
 
             {/* Top Helper Floating Pill */}
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-zinc-300 text-[11px] font-semibold flex items-center gap-1.5 pointer-events-none shadow-lg">
-              <Sliders size={12} className="text-teal-400 animate-pulse" />
-              <span>{hasInteracted ? "Dragging to compare" : "✨ Touch or drag to compare live"}</span>
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/80 backdrop-blur-md border border-white/10 text-zinc-300 text-[11px] font-medium flex items-center gap-1.5 pointer-events-none shadow-lg">
+              <Sliders size={12} className="text-[#c5a880]" />
+              <span>{hasInteracted ? "Dragging to compare" : "✦ Touch or drag to compare live"}</span>
             </div>
           </div>
 
@@ -155,9 +155,9 @@ export default function SSSColorGradingComparison({ onOpenBooking }) {
           <div className="mt-8 text-center">
             <button
               onClick={() => onOpenBooking("Wedding & Event Photo Shoot")}
-              className="px-8 py-4 bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-300 hover:to-emerald-300 text-[#071f1b] font-bold rounded-full shadow-lg shadow-teal-500/20 hover:scale-105 transition-all duration-300 text-xs sm:text-sm uppercase tracking-wider cursor-pointer inline-flex items-center gap-2 group"
+              className="px-8 py-3.5 bg-[#c5a880] hover:bg-[#d4af37] text-black font-semibold rounded-full shadow-lg hover:shadow-[0_0_25px_rgba(197,168,128,0.35)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 text-xs uppercase tracking-wider cursor-pointer inline-flex items-center gap-2 group"
             >
-              <Sparkles size={16} className="group-hover:rotate-12 transition-transform" />
+              <Sparkles size={15} />
               <span>{text.cta}</span>
             </button>
           </div>
