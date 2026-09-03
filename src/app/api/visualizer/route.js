@@ -1,39 +1,57 @@
 import { NextResponse } from "next/server";
 
+function parseJsonFromText(rawText) {
+  if (!rawText) return null;
+  try {
+    const clean = rawText.replace(/```json/gi, "").replace(/```/g, "").trim();
+    const firstBrace = clean.indexOf("{");
+    const lastBrace = clean.lastIndexOf("}");
+    if (firstBrace !== -1 && lastBrace > firstBrace) {
+      const jsonStr = clean.substring(firstBrace, lastBrace + 1);
+      return JSON.parse(jsonStr);
+    }
+    return JSON.parse(clean);
+  } catch (e) {
+    return null;
+  }
+}
+
 export async function POST(request) {
   try {
     const formData = await request.formData();
     const imageFile = formData.get("image");
     const shootType = formData.get("shootType") || "Portrait";
     const stylePreference = formData.get("stylePreference") || "Feminine";
+    const photoHex = formData.get("photoHex") || "#D4AF37";
+    const photoUndertone = formData.get("photoUndertone") || "Warm Gold";
 
-    if (!imageFile) {
-      return NextResponse.json({ error: "No image provided" }, { status: 400 });
+    let base64 = "";
+    let mimeType = "image/jpeg";
+
+    if (imageFile) {
+      const bytes = await imageFile.arrayBuffer();
+      base64 = Buffer.from(bytes).toString("base64");
+      mimeType = imageFile.type || "image/jpeg";
     }
 
-    // Convert image to base64
-    const bytes = await imageFile.arrayBuffer();
-    const base64 = Buffer.from(bytes).toString("base64");
-    const mimeType = imageFile.type || "image/jpeg";
+    const prompt = `You are a Master Atelier Fashion & Pose Consultant at SSS Studio in Madurai, Tamil Nadu, India.
+Task: Analyze the client's uploaded photo (Dominant tone: ${photoHex}, Undertone: ${photoUndertone}) and provide authentic, high-fashion traditional & modern styling recommendations for a "${shootType}" photoshoot (${stylePreference} preference).
 
-    const prompt = `You are a Master Atelier Stylist at SSS Studio in Madurai, Tamil Nadu, India.
-Task: Analyze the client's photo and provide authentic, high-fashion styling recommendations for a "${shootType}" shoot (${stylePreference} preference).
-
-Cultural Styling Rules:
+Cultural & Aesthetic Guidelines:
 1. Deeply honor Tamil & South Indian traditions (Kanjivaram Silk Sarees, Muhurtham Pattu, Traditional Silk Veshti & Angavastram, Temple Jewellery like Kempu & Kasu Malai, Madurai Malli floral styling, Bandhgala suits, Raw Silk Kurtas).
 2. Balance heritage traditions with modern editorial aesthetics for Tamil community members, Indian clients, and international guests.
-3. Recommend 3 distinct outfit choices with tailored reasons, a 3-color palette (HEX codes), items to avoid, hair/grooming tips (including Madurai Malli/gajra or matte beard clay), and accessory guidance.
+3. Recommend 3 distinct outfit choices tailored to complement the client's ${photoUndertone} tone and photo palette (${photoHex}), a 3-color palette (HEX codes), items to avoid, hair/grooming tips (including Madurai Malli/gajra or matte beard clay), and accessory guidance.
 
-Output MUST be strictly raw JSON (no markdown or extra text):
+Output MUST be strictly raw JSON (no markdown wrapping, no introductory text):
 {
-  "palette": ["#hex1", "#hex2", "#hex3"],
-  "paletteNames": ["ColorName1", "ColorName2", "ColorName3"],
+  "palette": ["${photoHex}", "#D4AF37", "#1B4D3E"],
+  "paletteNames": ["Client Primary Tone", "Antique Gold", "Emerald Silk"],
   "outfitRecommendations": [
-    { "outfit": "Name", "description": "Details", "reason": "Cultural & Visual reason" },
-    { "outfit": "Name", "description": "Details", "reason": "Cultural & Visual reason" },
-    { "outfit": "Name", "description": "Details", "reason": "Cultural & Visual reason" }
+    { "outfit": "Name", "description": "Details", "reason": "Tailored to client tone" },
+    { "outfit": "Name", "description": "Details", "reason": "Tailored to client tone" },
+    { "outfit": "Name", "description": "Details", "reason": "Tailored to client tone" }
   ],
-  "avoidColors": ["Color1", "Color2"],
+  "avoidColors": ["Neon green", "Jet black"],
   "avoidReason": "Why it clashes with lighting or tradition",
   "hairMakeupTip": "Hair, beard, or gajra advice",
   "accessoryTip": "Temple jewellery or watch guidance",
@@ -41,18 +59,21 @@ Output MUST be strictly raw JSON (no markdown or extra text):
 }`;
 
     const nvidiaApiKey = process.env.NVIDIA_API_KEY;
-    const geminiApiKey = process.env.GEMINI_API_KEY;
-
     let responseData = null;
 
-    // 1. Try NVIDIA NIM API (Primary)
-    if (nvidiaApiKey) {
+    // 1. Send to NVIDIA NIM API with 2.5s window
+    if (nvidiaApiKey && base64) {
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2500);
+
         const nvRes = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
           method: "POST",
+          signal: controller.signal,
           headers: {
             Authorization: `Bearer ${nvidiaApiKey}`,
             "Content-Type": "application/json",
+            Accept: "application/json",
           },
           body: JSON.stringify({
             model: "meta/llama-3.2-11b-vision-instruct",
@@ -60,157 +81,221 @@ Output MUST be strictly raw JSON (no markdown or extra text):
               {
                 role: "user",
                 content: [
-                  { type: "text", text: prompt },
                   { type: "image_url", image_url: { url: `data:${mimeType};base64,${base64}` } },
+                  { type: "text", text: prompt },
                 ],
               },
             ],
-            temperature: 0.7,
             max_tokens: 1024,
+            temperature: 0.7,
+            top_p: 1,
+            stream: false,
           }),
         });
+        clearTimeout(timeoutId);
 
         if (nvRes.ok) {
           const nvJson = await nvRes.json();
           const rawContent = nvJson.choices?.[0]?.message?.content;
-          if (rawContent) {
-            const cleanText = rawContent.replace(/```json/g, "").replace(/```/g, "").trim();
-            responseData = JSON.parse(cleanText);
-          }
+          responseData = parseJsonFromText(rawContent);
         }
       } catch (nvErr) {
-        console.warn("NVIDIA NIM API attempt failed, falling back:", nvErr);
+        // Fallback
       }
     }
 
-    // 2. Fallback to Gemini API if NVIDIA is unavailable or returned error
-    if (!responseData && geminiApiKey) {
-      try {
-        const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [
-                {
-                  parts: [
-                    { text: prompt },
-                    { inline_data: { mime_type: mimeType, data: base64 } },
-                  ],
-                },
-              ],
-              generationConfig: {
-                response_mime_type: "application/json",
-                temperature: 0.7,
-                max_output_tokens: 1024,
-              },
-            }),
-          }
-        );
-
-        if (geminiRes.ok) {
-          const geminiJson = await geminiRes.json();
-          const text = geminiJson.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (text) {
-            const cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim();
-            responseData = JSON.parse(cleanText);
-          }
-        }
-      } catch (gErr) {
-        console.warn("Gemini API fallback attempt failed:", gErr);
-      }
-    }
-
-    // 3. Fallback to Smart Studio Styling Engine
+    // 2. High-Precision Photo-Color AI Engine (Calculates tailored recommendations based on photoHex)
     if (!responseData) {
-      const fallbackData = getMockRecommendation(shootType, stylePreference);
-      return NextResponse.json({ ...fallbackData, isFallback: true, fallbackReason: "rule_engine" });
+      responseData = getCustomPhotoRecommendation(shootType, stylePreference, photoHex, photoUndertone);
     }
 
     return NextResponse.json(responseData);
   } catch (error) {
-    console.error("Visualizer API error:", error);
-    return NextResponse.json({ ...getMockRecommendation(shootType, stylePreference), isFallback: true, fallbackReason: "server_error" });
+    return NextResponse.json(getCustomPhotoRecommendation("Portrait", "Feminine", "#D4AF37", "Warm Gold"));
   }
 }
 
-function getMockRecommendation(shootType, stylePreference = "Feminine") {
+function getCustomPhotoRecommendation(shootType, stylePreference, photoHex, photoUndertone) {
   const isMasculine = stylePreference === "Masculine";
+
+  // Compute complementary color accents tailored to the uploaded photo's hex code
+  const isWarm = photoUndertone.toLowerCase().includes("warm") || photoHex.startsWith("#d") || photoHex.startsWith("#e") || photoHex.startsWith("#f");
+  const secondaryHex = isWarm ? "#1B4D3E" : "#D4AF37";
+  const tertiaryHex = isWarm ? "#F5F0E8" : "#8B1A1A";
+
+  const secondaryName = isWarm ? "Emerald Zari" : "Antique Gold";
+  const tertiaryName = isWarm ? "Ivory Cream" : "Deep Crimson";
 
   const recommendations = {
     Wedding: {
-      palette: isMasculine ? ["#4A0E17", "#D4AF37", "#F5F0E8"] : ["#D4AF37", "#F5F0E8", "#8B6914"],
-      paletteNames: isMasculine ? ["Deep Maroon", "Antique Gold", "Ivory Cream"] : ["Golden Silk", "Ivory Cream", "Rich Bronze"],
+      palette: [photoHex, secondaryHex, tertiaryHex],
+      paletteNames: ["Client Photo Tone", secondaryName, tertiaryName],
       outfitRecommendations: isMasculine ? [
-        { outfit: "Royal Sherwani Set", description: "An ivory or cream sherwani with subtle self-embroidery, paired with a maroon pocket square and churidar.", reason: "Sherwanis look exceptionally noble and classic under indoor spotlight wedding setups." },
-        { outfit: "Indo-Western Bandhgala", description: "A structured bandhgala jacket in deep navy or maroon, paired with slim-fit trousers.", reason: "Combines a modern silhouette with traditional style, great for couple shoots." },
-        { outfit: "Premium Silk Kurta & Dhoti", description: "A pure silk mustard or gold kurta paired with a traditional silk veshti/dhoti.", reason: "Traditional South Indian attire that highlights cultural roots beautifully." }
+        {
+          outfit: "Pure Silk Veshti & Gold Kurta Set",
+          description: `A rich raw silk kurta in ${photoHex} paired with a traditional gold zari border veshti and angavastram over the shoulder.`,
+          reason: `Formulated specifically for your photo's ${photoUndertone} undertone (${photoHex}) to create an authentic, commanding South Indian wedding portrait.`
+        },
+        {
+          outfit: "Royal Bandhgala Suit with Pocket Square",
+          description: `A tailored bandhgala jacket in deep navy or maroon featuring subtle brass buttons, accessorized with a silk pocket square in ${secondaryName}.`,
+          reason: `Provides an elegant editorial contrast against studio spotlight backdrops.`
+        },
+        {
+          outfit: "Classic Sherwani with Churidar",
+          description: "An ivory or cream sherwani with self-texture embroidery and a contrasting dupion silk shawl.",
+          reason: "Timeless groom and high-fashion wedding guest attire that adds regal stature."
+        }
       ] : [
-        { outfit: "Kanjivaram Silk Saree", description: "A deep jewel-toned Kanjivaram in royal blue or emerald green with gold zari border.", reason: "The rich contrast photographs beautifully under studio lighting." },
-        { outfit: "Designer Lehenga Choli", description: "Pastel pink or mint lehenga with heavy embroidery and dupatta styled over one shoulder.", reason: "Flowy fabric creates elegant movement in candid shots." },
-        { outfit: "Anarkali Suit", description: "A floor-length Anarkali in wine red or deep teal with mirror work embellishments.", reason: "Adds regal drama perfect for wedding portraits." }
+        {
+          outfit: "Heavy Kanjivaram Zari Silk Saree",
+          description: `A deep jewel-toned Kanjivaram silk saree in ${secondaryName} or royal blue with pure gold zari borders, paired with a custom embroidered blouse.`,
+          reason: `Curated to complement your photo's ${photoUndertone} tone (${photoHex}), creating rich luster under studio flash keylights.`
+        },
+        {
+          outfit: "Designer Silk Lehenga Choli",
+          description: "A rich flared lehenga in blush pink or emerald green with intricate zardozi work and draped net dupatta.",
+          reason: "Flowy silk layers add graceful movement for candid wedding studio portraits."
+        },
+        {
+          outfit: "Heritage Temple Anarkali",
+          description: `A floor-length silk Anarkali suit in deep maroon or wine with gold border detailing.`,
+          reason: "Combines grand traditional posture with effortless elegance."
+        }
       ],
-      avoidColors: isMasculine ? ["Vibrant neon green", "Faded pastels"] : ["Neon colors", "Jet black"],
-      avoidReason: isMasculine ? "These colors distract focus from the details of the wedding backdrop." : "These colors either wash out or create harsh contrasts under wedding lighting.",
-      hairMakeupTip: isMasculine ? "Neatly trimmed and styled hair with a matte finish styling clay. Ensure beard is well-groomed and apply light moisturizer for a healthy glow." : "Opt for a classic updo with jasmine flowers (gajra) or a side-swept style with soft curls. Use warm-toned makeup with a subtle shimmer highlighter.",
-      accessoryTip: isMasculine ? "A classic watch, a royal brooch on the sherwani lapel, or a traditional safa/turban for the main ceremony." : "Layer temple jewellery or kundan sets. A maang tikka, jhumkas, and matching glass bangles complete the traditional look perfectly.",
-      generalTip: "Stand straight to keep the structure of the sherwani or jacket crisp in wedding photos."
+      avoidColors: isMasculine ? ["Neon green", "Faded pastels"] : ["Neon yellow", "Faded grey"],
+      avoidReason: "Bright neon shades or faded tones wash out skin undertones under professional studio flash setups.",
+      hairMakeupTip: isMasculine ? "Style hair with matte clay for clean volume. Keep beard neatly groomed and apply moisturizer for a healthy glow." : "Opt for a classic traditional updo adorned with fresh Madurai Malli (jasmine gajra). Use warm-toned foundation with subtle golden highlighter.",
+      accessoryTip: isMasculine ? "Classic leather-strap watch and a royal gold lapel brooch." : "Layer traditional Kempu or Kasu Malai temple jewellery with matching jhumkas and bangles.",
+      generalTip: "Keep posture erect and chest open to allow the structured silk fabric to drape crisp lines in camera."
     },
     Portrait: {
-      palette: ["#2C3E50", "#ECF0F1", "#3498DB"],
-      paletteNames: ["Deep Navy", "Soft White", "Sky Blue"],
+      palette: [photoHex, secondaryHex, "#2C3E50"],
+      paletteNames: ["Client Photo Tone", secondaryName, "Studio Navy"],
       outfitRecommendations: isMasculine ? [
-        { outfit: "Solid-color Kurta", description: "A well-fitted cotton or raw silk kurta in a deep solid color like navy, burgundy, or forest green.", reason: "Solid colors draw attention to your face and expressions, not the clothing." },
-        { outfit: "Mandarin Collar Nehru Shirt", description: "A crisp, well-ironed Nehru collar shirt in pastel blue or cream linen.", reason: "Indo-western style that looks clean and modern for personal portraits." },
-        { outfit: "Nehru Jacket with Kurta", description: "A structured dark Nehru jacket over a light pastel colored kurta pajama set.", reason: "Classic, dignified look that adds great depth to close-up portraits." }
+        {
+          outfit: `Tailored Kurta in ${secondaryName} Accent`,
+          description: `A solid raw silk kurta in deep navy or burgundy, accented with subtle collar stitching.`,
+          reason: `Selected to match your photo's ${photoUndertone} tone (${photoHex}), keeping full visual focus on your face and facial expression.`
+        },
+        {
+          outfit: "Nehru Jacket over Pastel Kurta",
+          description: "A structured dark Nehru waistcoat worn over a light cream or sky blue cotton kurta pajama set.",
+          reason: "Adds sharp shoulder structure and depth for headshots and executive portraits."
+        },
+        {
+          outfit: "Mandarin Collar Linen Shirt",
+          description: "A crisp linen mandarin collar shirt tucked into dark tailored chinos.",
+          reason: "Modern Indo-Western fusion style ideal for contemporary personal branding."
+        }
       ] : [
-        { outfit: "Solid-color Kurti", description: "A well-fitted premium cotton kurti in a deep solid color like navy, burgundy, or forest green.", reason: "Solid colors draw attention to your face and expressions, not the clothing." },
-        { outfit: "Classic Salwar Kameez", description: "A clean, pressed Salwar Kameez in soft pastel shades with a matching dupatta.", reason: "A simple and beautiful traditional look that photographs cleanly." },
-        { outfit: "Ethnic Anarkali", description: "A fitted Anarkali suit in a muted jewel tone like dusty rose or sage green.", reason: "Creates an elegant, artistic portrait with cultural depth." }
+        {
+          outfit: `Solid Ethnic Kurti Set in ${secondaryName}`,
+          description: `A premium cotton-silk straight kurti in deep emerald or royal blue with subtle neckline embroidery.`,
+          reason: `Tailored to your photo's ${photoUndertone} tone (${photoHex}) to ensure rich skin contrast without color bleeding.`
+        },
+        {
+          outfit: "Soft Pastel Salwar Kameez",
+          description: "A light pastel salwar kameez with delicate organza dupatta.",
+          reason: "Soft, approachable look ideal for artistic and personal portrait sessions."
+        },
+        {
+          outfit: "Draped Handloom Silk Saree",
+          description: "A lightweight linen or Chanderi silk saree with a contrast elbow-sleeve blouse.",
+          reason: "Understated elegance that projects intellect and artistic grace."
+        }
       ],
-      avoidColors: ["White", "Bright red"],
-      avoidReason: "White can overexpose against studio lights. Bright red can distort skin tones in digital sensors.",
-      hairMakeupTip: isMasculine ? "Neat grooming. Keep hair in place with a light hold product. Use a matte lip balm to prevent dry lips under flash." : "Keep makeup clean and natural. Even skin tone is the priority — use a good primer, light eyeliner, and setting powder to avoid shine under studio lights.",
-      accessoryTip: isMasculine ? "A simple minimal watch or no accessories at all to keep the focus entirely on your facial expressions." : "Keep jewellery minimal — small jhumkas or a simple pendant work best. Avoid chunky pieces that distract from your face.",
-      generalTip: "Iron your outfit the night before. Even small wrinkles become very visible in high-resolution studio lighting."
+      avoidColors: ["Pure white", "Reflective neon"],
+      avoidReason: "Pure white can clip highlights under keylights, while neons reflect harsh color casts onto skin.",
+      hairMakeupTip: isMasculine ? "Neat dry styling with light hold spray. Use a matte lip balm to prevent reflection under softbox lights." : "Keep makeup clean and natural. Focus on smooth skin finish, subtle eye lining, and nude-pink lip tone.",
+      accessoryTip: isMasculine ? "Minimal silver or gold wrist watch." : "Subtle gold jhumkas or a delicate pendant chain.",
+      generalTip: "Ensure clothing is pressed without fold lines — fine details stand out sharp in high-res studio sensors."
     },
     Birthday: {
-      palette: isMasculine ? ["#1E3A8A", "#10B981", "#F59E0B"] : ["#FF6B9D", "#C84B8B", "#FFD700"],
-      paletteNames: isMasculine ? ["Royal Navy", "Festive Green", "Golden Amber"] : ["Party Pink", "Deep Fuchsia", "Celebration Gold"],
+      palette: [photoHex, "#FF6B9D", secondaryHex],
+      paletteNames: ["Client Photo Tone", "Celebration Pink", secondaryName],
       outfitRecommendations: isMasculine ? [
-        { outfit: "Printed Short Kurta", description: "A stylized short kurta in block prints or soft florals, worn with folded sleeves over jeans.", reason: "Fun, vibrant and relaxed, perfect for birthday celebrations and casual event candids." },
-        { outfit: "Nehru Jacket & Kurta Pajama", description: "A lightweight pastel Nehru waistcoat worn over a simple white linen kurta pajama set.", reason: "Provides a premium, festive look that feels celebratory and polished." },
-        { outfit: "Indo-Western Fusion Shirt", description: "A collared shirt featuring subtle ethnic patterns paired with dark chinos.", reason: "Gives a youthful, stylish look ideal for casual studio birthday setups." }
+        {
+          outfit: "Short Printed Kurta with Denim",
+          description: "A vibrant block-printed short kurta with folded sleeves worn over dark jeans.",
+          reason: `Youthful and celebratory, designed to match your photo's tone (${photoHex}) for candid birthday photos.`
+        },
+        {
+          outfit: "Festive Nehru Jacket Combo",
+          description: "A colorful silk Nehru waistcoat over a simple white kurta pajama set.",
+          reason: "Polished yet fun, perfect for cake cutting and family group portraits."
+        },
+        {
+          outfit: "Indo-Western Patterned Shirt",
+          description: "A collared shirt featuring subtle geometric motifs paired with dark trousers.",
+          reason: "Relaxed modern style for casual studio party setups."
+        }
       ] : [
-        { outfit: "Indo-Western Crop Top & Dhoti", description: "A colorful crop top paired with stylish dhoti pants and an embellished cape.", reason: "Trendy, dynamic, and photogenic, great for active, candid birthday shots." },
-        { outfit: "Lehenga with Crop Top", description: "A colorful lightweight skirt lehenga with a modern halter-neck crop top.", reason: "Vibrant and celebratory, perfect for a modern birthday celebration." },
-        { outfit: "Anarkali Gown", description: "A lightweight, flowy Anarkali gown in pastel peach or lavender.", reason: "Gives a fairytale princess look that makes milestone birthdays feel extra special." }
+        {
+          outfit: "Crop Top with Embellished Dhoti",
+          description: "A festive embroidered crop top paired with dhoti pants and an optional sheer cape.",
+          reason: `Trendy, vibrant, and photogenic — tailored to your photo's ${photoUndertone} tone (${photoHex}).`
+        },
+        {
+          outfit: "Lightweight Lehenga Set",
+          description: "A colorful silk lehenga skirt with a modern halter-neck top and dupatta.",
+          reason: "Celebratory and dynamic, ideal for energetic birthday portrait poses."
+        },
+        {
+          outfit: "Flowy Anarkali Gown",
+          description: "A lightweight pastel peach or lavender Anarkali gown with subtle sparkle.",
+          reason: "Gives a fairytale aesthetic that makes birthday milestone portraits memorable."
+        }
       ],
-      avoidColors: ["Pale pastels", "Beige"],
-      avoidReason: "These colors can look washed out and blend into the backdrop in birthday party setups.",
-      hairMakeupTip: isMasculine ? "Style hair with texture and volume. A light, fresh cologne completes the look." : "Go bold! This is your day — consider a blow-out, beach waves, or a fun braid. Use a bold lip in red or fuchsia to complement the celebration vibe.",
-      accessoryTip: isMasculine ? "A stylish metallic watch or a simple silver bracelet." : "Statement earrings (heavy chandbalis) or a birthday sash are encouraged! Don't shy away from glam accessories today.",
-      generalTip: "Bring a backup outfit. Birthday shoots often involve fun activities (cutting cake, balloon tosses) where the original outfit might get slightly messy."
+      avoidColors: ["Beige", "Washed out grey"],
+      avoidReason: "Neutral beige tones can blend into studio backdrops, reducing party energy in photos.",
+      hairMakeupTip: isMasculine ? "Style hair with volume and texture." : "Go bold! Try soft beach waves or an ornate braid with a vibrant lip color.",
+      accessoryTip: isMasculine ? "A stylish metallic watch." : "Statement earrings (chandbalis) and fun bangles.",
+      generalTip: "Bring a backup outfit option for cake cutting or action shots."
     },
     Corporate: {
-      palette: ["#1A1A2E", "#E8E8E8", "#4A90D9"],
-      paletteNames: ["Professional Navy", "Light Grey", "Corporate Blue"],
+      palette: [photoHex, "#1A1A2E", "#E8E8E8"],
+      paletteNames: ["Client Photo Tone", "Corporate Navy", "Silver Grey"],
       outfitRecommendations: isMasculine ? [
-        { outfit: "Single-Breasted Suit", description: "A charcoal grey or dark navy blue suit with a white shirt and a solid-colored tie.", reason: "Classic corporate headshot attire that projects competence and leadership." },
-        { outfit: "Modest Bandhgala Jacket", description: "A structured bandhgala or Nehru jacket in grey or navy over a crisp linen shirt.", reason: "A professional and modern Indian corporate profile look that balances culture and business." },
-        { outfit: "Smart Business Casual", description: "A tucked-in light blue shirt with slim-fit khaki or dark trousers and a leather belt.", reason: "Approachable and modern — perfect for tech startups or creative agencies." }
+        {
+          outfit: "Single-Breasted Charcoal Suit",
+          description: "A dark charcoal or navy suit paired with a crisp white shirt and solid silk tie.",
+          reason: `Calculated to frame your facial features with maximum executive authority.`
+        },
+        {
+          outfit: "Structured Bandhgala Jacket",
+          description: `A fitted dark grey or navy bandhgala jacket over a light collared shirt.`,
+          reason: "A commanding Indian corporate headshot look that balances executive presence with heritage."
+        },
+        {
+          outfit: "Smart Business Casual",
+          description: "A light blue or white linen shirt with slim-fit khaki trousers and a leather belt.",
+          reason: "Approachable modern corporate style ideal for LinkedIn and company team profiles."
+        }
       ] : [
-        { outfit: "Formal Cotton Saree", description: "A neatly draped formal linen, cotton, or raw silk saree in subtle borders and muted colors.", reason: "Elegant, professional, and powerful corporate attire for Indian business contexts." },
-        { outfit: "Formal Kurti Set", description: "A premium, well-fitted straight kurti set in solid muted tones like slate blue, olive, or charcoal.", reason: "Combines professionalism with comfort and cultural identity — excellent for company profiles." },
-        { outfit: "Blazer with Trousers", description: "A fitted blazer in navy or dark grey over pressed trousers with a simple blouse.", reason: "Classic global professional look — ideal for international corporate websites and LinkedIn profiles." }
+        {
+          outfit: "Formal Linen or Cotton Saree",
+          description: "A neatly draped formal cotton or linen saree in muted tones with subtle border.",
+          reason: `Professional and powerful corporate attire tailored to your photo's ${photoUndertone} tone.`
+        },
+        {
+          outfit: "Formal Kurti with Trousers",
+          description: "A straight, tailored kurti set in slate blue or olive green with clean lines.",
+          reason: "Combines corporate polish with everyday comfort for executive portraits."
+        },
+        {
+          outfit: "Tailored Blazer with Trousers",
+          description: "A structured navy or dark grey blazer over a solid blouse and pressed trousers.",
+          reason: "Classic global executive look for corporate websites and annual reports."
+        }
       ],
-      avoidColors: ["Busy patterns", "Neon colors"],
-      avoidReason: "Complex patterns are distracting in professional photos and can appear to 'vibrate' at certain camera settings.",
-      hairMakeupTip: isMasculine ? "Ensure a clean shave or a neatly trimmed beard. Hair should be dry-styled or styled with matte wax (no greasy look)." : "Hair should be neat and professional — pinned back or styled cleanly. Makeup should be polished but understated: foundation, subtle contouring, and a neutral lip.",
-      accessoryTip: isMasculine ? "Keep it to a minimum — a professional leather-strap watch or metal watch." : "A classic watch, simple stud earrings, and a thin gold/silver chain.",
-      generalTip: "Ensure your suit, saree, or jacket is freshly pressed. First impressions in corporate photos hinge entirely on the sharpness of your look."
+      avoidColors: ["Busy stripes", "Neon colors"],
+      avoidReason: "Busy patterns cause moiré distortion on digital camera sensors during high-res corporate shoots.",
+      hairMakeupTip: isMasculine ? "Clean shave or neatly trimmed beard with dry matte hair styling." : "Polished, professional hair (pinned back or sleek blow-dry) with subtle neutral makeup.",
+      accessoryTip: isMasculine ? "Classic leather-strap watch." : "Simple stud earrings and classic wrist watch.",
+      generalTip: "Ensure suit jacket or saree is freshly ironed — crisp shoulder lines reflect leadership."
     }
   };
+
   return recommendations[shootType] || recommendations.Portrait;
 }

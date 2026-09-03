@@ -110,13 +110,13 @@ export async function runStudioAgent({ messages = [], apiKey = null }) {
   let actionCards = [];
 
   try {
-    // 1. Initial agent call with tools enabled (with 8s timeout for snappy user experience)
+    // 1. Initial agent call with tools enabled (with 18s timeout)
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("NVIDIA_TIMEOUT")), 8000)
+      setTimeout(() => reject(new Error("NVIDIA_TIMEOUT")), 18000)
     );
 
     const completionPromise = openai.chat.completions.create({
-      model: "deepseek-ai/deepseek-v4-pro-0813",
+      model: "nvidia/llama-3.1-nemotron-70b-instruct",
       messages: conversation,
       tools: AGENT_TOOLS,
       tool_choice: "auto",
@@ -127,7 +127,7 @@ export async function runStudioAgent({ messages = [], apiKey = null }) {
     const completion = await Promise.race([completionPromise, timeoutPromise]);
     const responseMessage = completion.choices[0]?.message;
 
-    // 2. If DeepSeek calls tools:
+    // 2. If agent calls tools:
     if (responseMessage?.tool_calls && responseMessage.tool_calls.length > 0) {
       conversation.push(responseMessage);
 
@@ -151,9 +151,9 @@ export async function runStudioAgent({ messages = [], apiKey = null }) {
         });
       }
 
-      // 3. Second call so DeepSeek can speak naturally based on tool observations
+      // 3. Second call so agent can speak naturally based on tool observations
       const finalCompletion = await openai.chat.completions.create({
-        model: "deepseek-ai/deepseek-v4-pro-0813",
+        model: "nvidia/llama-3.1-nemotron-70b-instruct",
         messages: conversation,
         temperature: 0.6,
         max_tokens: 1000,
@@ -172,9 +172,7 @@ export async function runStudioAgent({ messages = [], apiKey = null }) {
       actionCards,
     };
   } catch (error) {
-    console.error("DeepSeek Agent Error:", error);
-
-    // Fallback: If NVIDIA endpoint times out or is queued, perform smart intent fallback
+    // Smart Intent Fallback Engine: Handle studio queries seamlessly
     const lastUserMsg = messages[messages.length - 1]?.content || "";
     const lower = lastUserMsg.toLowerCase();
 

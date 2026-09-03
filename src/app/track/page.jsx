@@ -118,25 +118,25 @@ export default function TrackOrderPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#080c0b] text-zinc-100 pt-32 pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-[#FFFFFF] text-zinc-900 pt-32 pb-24 relative overflow-hidden">
       {/* Background ambient lighting */}
-      <div className="absolute top-20 left-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute top-20 left-1/4 w-96 h-96 bg-[#d4af37]/15 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-[#d4af37]/15 rounded-full blur-[160px] pointer-events-none" />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <AnimatedSection className="text-center mb-10 print:hidden">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-widest mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#d4af37]/15 border border-[#d4af37]/40 text-[#8b6508] text-xs font-bold uppercase tracking-widest mb-4">
             <Sparkles size={14} /> Live Studio Tracking
           </div>
-          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4 text-white">
+          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4 text-zinc-900">
             Track Your Order or Shoot
           </h1>
-          <p className="text-zinc-400 max-w-xl mx-auto text-base">
-            Enter your <span className="text-teal-300 font-semibold">10-Digit Mobile Number</span> or <span className="text-teal-300 font-semibold">Order ID</span> to view real-time production, framing, and delivery progress.
+          <p className="text-zinc-600 max-w-xl mx-auto text-base">
+            Enter your <span className="text-[#8b6508] font-bold">10-Digit Mobile Number</span> or <span className="text-[#8b6508] font-bold">Order ID</span> to view real-time production, framing, and delivery progress.
           </p>
         </AnimatedSection>
 
-        {/* Print Header */}
+        {/* Printable Header */}
         <div className="hidden print:block text-center mb-8 border-b border-zinc-200 pb-8 text-black">
           <h1 className="font-serif text-4xl font-bold mb-2">SSS Photography Studio</h1>
           <p className="text-zinc-600">34, Prasanna New Colony, Avaniyapuram, Madurai - 625012 | +91 63835 65425</p>
@@ -145,8 +145,8 @@ export default function TrackOrderPage() {
 
         {/* Search Box */}
         <AnimatedSection delay={0.1} className="max-w-2xl mx-auto mb-10 print:hidden">
-          <div className="relative flex items-center shadow-2xl shadow-teal-950/40 rounded-2xl">
-            <div className="absolute left-4 text-teal-400">
+          <div className="relative flex items-center shadow-2xl rounded-2xl">
+            <div className="absolute left-4 text-[#d4af37]">
               <Search className="w-5 h-5" />
             </div>
             <input
@@ -155,7 +155,7 @@ export default function TrackOrderPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              className="w-full bg-[#0d1715] border-2 border-teal-500/30 hover:border-teal-500/50 focus:border-teal-400 rounded-2xl py-4 pl-12 pr-32 text-base md:text-lg font-mono focus:outline-none transition-all text-white placeholder:text-zinc-600 shadow-inner"
+              className="w-full bg-[#15171E] border-2 border-[#d4af37]/30 hover:border-[#d4af37]/60 focus:border-[#d4af37] rounded-2xl py-4 pl-12 pr-32 text-base md:text-lg font-mono focus:outline-none transition-all text-white placeholder:text-zinc-500 shadow-inner"
             />
             <button
               onClick={() => handleSearch()}

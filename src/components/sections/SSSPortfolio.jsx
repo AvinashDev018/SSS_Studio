@@ -111,21 +111,21 @@ export default function SSSPortfolio() {
 
 
   return (
-    <section id="portfolio" className="py-24 bg-[#0a0a0a] text-white relative overflow-hidden border-t border-white/5">
+    <section id="portfolio" className="py-24 bg-[#FFFFFF] text-zinc-900 relative overflow-hidden border-t border-black/5">
       {/* Background ambient lighting */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-[#c5a880]/5 rounded-full blur-[160px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#c5a880]/5 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-[#d4af37]/10 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#d4af37]/10 rounded-full blur-[160px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.03] border border-white/10 text-[#c5a880] text-xs font-semibold uppercase tracking-widest mb-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/[0.03] border border-[#d4af37]/40 text-[#8b6508] text-xs font-bold uppercase tracking-widest mb-3">
             <Camera size={14} /> {t.portfolio.tag}
           </div>
-          <h2 className="text-3xl md:text-5xl font-serif font-normal text-white mb-4">
+          <h2 className="text-3xl md:text-5xl font-serif font-normal text-zinc-900 mb-4">
             {t.portfolio.title}
           </h2>
-          <div className="w-16 h-0.5 bg-[#c5a880]/40 mx-auto rounded-full" />
+          <div className="w-16 h-0.5 bg-[#d4af37] mx-auto rounded-full" />
         </div>
 
         {/* Filter Tabs */}
@@ -136,10 +136,10 @@ export default function SSSPortfolio() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative px-5 py-2 rounded-full text-xs font-medium tracking-wider uppercase transition-all duration-300 cursor-pointer ${
+                className={`relative px-5 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300 cursor-pointer ${
                   isActive
-                    ? "bg-[#c5a880] text-black font-semibold shadow-md"
-                    : "bg-white/5 text-zinc-400 hover:text-white border border-white/10 hover:border-white/20 hover:bg-white/10"
+                    ? "bg-[#d4af37] text-black shadow-md"
+                    : "bg-black/[0.04] text-zinc-600 hover:text-black border border-black/10 hover:border-black/20 hover:bg-black/10"
                 }`}
               >
                 {tab.label}
@@ -159,12 +159,15 @@ export default function SSSPortfolio() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.4, delay: idx * 0.06 }}
-                whileHover={{ y: -6 }}
+                whileHover={{ y: -8 }}
                 onClick={() => openLightbox(proj)}
-                className="bg-[#121212] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col justify-between cursor-pointer group hover:border-[#c5a880]/40 transition-all duration-300"
+                className="bg-white border-2 border-[#d4af37]/70 hover:border-[#d4af37] rounded-2xl overflow-hidden shadow-[0_10px_35px_rgba(212,175,55,0.12)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.25)] flex flex-col justify-between cursor-pointer group transition-all duration-300 relative"
               >
+                {/* Thin Inner Gold Accent Border Frame */}
+                <div className="absolute inset-1 border border-[#d4af37]/30 rounded-[14px] pointer-events-none z-10" />
+
                 <div>
-                  <div className="relative h-64 sm:h-72 overflow-hidden bg-zinc-900">
+                  <div className="relative h-64 sm:h-72 overflow-hidden bg-zinc-100">
                     <img
                       src={proj.images[0]}
                       alt={proj.title}
@@ -172,27 +175,34 @@ export default function SSSPortfolio() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-                    <span className="absolute top-4 left-4 text-[11px] font-medium text-[#c5a880] bg-black/80 border border-white/15 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md shadow-md">
+                    <span className="absolute top-4 left-4 text-[10px] font-extrabold text-[#8b6508] bg-white/95 border border-[#d4af37]/40 px-3 py-1 rounded-full uppercase tracking-widest backdrop-blur-md shadow-sm">
                       {proj.categoryLabel}
                     </span>
+
+                    {/* All-Caps Category Bottom Frame Label (Matches Reference Image) */}
+                    <div className="absolute bottom-3 left-4 right-4 text-center">
+                      <span className="font-serif text-base tracking-[0.25em] font-extrabold text-white uppercase drop-shadow-lg">
+                        {proj.categoryLabel}
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="p-6">
-                    <h3 className="text-xl font-serif font-normal text-white mb-2 group-hover:text-[#c5a880] transition-colors">
+                  <div className="p-6 text-left">
+                    <h3 className="text-xl font-serif font-bold text-zinc-900 mb-2 group-hover:text-[#b8860b] transition-colors">
                       {proj.title}
                     </h3>
-                    <p className="text-zinc-400 text-sm line-clamp-2 font-light leading-relaxed">
+                    <p className="text-zinc-600 text-xs line-clamp-2 font-light leading-relaxed">
                       {proj.description}
                     </p>
                   </div>
                 </div>
 
                 <div className="px-6 pb-6 pt-0 mt-auto">
-                  <div className="border-t border-white/10 pt-4 flex justify-between items-center text-xs text-zinc-400 font-medium uppercase tracking-wider">
-                    <span>
-                      {proj.images ? `${proj.images.length} Photos` : ""}
+                  <div className="border-t border-black/10 pt-4 flex justify-between items-center text-xs text-zinc-600 font-bold uppercase tracking-wider">
+                    <span className="text-[11px] text-zinc-500">
+                      {proj.images ? `${proj.images.length} High-Res Photos` : ""}
                     </span>
-                    <span className="text-[#c5a880] group-hover:underline flex items-center gap-1">
+                    <span className="text-[#8b6508] group-hover:underline flex items-center gap-1 font-extrabold">
                       View Story →
                     </span>
                   </div>

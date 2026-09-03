@@ -44,8 +44,8 @@ export default function Navbar() {
   const desktopLinks = [
     { name: t.nav.services, href: "/#services" },
     { name: t.nav.portfolio, href: "/#portfolio" },
-    { name: currentLang === "ta" ? "AI ஸ்டைலிஸ்ட்" : currentLang === "hi" ? "AI स्टाइल कंसल्टेंट" : "AI Stylist", href: "/visualizer" },
     { name: currentLang === "ta" ? "பிரேம்கள்" : currentLang === "hi" ? "फोटो फ्रेम" : "Frames", href: "/#frames" },
+    { name: currentLang === "ta" ? "ஸ்டோர்" : currentLang === "hi" ? "स्टोर" : "Store", href: "/store" },
     { name: t.nav.pricing, href: "/packages" },
     { name: t.nav.about, href: "/#about" },
     { name: t.nav.contact, href: "/#contact" },
@@ -56,7 +56,6 @@ export default function Navbar() {
     { name: t.nav.home, href: "/" },
     { name: t.nav.services, href: "/#services" },
     { name: t.nav.portfolio, href: "/#portfolio" },
-    { name: currentLang === "ta" ? "AI ஸ்டைலிஸ்ட்" : currentLang === "hi" ? "AI स्टाइल कंसल्टेंट" : "AI Outfit & Pose Stylist", href: "/visualizer" },
     { name: currentLang === "ta" ? "பிரேம்கள்" : currentLang === "hi" ? "फोटो फ्रेम" : "Frames", href: "/#frames" },
     { name: t.nav.pricing, href: "/packages" },
     { name: currentLang === "ta" ? "ஸ்டோர்" : currentLang === "hi" ? "स्टोर" : "Store", href: "/store" },
@@ -72,27 +71,27 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-40 bg-[#0a0a0a]/92 backdrop-blur-2xl border-b border-white/10 transition-all duration-300 shadow-2xl shadow-black/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 w-full">
-        <div className="flex items-center justify-between h-20 gap-4 lg:gap-8">
+    <nav className="sticky top-0 z-40 bg-white/90 backdrop-blur-2xl border-b border-black/10 transition-all duration-300 shadow-md">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="flex items-center justify-between h-20 gap-2 lg:gap-4">
           
           {/* Left: Brand Logo */}
           <div className="shrink-0">
             <StudioLogo size="md" href="/" />
           </div>
 
-          {/* Center: Desktop Nav Links (Clean, Uncluttered, Never Touching Edges) */}
-          <div className="hidden lg:flex items-center space-x-1 xl:space-x-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-md">
+          {/* Center: Desktop Nav Links (Clean, Centered, Perfectly Spaced) */}
+          <div className="hidden lg:flex items-center space-x-1 xl:space-x-1.5 px-2.5 py-1.5 rounded-full bg-black/[0.04] border border-black/10 backdrop-blur-md shrink-0">
             {desktopLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`relative px-3.5 py-1.5 text-xs font-medium uppercase tracking-[0.14em] transition-all duration-300 rounded-full whitespace-nowrap ${
+                  className={`relative px-2.5 xl:px-3 py-1.5 text-[11px] xl:text-xs font-medium uppercase tracking-[0.08em] transition-all duration-300 rounded-full whitespace-nowrap ${
                     isActive
-                      ? "text-[#c5a880] bg-[#c5a880]/15 font-semibold shadow-[0_0_12px_rgba(197,168,128,0.2)] border border-[#c5a880]/30"
-                      : "text-zinc-300 hover:text-white hover:bg-white/5"
+                      ? "text-[#8b6508] bg-[#d4af37]/25 font-bold border border-[#d4af37]/60 shadow-sm"
+                      : "text-zinc-700 hover:text-black hover:bg-black/5"
                   }`}
                 >
                   {link.name}
@@ -102,7 +101,7 @@ export default function Navbar() {
           </div>
 
           {/* Right: Streamlined Action CTAs */}
-          <div className="hidden lg:flex items-center gap-3 shrink-0">
+          <div className="hidden lg:flex items-center gap-2 xl:gap-3 shrink-0">
             
             {/* Interactive Language Selector Dropdown */}
             <div className="relative" ref={desktopLangRef}>
@@ -113,20 +112,20 @@ export default function Navbar() {
                   e.stopPropagation();
                   setIsDesktopLangOpen((prev) => !prev);
                 }}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/15 transition-all cursor-pointer whitespace-nowrap"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold text-zinc-800 hover:text-black bg-black/5 hover:bg-black/10 border border-black/15 transition-all cursor-pointer whitespace-nowrap"
                 title="Change Language"
               >
-                <Globe size={14} className="text-[#c5a880]" />
-                <span className="font-bold" suppressHydrationWarning>{translations[currentLang]?.langLabel || "EN"}</span>
-                <ChevronDown size={12} className={`text-zinc-400 transition-transform duration-200 ${isDesktopLangOpen ? "rotate-180" : ""}`} />
+                <Globe size={13} className="text-[#b8860b]" />
+                <span className="font-bold text-[11px]" suppressHydrationWarning>{translations[currentLang]?.langLabel || "EN"}</span>
+                <ChevronDown size={11} className={`text-zinc-500 transition-transform duration-200 ${isDesktopLangOpen ? "rotate-180" : ""}`} />
               </button>
 
               {isDesktopLangOpen && (
                 <div 
-                  className="absolute right-0 mt-2 w-44 rounded-2xl bg-[#141414] border border-white/15 shadow-2xl p-1.5 z-50 backdrop-blur-xl animate-in fade-in zoom-in-95 duration-150"
+                  className="absolute right-0 mt-2 w-44 rounded-2xl bg-white border border-black/15 shadow-2xl p-1.5 z-50 backdrop-blur-xl animate-in fade-in zoom-in-95 duration-150 text-zinc-800"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className="px-3 py-1.5 text-[10px] uppercase tracking-wider text-[#c5a880] font-bold border-b border-white/10">
+                  <div className="px-3 py-1.5 text-[10px] uppercase tracking-wider text-[#b8860b] font-bold border-b border-black/10">
                     Select Language / மொழி
                   </div>
                   {languages.map((lang) => (
@@ -139,19 +138,14 @@ export default function Navbar() {
                         changeLanguage(lang.code);
                         setIsDesktopLangOpen(false);
                       }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        changeLanguage(lang.code);
-                        setIsDesktopLangOpen(false);
-                      }}
-                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                      className={`flex items-center justify-between w-full px-3 py-2 text-xs rounded-xl transition-colors cursor-pointer ${
                         currentLang === lang.code
-                          ? "bg-[#c5a880]/20 text-[#c5a880] font-bold"
-                          : "text-zinc-300 hover:text-white hover:bg-white/5"
+                          ? "bg-[#d4af37]/20 text-[#8b6508] font-bold"
+                          : "text-zinc-700 hover:bg-black/5 hover:text-black"
                       }`}
                     >
                       <span>{lang.label}</span>
-                      {currentLang === lang.code && <Check size={14} className="text-[#c5a880]" />}
+                      {currentLang === lang.code && <Check size={12} className="text-[#b8860b]" />}
                     </button>
                   ))}
                 </div>
@@ -162,17 +156,17 @@ export default function Navbar() {
             <button
               suppressHydrationWarning
               onClick={() => triggerModal("offer", "Exclusive Wedding Season Gift Box")}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-medium text-[#c5a880] bg-[#c5a880]/10 border border-[#c5a880]/30 hover:bg-[#c5a880]/20 hover:scale-[1.02] transition-all duration-300 cursor-pointer uppercase tracking-wider whitespace-nowrap"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-bold text-[#8b6508] bg-[#d4af37]/15 border border-[#d4af37]/40 hover:bg-[#d4af37]/30 transition-all duration-300 cursor-pointer uppercase tracking-wider whitespace-nowrap shrink-0"
             >
-              <Sparkles size={13} className="text-[#c5a880]" />
+              <Sparkles size={12} className="text-[#8b6508]" />
               <span suppressHydrationWarning>{t.nav.offer}</span>
             </button>
 
-            {/* Book Now (Solid Champagne Gold Luxury Button) */}
+            {/* Book Now (Solid Metallic Gold Button) */}
             <button
               suppressHydrationWarning
               onClick={() => triggerModal("booking", "Wedding & Event Photo Shoot")}
-              className="px-5 py-2.5 rounded-full text-xs font-semibold text-black bg-[#c5a880] hover:bg-[#d4af37] shadow-lg hover:shadow-[0_0_20px_rgba(197,168,128,0.35)] hover:scale-[1.02] transition-all duration-300 cursor-pointer uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap"
+              className="px-4 py-2 rounded-full text-xs font-bold text-black bg-metallic-gold shadow-md hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 cursor-pointer uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap shrink-0 min-w-fit"
             >
               <span suppressHydrationWarning>{t.nav.bookNow}</span>
               <ArrowRight size={13} />

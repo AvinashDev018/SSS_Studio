@@ -58,7 +58,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-[#0a0a0a] text-white selection:bg-[#c5a880]/30 selection:text-white">
+    <div className="bg-[#FFFFFF] text-zinc-900 selection:bg-[#d4af37]/30 selection:text-black">
       {/* 1. Luxury Editorial Hero Section with Cinematic Photography Frame */}
       <SSSHero onOpenBooking={handleOpenBooking} onOpenQuote={handleOpenQuote} />
 

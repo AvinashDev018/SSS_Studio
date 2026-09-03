@@ -195,33 +195,33 @@ export default function SSSServices({ onOpenBooking }) {
   ];
 
   return (
-    <section id="services" className="py-24 bg-[#0a0a0a] relative overflow-hidden border-t border-white/5">
+    <section id="services" className="py-24 bg-[#F9F9FB] relative overflow-hidden border-t border-black/5">
       {/* Background ambient subtle warm lighting */}
-      <div className="absolute top-1/3 left-0 w-96 h-96 bg-[#c5a880]/5 rounded-full blur-[160px] pointer-events-none" />
-      <div className="absolute bottom-10 right-0 w-96 h-96 bg-[#c5a880]/5 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute top-1/3 left-0 w-96 h-96 bg-[#d4af37]/10 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute bottom-10 right-0 w-96 h-96 bg-[#d4af37]/10 rounded-full blur-[160px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.03] border border-white/10 text-[#c5a880] text-xs font-semibold uppercase tracking-widest mb-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/[0.03] border border-[#d4af37]/40 text-[#8b6508] text-xs font-bold uppercase tracking-widest mb-3">
             {t.services.tag}
           </div>
-          <h2 className="text-3xl md:text-5xl font-serif font-normal text-white mb-4">
+          <h2 className="text-3xl md:text-5xl font-serif font-normal text-zinc-900 mb-4">
             {t.services.title}
           </h2>
-          <p className="text-zinc-400 text-base md:text-lg font-light leading-relaxed">
+          <p className="text-zinc-600 text-base md:text-lg font-light leading-relaxed">
             {t.services.subtitle}
           </p>
 
           {/* Animated Category Filter Tabs */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mt-8 p-1.5 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-md max-w-fit mx-auto">
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-8 p-1.5 rounded-full bg-black/[0.04] border border-black/10 backdrop-blur-md max-w-fit mx-auto">
             {filterTabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveCategory(tab.id)}
-                className={`relative px-4 py-2 rounded-full text-xs font-medium transition-all duration-300 cursor-pointer ${
+                className={`relative px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 cursor-pointer ${
                   activeCategory === tab.id
-                    ? "text-black bg-[#c5a880] font-semibold shadow-md"
-                    : "text-zinc-400 hover:text-white hover:bg-white/5"
+                    ? "text-black bg-[#d4af37] shadow-md"
+                    : "text-zinc-600 hover:text-black hover:bg-black/5"
                 }`}
               >
                 {tab.label}
@@ -233,6 +233,15 @@ export default function SSSServices({ onOpenBooking }) {
         <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredServices.map((service, idx) => {
             const Icon = service.icon;
+            const prices = {
+              wedding: "₹ 25,000+",
+              "pre-wedding": "₹ 12,000+",
+              birthday: "₹ 4,500+",
+              "school-events": "₹ 8,500+",
+              baby: "₹ 5,000+",
+              maternity: "₹ 6,500+"
+            };
+
             return (
               <motion.div
                 layout
@@ -241,54 +250,71 @@ export default function SSSServices({ onOpenBooking }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.05 }}
                 transition={{ duration: 0.5, delay: idx * 0.08 }}
-                whileHover={{ y: -6 }}
-                className="opacity-100 bg-[#121212] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col justify-between group hover:border-[#c5a880]/40 transition-all duration-300"
+                whileHover={{ y: -8 }}
+                className="bg-white border-2 border-[#d4af37]/70 hover:border-[#d4af37] rounded-2xl overflow-hidden shadow-[0_10px_35px_rgba(212,175,55,0.12)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.25)] flex flex-col justify-between group transition-all duration-300 relative"
               >
+                {/* Thin Inner Gold Accent Border */}
+                <div className="absolute inset-1 border border-[#d4af37]/30 rounded-[14px] pointer-events-none z-10" />
+
                 <div>
-                  <div className="relative h-64 overflow-hidden bg-black/40">
+                  {/* Card Image Header */}
+                  <div className="relative h-60 overflow-hidden bg-zinc-100">
                     <img
                       src={service.image}
                       alt={service.title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/30 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                     
-                    <div className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-black/70 backdrop-blur-md border border-white/15 flex items-center justify-center text-[#c5a880] shadow-xl group-hover:scale-105 transition-all duration-300">
-                      <Icon size={18} />
+                    {/* Centered Gold Icon Badge */}
+                    <div className="absolute top-4 right-4 w-11 h-11 rounded-xl bg-white/95 backdrop-blur-md border-2 border-[#d4af37] flex items-center justify-center text-[#8b6508] shadow-md group-hover:scale-110 transition-all duration-300">
+                      <Icon size={20} />
                     </div>
 
                     {idx === 0 && (
-                      <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-[#c5a880] text-black text-[10px] font-bold uppercase tracking-wider shadow-lg">
+                      <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-metallic-gold text-black text-[10px] font-black uppercase tracking-widest shadow-lg">
                         ★ MOST POPULAR
                       </div>
                     )}
+
+                    {/* All-Caps Category Label Overlay */}
+                    <div className="absolute bottom-3 left-4 right-4 text-center">
+                      <span className="font-serif text-sm tracking-[0.2em] font-bold text-white uppercase drop-shadow-md">
+                        {service.title}
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="p-6">
-                    <h3 className="text-xl font-serif font-normal text-white mb-2 group-hover:text-[#c5a880] transition-colors">
-                      {service.title}
-                    </h3>
-                    <p className="text-zinc-400 text-sm leading-relaxed mb-6 font-light">
+                  <div className="p-6 text-center">
+                    <p className="text-zinc-600 text-xs leading-relaxed mb-4 font-light max-w-sm mx-auto">
                       {service.description}
                     </p>
 
-                    <div className="space-y-2.5 mb-6">
+                    {/* Price Tag */}
+                    <div className="mb-4">
+                      <span className="font-serif text-lg font-extrabold text-[#b8860b] tracking-wider block">
+                        {prices[service.id] || "₹ 5,000+"}
+                      </span>
+                      <span className="text-[10px] text-zinc-400 uppercase tracking-widest">Starting Investment</span>
+                    </div>
+
+                    <div className="space-y-2 mb-2 text-left bg-[#FAF9F6] p-3.5 rounded-xl border border-black/5">
                       {service.features.map((feat, fIdx) => (
-                        <div key={fIdx} className="flex items-center gap-2.5 text-xs text-zinc-300">
-                          <span className="w-4 h-4 rounded-full bg-[#c5a880]/20 text-[#c5a880] flex items-center justify-center shrink-0">
+                        <div key={fIdx} className="flex items-center gap-2 text-xs text-zinc-700 font-medium">
+                          <span className="w-4 h-4 rounded-full bg-[#d4af37]/20 text-[#8b6508] flex items-center justify-center shrink-0">
                             <Check size={11} strokeWidth={3} />
                           </span>
-                          <span>{feat}</span>
+                          <span className="text-[11px]">{feat}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                 </div>
 
-                <div className="p-6 pt-0">
+                <div className="p-6 pt-0 text-center">
                   <button
                     onClick={() => onOpenBooking(service.category)}
-                    className="w-full py-3 bg-white/[0.04] hover:bg-[#c5a880] text-zinc-200 hover:text-black border border-white/10 hover:border-[#c5a880] font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 text-xs uppercase tracking-wider cursor-pointer shadow-lg"
+                    className="w-full py-3 bg-metallic-gold text-black font-extrabold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 text-xs uppercase tracking-widest cursor-pointer shadow-md hover:scale-[1.02]"
                   >
                     <span>{t.services.bookBtn}</span>
                     <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />

@@ -303,41 +303,41 @@ export default function ChatbotWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="absolute bottom-20 right-0 w-[90vw] max-w-[420px] max-h-[calc(100vh-6rem)] bg-zinc-950 text-zinc-100 rounded-3xl shadow-[0_15px_60px_-15px_rgba(0,0,0,0.8)] border border-teal-500/30 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-300 origin-bottom-right">
+        <div className="absolute bottom-20 right-0 w-[90vw] max-w-[420px] max-h-[85vh] h-[520px] bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.2)] border-2 border-[#d4af37]/60 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-300 origin-bottom-right">
           {/* Header */}
-          <div className="bg-[#071310] border-b border-teal-500/20 p-4 flex items-center justify-between">
+          <div className="p-4 bg-white border-b border-black/10 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-3">
-              <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-teal-500/20 text-[#071f1b]">
+              <div className="relative w-9 h-9 rounded-xl bg-[#d4af37] flex items-center justify-center shadow-md text-black font-bold">
                 <Sparkles size={18} />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="font-bold text-sm text-white">SSS Studio AI Concierge</h3>
-                  <span className="bg-teal-500/20 text-teal-300 text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider border border-teal-400/30">
+                  <h3 className="font-bold text-sm text-zinc-900">SSS Studio AI Assistant</h3>
+                  <span className="bg-black/5 text-[#8b6508] text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider border border-[#d4af37]/40">
                     DeepSeek Agent
                   </span>
                 </div>
-                <p className="text-[11px] text-teal-400/80 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                <p className="text-[11px] text-[#8b6508] font-bold flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
                   Online • Tamil & English Fluent
                 </p>
               </div>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
+              className="text-zinc-600 hover:text-black p-1.5 rounded-lg hover:bg-black/5 transition-colors cursor-pointer"
             >
               <X size={18} />
             </button>
           </div>
 
           {/* Quick Suggestion Pills */}
-          <div className="bg-[#050b09] px-3 py-2 border-b border-white/5 flex gap-2 overflow-x-auto no-scrollbar">
+          <div className="bg-[#FAFAFA] px-3 py-2 border-b border-black/10 flex gap-2 overflow-x-auto no-scrollbar">
             {QUICK_SUGGESTIONS.map((sug, i) => (
               <button
                 key={i}
                 onClick={() => sendToAgent(sug)}
-                className="shrink-0 text-[11px] bg-teal-950/60 hover:bg-teal-900/80 text-teal-300 border border-teal-500/30 px-3 py-1 rounded-full transition-all hover:scale-102 cursor-pointer"
+                className="shrink-0 text-xs font-bold bg-white text-zinc-900 border border-[#d4af37]/60 hover:bg-[#d4af37] hover:text-black px-3.5 py-1.5 rounded-full transition-all shadow-sm cursor-pointer active:scale-95"
               >
                 {sug}
               </button>
@@ -345,7 +345,7 @@ export default function ChatbotWidget() {
           </div>
 
           {/* Chat Area */}
-          <div className="flex-1 min-h-0 p-4 overflow-y-auto overscroll-contain bg-[#060e0c] h-[380px] max-h-[calc(100vh-14rem)] flex flex-col gap-3.5">
+          <div className="flex-1 min-h-0 p-4 overflow-y-auto overscroll-contain bg-[#F9F9FB] h-[380px] max-h-[calc(100vh-14rem)] flex flex-col gap-3.5">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -357,8 +357,8 @@ export default function ChatbotWidget() {
                   <div
                     className={`p-3.5 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                       msg.sender === "user"
-                        ? "bg-gradient-to-r from-teal-500 to-emerald-600 text-black font-semibold rounded-tr-sm shadow-md"
-                        : "bg-[#0b1b17] border border-teal-500/20 text-zinc-100 rounded-tl-sm shadow-sm"
+                        ? "bg-[#d4af37] text-black font-bold rounded-tr-sm shadow-md"
+                        : "bg-white border border-black/10 text-zinc-900 font-medium rounded-tl-sm shadow-sm"
                     }`}
                   >
                     {msg.text}
@@ -370,37 +370,37 @@ export default function ChatbotWidget() {
                   <div className="w-full mt-1">
                     {/* Frame Recommendation Tool Output */}
                     {msg.cardData.action === "RECOMMEND_FRAMES" && (
-                      <div className="bg-[#0a201c] border border-teal-500/40 rounded-2xl p-3.5 shadow-xl text-xs">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-bold text-teal-300 flex items-center gap-1 text-[11px] uppercase tracking-wider">
+                      <div className="bg-white border-2 border-[#d4af37]/60 rounded-2xl p-3.5 shadow-md text-xs text-zinc-900">
+                        <div className="flex items-center justify-between mb-2 border-b border-black/10 pb-2">
+                          <span className="font-bold text-[#8b6508] flex items-center gap-1 text-[11px] uppercase tracking-wider">
                             <Package size={13} /> Recommended Custom Frames
                           </span>
-                          <span className="text-[10px] text-zinc-400">13 Sizes Available</span>
+                          <span className="text-[10px] text-zinc-500 font-bold">13 Sizes Available</span>
                         </div>
                         <div className="grid grid-cols-1 gap-2 my-2">
                           {msg.cardData.recommendedFrames?.map((f) => (
                             <div
                               key={f.id}
-                              className="flex items-center justify-between bg-black/40 border border-teal-500/20 p-2.5 rounded-xl"
+                              className="flex items-center justify-between bg-[#FAFAFA] border border-black/10 p-2.5 rounded-xl"
                             >
                               <div>
-                                <span className="font-serif font-bold text-sm text-white">{f.size} Inch</span>
+                                <span className="font-serif font-bold text-sm text-zinc-900">{f.size} Inch</span>
                                 {f.tag && (
-                                  <span className="ml-2 text-[9px] bg-teal-500/20 text-teal-300 font-bold px-1.5 py-0.5 rounded border border-teal-400/30">
+                                  <span className="ml-2 text-[9px] bg-[#d4af37]/20 text-[#8b6508] font-black px-1.5 py-0.5 rounded border border-[#d4af37]/40">
                                     {f.tag}
                                   </span>
                                 )}
-                                <p className="text-[10px] text-zinc-400 mt-0.5">{f.bestFor}</p>
+                                <p className="text-[10px] text-zinc-600 font-medium mt-0.5">{f.bestFor}</p>
                               </div>
-                              <span className="font-serif font-bold text-teal-400 text-sm">{f.priceFormatted}</span>
+                              <span className="font-serif font-black text-[#8b6508] text-sm">{f.priceFormatted}</span>
                             </div>
                           ))}
                         </div>
-                        <div className="mt-2.5 pt-2 border-t border-teal-500/20 flex gap-2">
+                        <div className="mt-2.5 pt-2 border-t border-black/10 flex gap-2">
                           <a
                             href="/#frames"
                             onClick={() => setIsOpen(false)}
-                            className="w-full py-2 bg-gradient-to-r from-teal-400 to-emerald-400 text-black font-bold text-[11px] rounded-lg text-center flex items-center justify-center gap-1 hover:brightness-110"
+                            className="w-full py-2 bg-[#d4af37] text-black font-bold text-[11px] rounded-lg text-center flex items-center justify-center gap-1 hover:brightness-105 shadow-sm"
                           >
                             Order in Frame Studio →
                           </a>
@@ -410,34 +410,34 @@ export default function ChatbotWidget() {
 
                     {/* Package Quote Calculation Tool Output */}
                     {msg.cardData.action === "PACKAGE_QUOTE" && (
-                      <div className="bg-[#081d19] border border-teal-400/40 rounded-2xl p-3.5 shadow-xl text-xs">
-                        <div className="flex items-center justify-between mb-2 border-b border-teal-500/20 pb-2">
+                      <div className="bg-white border-2 border-[#d4af37]/60 rounded-2xl p-3.5 shadow-md text-xs text-zinc-900">
+                        <div className="flex items-center justify-between mb-2 border-b border-black/10 pb-2">
                           <div>
-                            <span className="text-[10px] uppercase font-bold text-teal-400 tracking-wider">
+                            <span className="text-[10px] uppercase font-bold text-[#8b6508] tracking-wider">
                               Package Quote Estimate
                             </span>
-                            <h4 className="font-bold text-white capitalize text-sm">
+                            <h4 className="font-bold text-zinc-900 capitalize text-sm">
                               {msg.cardData.eventType} Ceremony ({msg.cardData.days} {msg.cardData.days > 1 ? "Days" : "Day"})
                             </h4>
                           </div>
                           <div className="text-right">
-                            <span className="font-serif font-bold text-base text-teal-300">
+                            <span className="font-serif font-black text-base text-[#8b6508]">
                               {msg.cardData.totalEstimated}
                             </span>
                           </div>
                         </div>
 
-                        <ul className="space-y-1 my-2 text-[11px] text-zinc-300">
+                        <ul className="space-y-1 my-2 text-[11px] text-zinc-800 font-semibold">
                           {msg.cardData.deliverables?.map((del, i) => (
                             <li key={i} className="flex items-center gap-1.5">
-                              <CheckCircle2 size={12} className="text-emerald-400 shrink-0" />
+                              <CheckCircle2 size={12} className="text-[#8b6508] shrink-0" />
                               <span>{del}</span>
                             </li>
                           ))}
                         </ul>
 
-                        <div className="mt-2.5 pt-2 border-t border-teal-500/20 flex items-center justify-between">
-                          <span className="text-[10px] text-emerald-400 flex items-center gap-1 font-semibold">
+                        <div className="mt-2.5 pt-2 border-t border-black/10 flex items-center justify-between">
+                          <span className="text-[10px] text-[#8b6508] flex items-center gap-1 font-bold">
                             <ShieldCheck size={12} /> 1-Month Delivery Guaranteed
                           </span>
                           <a
@@ -446,7 +446,7 @@ export default function ChatbotWidget() {
                             )}`}
                             target="_blank"
                             rel="noreferrer"
-                            className="py-1.5 px-3 bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-[11px] rounded-lg transition-colors flex items-center gap-1"
+                            className="py-1.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-lg transition-colors flex items-center gap-1 shadow-sm"
                           >
                             Chat on WhatsApp <ExternalLink size={11} />
                           </a>
@@ -456,16 +456,16 @@ export default function ChatbotWidget() {
 
                     {/* Order Tracking Output */}
                     {msg.cardData.action === "TRACK_ORDER" && (
-                      <div className="bg-[#071d18] border border-teal-400/40 rounded-2xl p-3.5 shadow-xl text-xs">
-                        <div className="flex items-center justify-between mb-2">
+                      <div className="bg-white border-2 border-[#d4af37]/60 rounded-2xl p-3.5 shadow-md text-xs text-zinc-900">
+                        <div className="flex items-center justify-between mb-2 border-b border-black/10 pb-2">
                           <div className="flex items-center gap-1.5">
-                            <Package size={14} className="text-teal-400" />
-                            <span className="font-mono font-bold text-white text-xs">
+                            <Package size={14} className="text-[#8b6508]" />
+                            <span className="font-mono font-bold text-zinc-900 text-xs">
                               {msg.cardData.orderId || "Order Tracking"}
                             </span>
                           </div>
                           {msg.cardData.found && (
-                            <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full font-bold text-[10px] uppercase">
+                            <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-full font-bold text-[10px] uppercase">
                               {msg.cardData.status}
                             </span>
                           )}
@@ -474,41 +474,41 @@ export default function ChatbotWidget() {
                         {msg.cardData.found ? (
                           <>
                             {msg.cardData.customerName && (
-                              <p className="text-zinc-300 text-[11px] mb-2">
-                                Client: <strong className="text-white">{msg.cardData.customerName}</strong>
+                              <p className="text-zinc-800 text-[11px] mb-2 font-medium">
+                                Client: <strong className="text-zinc-900 font-bold">{msg.cardData.customerName}</strong>
                                 {msg.cardData.eventType && ` • ${msg.cardData.eventType} Shoot`}
                               </p>
                             )}
 
                             {/* Progress bar */}
                             <div className="my-2.5">
-                              <div className="flex justify-between text-[10px] text-teal-300 font-semibold mb-1">
+                              <div className="flex justify-between text-[10px] text-[#8b6508] font-bold mb-1">
                                 <span>{msg.cardData.stageLabel || msg.cardData.status}</span>
                                 <span>{msg.cardData.progress || 50}%</span>
                               </div>
-                              <div className="w-full h-2 bg-black/50 rounded-full overflow-hidden border border-teal-500/20">
+                              <div className="w-full h-2 bg-zinc-200 rounded-full overflow-hidden border border-black/10">
                                 <div
-                                  className="h-full bg-gradient-to-r from-teal-400 to-emerald-400 rounded-full transition-all duration-500"
+                                  className="h-full bg-[#d4af37] rounded-full transition-all duration-500"
                                   style={{ width: `${msg.cardData.progress || 50}%` }}
                                 />
                               </div>
                               {msg.cardData.stageDesc && (
-                                <p className="text-[10px] text-zinc-400 mt-1">{msg.cardData.stageDesc}</p>
+                                <p className="text-[10px] text-zinc-600 font-medium mt-1">{msg.cardData.stageDesc}</p>
                               )}
                             </div>
 
                             {msg.cardData.courierTrackingId && (
-                              <div className="p-2 bg-black/40 rounded-lg border border-white/5 my-2 text-[10px] flex justify-between items-center">
-                                <span className="text-zinc-400">Courier ID:</span>
-                                <span className="font-mono text-teal-300 font-bold">{msg.cardData.courierTrackingId}</span>
+                              <div className="p-2 bg-[#FAFAFA] rounded-lg border border-black/10 my-2 text-[10px] flex justify-between items-center">
+                                <span className="text-zinc-600 font-medium">Courier ID:</span>
+                                <span className="font-mono text-[#8b6508] font-bold">{msg.cardData.courierTrackingId}</span>
                               </div>
                             )}
 
-                            <div className="mt-3 pt-2 border-t border-teal-500/20 flex gap-2">
+                            <div className="mt-3 pt-2 border-t border-black/10 flex gap-2">
                               <a
                                 href={msg.cardData.trackUrl || `/track?id=${msg.cardData.orderId}`}
                                 onClick={() => setIsOpen(false)}
-                                className="flex-1 py-1.5 bg-gradient-to-r from-teal-400 to-emerald-400 text-black font-bold text-[11px] rounded-lg text-center flex items-center justify-center gap-1 hover:brightness-110"
+                                className="flex-1 py-1.5 bg-[#d4af37] text-black font-bold text-[11px] rounded-lg text-center flex items-center justify-center gap-1 hover:brightness-105 shadow-sm"
                               >
                                 View Timeline →
                               </a>
@@ -518,7 +518,7 @@ export default function ChatbotWidget() {
                                 )}`}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="py-1.5 px-3 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[11px] rounded-lg text-center flex items-center justify-center gap-1 hover:bg-emerald-500/30"
+                                className="py-1.5 px-3 bg-emerald-600 text-white font-bold text-[11px] rounded-lg text-center flex items-center justify-center gap-1 hover:bg-emerald-500 shadow-sm"
                               >
                                 WhatsApp
                               </a>
@@ -526,12 +526,12 @@ export default function ChatbotWidget() {
                           </>
                         ) : (
                           <>
-                            <p className="text-zinc-300 text-xs leading-relaxed my-2">{msg.cardData.message}</p>
-                            <div className="mt-2 pt-2 border-t border-white/10 flex justify-end">
+                            <p className="text-zinc-800 text-xs leading-relaxed my-2 font-medium">{msg.cardData.message}</p>
+                            <div className="mt-2 pt-2 border-t border-black/10 flex justify-end">
                               <a
                                 href="/track"
                                 onClick={() => setIsOpen(false)}
-                                className="text-teal-400 hover:underline text-[11px] font-semibold flex items-center gap-1"
+                                className="text-[#8b6508] hover:underline text-[11px] font-bold flex items-center gap-1"
                               >
                                 Open Track Page <ExternalLink size={10} />
                               </a>
@@ -544,11 +544,11 @@ export default function ChatbotWidget() {
                 )}
 
                 {msg.type === "rich" && (
-                  <div className="p-3.5 rounded-2xl rounded-tl-sm bg-[#0a1b17] border border-teal-500/20 text-zinc-100 shadow-sm text-xs sm:text-sm">
-                    <p className="font-bold text-teal-300 mb-1">{msg.title}</p>
-                    <p className="text-zinc-300">{msg.text}</p>
+                  <div className="p-3.5 rounded-2xl rounded-tl-sm bg-white border border-black/10 text-zinc-900 shadow-sm text-xs sm:text-sm">
+                    <p className="font-bold text-[#8b6508] mb-1">{msg.title}</p>
+                    <p className="text-zinc-800 font-medium">{msg.text}</p>
                     {msg.details?.length > 0 && (
-                      <ul className="mt-2.5 space-y-1.5 list-disc pl-4 text-zinc-400 text-xs">
+                      <ul className="mt-2.5 space-y-1.5 list-disc pl-4 text-zinc-700 text-xs font-medium">
                         {msg.details.map((detail, i) => <li key={i}>{detail}</li>)}
                       </ul>
                     )}
@@ -560,7 +560,7 @@ export default function ChatbotWidget() {
                             href={action.href}
                             target={action.external ? "_blank" : undefined}
                             rel={action.external ? "noreferrer" : undefined}
-                            className="inline-flex items-center gap-1.5 bg-teal-400 hover:bg-teal-300 text-black px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
+                            className="inline-flex items-center gap-1.5 bg-[#d4af37] hover:brightness-105 text-black px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm"
                           >
                             {action.label}
                             <ChevronRight size={13} />
@@ -577,10 +577,10 @@ export default function ChatbotWidget() {
                       <button
                         key={opt.id}
                         onClick={() => handleMenuClick(opt.id, opt.label)}
-                        className="flex items-center justify-between bg-[#081714] border border-teal-500/20 p-2.5 rounded-xl text-xs text-zinc-300 hover:border-teal-400 hover:text-white hover:bg-teal-950/40 transition-all shadow-sm w-full text-left cursor-pointer"
+                        className="flex items-center justify-between bg-white border border-[#d4af37]/40 p-2.5 rounded-xl text-xs font-bold text-zinc-900 hover:bg-[#d4af37] hover:text-black transition-all shadow-sm w-full text-left cursor-pointer"
                       >
                         <span>{opt.label}</span>
-                        <ChevronRight size={14} className="text-teal-400/60" />
+                        <ChevronRight size={14} className="text-[#8b6508]" />
                       </button>
                     ))}
                   </div>
@@ -590,32 +590,32 @@ export default function ChatbotWidget() {
 
             {/* Agent Typing Indicator */}
             {isAgentTyping && (
-              <div className="self-start flex items-center gap-2 bg-[#0a1c18] border border-teal-500/30 px-3 py-2 rounded-2xl rounded-tl-sm text-xs text-teal-300">
-                <Loader2 size={13} className="animate-spin text-teal-400" />
+              <div className="self-start flex items-center gap-2 bg-white border border-[#d4af37]/60 px-3 py-2 rounded-2xl rounded-tl-sm text-xs text-[#8b6508] font-bold shadow-sm">
+                <Loader2 size={13} className="animate-spin text-[#8b6508]" />
                 <span>DeepSeek Agent is consulting studio data...</span>
               </div>
             )}
 
             {/* Inline Form for Report Damaged Item */}
             {currentState === "report_form" && (
-              <div className="self-start w-full bg-[#081714] border border-teal-500/30 p-3.5 rounded-2xl shadow-sm mt-2">
-                <h4 className="text-xs font-bold mb-2.5 text-teal-300">Submit Damage Report</h4>
+              <div className="self-start w-full bg-white border-2 border-[#d4af37]/60 p-3.5 rounded-2xl shadow-md mt-2 text-zinc-900">
+                <h4 className="text-xs font-bold mb-2.5 text-[#8b6508]">Submit Damage Report</h4>
                 <form onSubmit={handleReportSubmit} className="flex flex-col gap-2.5 text-xs">
                   <div>
-                    <label className="text-[10px] text-zinc-400 mb-1 block">Order ID *</label>
+                    <label className="text-[10px] text-zinc-600 font-bold mb-1 block">Order ID *</label>
                     <input
                       type="text"
                       required
                       value={orderId}
                       onChange={(e) => setOrderId(e.target.value)}
                       placeholder="e.g. SSS-12345"
-                      className="w-full text-xs bg-black/50 border border-white/10 rounded-lg p-2 text-white focus:outline-none focus:border-teal-400"
+                      className="w-full text-xs bg-[#FAFAFA] border border-black/15 rounded-lg p-2 text-zinc-900 font-semibold focus:outline-none focus:border-[#d4af37]"
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] text-zinc-400 mb-1 block">Photo Evidence</label>
+                    <label className="text-[10px] text-zinc-600 font-bold mb-1 block">Photo Evidence</label>
                     <div className="flex items-center gap-2">
-                      <label className="cursor-pointer bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-1.5 text-xs text-zinc-300 transition-colors">
+                      <label className="cursor-pointer bg-[#FAFAFA] hover:bg-zinc-100 px-3 py-1.5 rounded-lg border border-black/15 flex items-center gap-1.5 text-xs text-zinc-900 font-bold transition-colors">
                         <Paperclip size={13} />
                         Upload
                         <input
@@ -625,12 +625,12 @@ export default function ChatbotWidget() {
                           onChange={(e) => e.target.files[0] && setDamageImage(e.target.files[0].name)}
                         />
                       </label>
-                      {damageImage && <span className="text-[10px] text-zinc-400 truncate w-24">{damageImage}</span>}
+                      {damageImage && <span className="text-[10px] text-zinc-600 font-medium truncate w-24">{damageImage}</span>}
                     </div>
                   </div>
                   <button
                     type="submit"
-                    className="mt-1 w-full bg-teal-400 text-black text-xs font-bold py-2 rounded-lg hover:bg-teal-300 transition-colors"
+                    className="mt-1 w-full bg-[#d4af37] text-black text-xs font-bold py-2 rounded-lg hover:brightness-105 transition-colors shadow-sm"
                   >
                     Submit Report
                   </button>
@@ -641,8 +641,8 @@ export default function ChatbotWidget() {
           </div>
 
           {/* Bottom Input Area */}
-          <form onSubmit={handleTextSubmit} className="p-3 bg-[#071310] border-t border-teal-500/20">
-            <div className="flex items-center gap-2 bg-black/60 border border-teal-500/30 rounded-full px-3.5 py-1.5 focus-within:border-teal-400 transition-colors">
+          <form onSubmit={handleTextSubmit} className="p-3 bg-white border-t border-black/10">
+            <div className="flex items-center gap-2 bg-[#FAFAFA] border border-[#d4af37]/60 rounded-full px-3.5 py-1.5 focus-within:border-[#d4af37] focus-within:ring-1 focus-within:ring-[#d4af37] transition-all shadow-inner">
               <input
                 type="text"
                 value={userInput}
@@ -650,15 +650,15 @@ export default function ChatbotWidget() {
                 placeholder={isAgentTyping ? "DeepSeek is typing..." : "Ask in English or தமிழ் (e.g. Frame size)..."}
                 disabled={isAgentTyping || currentState === "report_form"}
                 aria-label="Ask SSS Studio DeepSeek Agent"
-                className="bg-transparent flex-1 text-xs sm:text-sm outline-none text-white placeholder:text-zinc-500 disabled:cursor-not-allowed"
+                className="bg-transparent flex-1 text-xs sm:text-sm outline-none text-zinc-900 font-semibold placeholder:text-zinc-400 disabled:cursor-not-allowed"
               />
               <button
                 type="submit"
                 disabled={isAgentTyping || !userInput.trim() || currentState === "report_form"}
                 aria-label="Send question"
-                className="w-7 h-7 rounded-full bg-teal-400 hover:bg-teal-300 text-black flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                className="w-8 h-8 rounded-full bg-[#d4af37] hover:scale-105 active:scale-95 text-black flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer font-bold shadow-md"
               >
-                <Send size={14} />
+                <Send size={15} />
               </button>
             </div>
           </form>

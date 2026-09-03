@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, User, Phone, Calendar, MapPin, Clock, DollarSign, MessageSquare, Sparkles } from "lucide-react";
+import { X, Send, User, Phone, Calendar, MapPin, Clock, DollarSign, MessageSquare, Sparkles, CheckCircle2 } from "lucide-react";
 
 export const SHOOT_TYPES = [
   "Wedding & Event Photo Shoot",
@@ -14,6 +14,8 @@ export const SHOOT_TYPES = [
   "Cinematic Wedding Shoot",
   "Custom Shoot Session",
 ];
+
+export const TIME_SLOTS = ["10:00 AM", "02:00 PM", "04:30 PM"];
 
 export default function BookingQuoteModal({
   isOpen,
@@ -27,6 +29,7 @@ export default function BookingQuoteModal({
   const [phone, setPhone] = useState("");
   const [shootType, setShootType] = useState(prefilledType);
   const [date, setDate] = useState("");
+  const [selectedSlot, setSelectedSlot] = useState("10:00 AM");
   const [location, setLocation] = useState("");
   const [duration, setDuration] = useState("");
   const [budget, setBudget] = useState("");
