@@ -6,27 +6,41 @@ import { revalidatePath } from "next/cache";
 const prisma = new PrismaClient();
 
 const FALLBACK_PACKAGES = [
- {
- id: "pkg_1",
- name: "Essential Portrait",
- price: "₹1,500",
- description: "Perfect for quick, professional solo portraits. Includes 5 edited high-res digital photos.",
- popular: false
- },
- {
- id: "pkg_2",
- name: "Signature Family Session",
- price: "₹4,500",
- description: "A beautiful session for the whole family. Includes 15 edited photos and 1 large physical print.",
- popular: true
- },
- {
- id: "pkg_3",
- name: "Premium Event Coverage",
- price: "₹15,000+",
- description: "Full event coverage (birthdays, small functions). Includes a full album and cinematic highlight video.",
- popular: false
- }
+  {
+    id: "pkg_1",
+    name: "Baby Milestone & Birthday",
+    price: "₹5,000",
+    description: "Sanitized props, wraps & cake smash milestone themes for 3M, 6M, 1Y.",
+    popular: false
+  },
+  {
+    id: "pkg_2",
+    name: "Maternity Portrait Shoot",
+    price: "₹6,000",
+    description: "Safe, tender & creative indoor studio or outdoor couple maternity session.",
+    popular: false
+  },
+  {
+    id: "pkg_3",
+    name: "Outdoor Pre-Wedding Shoot",
+    price: "₹8,000",
+    description: "Scenic hill stations (Kodaikanal, Munnar), tea estates or heritage temple shoots.",
+    popular: false
+  },
+  {
+    id: "pkg_4",
+    name: "Standard Muhurtham & Event",
+    price: "₹18,000",
+    description: "Traditional ceremony rituals, candid portraits & master photobook album.",
+    popular: false
+  },
+  {
+    id: "pkg_5",
+    name: "Premium Wedding & Cinematic",
+    price: "₹75,000",
+    description: "Full day coverage, 4K Drone, master album, free pre-wedding shoot perk & 1-Month Delivery Guarantee.",
+    popular: true
+  }
 ];
 
 export async function getPackages() {

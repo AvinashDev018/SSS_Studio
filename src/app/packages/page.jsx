@@ -1,134 +1,224 @@
-import { Check } from "lucide-react";
+import { Check, MapPin, Truck, ShieldCheck, Sparkles } from "lucide-react";
 import Link from "next/link";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import PackageCalculator from "@/components/PackageCalculator";
-import { getPackages } from "@/app/actions/packages";
 
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
- title: 'Pricing Packages',
- description: 'Transparent pricing for our wedding, event, and portrait photography services in Madurai.',
+  title: 'Photography Packages & District Rates | SSS Studio',
+  description: 'Transparent default rates for wedding, pre-wedding, maternity, baby, and event photography across all Tamil Nadu districts.',
 };
 
 export default async function PackagesPage() {
- const dbPackages = await getPackages();
- 
- const displayPackages = dbPackages.length > 0 ? dbPackages : [
- {
- id: "1",
- name: "Basic Session",
- price: "₹15,000",
- description: "Perfect for quick portraits or small pre-wedding shoots.",
- features: [
- "4 Hours of Coverage",
- "1 Senior Photographer",
- "50 Edited High-Res Photos",
- "Online Delivery Link"
- ],
- popular: false
- },
- {
- id: "2",
- name: "Premium Wedding",
- price: "₹75,000",
- description: "Our most popular package for comprehensive wedding day coverage.",
- features: [
- "Full Day Coverage (12 Hours)",
- "2 Senior Photographers",
- "1 Videographer (4K Signature Video)",
- "300+ Edited High-Res Photos",
- "Premium Layflat Album (40 Pages)",
- "Creative Couple & Bridal Portraits"
- ],
- popular: true
- },
- {
- id: "3",
- name: "Luxury Event",
- price: "₹1,50,000",
- description: "The ultimate coverage for multi-day grand events.",
- features: [
- "2 Days Full Coverage",
- "3 Photographers & 2 Videographers",
- "Pre-wedding or Post-wedding Shoot",
- "Next Day Same-Day-Edit Teaser",
- "2 Premium Layflat Albums",
- "All Raw Footage Delivered"
- ],
- popular: false
- }
- ];
+  const displayPackages = [
+    {
+      id: "1",
+      name: "Premium Wedding & Cinematic",
+      price: "₹75,000",
+      description: "Our flagship signature package for comprehensive wedding day coverage & memories.",
+      features: [
+        "Full Day Coverage (12 Hours)",
+        "2 Senior Photographers & 1 Cinema Videographer",
+        "Licensed 4K Aerial Drone Coverage",
+        "FREE Outdoor Pre-Wedding Shoot Perk",
+        "Handcrafted 40-Page Layflat Master Album",
+        "1-Month Delivery Guarantee (or ₹1,000 Cash Credit)"
+      ],
+      popular: true
+    },
+    {
+      id: "2",
+      name: "Standard Muhurtham & Event",
+      price: "₹18,000",
+      description: "Traditional ceremony rituals, candid portraits & master photobook album.",
+      features: [
+        "Traditional Rituals & Stage Coverage",
+        "1 Senior Photographer & 1 Videographer",
+        "30-Page Master Leather Photobook Album",
+        "1-Month Delivery Guarantee"
+      ],
+      popular: false
+    },
+    {
+      id: "3",
+      name: "Outdoor Pre-Wedding Shoot",
+      price: "₹8,000",
+      description: "Scenic hill stations (Kodaikanal, Munnar), tea estates or heritage temple shoots.",
+      features: [
+        "4-6 Hours Outdoor Session",
+        "Creative Couple & Bridal Styling",
+        "30 Master Retouched High-Res Photos",
+        "3-Minute HD Cinematic Teaser"
+      ],
+      popular: false
+    },
+    {
+      id: "4",
+      name: "Maternity Portrait Shoot",
+      price: "₹6,000",
+      description: "Safe, tender & creative indoor studio or outdoor couple maternity session.",
+      features: [
+        "Studio Gowns & Backdrop Access",
+        "Indoor & Outdoor Posing Concepts",
+        "25 Master Retouched High-Res Photos",
+        "1-Month Delivery Guarantee"
+      ],
+      popular: false
+    },
+    {
+      id: "5",
+      name: "Baby Milestone & Birthday",
+      price: "₹5,000",
+      description: "Sanitized wooden props, wraps & cake smash themes for 3M, 6M, 1Y milestones.",
+      features: [
+        "Full Birthday / Milestone Session",
+        "Sanitized Props & Baby Wraps",
+        "20 Master Retouched High-Res Photos",
+        "Private Digital Cloud Gallery (6 Months)"
+      ],
+      popular: false
+    }
+  ];
 
- return (
- <div className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
- <div className="text-center mb-16 relative">
- <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-brand-gradient hover-glow-brand/20 blur-[100px] rounded-full pointer-events-none" />
- <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white font-serif">Pricing Packages</h1>
- <p className="text-zinc-600 dark:text-zinc-400 text-lg max-w-2xl mx-auto">
- Transparent pricing for our most popular services. Contact us for custom requirements.
- </p>
- </div>
+  const travelTiers = [
+    {
+      district: "Local Base District (Madurai & Suburbs)",
+      cost: "FREE / Included",
+      desc: "Zero travel charges for Madurai city, Avaniyapuram, Thiruparankundram, Mattuthavani & 30 km radius."
+    },
+    {
+      district: "Neighboring Districts (Dindigul, Theni, Virudhunagar, Sivagangai, Ramnad)",
+      cost: "₹1,500 – ₹3,000",
+      desc: "Nominal cab & fuel travel charge added based on exact location distance from Madurai."
+    },
+    {
+      district: "Far Districts & Hill Stations (Chennai, Coimbatore, Kodaikanal, Ooty, Tirunelveli, Salem)",
+      cost: "Actual Transport + Stay",
+      desc: "Direct actual fuel/vehicle charges + basic accommodation for the 2–4 photographer crew."
+    }
+  ];
 
- <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
- {displayPackages.map((pkg, idx) => (
- <AnimatedSection key={pkg.id || idx} delay={idx * 0.2}>
- <div 
- className={`h-full relative group backdrop-blur-xl bg-white/50 dark:bg-zinc-900/50 border rounded-3xl p-8 flex flex-col transition-all duration-300 hover:-translate-y-2 ${
- pkg.popular 
- ? "border-cyan-500/50 shadow-2xl shadow-[#D4AF37]/10 dark:shadow-[#D4AF37]/5" 
- : "border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-xl"
- }`}
- >
- {pkg.popular && (
- <>
- <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent opacity-100" />
- <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#D4AF37] to-[#F3E5AB] text-zinc-900 px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase shadow-lg">
- Most Popular
- </div>
- </>
- )}
- 
- <h3 className="text-2xl font-bold mb-2 text-zinc-900 dark:text-white">{pkg.name}</h3>
- <p className="text-zinc-600 dark:text-zinc-400 mb-6 text-sm">{pkg.description}</p>
- 
- <div className="mb-8">
- <span className={`text-4xl font-bold tracking-tight ${
- pkg.popular 
- ? "bg-gradient-to-r from-[#D4AF37] to-[#aa8920] dark:to-[#F3E5AB] bg-clip-text text-transparent" 
- : "text-zinc-900 dark:text-white"
- }`}>
- {pkg.price}
- </span>
- </div>
- 
- <ul className="space-y-4 mb-8 flex-grow">
- {pkg.features.map((feature, fIdx) => (
- <li key={fIdx} className="flex items-start gap-3 text-zinc-700 dark:text-zinc-300 text-sm">
- <Check className={`w-5 h-5 shrink-0 mt-0.5 ${pkg.popular ? "text-brand-gradient" : "text-zinc-400 dark:text-zinc-500"}`} />
- <span>{feature}</span>
- </li>
- ))}
- </ul>
+  return (
+    <div className="py-12 sm:py-20 lg:py-24 px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen">
+      {/* Header */}
+      <div className="text-center mb-10 sm:mb-16 relative px-2">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 sm:w-32 h-28 sm:h-32 bg-brand-gradient hover-glow-brand/20 blur-[80px] sm:blur-[100px] rounded-full pointer-events-none" />
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3 sm:mb-4 text-zinc-900 dark:text-white font-serif leading-tight">
+          Pricing Packages &amp; Rates
+        </h1>
+        <p className="text-zinc-600 dark:text-zinc-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed">
+          Transparent, fixed default package rates for weddings, maternity, baby milestone shoots, and event photography across Tamil Nadu.
+        </p>
+      </div>
 
- <Link 
- href="/contact" 
- className={`w-full text-center py-4 rounded-xl font-semibold transition-all duration-300 ${
- pkg.popular 
- ? "bg-brand-gradient hover-glow-brand hover:bg-[#c5a028] text-black shadow-lg shadow-[#D4AF37]/25" 
- : "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700"
- }`}
- >
- Enquire Now
- </Link>
- </div>
- </AnimatedSection>
- ))}
- </div>
+      {/* Packages Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-16 sm:mb-24">
+        {displayPackages.map((pkg, idx) => (
+          <AnimatedSection key={pkg.id || idx} delay={idx * 0.1}>
+            <div 
+              className={`h-full relative group backdrop-blur-xl bg-white dark:bg-zinc-900 border rounded-2xl sm:rounded-3xl p-5 sm:p-8 flex flex-col transition-all duration-300 hover:-translate-y-1 shadow-xl ${
+                pkg.popular 
+                  ? "border-cyan-500 shadow-2xl shadow-cyan-500/20 ring-2 ring-cyan-500/50 mt-4 sm:mt-0" 
+                  : "border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700"
+              }`}
+            >
+              {pkg.popular && (
+                <>
+                  <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-cyan-500 via-amber-400 to-cyan-500 rounded-t-2xl sm:rounded-t-3xl" />
+                  <div className="absolute -top-3.5 sm:-top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-3 sm:px-4 py-1 rounded-full text-[10px] sm:text-xs font-bold tracking-widest uppercase shadow-xl flex items-center gap-1.5 z-20 whitespace-nowrap">
+                    <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" /> Most Popular
+                  </div>
+                </>
+              )}
+              
+              <h3 className="text-xl sm:text-2xl font-bold mb-2 text-zinc-900 dark:text-white mt-1 leading-snug">{pkg.name}</h3>
+              <p className="text-zinc-600 dark:text-zinc-400 mb-5 sm:mb-6 text-xs sm:text-sm flex-grow-0 leading-relaxed">{pkg.description}</p>
+              
+              <div className="mb-6 sm:mb-8">
+                <span className={`text-3xl sm:text-4xl font-bold tracking-tight ${
+                  pkg.popular 
+                    ? "bg-gradient-to-r from-cyan-500 via-teal-400 to-amber-400 bg-clip-text text-transparent" 
+                    : "text-zinc-900 dark:text-white"
+                }`}>
+                  {pkg.price}
+                </span>
+                <span className="text-[11px] sm:text-xs text-zinc-500 font-medium block mt-1">Default Studio Rate</span>
+              </div>
+              
+              <ul className="space-y-3 sm:space-y-4 mb-6 sm:mb-8 flex-grow">
+                {pkg.features.map((feature, fIdx) => (
+                  <li key={fIdx} className="flex items-start gap-2.5 sm:gap-3 text-zinc-700 dark:text-zinc-300 text-xs sm:text-sm">
+                    <Check className={`w-4 h-4 sm:w-5 sm:h-5 shrink-0 mt-0.5 ${pkg.popular ? "text-cyan-500 font-bold" : "text-zinc-400 dark:text-zinc-500"}`} />
+                    <span className="leading-tight">{feature}</span>
+                  </li>
+                ))}
+              </ul>
 
- <AnimatedSection delay={0.4} className="mt-20">
- <PackageCalculator />
- </AnimatedSection>
- </div>
- );
+              <Link 
+                href="/contact" 
+                className={`w-full text-center py-3 sm:py-4 rounded-xl text-sm sm:text-base font-bold transition-all duration-300 shadow-lg ${
+                  pkg.popular 
+                    ? "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-cyan-500/25 hover:shadow-cyan-500/40" 
+                    : "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                }`}
+              >
+                Book Package / Enquire
+              </Link>
+            </div>
+          </AnimatedSection>
+        ))}
+      </div>
+
+      {/* District Travel Policy Section */}
+      <AnimatedSection className="mb-16 sm:mb-24">
+        <div className="bg-zinc-900 text-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-10 border border-zinc-800 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-60 sm:w-80 h-60 sm:h-80 bg-cyan-500/10 blur-[100px] sm:blur-[120px] rounded-full pointer-events-none" />
+          
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-6">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
+              <MapPin className="w-5 h-5 sm:w-6 sm:h-6" />
+            </div>
+            <div>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-white tracking-wide leading-snug">
+                All-District Travel Charges (எல்லா மாவட்டங்களுக்கும் பயணம்)
+              </h2>
+              <p className="text-zinc-300 text-xs sm:text-sm mt-1 font-medium leading-relaxed">
+                SSS Photography Studio is based in Avaniyapuram, Madurai and covers all 38 districts of Tamil Nadu.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mt-6 sm:mt-8">
+            {travelTiers.map((tier, tIdx) => (
+              <div key={tIdx} className="bg-zinc-800/90 border border-zinc-700/80 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:border-cyan-400/60 transition-all shadow-lg flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center gap-2 text-cyan-400 font-bold text-lg sm:text-xl mb-2 sm:mb-3">
+                    <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400 shrink-0" />
+                    {tier.cost}
+                  </div>
+                  <h3 className="font-bold text-white text-sm sm:text-base mb-2 leading-snug">{tier.district}</h3>
+                </div>
+                <p className="text-[11px] sm:text-xs text-zinc-300 leading-relaxed font-normal mt-2 pt-2 border-t border-zinc-700/50">
+                  {tier.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-zinc-800 flex items-start sm:items-center gap-2.5 sm:gap-3 text-zinc-200 text-xs sm:text-sm font-medium leading-relaxed">
+            <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400 shrink-0 mt-0.5 sm:mt-0" />
+            <span>
+              All packages include our signature <strong className="text-white">1-Month Album Delivery Guarantee</strong> (or ₹1,000 cash credit) &amp; 100% Transit Damage Replacement Guarantee.
+            </span>
+          </div>
+        </div>
+      </AnimatedSection>
+
+      {/* Package Calculator Section */}
+      <AnimatedSection delay={0.4}>
+        <PackageCalculator />
+      </AnimatedSection>
+    </div>
+  );
 }
