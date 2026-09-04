@@ -78,7 +78,7 @@ export default function AdminOrders() {
       case 'READY_FOR_PICKUP': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-500';
       case 'SHIPPED': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-500';
       case 'PICKED_UP':
-      case 'DELIVERED': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500';
+      case 'DELIVERED': return 'bg-amber-500/15 text-amber-300 border border-amber-500/30';
       default: return 'bg-zinc-100 text-zinc-800';
     }
   };

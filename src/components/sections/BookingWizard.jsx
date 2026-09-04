@@ -271,15 +271,15 @@ export default function BookingWizard() {
   const pricing = getDatePricing(dateObj);
   
   const badgeColors = {
-   green: "bg-green-500/20 text-green-400 border-green-500/30",
-   amber: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-   rose: "bg-rose-500/20 text-rose-400 border-rose-500/30",
+   amber: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+   blue: "bg-blue-500/20 text-blue-300 border-blue-500/30",
+   purple: "bg-purple-500/20 text-purple-300 border-purple-500/30",
    zinc: ""
   };
   const tileBg = {
-   green: "hover:bg-green-500/10",
    amber: "hover:bg-amber-500/10",
-   rose: "hover:bg-rose-500/10",
+   blue: "hover:bg-blue-500/10",
+   purple: "hover:bg-purple-500/10",
    zinc: "hover:bg-zinc-200 dark:hover:bg-zinc-800"
   };
  

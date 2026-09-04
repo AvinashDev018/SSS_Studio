@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "agent": "node deepseek-coder.mjs",
+    "ai": "node deepseek-coder.mjs",
     "postinstall": "prisma generate",
     "test": "vitest run"
   },

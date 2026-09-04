@@ -267,16 +267,33 @@ export async function runStudioAgent({ messages = [], apiKey = null }) {
       setTimeout(() => reject(new Error("NVIDIA_TIMEOUT")), 18000)
     );
 
-    const completionPromise = openai.chat.completions.create({
-      model: "nvidia/llama-3.1-nemotron-70b-instruct",
-      messages: conversation,
-      tools: AGENT_TOOLS,
-      tool_choice: "auto",
-      temperature: 0.6,
-      max_tokens: 1500,
-    });
+    const candidateModels = [
+      "nvidia/nemotron-3-super-120b-a12b",
+      "mistralai/mistral-7b-instruct-v0.2",
+      "nvidia/neva-22b"
+    ];
 
-    const completion = await Promise.race([completionPromise, timeoutPromise]);
+    let completion = null;
+    for (const modelId of candidateModels) {
+      try {
+        const completionPromise = openai.chat.completions.create({
+          model: modelId,
+          messages: conversation,
+          tools: AGENT_TOOLS,
+          tool_choice: "auto",
+          temperature: 0.6,
+          max_tokens: 1500,
+        });
+        completion = await Promise.race([completionPromise, timeoutPromise]);
+        if (completion) break;
+      } catch (err) {
+        continue;
+      }
+    }
+
+    if (!completion) {
+      throw new Error("All NVIDIA AI models are currently busy. Please try again.");
+    }
     const responseMessage = completion.choices[0]?.message;
 
     // 2. If agent calls tools:

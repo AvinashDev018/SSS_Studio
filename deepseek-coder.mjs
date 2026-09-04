@@ -21,7 +21,7 @@ import { execSync } from "child_process";
 import readline from "readline";
 import OpenAI from "openai";
 
-const API_KEY = process.env.NVIDIA_API_KEY || "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";
+const API_KEY = process.env.NVIDIA_API_KEY;
 
 const openai = new OpenAI({
   apiKey: API_KEY,
@@ -168,14 +168,36 @@ Your workflow:
     iterations++;
     console.log(`🔄 [Agent Step ${iterations}]: Thinking...`);
 
-    const response = await openai.chat.completions.create({
-      model: "deepseek-ai/deepseek-v4-pro-0813",
-      messages,
-      tools: CODING_TOOLS,
-      tool_choice: "auto",
-      temperature: 0.2,
-      max_tokens: 3000,
-    });
+    const isPureCaptionPrompt = /^(caption|promo|slogan|quote)\b/i.test(userTask);
+
+    const candidateModels = [
+      "nvidia/nemotron-3-super-120b-a12b",
+      "mistralai/mistral-7b-instruct-v0.2",
+      "nvidia/neva-22b"
+    ];
+
+    let response = null;
+    let lastErr = null;
+
+    for (const modelId of candidateModels) {
+      try {
+        response = await openai.chat.completions.create({
+          model: modelId,
+          messages,
+          ...(isPureCaptionPrompt ? {} : { tools: CODING_TOOLS, tool_choice: "auto" }),
+          temperature: 0.3,
+          max_tokens: 2000,
+        });
+        if (response) break;
+      } catch (err) {
+        lastErr = err;
+        continue;
+      }
+    }
+
+    if (!response && lastErr) {
+      throw lastErr;
+    }
 
     const msg = response.choices[0]?.message;
     if (!msg) break;
