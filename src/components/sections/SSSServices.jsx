@@ -234,12 +234,12 @@ export default function SSSServices({ onOpenBooking }) {
           {filteredServices.map((service, idx) => {
             const Icon = service.icon;
             const prices = {
-              wedding: "₹ 25,000+",
-              "pre-wedding": "₹ 12,000+",
-              birthday: "₹ 4,500+",
-              "school-events": "₹ 8,500+",
-              baby: "₹ 5,000+",
-              maternity: "₹ 6,500+"
+              wedding: "Starting ₹ 18,000",
+              "pre-wedding": "Starting ₹ 8,000",
+              birthday: "Starting ₹ 5,000",
+              "school-events": "Starting ₹ 5,000",
+              baby: "Starting ₹ 5,000",
+              maternity: "Starting ₹ 6,000"
             };
 
             return (
