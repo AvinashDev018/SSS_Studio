@@ -184,7 +184,7 @@ const jsonLdSchema = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" className="scroll-smooth w-full overflow-x-hidden" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
@@ -192,21 +192,21 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body 
-        className={`${inter.variable} ${playfair.variable} font-sans bg-[#080c0b] text-zinc-100 min-h-screen flex flex-col relative antialiased selection:bg-teal-500/30`}
+        className={`${inter.variable} ${playfair.variable} font-sans bg-white text-zinc-900 min-h-screen flex flex-col relative antialiased selection:bg-[#d4af37]/30 w-full max-w-full overflow-x-hidden`}
         suppressHydrationWarning
       >
-        {/* Ambient Global Glow */}
-        <div className="fixed inset-0 z-0 pointer-events-none opacity-30">
-          <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] bg-teal-600/25 rounded-full blur-[140px]" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-600/20 rounded-full blur-[160px]" />
+        {/* Subtle Ambient Vignette */}
+        <div className="fixed inset-0 z-0 pointer-events-none opacity-40">
+          <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] bg-[#d4af37]/10 rounded-full blur-[140px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#b8860b]/5 rounded-full blur-[160px]" />
         </div>
 
-        <div className="relative z-10 flex flex-col min-h-screen" suppressHydrationWarning>
+        <div className="relative z-10 flex flex-col min-h-screen w-full max-w-full overflow-x-hidden" suppressHydrationWarning>
           <Providers>
             <CursorGlow />
             <SSSAnnouncementBar />
             <Navbar />
-            <main className="flex-grow">{children}</main>
+            <main className="flex-grow w-full max-w-full overflow-x-hidden">{children}</main>
             <Footer />
             <ChatbotWidget />
             <MultilingualWhatsAppWidget whatsappNumber="916383565425" />

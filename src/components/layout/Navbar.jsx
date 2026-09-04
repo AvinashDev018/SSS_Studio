@@ -71,13 +71,14 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-40 bg-white/90 backdrop-blur-2xl border-b border-black/10 transition-all duration-300 shadow-md">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="flex items-center justify-between h-20 gap-2 lg:gap-4">
+    <nav className="sticky top-0 z-40 bg-white/95 backdrop-blur-2xl border-b border-black/10 transition-all duration-300 shadow-md w-full max-w-full overflow-x-clip">
+      <div className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 w-full">
+        <div className="flex items-center justify-between h-16 sm:h-20 gap-1.5 sm:gap-4">
           
-          {/* Left: Brand Logo */}
+          {/* Left: Brand Logo (Scales down on compact mobile viewports) */}
           <div className="shrink-0">
-            <StudioLogo size="md" href="/" />
+            <StudioLogo size="sm" href="/" className="sm:hidden" />
+            <StudioLogo size="md" href="/" className="hidden sm:block" />
           </div>
 
           {/* Center: Desktop Nav Links (Clean, Centered, Perfectly Spaced) */}
@@ -100,7 +101,7 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Right: Streamlined Action CTAs */}
+          {/* Right: Streamlined Action CTAs (Desktop) */}
           <div className="hidden lg:flex items-center gap-2 xl:gap-3 shrink-0">
             
             {/* Interactive Language Selector Dropdown */}
@@ -173,8 +174,8 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* Mobile / Tablet View Controls */}
-          <div className="flex lg:hidden items-center gap-2">
+          {/* Mobile / Tablet View Controls (Zero Overflow, Fits perfectly on 320px-400px screens) */}
+          <div className="flex lg:hidden items-center gap-1.5 sm:gap-2 shrink-0">
             {/* Quick Language Pill */}
             <div className="relative" ref={mobileLangRef}>
               <button
@@ -184,15 +185,15 @@ export default function Navbar() {
                   e.stopPropagation();
                   setIsMobileLangOpen((prev) => !prev);
                 }}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-semibold text-zinc-200 bg-white/5 border border-white/15 cursor-pointer"
+                className="flex items-center gap-1 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold text-zinc-900 bg-black/5 border border-black/15 cursor-pointer hover:bg-black/10 transition-colors whitespace-nowrap"
               >
-                <Globe size={13} className="text-[#c5a880]" />
+                <Globe size={12} className="text-[#b8860b]" />
                 <span suppressHydrationWarning>{translations[currentLang]?.langLabel || "EN"}</span>
               </button>
 
               {isMobileLangOpen && (
                 <div 
-                  className="absolute right-0 mt-2 w-36 rounded-2xl bg-[#141414] border border-white/15 shadow-2xl p-1 z-50"
+                  className="absolute right-0 mt-2 w-40 rounded-2xl bg-white border border-black/15 shadow-2xl p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {languages.map((lang) => (
@@ -209,10 +210,10 @@ export default function Navbar() {
                         changeLanguage(lang.code);
                         setIsMobileLangOpen(false);
                       }}
-                      className={`w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-semibold ${
+                      className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold ${
                         currentLang === lang.code
-                          ? "bg-[#c5a880]/20 text-[#c5a880] font-bold"
-                          : "text-zinc-300 hover:text-white"
+                          ? "bg-[#d4af37]/25 text-[#8b6508] font-bold border border-[#d4af37]/40"
+                          : "text-zinc-700 hover:bg-black/5 hover:text-black"
                       }`}
                     >
                       {lang.label}
@@ -222,37 +223,37 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Quick Mobile Offer Button */}
+            {/* Quick Mobile Offer Button (Visible on sm+, hidden on ultra-small screens to prevent wrap) */}
             <button
               onClick={() => triggerModal("offer", "Exclusive Wedding Season Gift Box")}
-              className="px-3 py-1.5 rounded-full text-[11px] font-bold bg-[#c5a880] text-black flex items-center gap-1 cursor-pointer shadow-md"
+              className="hidden xs:flex px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-[#d4af37]/20 text-[#8b6508] border border-[#d4af37]/50 items-center gap-1 cursor-pointer shadow-sm whitespace-nowrap"
             >
-              <Sparkles size={12} /> {t.nav.offer}
+              <Sparkles size={11} className="text-[#8b6508]" /> {t.nav.offer}
             </button>
 
             {/* Hamburger Button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-xl text-zinc-300 hover:text-white bg-white/5 border border-white/10 focus:outline-none cursor-pointer"
+              className="inline-flex items-center justify-center p-2 rounded-xl text-zinc-900 bg-black/5 border border-black/15 hover:bg-black/10 focus:outline-none cursor-pointer"
               aria-expanded={isOpen}
             >
               <span className="sr-only">{isOpen ? "Close menu" : "Open menu"}</span>
-              {isOpen ? <X className="block h-5 w-5 text-[#c5a880]" /> : <Menu className="block h-5 w-5" />}
+              {isOpen ? <X className="block h-5 w-5 text-[#8b6508]" /> : <Menu className="block h-5 w-5 text-zinc-900" />}
             </button>
           </div>
 
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer Menu (Pure Luxury Light Theme, Zero Overflow) */}
       {isOpen && (
-        <div className="lg:hidden bg-[#0a0a0a]/98 backdrop-blur-2xl border-b border-white/10 shadow-2xl animate-in slide-in-from-top-3 duration-200">
-          <div className="px-5 pt-4 pb-6 space-y-3">
+        <div className="lg:hidden bg-white/98 backdrop-blur-2xl border-b border-black/15 shadow-2xl animate-in slide-in-from-top-3 duration-200">
+          <div className="px-4 sm:px-5 pt-4 pb-6 space-y-3">
             {/* Language Selector in Drawer */}
-            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+            <div className="flex items-center justify-between pb-3 border-b border-black/10">
               <div className="flex items-center gap-2">
-                <Globe size={15} className="text-[#c5a880]" />
-                <span className="text-xs text-zinc-300 font-medium">Language / மொழி:</span>
+                <Globe size={15} className="text-[#b8860b]" />
+                <span className="text-xs text-zinc-800 font-bold">Language / மொழி:</span>
               </div>
               <div className="flex gap-1.5">
                 {languages.map((lang) => (
@@ -260,10 +261,10 @@ export default function Navbar() {
                     key={lang.code}
                     type="button"
                     onClick={() => changeLanguage(lang.code)}
-                    className={`px-3 py-1 rounded-xl text-xs font-semibold cursor-pointer transition-all ${
+                    className={`px-3 py-1 rounded-xl text-xs font-bold cursor-pointer transition-all ${
                       currentLang === lang.code
-                        ? "bg-[#c5a880] text-black font-bold shadow-md"
-                        : "bg-white/5 text-zinc-300 hover:text-white border border-white/10"
+                        ? "bg-[#d4af37] text-black font-black shadow-sm"
+                        : "bg-black/5 text-zinc-700 hover:bg-black/10 border border-black/10"
                     }`}
                   >
                     {lang.short}
@@ -272,17 +273,17 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Nav Links */}
+            {/* Nav Links Grid */}
             <div className="grid grid-cols-2 gap-1.5 pt-1">
               {mobileLinks.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className={`block px-3.5 py-2.5 rounded-xl text-xs font-medium tracking-wider ${
+                  className={`block px-3.5 py-2.5 rounded-xl text-xs font-bold tracking-wider ${
                     pathname === link.href
-                      ? "bg-[#c5a880]/15 text-[#c5a880] font-semibold border border-[#c5a880]/30"
-                      : "text-zinc-300 hover:bg-white/5 hover:text-white"
+                      ? "bg-[#d4af37]/25 text-[#8b6508] border border-[#d4af37]/50"
+                      : "text-zinc-800 hover:bg-black/5 hover:text-black"
                   }`}
                 >
                   {link.name}
@@ -297,7 +298,7 @@ export default function Navbar() {
                   setIsOpen(false);
                   triggerModal("quote", "Wedding & Event Photo Shoot");
                 }}
-                className="w-full py-3 rounded-xl text-xs font-semibold text-white bg-white/5 border border-white/10 text-center cursor-pointer hover:bg-white/10"
+                className="w-full py-3 rounded-xl text-xs font-bold text-zinc-900 bg-black/5 border border-black/15 text-center cursor-pointer hover:bg-black/10"
               >
                 {t.nav.getQuote}
               </button>
@@ -306,7 +307,7 @@ export default function Navbar() {
                   setIsOpen(false);
                   triggerModal("offer", "Exclusive Wedding Season Gift Box");
                 }}
-                className="w-full py-3 rounded-xl text-xs font-bold text-black bg-[#c5a880] text-center cursor-pointer shadow-md"
+                className="w-full py-3 rounded-xl text-xs font-bold text-[#8b6508] bg-[#d4af37]/25 border border-[#d4af37]/50 text-center cursor-pointer shadow-sm"
               >
                 {t.nav.offer}
               </button>
@@ -317,7 +318,7 @@ export default function Navbar() {
                 setIsOpen(false);
                 triggerModal("booking", "Wedding & Event Photo Shoot");
               }}
-              className="block text-center w-full bg-[#c5a880] hover:bg-[#d4af37] text-black px-5 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-lg active:scale-95 transition-all mt-2 cursor-pointer"
+              className="block text-center w-full bg-metallic-gold text-black px-5 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider shadow-lg active:scale-95 transition-all mt-2 cursor-pointer"
             >
               {t.nav.bookNow}
             </button>

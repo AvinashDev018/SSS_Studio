@@ -24,13 +24,13 @@ export default function SSSHero({ onOpenBooking, onOpenQuote }) {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-black/[0.03] border border-[#d4af37]/40 shadow-sm backdrop-blur-md text-zinc-700 text-xs tracking-widest uppercase mb-10 font-medium"
+          className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-1.5 rounded-full bg-black/[0.03] border border-[#d4af37]/40 shadow-sm backdrop-blur-md text-zinc-800 text-[10px] sm:text-xs tracking-widest uppercase mb-6 sm:mb-10 font-bold max-w-full text-center"
         >
-          <span className="relative flex h-2 w-2">
+          <span className="relative flex h-2 w-2 shrink-0">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#b8860b] opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#b8860b]" />
           </span>
-          <span>Open for 2026-27 Bookings • Avaniyapuram, Madurai</span>
+          <span className="truncate">Open for 2026-27 Bookings • Avaniyapuram, Madurai</span>
         </motion.div>
 
         {/* Editorial Split Grid */}

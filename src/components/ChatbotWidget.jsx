@@ -267,7 +267,7 @@ export default function ChatbotWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[95]">
+    <div className="fixed bottom-4 right-3 sm:bottom-6 sm:right-6 z-[95]">
       {/* Floating Agent Button & Label */}
       <div className="flex items-center gap-2.5">
         {!isOpen && (
@@ -284,15 +284,15 @@ export default function ChatbotWidget() {
           suppressHydrationWarning
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Open Studio AI Concierge"
-          className={`relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${
+          className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${
             isOpen ? "bg-red-500 hover:bg-red-600 rotate-90" : "bg-gradient-to-r from-teal-400 to-emerald-500 hover:scale-105 shadow-teal-500/50 shadow-lg text-black font-bold"
           } cursor-pointer`}
         >
         {isOpen ? (
-          <X size={24} />
+          <X size={22} />
         ) : (
           <>
-            <MessageCircle size={26} />
+            <MessageCircle size={24} className="sm:w-6 sm:h-6" />
             <span className="absolute -top-1 -right-1 w-4 h-4 bg-teal-300 rounded-full border-2 border-zinc-900 animate-pulse flex items-center justify-center">
               <Sparkles size={8} className="text-black" />
             </span>
@@ -303,7 +303,7 @@ export default function ChatbotWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="absolute bottom-20 right-0 w-[90vw] max-w-[420px] max-h-[85vh] h-[520px] bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.2)] border-2 border-[#d4af37]/60 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-300 origin-bottom-right">
+        <div className="absolute bottom-16 sm:bottom-20 right-0 w-[calc(100vw-1.5rem)] sm:w-[420px] max-w-[420px] max-h-[80vh] sm:max-h-[85vh] h-[490px] sm:h-[520px] bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.2)] border-2 border-[#d4af37]/60 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-300 origin-bottom-right">
           {/* Header */}
           <div className="p-4 bg-white border-b border-black/10 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-3">
