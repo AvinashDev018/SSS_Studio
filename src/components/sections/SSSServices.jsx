@@ -230,100 +230,114 @@ export default function SSSServices({ onOpenBooking }) {
           </div>
         </div>
 
-        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredServices.map((service, idx) => {
-            const Icon = service.icon;
-            const prices = {
-              wedding: "Starting ₹ 18,000",
-              "pre-wedding": "Starting ₹ 8,000",
-              birthday: "Starting ₹ 5,000",
-              "school-events": "Starting ₹ 5,000",
-              baby: "Starting ₹ 5,000",
-              maternity: "Starting ₹ 6,000"
-            };
+          {/* Mobile Swipe Guidance Banner */}
+          <div className="flex md:hidden items-center justify-between px-2 mb-3 text-xs text-zinc-500 font-medium">
+            <span className="flex items-center gap-1 text-[#8b6508] font-bold">
+              ← Swipe to view services ({filteredServices.length}) →
+            </span>
+            <span className="text-[11px] bg-black/5 px-2.5 py-0.5 rounded-full font-mono text-zinc-600">
+              Horizontal Scroll
+            </span>
+          </div>
 
-            return (
-              <motion.div
-                layout
-                key={service.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.05 }}
-                transition={{ duration: 0.5, delay: idx * 0.08 }}
-                whileHover={{ y: -8 }}
-                className="bg-white border-2 border-[#d4af37]/70 hover:border-[#d4af37] rounded-2xl overflow-hidden shadow-[0_10px_35px_rgba(212,175,55,0.12)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.25)] flex flex-col justify-between group transition-all duration-300 relative"
-              >
-                {/* Thin Inner Gold Accent Border */}
-                <div className="absolute inset-1 border border-[#d4af37]/30 rounded-[14px] pointer-events-none z-10" />
+          {/* Service Cards Container: Horizontal Snap Carousel on Mobile (< md), Grid on Desktop (md+) */}
+          <motion.div 
+            layout 
+            className="flex md:grid overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar pb-6 gap-4 md:gap-8 -mx-4 px-4 md:mx-0 md:px-0 grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+          >
+            {filteredServices.map((service, idx) => {
+              const Icon = service.icon;
+              const prices = {
+                wedding: "Starting ₹ 18,000",
+                "pre-wedding": "Starting ₹ 8,000",
+                birthday: "Starting ₹ 5,000",
+                "school-events": "Starting ₹ 5,000",
+                baby: "Starting ₹ 5,000",
+                maternity: "Starting ₹ 6,000"
+              };
 
-                <div>
-                  {/* Card Image Header */}
-                  <div className="relative h-60 overflow-hidden bg-zinc-100">
-                    <img
-                      src={service.image}
-                      alt={service.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    
-                    {/* Centered Gold Icon Badge */}
-                    <div className="absolute top-4 right-4 w-11 h-11 rounded-xl bg-white/95 backdrop-blur-md border-2 border-[#d4af37] flex items-center justify-center text-[#8b6508] shadow-md group-hover:scale-110 transition-all duration-300">
-                      <Icon size={20} />
-                    </div>
+              return (
+                <motion.div
+                  layout
+                  key={service.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.05 }}
+                  transition={{ duration: 0.5, delay: idx * 0.08 }}
+                  whileHover={{ y: -8 }}
+                  className="w-[85vw] sm:w-[340px] md:w-auto shrink-0 snap-center bg-white border-2 border-[#d4af37]/70 hover:border-[#d4af37] rounded-2xl overflow-hidden shadow-[0_10px_35px_rgba(212,175,55,0.12)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.25)] flex flex-col justify-between group transition-all duration-300 relative"
+                >
+                  {/* Thin Inner Gold Accent Border */}
+                  <div className="absolute inset-1 border border-[#d4af37]/30 rounded-[14px] pointer-events-none z-10" />
 
-                    {idx === 0 && (
-                      <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-metallic-gold text-black text-[10px] font-black uppercase tracking-widest shadow-lg">
-                        ★ MOST POPULAR
+                  <div>
+                    {/* Card Image Header */}
+                    <div className="relative h-56 sm:h-60 overflow-hidden bg-zinc-100">
+                      <img
+                        src={service.image}
+                        alt={service.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                      
+                      {/* Centered Gold Icon Badge */}
+                      <div className="absolute top-4 right-4 w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/95 backdrop-blur-md border-2 border-[#d4af37] flex items-center justify-center text-[#8b6508] shadow-md group-hover:scale-110 transition-all duration-300">
+                        <Icon size={18} className="sm:w-5 sm:h-5" />
                       </div>
-                    )}
 
-                    {/* All-Caps Category Label Overlay */}
-                    <div className="absolute bottom-3 left-4 right-4 text-center">
-                      <span className="font-serif text-sm tracking-[0.2em] font-bold text-white uppercase drop-shadow-md">
-                        {service.title}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-6 text-center">
-                    <p className="text-zinc-600 text-xs leading-relaxed mb-4 font-light max-w-sm mx-auto">
-                      {service.description}
-                    </p>
-
-                    {/* Price Tag */}
-                    <div className="mb-4">
-                      <span className="font-serif text-lg font-extrabold text-[#b8860b] tracking-wider block">
-                        {prices[service.id] || "₹ 5,000+"}
-                      </span>
-                      <span className="text-[10px] text-zinc-400 uppercase tracking-widest">Starting Investment</span>
-                    </div>
-
-                    <div className="space-y-2 mb-2 text-left bg-[#FAF9F6] p-3.5 rounded-xl border border-black/5">
-                      {service.features.map((feat, fIdx) => (
-                        <div key={fIdx} className="flex items-center gap-2 text-xs text-zinc-700 font-medium">
-                          <span className="w-4 h-4 rounded-full bg-[#d4af37]/20 text-[#8b6508] flex items-center justify-center shrink-0">
-                            <Check size={11} strokeWidth={3} />
-                          </span>
-                          <span className="text-[11px]">{feat}</span>
+                      {idx === 0 && (
+                        <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-metallic-gold text-black text-[10px] font-black uppercase tracking-widest shadow-lg">
+                          ★ MOST POPULAR
                         </div>
-                      ))}
+                      )}
+
+                      {/* All-Caps Category Label Overlay */}
+                      <div className="absolute bottom-3 left-4 right-4 text-center">
+                        <span className="font-serif text-xs sm:text-sm tracking-[0.2em] font-bold text-white uppercase drop-shadow-md">
+                          {service.title}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-5 sm:p-6 text-center">
+                      <p className="text-zinc-600 text-xs leading-relaxed mb-4 font-light max-w-sm mx-auto">
+                        {service.description}
+                      </p>
+
+                      {/* Price Tag */}
+                      <div className="mb-4">
+                        <span className="font-serif text-lg font-extrabold text-[#b8860b] tracking-wider block">
+                          {prices[service.id] || "₹ 5,000+"}
+                        </span>
+                        <span className="text-[10px] text-zinc-400 uppercase tracking-widest">Starting Investment</span>
+                      </div>
+
+                      <div className="space-y-2 mb-2 text-left bg-[#FAF9F6] p-3 sm:p-3.5 rounded-xl border border-black/5">
+                        {service.features.map((feat, fIdx) => (
+                          <div key={fIdx} className="flex items-center gap-2 text-xs text-zinc-700 font-medium">
+                            <span className="w-4 h-4 rounded-full bg-[#d4af37]/20 text-[#8b6508] flex items-center justify-center shrink-0">
+                              <Check size={11} strokeWidth={3} />
+                            </span>
+                            <span className="text-[11px] leading-tight">{feat}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="p-6 pt-0 text-center">
-                  <button
-                    onClick={() => onOpenBooking(service.category)}
-                    className="w-full py-3 bg-metallic-gold text-black font-extrabold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 text-xs uppercase tracking-widest cursor-pointer shadow-md hover:scale-[1.02]"
-                  >
-                    <span>{t.services.bookBtn}</span>
-                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                  </button>
-                </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+                  <div className="p-5 sm:p-6 pt-0 text-center">
+                    <button
+                      onClick={() => onOpenBooking(service.category)}
+                      className="w-full py-3 bg-metallic-gold text-black font-extrabold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 text-xs uppercase tracking-widest cursor-pointer shadow-md hover:scale-[1.02]"
+                    >
+                      <span>{t.services.bookBtn}</span>
+                      <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
       </div>
     </section>
   );

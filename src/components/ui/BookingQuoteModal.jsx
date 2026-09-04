@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, User, Phone, Calendar, MapPin, Clock, DollarSign, MessageSquare, Sparkles, CheckCircle2 } from "lucide-react";
+import { X, Send, User, Phone, Calendar, MapPin, Clock, DollarSign, MessageSquare, Sparkles } from "lucide-react";
 
 export const SHOOT_TYPES = [
   "Wedding & Event Photo Shoot",
@@ -104,47 +104,47 @@ export default function BookingQuoteModal({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex justify-center items-center p-4 overflow-y-auto py-8">
+        <div className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-md flex justify-center items-center p-2 sm:p-4 overflow-y-auto py-4 sm:py-8">
           <div className="absolute inset-0" onClick={onClose} />
           
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ duration: 0.3, type: "spring", bounce: 0.2 }}
-            className="bg-gradient-to-br from-[#0c3530]/98 via-[#104b43]/98 to-[#166055]/98 border border-white/15 text-white rounded-3xl p-6 md:p-8 w-full max-w-lg shadow-2xl relative z-10 overflow-hidden text-left my-auto max-h-[90vh] overflow-y-auto"
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.25, type: "spring", bounce: 0.15 }}
+            className="bg-gradient-to-b from-[#141622] via-[#0d0e17] to-[#07080e] border border-amber-500/35 text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 w-full max-w-lg shadow-[0_20px_60px_rgba(0,0,0,0.9)] relative z-10 text-left my-auto max-h-[92vh] overflow-y-auto scrollbar-thin"
           >
-            {/* Top Glow Bar */}
-            <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-teal-400 via-emerald-400 to-teal-400" />
+            {/* Top Gold Glow Bar */}
+            <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-amber-500 via-yellow-300 to-amber-500" />
             
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 text-gray-300 hover:text-white transition-colors duration-300 focus:outline-none cursor-pointer"
+              className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-zinc-300 hover:text-white transition-colors duration-300 focus:outline-none cursor-pointer z-20"
               aria-label="Close"
             >
               <X size={18} />
             </button>
 
             {/* Header */}
-            <div className="mb-4 text-center">
-              <h3 className="text-2xl md:text-3xl font-serif font-bold text-white flex items-center justify-center gap-2">
+            <div className="mb-3 sm:mb-4 text-center pr-6 sm:pr-0">
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-white flex items-center justify-center gap-2 tracking-wide">
                 {mode === "booking" ? "Book a Shoot" : "Request a Quote"}
               </h3>
-              <p className="text-teal-300 text-xs font-semibold tracking-wider uppercase mt-1">
+              <p className="text-amber-400 text-[10px] sm:text-xs font-bold tracking-widest uppercase mt-0.5">
                 SSS Photography Studio
               </p>
             </div>
 
             {/* Mode Switcher Tabs */}
-            <div className="flex border-b border-white/10 mb-6">
+            <div className="flex border-b border-zinc-800 mb-4 sm:mb-6">
               <button
                 type="button"
                 onClick={() => setMode("booking")}
-                className={`flex-1 pb-3 text-sm font-semibold border-b-2 transition-all duration-300 cursor-pointer ${
+                className={`flex-1 pb-2.5 sm:pb-3 text-xs sm:text-sm font-bold border-b-2 transition-all duration-300 cursor-pointer ${
                   mode === "booking"
-                    ? "border-teal-400 text-teal-300 font-bold"
-                    : "border-transparent text-gray-400 hover:text-gray-200"
+                    ? "border-amber-400 text-amber-400 font-extrabold"
+                    : "border-transparent text-zinc-400 hover:text-zinc-200"
                 }`}
               >
                 Shoot Booking
@@ -152,10 +152,10 @@ export default function BookingQuoteModal({
               <button
                 type="button"
                 onClick={() => setMode("quote")}
-                className={`flex-1 pb-3 text-sm font-semibold border-b-2 transition-all duration-300 cursor-pointer ${
+                className={`flex-1 pb-2.5 sm:pb-3 text-xs sm:text-sm font-bold border-b-2 transition-all duration-300 cursor-pointer ${
                   mode === "quote"
-                    ? "border-teal-400 text-teal-300 font-bold"
-                    : "border-transparent text-gray-400 hover:text-gray-200"
+                    ? "border-amber-400 text-amber-400 font-extrabold"
+                    : "border-transparent text-zinc-400 hover:text-zinc-200"
                 }`}
               >
                 General Enquiry
@@ -166,17 +166,17 @@ export default function BookingQuoteModal({
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-4 p-3 bg-red-500/25 border border-red-500/40 rounded-xl text-red-200 text-sm font-medium text-center"
+                className="mb-3 p-2.5 bg-red-500/20 border border-red-500/40 rounded-xl text-red-200 text-xs sm:text-sm font-medium text-center"
               >
                 {error}
               </motion.div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               {/* Name */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1.5 flex items-center gap-1.5">
-                  <User size={14} className="text-teal-400" /> Full Name <span className="text-red-400">*</span>
+                <label className="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1 flex items-center gap-1.5">
+                  <User size={13} className="text-amber-400" /> Full Name <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
@@ -184,15 +184,15 @@ export default function BookingQuoteModal({
                   placeholder="Enter your name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-400 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-all duration-300 w-full text-sm"
+                  className="bg-zinc-900/90 border border-zinc-700/80 rounded-xl px-3.5 py-2 sm:py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all duration-300 w-full text-xs sm:text-sm"
                 />
               </div>
 
               {/* Phone & Date */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1.5 flex items-center gap-1.5">
-                    <Phone size={14} className="text-teal-400" /> Phone Number <span className="text-red-400">*</span>
+                  <label className="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1 flex items-center gap-1.5">
+                    <Phone size={13} className="text-amber-400" /> Phone Number <span className="text-red-400">*</span>
                   </label>
                   <input
                     type="tel"
@@ -200,35 +200,35 @@ export default function BookingQuoteModal({
                     placeholder="Enter contact number"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-400 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-all duration-300 w-full text-sm"
+                    className="bg-zinc-900/90 border border-zinc-700/80 rounded-xl px-3.5 py-2 sm:py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all duration-300 w-full text-xs sm:text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1.5 flex items-center gap-1.5">
-                    <Calendar size={14} className="text-teal-400" /> Shoot Date <span className="text-red-400">*</span>
+                  <label className="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1 flex items-center gap-1.5">
+                    <Calendar size={13} className="text-amber-400" /> Shoot Date <span className="text-red-400">*</span>
                   </label>
                   <input
                     type="date"
                     required
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-all duration-300 w-full text-sm"
+                    className="bg-zinc-900/90 border border-zinc-700/80 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all duration-300 w-full text-xs sm:text-sm appearance-none min-h-[38px]"
                   />
                 </div>
               </div>
 
               {/* Type of Shoot */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1.5 flex items-center gap-1.5">
-                  <Sparkles size={14} className="text-teal-400" /> Type of Shoot <span className="text-red-400">*</span>
+                <label className="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1 flex items-center gap-1.5">
+                  <Sparkles size={13} className="text-amber-400" /> Type of Shoot <span className="text-red-400">*</span>
                 </label>
                 <select
                   value={shootType}
                   onChange={(e) => setShootType(e.target.value)}
-                  className="bg-[#0b3430] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-all duration-300 w-full text-sm cursor-pointer"
+                  className="bg-[#141622] border border-zinc-700/80 rounded-xl px-3.5 py-2 sm:py-2.5 text-white focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all duration-300 w-full text-xs sm:text-sm cursor-pointer"
                 >
                   {SHOOT_TYPES.map((type, idx) => (
-                    <option key={idx} value={type} className="bg-[#0b3430]">
+                    <option key={idx} value={type} className="bg-[#141622] text-white">
                       {type}
                     </option>
                   ))}
@@ -237,8 +237,8 @@ export default function BookingQuoteModal({
 
               {/* Location */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1.5 flex items-center gap-1.5">
-                  <MapPin size={14} className="text-teal-400" /> Location / Venue <span className="text-red-400">*</span>
+                <label className="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1 flex items-center gap-1.5">
+                  <MapPin size={13} className="text-amber-400" /> Location / Venue <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
@@ -246,35 +246,35 @@ export default function BookingQuoteModal({
                   placeholder="e.g. Madurai, Avaniyapuram, etc."
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-400 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-all duration-300 w-full text-sm"
+                  className="bg-zinc-900/90 border border-zinc-700/80 rounded-xl px-3.5 py-2 sm:py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all duration-300 w-full text-xs sm:text-sm"
                 />
               </div>
 
               {/* Quote Mode Extra Fields */}
               {mode === "quote" && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1.5 flex items-center gap-1.5">
-                      <Clock size={14} className="text-teal-400" /> Duration
+                    <label className="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1 flex items-center gap-1.5">
+                      <Clock size={13} className="text-amber-400" /> Duration
                     </label>
                     <input
                       type="text"
                       placeholder="e.g. 4 Hours, 2 Days"
                       value={duration}
                       onChange={(e) => setDuration(e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-400 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-all duration-300 w-full text-sm"
+                      className="bg-zinc-900/90 border border-zinc-700/80 rounded-xl px-3.5 py-2 sm:py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all duration-300 w-full text-xs sm:text-sm"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1.5 flex items-center gap-1.5">
-                      <DollarSign size={14} className="text-teal-400" /> Estimated Budget
+                    <label className="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1 flex items-center gap-1.5">
+                      <DollarSign size={13} className="text-amber-400" /> Estimated Budget
                     </label>
                     <input
                       type="text"
                       placeholder="e.g. ₹25,000"
                       value={budget}
                       onChange={(e) => setBudget(e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-400 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-all duration-300 w-full text-sm"
+                      className="bg-zinc-900/90 border border-zinc-700/80 rounded-xl px-3.5 py-2 sm:py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all duration-300 w-full text-xs sm:text-sm"
                     />
                   </div>
                 </div>
@@ -282,24 +282,24 @@ export default function BookingQuoteModal({
 
               {/* Special Notes */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1.5 flex items-center gap-1.5">
-                  <MessageSquare size={14} className="text-teal-400" /> Special Requests & Notes
+                <label className="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1 flex items-center gap-1.5">
+                  <MessageSquare size={13} className="text-amber-400" /> Special Requests & Notes
                 </label>
                 <textarea
-                  rows="3"
+                  rows={2}
                   placeholder="Tell us about specific rituals, venue timings, or album preferences..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-all duration-300 w-full text-sm resize-none"
+                  className="bg-zinc-900/90 border border-zinc-700/80 rounded-xl px-3.5 py-2 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all duration-300 w-full text-xs sm:text-sm resize-none"
                 />
               </div>
 
               {/* Submit Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-3">
+              <div className="flex flex-row gap-2.5 pt-2 sm:pt-3">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="w-full sm:w-1/3 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white font-semibold rounded-xl transition-all duration-300 text-sm cursor-pointer order-2 sm:order-1"
+                  className="w-1/3 py-2.5 sm:py-3 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 hover:text-white font-semibold rounded-xl transition-all duration-300 text-xs sm:text-sm cursor-pointer"
                 >
                   Close
                 </button>
@@ -307,9 +307,9 @@ export default function BookingQuoteModal({
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
-                  className="w-full sm:flex-1 py-3 bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-500 hover:to-emerald-500 text-[#071f1b] font-bold rounded-xl shadow-lg transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer order-1 sm:order-2"
+                  className="w-2/3 py-2.5 sm:py-3 bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-zinc-950 font-extrabold rounded-xl shadow-xl shadow-amber-500/20 transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer text-xs sm:text-sm"
                 >
-                  <Send size={18} /> Send via WhatsApp
+                  <Send size={16} /> Send via WhatsApp
                 </motion.button>
               </div>
             </form>
