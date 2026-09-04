@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { ShoppingBag, ShoppingCart, Lock, Home, X, MessageCircle, Truck, User, Phone, Upload, Image as ImageIcon, Minus, Plus, CheckCircle2, CreditCard, Store } from "lucide-react";
+import { ShoppingBag, ShoppingCart, Lock, Home, X, MessageCircle, Truck, User, Phone, Upload, Image as ImageIcon, Minus, Plus, CheckCircle2, CreditCard, Store, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -335,8 +335,9 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  )}
  {['Frame', 'Collage', 'Gift'].includes(item.category) && (
  <button 
+ aria-label="Upload photo"
  onClick={() => triggerUpload(item.cartId)}
- className="absolute -bottom-2 -right-2 bg-brand-gradient hover-glow-brand text-black p-1.5 rounded-full shadow-md"
+ className="absolute -bottom-2 -right-2 bg-brand-gradient hover-glow-brand text-black p-1.5 rounded-full shadow-md focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-none"
  >
  <Upload className="w-3 h-3" />
  </button>
@@ -347,13 +348,13 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  <div className="flex items-center justify-between mt-2">
  <p className="font-bold text-brand-gradient">₹{item.price * (item.quantity || 1)}</p>
  <div className="flex items-center gap-3 bg-black/40 border border-white/10 rounded-lg px-2 py-1">
- <button onClick={() => (item.quantity || 1) > 1 ? onUpdateItem(item.cartId, { quantity: item.quantity - 1 }) : onRemove(item.cartId)} className="text-zinc-400 hover:text-white"><Minus className="w-3 h-3" /></button>
+ <button aria-label="Decrease quantity" onClick={() => (item.quantity || 1) > 1 ? onUpdateItem(item.cartId, { quantity: item.quantity - 1 }) : onRemove(item.cartId)} className="text-zinc-400 hover:text-white focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-none rounded"><Minus className="w-3 h-3" /></button>
  <span className="text-xs font-bold text-white w-4 text-center">{item.quantity || 1}</span>
- <button onClick={() => onUpdateItem(item.cartId, { quantity: (item.quantity || 1) + 1 })} className="text-zinc-400 hover:text-white"><Plus className="w-3 h-3" /></button>
+ <button aria-label="Increase quantity" onClick={() => onUpdateItem(item.cartId, { quantity: (item.quantity || 1) + 1 })} className="text-zinc-400 hover:text-white focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-none rounded"><Plus className="w-3 h-3" /></button>
  </div>
  </div>
  </div>
- <button onClick={() => onRemove(item.cartId)} className="absolute right-3 top-3 text-zinc-500 hover:text-red-500"><X className="w-4 h-4" /></button>
+ <button aria-label="Remove item" onClick={() => onRemove(item.cartId)} className="absolute right-3 top-3 text-zinc-500 hover:text-red-500 focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-none rounded"><X className="w-4 h-4" /></button>
  </motion.div>
  ))
  )}
@@ -484,8 +485,8 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
    <span>{error}</span>
   </div>
  )}
- <button onClick={handleCheckout} disabled={isSubmitting} className="w-full bg-brand-gradient hover-glow-brand text-black py-4 rounded-xl font-bold text-lg hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:-translate-y-1 transition-all disabled:opacity-50">
-  {isSubmitting ? "Processing..." : "Confirm Order"}
+ <button onClick={handleCheckout} disabled={isSubmitting} className="w-full bg-brand-gradient hover-glow-brand text-black py-4 rounded-xl font-bold text-lg hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:-translate-y-1 transition-all disabled:opacity-50 disabled:hover:translate-y-0 flex items-center justify-center gap-2">
+  {isSubmitting ? <><Loader2 className="w-5 h-5 animate-spin" /> Processing...</> : "Confirm Order"}
  </button>
  
  <p className="text-center text-xs text-zinc-500 mt-4 flex items-center justify-center gap-1">
