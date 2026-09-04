@@ -31,10 +31,10 @@ const MENU_OPTIONS = [
 const QUICK_SUGGESTIONS = [
   "🖼️ Recommend frame for sofa wall",
   "💍 2-Day Wedding with Drone quote",
-  "⚡ What is 1-Month Delivery Guarantee?",
-  "🎁 Birthday gift items & prices",
-  "📍 Studio Location & Timings",
+  "frame price enna bro? (Tanglish)",
   "தமிழ் உதவி (Tamil Support)",
+  "⚡ What is 1-Month Delivery Guarantee?",
+  "📍 Studio Location & Timings",
 ];
 
 const WHATSAPP_URL = "https://wa.me/916383565425?text=Hi!%20I%27m%20interested%20in%20booking%20a%20photography%20session%20with%20SSS%20Studio.";
