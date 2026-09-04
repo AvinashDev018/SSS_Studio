@@ -1,8 +1,17 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Instagram, Facebook, Mail, MapPin, Phone, Clock, Sparkles, ShieldCheck } from "lucide-react";
 import StudioLogo from "@/components/ui/StudioLogo";
 
 export default function Footer() {
+  const pathname = usePathname();
+
+  // Hide public website footer on all admin portal pages
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
   return (
     <footer className="bg-[#FFFFFF] text-zinc-900 border-t border-black/10 pt-16 pb-10 relative overflow-hidden">
       {/* Ambient background glow */}

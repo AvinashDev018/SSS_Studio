@@ -90,16 +90,33 @@ export default function AdminBookingsView({ initialBookings = [] }) {
     }
   };
 
-  const handleWhatsAppContact = (booking) => {
-    const dateFormatted = booking.date ? new Date(booking.date).toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "short",
-      year: "numeric"
-    }) : "your requested date";
+  const getShootTypeEmoji = (eventType = "") => {
+    const type = eventType.toLowerCase();
+    if (type.includes("wedding") || type.includes("pre-wedding") || type.includes("post wedding")) return "💍";
+    if (type.includes("birthday") || type.includes("party")) return "🎉";
+    if (type.includes("school") || type.includes("college") || type.includes("event")) return "🎓";
+    if (type.includes("baby") || type.includes("newborn")) return "👶";
+    if (type.includes("maternity") || type.includes("pregnancy")) return "🤰";
+    if (type.includes("modelling") || type.includes("portrait") || type.includes("fashion")) return "✨";
+    return "📸";
+  };
 
-    const msg = `Hello ${booking.name}! 👋\n\nThank you for reaching out to *SSS Photography Studio* for your *${booking.eventType}* on *${dateFormatted}*.\n\n` +
-      `We are pleased to connect with you regarding your shoot requirements.\n\n` +
-      `How can we best assist you today? 📸✨`;
+  const handleWhatsAppContact = (booking) => {
+    const dateFormatted = booking.date
+      ? new Date(booking.date).toISOString().split("T")[0]
+      : "2026-09-15";
+
+    const shootEmoji = getShootTypeEmoji(booking.eventType);
+
+    const msg = `📸 *New Shoot Booking Request* 📸\n` +
+      `--------------------------------\n` +
+      `👤 *Name:* ${booking.name || "Client"}\n` +
+      `📞 *Phone:* ${booking.phone || ""}\n` +
+      `${shootEmoji} *Shoot Type:* ${booking.eventType || "Photo Shoot"}\n` +
+      `📅 *Date:* ${dateFormatted}\n` +
+      `📍 *Location:* ${booking.location || "Avaniyapuram"}\n` +
+      `--------------------------------\n` +
+      `Please check availability and confirm pricing!`;
 
     const cleanPhone = (booking.phone || "").replace(/\D/g, "");
     const waPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
@@ -154,14 +171,14 @@ export default function AdminBookingsView({ initialBookings = [] }) {
           onClick={() => setStatusFilter("ALL")}
           className={`p-4 sm:p-5 rounded-2xl text-left transition-all duration-200 cursor-pointer relative overflow-hidden group ${
             statusFilter === "ALL"
-              ? "bg-[#0f231e] border-2 border-teal-400/80 shadow-lg shadow-teal-500/15 scale-[1.02]"
-              : "bg-[#0b1412] border border-white/10 hover:border-teal-500/40 hover:bg-[#0d1815]"
+              ? "bg-[#1c160a] border-2 border-amber-400 shadow-lg shadow-amber-500/20 scale-[1.02]"
+              : "bg-[#0a0d0a] border border-amber-500/20 hover:border-amber-400/60 hover:bg-[#121008]"
           }`}
         >
           <div className="flex items-center justify-between">
             <span className="text-zinc-300 text-xs sm:text-sm font-semibold">Total Inquiries</span>
             <span className={`p-2 rounded-xl transition-colors ${
-              statusFilter === "ALL" ? "bg-teal-400 text-black" : "bg-white/5 text-zinc-300 group-hover:bg-teal-500/20 group-hover:text-teal-300"
+              statusFilter === "ALL" ? "bg-amber-400 text-black" : "bg-amber-500/10 text-amber-300 group-hover:bg-amber-500/20"
             }`}>
               <Inbox className="w-4 h-4" />
             </span>
@@ -170,7 +187,7 @@ export default function AdminBookingsView({ initialBookings = [] }) {
           <div className="flex items-center justify-between mt-1.5">
             <span className="text-[11px] text-zinc-400 font-light">All shoot requests</span>
             {statusFilter === "ALL" && (
-              <span className="text-[10px] font-bold uppercase tracking-wider text-teal-300 bg-teal-500/20 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-black bg-amber-400 px-2 py-0.5 rounded-full">
                 Active
               </span>
             )}
@@ -184,7 +201,7 @@ export default function AdminBookingsView({ initialBookings = [] }) {
           className={`p-4 sm:p-5 rounded-2xl text-left transition-all duration-200 cursor-pointer relative overflow-hidden group ${
             statusFilter === "PENDING"
               ? "bg-[#251b0a] border-2 border-amber-400 shadow-lg shadow-amber-500/20 scale-[1.02]"
-              : "bg-[#0b1412] border border-amber-500/20 hover:border-amber-400/60 hover:bg-[#161208]"
+              : "bg-[#0a0d0a] border border-amber-500/20 hover:border-amber-400/60 hover:bg-[#161208]"
           }`}
         >
           <div className="flex items-center justify-between">
@@ -199,7 +216,7 @@ export default function AdminBookingsView({ initialBookings = [] }) {
           <div className="flex items-center justify-between mt-1.5">
             <span className="text-[11px] text-amber-400/80 font-light">Needs response</span>
             {statusFilter === "PENDING" ? (
-              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-amber-500/30 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-black bg-amber-400 px-2 py-0.5 rounded-full">
                 Active
               </span>
             ) : (
@@ -214,27 +231,27 @@ export default function AdminBookingsView({ initialBookings = [] }) {
           onClick={() => setStatusFilter("CONFIRMED")}
           className={`p-4 sm:p-5 rounded-2xl text-left transition-all duration-200 cursor-pointer relative overflow-hidden group ${
             statusFilter === "CONFIRMED"
-              ? "bg-[#09221d] border-2 border-teal-400 shadow-lg shadow-teal-500/20 scale-[1.02]"
-              : "bg-[#0b1412] border border-teal-500/20 hover:border-teal-400/60 hover:bg-[#0d1c18]"
+              ? "bg-[#1c160a] border-2 border-amber-400 shadow-lg shadow-amber-500/20 scale-[1.02]"
+              : "bg-[#0a0d0a] border border-amber-500/20 hover:border-amber-400/60 hover:bg-[#121008]"
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-teal-300 text-xs sm:text-sm font-semibold">Confirmed Shoots</span>
+            <span className="text-amber-300 text-xs sm:text-sm font-semibold">Confirmed Shoots</span>
             <span className={`p-2 rounded-xl transition-colors ${
-              statusFilter === "CONFIRMED" ? "bg-teal-400 text-black" : "bg-teal-500/10 text-teal-400 group-hover:bg-teal-500/20"
+              statusFilter === "CONFIRMED" ? "bg-amber-400 text-black" : "bg-amber-500/10 text-amber-400 group-hover:bg-amber-500/20"
             }`}>
               <CheckCircle2 className="w-4 h-4" />
             </span>
           </div>
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-teal-300 mt-3">{stats.confirmed}</h3>
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-amber-300 mt-3">{stats.confirmed}</h3>
           <div className="flex items-center justify-between mt-1.5">
-            <span className="text-[11px] text-teal-400/80 font-light">Ready on calendar</span>
+            <span className="text-[11px] text-amber-400/80 font-light">Ready on calendar</span>
             {statusFilter === "CONFIRMED" ? (
-              <span className="text-[10px] font-bold uppercase tracking-wider text-teal-300 bg-teal-500/30 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-black bg-amber-400 px-2 py-0.5 rounded-full">
                 Active
               </span>
             ) : (
-              <span className="text-[10px] text-teal-400 font-medium hidden sm:inline">Click to filter</span>
+              <span className="text-[10px] text-amber-400 font-medium hidden sm:inline">Click to filter</span>
             )}
           </div>
         </button>
@@ -245,27 +262,27 @@ export default function AdminBookingsView({ initialBookings = [] }) {
           onClick={() => setStatusFilter("COMPLETED")}
           className={`p-4 sm:p-5 rounded-2xl text-left transition-all duration-200 cursor-pointer relative overflow-hidden group ${
             statusFilter === "COMPLETED"
-              ? "bg-[#0a2318] border-2 border-emerald-400 shadow-lg shadow-emerald-500/20 scale-[1.02]"
-              : "bg-[#0b1412] border border-emerald-500/20 hover:border-emerald-400/60 hover:bg-[#0c1c14]"
+              ? "bg-[#1c160a] border-2 border-amber-400 shadow-lg shadow-amber-500/20 scale-[1.02]"
+              : "bg-[#0a0d0a] border border-amber-500/20 hover:border-amber-400/60 hover:bg-[#121008]"
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-emerald-300 text-xs sm:text-sm font-semibold">Completed</span>
+            <span className="text-amber-300 text-xs sm:text-sm font-semibold">Completed</span>
             <span className={`p-2 rounded-xl transition-colors ${
-              statusFilter === "COMPLETED" ? "bg-emerald-400 text-black" : "bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500/20"
+              statusFilter === "COMPLETED" ? "bg-amber-400 text-black" : "bg-amber-500/10 text-amber-400 group-hover:bg-amber-500/20"
             }`}>
               <CheckCheck className="w-4 h-4" />
             </span>
           </div>
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-emerald-300 mt-3">{stats.completed}</h3>
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-amber-300 mt-3">{stats.completed}</h3>
           <div className="flex items-center justify-between mt-1.5">
-            <span className="text-[11px] text-emerald-400/80 font-light">Albums delivered</span>
+            <span className="text-[11px] text-amber-400/80 font-light">Albums delivered</span>
             {statusFilter === "COMPLETED" ? (
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-500/30 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-black bg-amber-400 px-2 py-0.5 rounded-full">
                 Active
               </span>
             ) : (
-              <span className="text-[10px] text-emerald-400 font-medium hidden sm:inline">Click to filter</span>
+              <span className="text-[10px] text-amber-400 font-medium hidden sm:inline">Click to filter</span>
             )}
           </div>
         </button>

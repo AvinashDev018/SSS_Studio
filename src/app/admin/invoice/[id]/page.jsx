@@ -45,7 +45,9 @@ export default function ReceiptPage() {
     );
   }
 
-  const trackUrl = `http://localhost:3000/track?id=${order.orderId}`;
+  const trackUrl = typeof window !== "undefined"
+    ? `${window.location.origin}/track?id=${order.orderId}`
+    : `https://sssphotostudio.com/track?id=${order.orderId}`;
   
   // Format the date if it's a DB date object
   const formattedDate = order.createdAt ? new Date(order.createdAt).toLocaleDateString() : order.date;

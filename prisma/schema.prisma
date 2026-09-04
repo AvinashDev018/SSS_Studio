@@ -128,3 +128,23 @@ model Product {
   image     String
   createdAt DateTime @default(now())
 }
+
+model ChatCache {
+  id              String   @id @default(uuid())
+  normalizedQuery String   @unique
+  category        String   @default("GENERAL")
+  botReply        Json
+  hitCount        Int      @default(1)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ChatLog {
+  id         String   @id @default(uuid())
+  sessionId  String?
+  userPrompt String
+  botReply   String
+  language   String   @default("en")
+  wasCached  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}

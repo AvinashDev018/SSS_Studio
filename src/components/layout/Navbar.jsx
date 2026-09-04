@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { Menu, X, Globe, Check, ChevronDown, Sparkles, ArrowRight } from "lucide-react";
+import { Menu, X, Globe, Check, ChevronDown, Sparkles, ArrowRight, Package } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 import StudioLogo from "@/components/ui/StudioLogo";
@@ -13,6 +13,10 @@ export default function Navbar() {
   const [isMobileLangOpen, setIsMobileLangOpen] = useState(false);
   const pathname = usePathname();
   const { currentLang, changeLanguage, t, translations } = useLanguage();
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
   
   const desktopLangRef = useRef(null);
   const mobileLangRef = useRef(null);
@@ -47,6 +51,7 @@ export default function Navbar() {
     { name: currentLang === "ta" ? "பிரேம்கள்" : currentLang === "hi" ? "फोटो फ्रेम" : "Frames", href: "/#frames" },
     { name: currentLang === "ta" ? "ஸ்டோர்" : currentLang === "hi" ? "स्टोर" : "Store", href: "/store" },
     { name: t.nav.pricing, href: "/packages" },
+    { name: t.nav.track || "Track", href: "/track", highlight: true },
     { name: t.nav.about, href: "/#about" },
     { name: t.nav.contact, href: "/#contact" },
   ];
@@ -59,6 +64,7 @@ export default function Navbar() {
     { name: currentLang === "ta" ? "பிரேம்கள்" : currentLang === "hi" ? "फोटो फ्रेम" : "Frames", href: "/#frames" },
     { name: t.nav.pricing, href: "/packages" },
     { name: currentLang === "ta" ? "ஸ்டோர்" : currentLang === "hi" ? "स्टोर" : "Store", href: "/store" },
+    { name: t.nav.track || "Track", href: "/track", highlight: true },
     { name: t.nav.about, href: "/#about" },
     { name: t.nav.testimonials, href: "/#testimonials" },
     { name: t.nav.contact, href: "/#contact" },
@@ -75,10 +81,10 @@ export default function Navbar() {
       <div className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 w-full">
         <div className="flex items-center justify-between h-16 sm:h-20 gap-1.5 sm:gap-4">
           
-          {/* Left: Brand Logo (Scales down on compact mobile viewports) */}
-          <div className="shrink-0">
+          {/* Left: Brand Logo */}
+          <div className="shrink-0 flex items-center">
             <StudioLogo size="sm" href="/" className="sm:hidden" />
-            <StudioLogo size="md" href="/" className="hidden sm:block" />
+            <StudioLogo size="md" href="/" className="hidden sm:flex" />
           </div>
 
           {/* Center: Desktop Nav Links (Clean, Centered, Perfectly Spaced) */}
@@ -89,12 +95,15 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`relative px-2.5 xl:px-3 py-1.5 text-[11px] xl:text-xs font-medium uppercase tracking-[0.08em] transition-all duration-300 rounded-full whitespace-nowrap ${
+                  className={`relative px-2.5 xl:px-3 py-1.5 text-[11px] xl:text-xs font-medium uppercase tracking-[0.08em] transition-all duration-300 rounded-full whitespace-nowrap flex items-center gap-1 ${
                     isActive
                       ? "text-[#8b6508] bg-[#d4af37]/25 font-bold border border-[#d4af37]/60 shadow-sm"
+                      : link.highlight
+                      ? "text-amber-700 font-bold hover:text-amber-900 hover:bg-amber-100/60"
                       : "text-zinc-700 hover:text-black hover:bg-black/5"
                   }`}
                 >
+                  {link.highlight && <Package size={13} className="text-[#b8860b] inline-block animate-pulse" />}
                   {link.name}
                 </Link>
               );
@@ -280,12 +289,15 @@ export default function Navbar() {
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className={`block px-3.5 py-2.5 rounded-xl text-xs font-bold tracking-wider ${
+                  className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold tracking-wider ${
                     pathname === link.href
                       ? "bg-[#d4af37]/25 text-[#8b6508] border border-[#d4af37]/50"
+                      : link.highlight
+                      ? "bg-[#d4af37]/15 text-[#8b6508] border border-[#d4af37]/30"
                       : "text-zinc-800 hover:bg-black/5 hover:text-black"
                   }`}
                 >
+                  {link.highlight && <Package size={14} className="text-[#b8860b]" />}
                   {link.name}
                 </Link>
               ))}

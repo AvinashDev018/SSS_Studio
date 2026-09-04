@@ -39,28 +39,28 @@ export default async function AdminDashboard() {
       <AdminNav currentPath="/admin" />
 
       {/* Friendly Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 bg-gradient-to-r from-[#0c221e]/80 via-[#0a1815]/60 to-transparent p-6 rounded-3xl border border-teal-500/20 shadow-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 bg-gradient-to-r from-[#181308]/90 via-[#100d05]/80 to-transparent p-6 rounded-3xl border border-amber-500/25 shadow-xl">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="p-1.5 rounded-xl bg-teal-500/15 text-teal-300 border border-teal-500/30">
+            <span className="p-1.5 rounded-xl bg-amber-500/15 text-amber-300 border border-amber-400/30">
               <Calendar className="w-4 h-4" />
             </span>
-            <span className="text-xs uppercase tracking-wider font-extrabold text-teal-400">
+            <span className="text-xs uppercase tracking-wider font-extrabold text-amber-400">
               Studio Operations Hub
             </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white tracking-tight">
-            Client Bookings & Shoot Requests
+            Client Bookings &amp; Shoot Requests
           </h1>
           <p className="text-xs sm:text-sm text-zinc-300 mt-1 font-light max-w-2xl">
             Quickly review incoming shoot inquiries, confirm calendar dates, and contact clients directly via WhatsApp in one click.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-center px-4 py-2 rounded-2xl bg-teal-500/10 border border-teal-500/30 shrink-0">
-          <span className="text-xs text-zinc-400">Total Bookings:</span>
-          <span className="text-base font-black text-teal-300">{bookings.length}</span>
+        <div className="flex items-center gap-2 self-start sm:self-center px-4 py-2 rounded-2xl bg-amber-500/15 border border-amber-400/30 shrink-0">
+          <span className="text-xs text-zinc-300 font-medium">Total Bookings:</span>
+          <span className="text-base font-black text-amber-300">{bookings.length}</span>
         </div>
       </div>
 

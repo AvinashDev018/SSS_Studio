@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { prisma } from "../prisma.js";
+import { prisma } from "@/lib/prisma";
 
 // 1. Tool Schemas for DeepSeek Tool Calling
 export const AGENT_TOOLS = [
@@ -99,6 +99,24 @@ export const AGENT_TOOLS = [
           estimated_total: { type: "string", description: "Estimated price in INR" },
         },
         required: ["summary", "estimated_total"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "fetch_recent_shoots",
+      description: "Fetch recent portfolio photography shoots and real sample photos (Wedding, Muhurtham, Pre-Wedding, Maternity, Baby, 1st Birthday) to present to the user.",
+      parameters: {
+        type: "object",
+        properties: {
+          category: {
+            type: "string",
+            enum: ["all", "wedding", "pre-wedding", "baby-maternity", "birthday-events"],
+            description: "Optional category filter: 'wedding', 'pre-wedding', 'baby-maternity', 'birthday-events', or 'all'",
+          },
+        },
+        required: [],
       },
     },
   },
@@ -350,6 +368,77 @@ export async function executeAgentTool(name, args) {
           summary,
           estimatedTotal: total,
           phone: "+91 63835 65425",
+        };
+      }
+
+      case "fetch_recent_shoots": {
+        const catFilter = (args.category || "all").toLowerCase();
+        const portfolioProjects = [
+          {
+            id: 1,
+            title: "Royal Traditional Muhurtham",
+            category: "wedding",
+            categoryLabel: "Wedding",
+            clientName: "Anand & Priya",
+            image: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504972/kllcuquwxjltq88cmb5n.jpg",
+            description: "Full traditional rituals and authentic candid moments captured with vibrant South Indian ceremony tones.",
+          },
+          {
+            id: 2,
+            title: "Hills Pre-Wedding Story",
+            category: "pre-wedding",
+            categoryLabel: "Pre / Post Wedding",
+            clientName: "Pre-Wedding Munnar",
+            image: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504211/tqb10uvuzmqdkuxyqmps.jpg",
+            description: "Golden hour romance and scenic landscape vistas captured across tea estates and misty hills.",
+          },
+          {
+            id: 3,
+            title: "Serene Outdoor Maternity Shoot",
+            category: "baby-maternity",
+            categoryLabel: "Baby & Maternity",
+            clientName: "Maternity Story",
+            image: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787505577/iqimm503wxxauaksjjzt.jpg",
+            description: "Ethereal glow, custom gown styling, and tender candid love celebrating the arrival of new life.",
+          },
+          {
+            id: 4,
+            title: "Joyous 1st Birthday Carnival Celebration",
+            category: "birthday-events",
+            categoryLabel: "Birthdays & Events",
+            clientName: "1st Birthday Smash",
+            image: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787505207/rm2cysblt45dofw4myda.jpg",
+            description: "Colorful balloon decor, cake smash moments, and joyful family celebrations documented with crisp clarity.",
+          },
+          {
+            id: 5,
+            title: "Grand Sangeet & Reception Night",
+            category: "wedding",
+            categoryLabel: "Wedding",
+            clientName: "Sangeet Night",
+            image: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504209/y4t69imuaktbevg8re57.jpg",
+            description: "High-energy dance performances, stage lighting, and glamorous couple portraits under the stars.",
+          },
+          {
+            id: 6,
+            title: "Newborn Dreamland Portraiture",
+            category: "baby-maternity",
+            categoryLabel: "Baby & Maternity",
+            clientName: "Newborn Story",
+            image: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504214/eill2s5uvoq7wwabeunx.jpg",
+            description: "Safe, cozy setups with adorable organic wraps and handcrafted wooden cradles.",
+          },
+        ];
+
+        const matches = portfolioProjects.filter((p) =>
+          catFilter === "all" ? true : p.category === catFilter || p.category.includes(catFilter)
+        );
+
+        return {
+          action: "SHOW_RECENT_SHOOTS",
+          status: "success",
+          count: matches.length,
+          shoots: matches,
         };
       }
 

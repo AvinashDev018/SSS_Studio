@@ -10,8 +10,7 @@ export const MILESTONES = [
   { id: "DELIVERED", label: "Delivery Completed", icon: "✨" },
 ];
 
-export function generateMilestoneMessage({ orderId, customerName, address, courierTrackingId, totalAmount, originUrl = "https://sssphotostudio.com" }, milestone) {
-  const trackUrl = `${originUrl}/track?id=${orderId}`;
+export function generateMilestoneMessage({ orderId, customerName, address, courierTrackingId, totalAmount }, milestone) {
   const name = customerName || "Valued Customer";
 
   switch (milestone) {
@@ -23,8 +22,7 @@ Your SSS Photography Studio order *#${orderId}* has entered *Fine-Art Printing &
 • Status: 🎨 Color Correction & Lamination Underway
 • Total Amount: ₹${totalAmount || 0}
 
-Track live production progress here:
-${trackUrl}
+You can track live production progress using your *Order ID (${orderId})* or *Mobile Number* on our website **Track Order** page!
 
 We will notify you the moment your handcrafted order is ready! 📸`;
 
@@ -36,8 +34,7 @@ Your handcrafted order *#${orderId}* has been safely bubble-wrapped and *DISPATC
 • Courier Tracking ID: *${courierTrackingId || "In Transit"}*
 • Destination: ${address || "Your Address"}
 
-Track delivery live here:
-${trackUrl}
+You can track delivery status using your *Order ID (${orderId})* or *Mobile Number* on our website **Track Order** page!
 
 Thank you for choosing SSS Photography Studio! ✨`;
 
@@ -50,8 +47,7 @@ Great news! Your handcrafted order *#${orderId}* is complete and *READY FOR PICK
 ⏰ *Timings:* Mon–Sun, 9:00 AM – 8:00 PM
 📞 *Direct Helpline:* +91 63835 65425
 
-View your order receipt & details:
-${trackUrl}
+You can view order details with your *Order ID (${orderId})* or *Mobile Number* on our website **Track Order** page!
 
 See you soon! 📸`;
 
@@ -66,7 +62,7 @@ If you love our work and 1-Month Delivery Guarantee, please support us with a qu
 Thank you from the entire SSS Photography Studio family! 🙏`;
 
     default:
-      return `Vanakkam ${name}! Your SSS Studio order *#${orderId}* status is: *${milestone}*.\nTrack live here: ${trackUrl}`;
+      return `Vanakkam ${name}! Your SSS Studio order *#${orderId}* status is: *${milestone}*.\nTrack live using your Order ID (${orderId}) or Mobile Number on our website Track Order page!`;
   }
 }
 

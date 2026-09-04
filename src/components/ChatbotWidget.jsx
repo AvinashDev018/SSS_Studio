@@ -267,16 +267,16 @@ export default function ChatbotWidget() {
   };
 
   return (
-    <div className="fixed bottom-4 right-3 sm:bottom-6 sm:right-6 z-[95]">
+    <div className="fixed bottom-5 right-4 sm:bottom-6 sm:right-6 z-[95]">
       {/* Floating Agent Button & Label */}
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-2">
         {!isOpen && (
           <div
             onClick={() => setIsOpen(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 bg-[#051a15]/95 backdrop-blur-md border border-teal-400/40 text-teal-300 rounded-full text-xs font-bold shadow-xl shadow-teal-500/20 cursor-pointer hover:bg-teal-950 transition-all hover:scale-105"
+            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-[#051410]/90 backdrop-blur-md border border-amber-400/40 text-amber-300 rounded-full text-[11px] font-extrabold shadow-lg shadow-amber-500/10 cursor-pointer hover:bg-emerald-950 transition-all hover:scale-105"
           >
-            <Sparkles size={13} className="text-teal-400 animate-pulse" />
-            <span>Ask DeepSeek AI (Frames & Quotes)</span>
+            <Sparkles size={12} className="text-amber-400 animate-pulse" />
+            <span>Ask AI Concierge</span>
           </div>
         )}
 
@@ -404,6 +404,52 @@ export default function ChatbotWidget() {
                           >
                             Order in Frame Studio →
                           </a>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* SHOW_RECENT_SHOOTS Tool Output */}
+                    {msg.cardData.action === "SHOW_RECENT_SHOOTS" && (
+                      <div className="bg-white border-2 border-[#d4af37]/60 rounded-2xl p-3 shadow-md text-xs text-zinc-900">
+                        <div className="flex items-center justify-between mb-2 border-b border-black/10 pb-2">
+                          <span className="text-[10px] uppercase font-extrabold text-[#8b6508] tracking-wider flex items-center gap-1">
+                            <Sparkles size={12} /> Recent Studio Shoots ({msg.cardData.count})
+                          </span>
+                          <a
+                            href="/#portfolio"
+                            onClick={() => setIsOpen(false)}
+                            className="text-[10px] font-bold text-[#8b6508] hover:underline"
+                          >
+                            Full Gallery →
+                          </a>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 my-2">
+                          {msg.cardData.shoots?.map((shoot) => (
+                            <a
+                              key={shoot.id}
+                              href="/#portfolio"
+                              onClick={() => setIsOpen(false)}
+                              className="group block rounded-xl overflow-hidden border border-black/10 bg-zinc-50 hover:border-[#d4af37] transition-all relative"
+                            >
+                              <div className="h-24 sm:h-28 overflow-hidden relative">
+                                <img
+                                  src={shoot.image}
+                                  alt={shoot.title}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                />
+                                <span className="absolute bottom-1 left-1 text-[9px] font-bold text-white bg-black/70 px-1.5 py-0.5 rounded backdrop-blur-xs">
+                                  {shoot.categoryLabel}
+                                </span>
+                              </div>
+                              <div className="p-1.5">
+                                <p className="font-bold text-[10px] text-zinc-900 truncate leading-tight">
+                                  {shoot.title}
+                                </p>
+                                <p className="text-[9px] text-zinc-500 truncate">{shoot.clientName}</p>
+                              </div>
+                            </a>
+                          ))}
                         </div>
                       </div>
                     )}

@@ -38,20 +38,20 @@ export default function AdminNav({ currentPath: propPath }) {
   return (
     <header className="mb-8 space-y-3">
       {/* 1. Top Brand & Action Bar */}
-      <div className="bg-[#0c1614]/90 backdrop-blur-xl border border-teal-500/20 rounded-2xl px-5 py-3.5 shadow-2xl flex items-center justify-between gap-4">
+      <div className="bg-[#0b0c07]/90 backdrop-blur-xl border border-amber-500/25 rounded-2xl px-5 py-3.5 shadow-2xl flex items-center justify-between gap-4">
         {/* Left: Studio Identity */}
         <div className="flex items-center gap-3">
           <StudioLogo size="sm" />
           <div>
             <div className="flex items-center gap-2">
               <span className="font-bold text-white text-base tracking-wide">SSS Studio</span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/15 border border-teal-500/30 text-teal-300">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                ADMIN PORTAL
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 border border-amber-400/30 text-amber-300">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                ADMIN CRM PORTAL
               </span>
             </div>
             <p className="text-[11px] text-zinc-400 font-light hidden sm:block">
-              Madurai Studio Management Suite
+              Madurai Studio &amp; Order Management Suite
             </p>
           </div>
         </div>
@@ -62,11 +62,11 @@ export default function AdminNav({ currentPath: propPath }) {
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl bg-white/5 hover:bg-teal-500/10 text-zinc-300 hover:text-teal-300 text-xs font-semibold border border-white/10 hover:border-teal-500/30 transition-all duration-200"
+            className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl bg-white/5 hover:bg-amber-500/15 text-zinc-300 hover:text-amber-300 text-xs font-semibold border border-amber-500/20 hover:border-amber-400/40 transition-all duration-200"
             title="Open Live Website in New Tab"
           >
             <span>Live Website</span>
-            <ArrowUpRight className="w-3.5 h-3.5 text-teal-400" />
+            <ArrowUpRight className="w-3.5 h-3.5 text-amber-400" />
           </Link>
 
           <form action={logoutAdmin}>
@@ -83,7 +83,7 @@ export default function AdminNav({ currentPath: propPath }) {
       </div>
 
       {/* 2. Clean Dedicated Navigation Rail (Single Row with Horizontal Scroll on Mobile) */}
-      <nav className="bg-[#080e0c]/80 backdrop-blur-md border border-white/10 rounded-2xl p-1.5 shadow-lg overflow-x-auto no-scrollbar">
+      <nav className="bg-[#060805]/90 backdrop-blur-md border border-amber-500/20 rounded-2xl p-1.5 shadow-lg overflow-x-auto no-scrollbar">
         <div className="flex items-center gap-1 min-w-max">
           {links.map((link) => {
             const Icon = link.icon;
@@ -95,11 +95,11 @@ export default function AdminNav({ currentPath: propPath }) {
                 href={link.href}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
                   isActive
-                    ? "bg-gradient-to-r from-teal-500 to-emerald-500 text-[#071f1b] font-bold shadow-lg shadow-teal-500/25 scale-[1.02]"
+                    ? "bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 text-black font-extrabold shadow-lg shadow-amber-500/25 scale-[1.02]"
                     : "text-zinc-400 hover:text-white hover:bg-white/5"
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? "text-[#071f1b]" : "text-zinc-400"}`} />
+                <Icon className={`w-4 h-4 ${isActive ? "text-black" : "text-zinc-400"}`} />
                 <span>{link.name}</span>
               </Link>
             );

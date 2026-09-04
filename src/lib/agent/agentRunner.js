@@ -76,15 +76,14 @@ Personalized Birthday & Special Gifts:
 - High-Gloss Metal Keychain: ₹299
 
 =========================
-6. WEBSITE FEATURES & ORDER TRACKING
+6. WEBSITE PAGES & END-TO-END EXPLANATION
 =========================
-- How to Track Orders ("order panna aprm epdi pakuradhu", "order tracking", "order status", mobile numbers, Order IDs):
-  Clients can track their live frame or gift order status by going to the "Track Order" page on the top website menu or by typing their Order ID (e.g., SSS-1002) or 10-digit Mobile Number (e.g., 6383565425) directly in this chat! ALWAYS call the "track_order" tool whenever a client provides an Order ID or mobile number!
-- Website Pages:
-  - Home Page: Portfolio, 1-Month Delivery Guarantee badge, Color Grading comparison slider, Customer reviews, Quick booking form.
-  - Store Page: 13 Photo Frame sizes custom visualizer & cart, Passport photo package orders, Personalized gift catalog.
-  - Track Order Page: Real-time status lookup using Order ID or Phone Number.
-  - Booking & Packages: Interactive quote estimator, wedding/maternity session date reservations.
+When the user asks to "explain about this page", "explain home page", "explain booking", "explain pricing card", "explain contact details", or any section of the website:
+- Home Page ("explain home page", "what is on home page"): Explain that SSS Photography Studio showcases recent shoot stories, our signature 1-Month Album Delivery Guarantee badge, South Indian ceremony color grading comparison, client reviews, and direct booking forms.
+- Booking & Packages ("explain booking", "explain pricing card"): Explain our transparent default packages (Weddings starting ₹18,000 to ₹75,000+ Premium, Pre-wedding ₹8,000, Maternity ₹6,000, Baby/Birthday ₹5,000), itemized breakdown (Candid, Traditional, 4K Cinematic, Drone), 1-Month Delivery Guarantee, and instant WhatsApp booking quotes.
+- Contact Details ("explain contact", "contact details"): 34, Prasanna New Colony, Avaniyapuram, Madurai 625012 (Landmark near Avaniyapuram main junction). Open Mon-Sun 9 AM - 8 PM. Phone & WhatsApp: +91 63835 65425.
+- Store & Visualizer Page: 13 photo frame sizes visualizer, instant biometric passport prints, and personalized gifts (3D Crystal Cube ₹1,499, Magic Mug ₹499, 3D Moon Lamp ₹1,100).
+- Track Order Page: Real-time status lookup using Order ID (e.g. SSS-1002) or 10-digit registered Mobile Number.
 
 =========================
 7. POLICIES & FREQUENTLY ASKED QUESTIONS
@@ -102,6 +101,7 @@ You have access to DETERMINISTIC TOOLS. YOU MUST CALL TOOLS whenever client inte
 2. Pricing, package calculation, wedding/maternity cost -> CALL "calculate_package_quote".
 3. Order or tracking query, phone number, Order ID -> CALL "track_order".
 4. Ready to book or wants WhatsApp quote -> CALL "create_whatsapp_deal".
+5. Client asks for recent photos, sample pictures, gallery, previous shoot images, recent projects -> CALL "fetch_recent_shoots".
 
 =========================
 9. PERFECT 3-WAY LANGUAGE & DIALECT MATCHING (STRICT MANDATE)
@@ -180,7 +180,8 @@ function analyzeUserMessage(userMsg = "", messages = []) {
     "birthday", "gift", "crystal", "mug", "lamp", "deposit", "raw", "camera", "contact",
     "phone", "whatsapp", "guarantee", "muhurtham", "candid", "drone", "studio", "booking",
     "rate", "vilai", "kaasu", "pathi", "sollu", "passport", "puzzle", "keychain", "heart", "moon",
-    "aprm", "epdi", "pakuradhu", "panna", "status",
+    "aprm", "epdi", "pakuradhu", "panna", "status", "explain", "page", "website", "home", "card",
+    "details", "recent", "sample", "gallery", "portfolio",
     "பிரேம்", "போட்டோ", "திருமணம்", "விலை", "ஸ்டுடியோ", "மதுரை", "அவனியாபுரம்", "ஆல்பம்", "பரிசு"
   ];
   const isStudioRelated = isPhoneNumberOrOrderId || studioKeywords.some(kw => lower.includes(kw));
@@ -421,7 +422,71 @@ export async function runStudioAgent({ messages = [], apiKey = null }) {
       };
     }
 
-    // 8. Package Quotes & Pricing
+    // 8. Recent Photos / Portfolio Samples Trigger
+    if (lower.includes("recent") || lower.includes("photo") || lower.includes("sample") || lower.includes("portfolio") || lower.includes("gallery") || lower.includes("work") || lower.includes("image") || lower.includes("picture") || lower.includes("பார்க்க")) {
+      const toolRes = await executeAgentTool("fetch_recent_shoots", {
+        category: lower.includes("wedding") ? "wedding" : lower.includes("pre") ? "pre-wedding" : lower.includes("maternity") || lower.includes("baby") ? "baby-maternity" : lower.includes("birthday") ? "birthday-events" : "all",
+      });
+      return {
+        reply: analysis.isTanglish
+          ? "Vanakkam bro! Enga SSS Studio-vodha recent shoot photos & real client stories keenje irukku bro 👇 Tap panni HD photos paarkalam!"
+          : analysis.isTamilScript
+          ? "வணக்கம்! SSS போட்டோகிராபி ஸ்டுடியோவின் சமீபத்திய புகைப்படத் தொகுப்புகள் கீழே உள்ளன 👇 போட்டோக்களைக் கிளிக் செய்து காணலாம்:"
+          : "Vanakkam! Here are some of our recent photography shoots and real client stories at SSS Studio 👇 Tap to view high-resolution samples:",
+        actionCards: [toolRes],
+      };
+    }
+
+    // 9. Page Explanation (Explain Home, Services, Packages, Booking, Contact, Pricing)
+    if (lower.includes("explain") || lower.includes("page") || lower.includes("home") || lower.includes("card") || lower.includes("details")) {
+      if (lower.includes("home")) {
+        return {
+          reply: analysis.isTanglish
+            ? "Enga **Home Page** -la SSS Studio-vodha recent client stories, signature **1-Month Album Delivery Guarantee** badge, South Indian traditional ceremony color grading slider, customer reviews & direct booking quote forms irukku bro!"
+            : analysis.isTamilScript
+            ? "எங்கள் **முகப்பு பக்கத்தில் (Home Page)** சமீபத்திய போட்டோ கதைகள், **1-மாத ஆல்பம் டெலிவரி உத்தரவாதம்**, வாடிக்கையாளர் கருத்துக்கள் மற்றும் நேரடி முன்பதிவு படிவங்கள் உள்ளன!"
+            : "Our **Home Page** features our signature 1-Month Album Delivery Guarantee badge, recent client shoot stories, South Indian ceremony color grading comparison slider, authentic client reviews, and direct booking consultation forms!",
+          actionCards: [],
+        };
+      }
+      if (lower.includes("contact")) {
+        return {
+          reply: analysis.isTanglish
+            ? "Enga Studio Contact Details: 34, Prasanna New Colony, Avaniyapuram, Madurai 625012. Open all 7 days (9 AM to 8 PM). Call or WhatsApp: +91 63835 65425 📞"
+            : analysis.isTamilScript
+            ? "ஸ்டுடியோ முகவரி: 34, பிரசன்னா நியூ காலனி, அவனியாபுரம், மதுரை 625012. அனைத்து நாட்களும் திறந்திருக்கும் (காலை 9 முதல் இரவு 8 மணி வரை). தொடர்புக்கு: +91 63835 65425 📞"
+            : "SSS Studio Contact Info: 34, Prasanna New Colony, Avaniyapuram, Madurai, Tamil Nadu 625012. Open Mon-Sun (9:00 AM - 8:00 PM). Phone & WhatsApp: +91 63835 65425 📞",
+          actionCards: [],
+        };
+      }
+      if (lower.includes("booking") || lower.includes("package") || lower.includes("pricing") || lower.includes("card")) {
+        const toolRes = await executeAgentTool("calculate_package_quote", {
+          event_type: "wedding",
+          include_drone: true,
+          include_master_album: true,
+        });
+        return {
+          reply: analysis.isTanglish
+            ? "Enga **Packages & Pricing** page-la Weddings (Starting ₹18,000 to ₹75,000+ Premium), Pre-wedding (₹8,000), Maternity (₹6,000), Baby/Birthday (₹5,000) default rates irukku. 1-Month Delivery Guarantee & free pre-wedding shoot perk-oda tharrom bro! Sample quote card 👇"
+            : analysis.isTamilScript
+            ? "எங்களின் **கட்டணம் & பேக்கேஜ் (Pricing & Packages)** பக்கத்தில் திருமணம் (₹18,000 முதல்), ப்ரீ-வெடிங் (₹8,000), மெட்டர்னிட்டி (₹6,000) போன்ற தெளிவான கட்டண விவரங்கள் உள்ளன. கணக்கிடப்பட்ட மாதிரி கார்டு கீழே உள்ளது 👇"
+            : "Our **Packages & Pricing** section features transparent default rates (Weddings starting ₹18,000 up to ₹75,000+ Premium, Pre-wedding ₹8,000, Maternity ₹6,000, Baby/Birthday ₹5,000) with our 1-Month Album Delivery Guarantee! Here is an itemized estimate card 👇",
+          actionCards: [toolRes],
+        };
+      }
+
+      // General Page Explanation Fallback
+      return {
+        reply: analysis.isTanglish
+          ? "Enga **SSS Photography Studio Website** -la Home (Client Stories & 1-Month Album Guarantee), Services & Packages (Weddings ₹18k-₹75k, Pre-wedding ₹8k, Maternity ₹6k, Baby ₹5k), 13 Photo Frame Visualizer Store (₹349-₹4,999) & Live Track Order features irukku bro! Enna section pathi theriya venum?"
+          : analysis.isTamilScript
+          ? "எங்கள் **SSS போட்டோகிராபி ஸ்டுடியோ இணையதளத்தில்** முகப்பு (சமீபத்திய கதைகள் & 1-மாத ஆல்பம் உத்தரவாதம்), சேவைகள் & பேக்கேஜ்கள் (திருமணம் ₹18,000 முதல், மெட்டர்னிட்டி ₹6,000), 13 பிரேம் சைஸ் ஸ்டோர் மற்றும் ஆர்டர் டிராக்கிங் வசதிகள் உள்ளன!"
+          : "Welcome to SSS Photography Studio! Our website includes:\n• **Home Page**: Recent client shoot stories, signature 1-Month Album Delivery Guarantee, and color grading comparison.\n• **Packages & Pricing**: Weddings (starting ₹18,000 to ₹75,000+), Pre-wedding (₹8,000), Maternity (₹6,000), Baby (₹5,000).\n• **Frame Studio**: 13 custom handcrafted photo frame sizes (₹349 to ₹4,999).\n• **Track Order**: Live real-time order status tracking with your Order ID or Mobile Number.",
+        actionCards: [],
+      };
+    }
+
+    // 10. Package Quotes & Pricing
     if (lower.includes("quote") || lower.includes("price") || lower.includes("cost") || lower.includes("wedding") || lower.includes("package") || lower.includes("maternity") || lower.includes("baby") || lower.includes("birthday") || lower.includes("திருமணம்") || lower.includes("விலை") || lower.includes("evvalavu") || lower.includes("rate")) {
       const toolRes = await executeAgentTool("calculate_package_quote", {
         event_type: lower.includes("maternity") ? "maternity" : lower.includes("baby") || lower.includes("birthday") ? "birthday" : "wedding",

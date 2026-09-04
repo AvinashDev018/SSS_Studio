@@ -1,11 +1,17 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 import { Sparkles, Clock, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function SSSAnnouncementBar() {
+  const pathname = usePathname();
   const { t } = useLanguage();
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   const triggerModal = (mode = "booking", shootType = "Complimentary Pre-Wedding Shoot Offer") => {
     if (typeof window !== "undefined") {

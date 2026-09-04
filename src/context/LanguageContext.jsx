@@ -25,6 +25,7 @@ const translations = {
       offer: "Offer Here!",
       getQuote: "Get Quote",
       bookNow: "Book Now",
+      track: "Track",
     },
     hero: {
       titleLine1: "Capturing Your Beautiful",
@@ -97,6 +98,7 @@ const translations = {
       offer: "சலுகை!",
       getQuote: "விலை விவரம்",
       bookNow: "முன்பதிவு",
+      track: "டிராக்கிங்",
     },
     hero: {
       titleLine1: "உங்கள் அழகான தருணங்களை",
@@ -169,6 +171,7 @@ const translations = {
       offer: "ऑफर!",
       getQuote: "कोटेशन",
       bookNow: "बुक करें",
+      track: "ट्रैक",
     },
     hero: {
       titleLine1: "आपके खूबसूरत पलों को",

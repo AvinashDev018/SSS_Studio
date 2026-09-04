@@ -101,25 +101,25 @@ export default function SSSTestimonials({ onOpenReviewModal }) {
   const testimonials = testimonialsData[currentLang] || testimonialsData.en;
 
   return (
-    <section id="testimonials" className="py-24 bg-[#080c0b] relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl -z-10 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl -z-10 pointer-events-none" />
+    <section id="testimonials" className="py-24 bg-[#060807] relative overflow-hidden border-t border-amber-500/15">
+      <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl -z-10 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl -z-10 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-widest mb-3">
-            <MessageSquare size={14} /> {t.testimonials.tag}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500/15 via-amber-400/10 to-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-bold uppercase tracking-widest mb-3 shadow-lg shadow-amber-500/5">
+            <MessageSquare size={14} className="text-amber-400" /> {t.testimonials.tag}
           </div>
           <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-4">
             {t.testimonials.title}
           </h2>
-          <p className="text-zinc-400 text-base md:text-lg font-light leading-relaxed mb-8">
+          <p className="text-zinc-300 text-base md:text-lg font-light leading-relaxed mb-8">
             {t.testimonials.subtitle}
           </p>
 
           <button
             onClick={onOpenReviewModal}
-            className="px-6 py-3 bg-gradient-to-r from-teal-400 to-emerald-400 text-[#071f1b] font-bold rounded-full shadow-lg hover:shadow-teal-500/30 hover:scale-105 transition-all duration-300 text-xs uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer"
+            className="px-6 py-3.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 text-black font-extrabold rounded-full shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 text-xs uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer"
           >
             <PlusCircle size={16} /> {t.testimonials.leaveReview}
           </button>
@@ -134,13 +134,13 @@ export default function SSSTestimonials({ onOpenReviewModal }) {
               viewport={{ once: true, amount: 0.05 }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
               whileHover={{ y: -8, scale: 1.02 }}
-              className="bg-[#0c3530]/40 backdrop-blur-xl border border-teal-500/20 rounded-3xl p-8 relative flex flex-col justify-between group shadow-xl hover:border-teal-400/60 hover:shadow-2xl hover:shadow-teal-500/10 transition-all duration-300 overflow-hidden"
+              className="bg-gradient-to-b from-[#161208]/80 to-[#0b0a04]/90 backdrop-blur-xl border border-amber-500/25 rounded-3xl p-8 relative flex flex-col justify-between group shadow-xl hover:border-amber-400/60 hover:shadow-2xl hover:shadow-amber-500/15 transition-all duration-300 overflow-hidden"
             >
               {/* Shimmer sweep on hover */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-teal-400/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
 
               <div>
-                <Quote className="text-4xl text-teal-400/20 mb-4 group-hover:text-teal-400/40 transition-colors" />
+                <Quote className="text-4xl text-amber-400/25 mb-4 group-hover:text-amber-400/50 transition-colors" />
                 <div className="flex gap-1 text-amber-400 mb-4">
                   {Array.from({ length: 5 }).map((_, sIdx) => (
                     <Star
@@ -150,19 +150,19 @@ export default function SSSTestimonials({ onOpenReviewModal }) {
                     />
                   ))}
                 </div>
-                <p className="text-zinc-300 italic text-sm md:text-base leading-relaxed mb-6 font-light">
+                <p className="text-zinc-200 italic text-sm md:text-base leading-relaxed mb-6 font-light">
                   &ldquo;{item.text}&rdquo;
                 </p>
               </div>
 
               <div className="border-t border-white/10 pt-4 flex justify-between items-center mt-auto">
                 <div>
-                  <h4 className="font-bold text-white text-sm md:text-base group-hover:text-teal-300 transition-colors">{item.name}</h4>
-                  <p className="text-xs text-teal-300 font-medium mt-0.5">{item.role}</p>
+                  <h4 className="font-bold text-white text-sm md:text-base group-hover:text-amber-300 transition-colors">{item.name}</h4>
+                  <p className="text-xs text-amber-300 font-semibold mt-0.5">{item.role}</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-[11px] text-zinc-400 block">{item.location}</span>
-                  <span className="text-[11px] text-zinc-500">{item.date}</span>
+                  <span className="text-[11px] text-zinc-300 block">{item.location}</span>
+                  <span className="text-[11px] text-zinc-400">{item.date}</span>
                 </div>
               </div>
             </motion.div>
