@@ -72,6 +72,7 @@ export default function GalleryPage() {
  {CATEGORIES.map(category => (
  <button
  key={category}
+ aria-pressed={activeCategory === category}
  onClick={() => setActiveCategory(category)}
  className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
  activeCategory === category
@@ -89,18 +90,13 @@ export default function GalleryPage() {
  <AnimatedSection delay={0.2}>
  <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
  {filteredItems.map((item, idx) => (
- <div 
+ <button
  key={`${item.id}-${idx}`} 
- role="button"
- tabIndex={0}
- className="break-inside-avoid relative group rounded-2xl overflow-hidden cursor-pointer bg-zinc-900 border border-white/10 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-500 focus-visible:ring-2 focus-visible:ring-cyan-500 focus:outline-none"
+ type="button"
+ aria-haspopup="dialog"
+ aria-label={`View ${item.category} photo full screen`}
+ className="w-full text-left break-inside-avoid relative group rounded-2xl overflow-hidden cursor-pointer bg-zinc-900 border border-white/10 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-500 focus-visible:ring-2 focus-visible:ring-cyan-500 focus:outline-none block"
  onClick={() => setSelectedIndex(idx)}
- onKeyDown={(e) => {
-   if (e.key === "Enter" || e.key === " ") {
-     e.preventDefault();
-     setSelectedIndex(idx);
-   }
- }}
  >
  <img 
  src={item.src} 
@@ -110,7 +106,7 @@ export default function GalleryPage() {
  />
  
  {/* Premium Overlay */}
- <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+ <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
  <div className="absolute bottom-0 left-0 right-0 p-6 flex items-end justify-between transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
  <div>
  <p className="text-brand-gradient font-bold text-xs tracking-widest uppercase mb-1">{item.category}</p>
@@ -121,7 +117,7 @@ export default function GalleryPage() {
  </div>
  </div>
  </div>
- </div>
+ </button>
  ))}
  </div>
 
