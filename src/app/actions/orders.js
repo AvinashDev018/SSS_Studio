@@ -1,9 +1,7 @@
 "use server";
 
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-
-const prisma = new PrismaClient();
 
 // Generate a random Order ID like ORD-1A2B
 function generateOrderId() {
@@ -131,7 +129,7 @@ export async function searchOrdersByPhoneOrId(query) {
           address: b.location,
           items: [{ name: `${b.eventType} Photoshoot Coverage`, quantity: 1, price: 0 }],
         })),
-      ];
+      ].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
 
       return {
         success: true,

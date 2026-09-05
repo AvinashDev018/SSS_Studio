@@ -16,13 +16,17 @@ export default function AdminOrders() {
  fetchOrders();
  }, []);
 
- const fetchOrders = async () => {
- const res = await getOrders();
- if (res.success) {
- setOrders(res.orders);
- }
- setLoading(false);
- };
+  const fetchOrders = async () => {
+  const res = await getOrders();
+  if (res.success) {
+  const parsed = res.orders.map((o) => ({
+  ...o,
+  items: typeof o.items === "string" ? JSON.parse(o.items) : (o.items || []),
+  }));
+  setOrders(parsed);
+  }
+  setLoading(false);
+  };
 
  const handleAcceptAndWhatsApp = async (order) => {
  const isPassportOnly = order.items.every(item => item.category === "Passport");

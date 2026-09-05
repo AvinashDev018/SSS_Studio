@@ -94,33 +94,33 @@ export default function AdminGalleryPage() {
       <AdminNav currentPath="/admin/gallery" />
 
       {/* Friendly Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 bg-gradient-to-r from-[#0c221e]/80 via-[#0a1815]/60 to-transparent p-6 rounded-3xl border border-teal-500/20 shadow-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 bg-[#14120c] p-6 rounded-3xl border border-amber-500/40 shadow-2xl">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="p-1.5 rounded-xl bg-teal-500/15 text-teal-300 border border-teal-500/30">
+            <span className="p-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-400/40">
               <ImageIcon className="w-4 h-4" />
             </span>
-            <span className="text-xs uppercase tracking-wider font-extrabold text-teal-400">
-              Portfolio & Visual Assets
+            <span className="text-xs uppercase tracking-wider font-black text-amber-400">
+              Portfolio &amp; Visual Assets
             </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-serif font-extrabold text-white tracking-tight">
             Master Gallery CMS
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-300 mt-1 font-light max-w-2xl">
+          <p className="text-xs sm:text-sm text-zinc-200 mt-1 font-normal max-w-2xl leading-relaxed">
             Upload and organize high-resolution photoshoot masterworks displayed across your homepage and public portfolio.
           </p>
         </div>
 
         {/* Upload Control Button Strip */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-[#080e0c] border border-white/10">
+          <div className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-[#0b0c07] border border-amber-500/30">
             <span className="text-xs text-zinc-400 font-medium">Category:</span>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="bg-transparent border-none text-xs text-white focus:ring-0 cursor-pointer font-semibold"
+              className="bg-transparent border-none text-xs text-amber-300 focus:ring-0 cursor-pointer font-bold"
             >
               {CATEGORIES.map((cat) => (
                 <option key={cat} value={cat} className="bg-[#0b1412]">
@@ -141,7 +141,7 @@ export default function AdminGalleryPage() {
           <button
             onClick={handleUploadClick}
             disabled={isUploading}
-            className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-300 hover:to-emerald-300 text-[#071f1b] font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-teal-500/20 disabled:opacity-50 cursor-pointer"
+            className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-black font-extrabold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:from-amber-300 hover:to-yellow-400 disabled:opacity-50 cursor-pointer"
           >
             {isUploading ? (
               <span>Uploading to Cloud...</span>

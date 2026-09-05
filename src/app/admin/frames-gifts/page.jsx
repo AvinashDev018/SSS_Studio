@@ -370,30 +370,30 @@ export default function AdminFramesGifts() {
           className={`fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-2xl shadow-2xl border flex items-center gap-2.5 text-sm font-semibold transition-all ${
             feedback.type === "error"
               ? "bg-red-950/90 border-red-500/40 text-red-200"
-              : "bg-emerald-950/90 border-emerald-500/40 text-emerald-200"
+              : "bg-amber-950/90 border-amber-500/40 text-amber-200"
           }`}
         >
-          <Check size={16} className={feedback.type === "error" ? "text-red-400" : "text-emerald-400"} />
+          <Check size={16} className={feedback.type === "error" ? "text-red-400" : "text-amber-400"} />
           <span>{feedback.msg}</span>
         </div>
       )}
 
       {/* Hero Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 bg-gradient-to-r from-[#0c221e]/90 via-[#0a1815]/80 to-[#071310] p-6 rounded-3xl border border-teal-500/30 shadow-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 bg-[#14120c] p-6 rounded-3xl border border-amber-500/40 shadow-2xl">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="p-1.5 rounded-xl bg-teal-500/15 text-teal-300 border border-teal-500/30">
+            <span className="p-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-400/40">
               <Frame className="w-4 h-4" />
             </span>
-            <span className="text-xs uppercase tracking-wider font-extrabold text-teal-400">
+            <span className="text-xs uppercase tracking-wider font-black text-amber-400">
               Live Store Catalog CMS
             </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-serif font-extrabold text-white tracking-tight">
             Frames &amp; Gifts Management
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-300 mt-1 font-light max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-zinc-200 mt-1 font-normal max-w-2xl leading-relaxed">
             Update Photo Frame sizes &amp; prices, manage Birthday Gift products, and control what clients see on the live studio website in real-time.
           </p>
         </div>
@@ -404,30 +404,30 @@ export default function AdminFramesGifts() {
             href="/#frames"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-teal-500/15 text-zinc-300 hover:text-teal-300 text-xs font-semibold border border-white/10 hover:border-teal-500/30 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-400 text-amber-300 hover:text-black text-xs font-black border border-amber-400/40 transition-all cursor-pointer shadow-lg"
           >
             <span>Live Frame Price List</span>
-            <ArrowUpRight size={13} className="text-teal-400" />
+            <ArrowUpRight size={14} className="text-amber-400 group-hover:text-black" />
           </a>
           <a
             href="/store"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-teal-500/15 text-zinc-300 hover:text-teal-300 text-xs font-semibold border border-white/10 hover:border-teal-500/30 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-black text-xs font-black border border-amber-300 transition-all cursor-pointer shadow-lg"
           >
             <span>Live Store Page</span>
-            <ArrowUpRight size={13} className="text-teal-400" />
+            <ArrowUpRight size={14} className="text-black" />
           </a>
         </div>
       </div>
 
       {/* Main Switcher Tabs (Frames vs Gifts) */}
-      <div className="flex items-center gap-3 mb-8 bg-[#081210] p-1.5 rounded-2xl border border-white/10 w-fit">
+      <div className="flex items-center gap-3 mb-8 bg-[#121008] p-1.5 rounded-2xl border border-amber-500/30 w-fit">
         <button
           onClick={() => setActiveTab("frames")}
           className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
             activeTab === "frames"
-              ? "bg-gradient-to-r from-teal-400 to-emerald-400 text-[#071f1b] shadow-md scale-[1.02]"
+              ? "bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-black font-extrabold shadow-md scale-[1.02]"
               : "text-zinc-400 hover:text-white hover:bg-white/5"
           }`}
         >
@@ -439,7 +439,7 @@ export default function AdminFramesGifts() {
           onClick={() => setActiveTab("gifts")}
           className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
             activeTab === "gifts"
-              ? "bg-gradient-to-r from-teal-400 to-emerald-400 text-[#071f1b] shadow-md scale-[1.02]"
+              ? "bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-black font-extrabold shadow-md scale-[1.02]"
               : "text-zinc-400 hover:text-white hover:bg-white/5"
           }`}
         >

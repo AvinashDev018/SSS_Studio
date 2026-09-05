@@ -8,8 +8,8 @@ import StudioLogo from "@/components/ui/StudioLogo";
 export default function Footer() {
   const pathname = usePathname();
 
-  // Hide public website footer on all admin portal pages
-  if (pathname?.startsWith("/admin")) {
+  // Hide public website footer on admin, store, and pricing/packages pages
+  if (pathname?.startsWith("/admin") || pathname === "/store" || pathname === "/packages") {
     return null;
   }
   return (

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, User, Phone, Calendar, MapPin, Clock, DollarSign, MessageSquare, Sparkles } from "lucide-react";
+import { createBooking } from "@/app/actions/booking";
 
 export const SHOOT_TYPES = [
   "Wedding & Event Photo Shoot",
@@ -51,7 +52,7 @@ export default function BookingQuoteModal({
     }
   }, [isOpen, prefilledType, prefilledMode]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -94,6 +95,21 @@ export default function BookingQuoteModal({
         (notes.trim() ? `💬 *Notes:* ${notes.trim()}\n` : "") +
         `--------------------------------\n` +
         `Please provide a customized quotation!`;
+    }
+
+    // Save booking request to Supabase PostgreSQL database first
+    try {
+      await createBooking({
+        name: name.trim(),
+        phone: phone.trim(),
+        eventType: shootType,
+        date,
+        timeSlot: selectedSlot || "10:00 AM",
+        location: location.trim(),
+        requirements: notes.trim() ? `${mode === "quote" ? "[Quote Request] " : ""}${notes.trim()}` : (mode === "quote" ? "[Quote Request]" : null),
+      });
+    } catch (err) {
+      console.error("Database save warning:", err);
     }
 
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;

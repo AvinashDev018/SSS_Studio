@@ -285,208 +285,249 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  )}
  </div>
 
-  <Link href={`/track?id=${createdOrderId}`} onClick={() => onRemove("ALL")} className="w-full bg-brand-gradient hover-glow-brand text-black py-3 rounded-xl font-bold text-sm hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all flex items-center justify-center gap-2">
-    {orderMode === "HOME_UPI" ? (
-      <><Truck className="w-4 h-4" /> Track Courier Status</>
-    ) : (
-      <><Store className="w-4 h-4" /> Check Order Status</>
-    )}
-  </Link>
+  <div className="space-y-2">
+    {/* Send Order & Photo to WhatsApp Button */}
+    <button
+      onClick={() => {
+        const itemNames = items.map((i) => `• ${i.name} (x${i.quantity || 1})`).join("\n");
+        const photoLinks = items
+          .filter((i) => i.image)
+          .map((i, idx) => `🖼️ Photo ${idx + 1}: ${i.image}`)
+          .join("\n");
+
+        const msg =
+          `🛒 *New Studio Frame Order* 🛒\n` +
+          `--------------------------------\n` +
+          `🔖 *Order ID:* #${createdOrderId}\n` +
+          `👤 *Name:* ${name}\n` +
+          `📞 *Phone:* ${phone}\n` +
+          `📍 *Delivery:* ${orderMode === "HOME_UPI" ? address : "Studio Pickup"}\n` +
+          `💰 *Total Amount:* ₹${totalAmount}\n` +
+          `--------------------------------\n` +
+          `📦 *Items:* \n${itemNames}\n` +
+          (photoLinks ? `\n${photoLinks}\n` : "") +
+          `--------------------------------\n` +
+          `Please confirm printing and framing schedule!`;
+
+        const waUrl = `https://wa.me/916383565425?text=${encodeURIComponent(msg)}`;
+        const win = window.open(waUrl, "_blank");
+        if (!win || win.closed || typeof win.closed === "undefined") {
+          window.location.href = waUrl;
+        }
+      }}
+      className="w-full bg-[#25D366] hover:bg-[#20ba59] text-black py-3 rounded-xl font-extrabold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-500/20"
+    >
+      <MessageCircle className="w-4 h-4 fill-black" /> Send Order Details & Photo to WhatsApp
+    </button>
+
+    <Link href={`/track?id=${createdOrderId}`} onClick={() => onRemove("ALL")} className="w-full bg-brand-gradient hover-glow-brand text-black py-3 rounded-xl font-bold text-sm hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all flex items-center justify-center gap-2">
+      {orderMode === "HOME_UPI" ? (
+        <><Truck className="w-4 h-4" /> Track Courier Status</>
+      ) : (
+        <><Store className="w-4 h-4" /> Check Order Status</>
+      )}
+    </Link>
+  </div>
  </div>
  );
  }
 
  return (
- <div className={`bg-black/40 backdrop-blur-3xl rounded-3xl p-6 border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-all duration-300 ${!isOpen && 'opacity-50 hover:opacity-100'}`}>
- {/* Cart Header */}
- <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
- <h2 className="text-xl font-serif font-bold flex items-center gap-2 text-white">
- <ShoppingBag className="w-5 h-5 text-brand-gradient" /> Your Order
- </h2>
- <span className="bg-brand-gradient hover-glow-brand/20 text-brand-gradient text-xs font-bold px-3 py-1 rounded-full border border-cyan-500/30">
- {items.length} Items
- </span>
- </div>
-
- {/* Cart Items */}
- <div className="space-y-4">
- <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" multiple />
- <AnimatePresence>
- {items.length === 0 ? (
- <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-10 text-zinc-500">
- Your cart is empty.
- </motion.div>
- ) : (
- items.map((item) => (
- <motion.div
- key={item.cartId}
- initial={{ opacity: 0, y: 10 }}
- animate={{ opacity: 1, y: 0 }}
- exit={{ opacity: 0, x: -20 }}
- className="flex gap-4 items-center bg-white/5 p-3 rounded-2xl border border-white/5 relative group"
- >
- <div className="relative shrink-0">
- {item.image ? (
- <img src={item.image} alt={item.name} className="w-16 h-16 rounded-xl object-cover" />
- ) : (
- <div className="w-16 h-16 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-500">
- <ImageIcon className="w-6 h-6" />
- </div>
- )}
- {['Frame', 'Collage', 'Gift'].includes(item.category) && (
- <button 
- onClick={() => triggerUpload(item.cartId)}
- className="absolute -bottom-2 -right-2 bg-brand-gradient hover-glow-brand text-black p-1.5 rounded-full shadow-md"
- >
- <Upload className="w-3 h-3" />
- </button>
- )}
- </div>
- <div className="flex-1">
- <h4 className="font-semibold text-white text-sm">{item.name}</h4>
- <div className="flex items-center justify-between mt-2">
- <p className="font-bold text-brand-gradient">₹{item.price * (item.quantity || 1)}</p>
- <div className="flex items-center gap-3 bg-black/40 border border-white/10 rounded-lg px-2 py-1">
- <button onClick={() => (item.quantity || 1) > 1 ? onUpdateItem(item.cartId, { quantity: item.quantity - 1 }) : onRemove(item.cartId)} className="text-zinc-400 hover:text-white"><Minus className="w-3 h-3" /></button>
- <span className="text-xs font-bold text-white w-4 text-center">{item.quantity || 1}</span>
- <button onClick={() => onUpdateItem(item.cartId, { quantity: (item.quantity || 1) + 1 })} className="text-zinc-400 hover:text-white"><Plus className="w-3 h-3" /></button>
- </div>
- </div>
- </div>
- <button onClick={() => onRemove(item.cartId)} className="absolute right-3 top-3 text-zinc-500 hover:text-red-500"><X className="w-4 h-4" /></button>
- </motion.div>
- ))
- )}
- </AnimatePresence>
- </div>
-
- {/* Checkout Section */}
- {items.length > 0 && (
- <div className="mt-6 space-y-4">
- 
- {hasPhotoItem && (
- <div className="bg-brand-gradient hover-glow-brand border border-transparent rounded-xl p-3">
- <p className="text-sm text-black font-bold flex items-center justify-center gap-2">
- <Upload className="w-4 h-4 shrink-0" />
- Upload photos for your customized items
- </p>
- </div>
- )}
-
- <div className="space-y-4">
- <div>
-  <label className="text-xs font-medium text-zinc-400 block mb-1">
-   Full Name <span className="text-red-400">*</span>
-  </label>
-  <input
-   type="text"
-   value={name}
-   onChange={(e) => { setName(e.target.value); if(e.target.value.trim()) setFieldErrors(prev => ({...prev, name: false})); }}
-   placeholder="John Doe"
-   className={`w-full bg-black/50 rounded-xl px-4 py-3 focus:outline-none text-sm text-white placeholder-zinc-600 border ${
-    fieldErrors.name ? 'border-red-500/70 focus:border-red-500' : 'border-white/10 focus:border-cyan-500'
-   }`}
-  />
-  {fieldErrors.name && <p className="text-red-400 text-xs mt-1 flex items-center gap-1">⚠ Name is required</p>}
- </div>
- <div>
-  <label className="text-xs font-medium text-zinc-400 block mb-1">
-   WhatsApp Number <span className="text-red-400">*</span>
-  </label>
-  <input
-   type="tel"
-   value={phone}
-   onChange={(e) => { setPhone(e.target.value); if(e.target.value.trim()) setFieldErrors(prev => ({...prev, phone: false})); }}
-   placeholder="+91 9876543210"
-   className={`w-full bg-black/50 rounded-xl px-4 py-3 focus:outline-none text-sm text-white placeholder-zinc-600 border ${
-    fieldErrors.phone ? 'border-red-500/70 focus:border-red-500' : 'border-white/10 focus:border-cyan-500'
-   }`}
-  />
-  {fieldErrors.phone && <p className="text-red-400 text-xs mt-1 flex items-center gap-1">⚠ Phone is required</p>}
- </div>
-
- <div className="pt-2">
- <label className="text-xs font-medium text-zinc-400 block mb-1">Promo Code (Optional)</label>
- <div className="flex gap-2">
- <input 
- type="text" 
- value={promoCode} 
- onChange={(e) => setPromoCode(e.target.value.toUpperCase())} 
- placeholder="e.g. FESTIVAL20" 
- className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 focus:outline-none focus:border-cyan-500 text-sm text-white placeholder-zinc-600 uppercase" 
- disabled={appliedPromo !== null}
- />
- {!appliedPromo ? (
- <button onClick={applyPromo} className="bg-brand-gradient hover-glow-brand text-black px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-brand-gradient hover-glow-brand text-white border-transparent transition-colors">
- Apply
- </button>
- ) : (
- <button onClick={() => { setAppliedPromo(null); setPromoCode(""); }} className="bg-red-500/20 text-red-500 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-red-500/30 transition-colors">
- Remove
- </button>
- )}
- </div>
- </div>
-
- <div className="pt-2 border-t border-white/10">
-    <label className="text-xs font-medium text-zinc-400 block mb-3">Order & Payment Option</label>
-    <div className="flex flex-col gap-2">
-      <button onClick={() => setOrderMode("STUDIO_CASH")} className={`w-full flex justify-between items-center px-4 py-3 text-sm font-medium rounded-xl transition-all border ${orderMode === "STUDIO_CASH" ? "bg-white/10 text-white border-cyan-500/50 shadow-sm" : "bg-black/50 text-zinc-400 border-white/5 hover:text-white"}`}>
-        <div className="flex items-center gap-3"><Home className="w-4 h-4 text-cyan-400" /> Pick Up (Pay at Studio)</div>
-        {orderMode === "STUDIO_CASH" && <CheckCircle2 className="w-4 h-4 text-cyan-400" />}
-      </button>
-      
-      <button onClick={() => setOrderMode("STUDIO_UPI")} className={`w-full flex justify-between items-center px-4 py-3 text-sm font-medium rounded-xl transition-all border ${orderMode === "STUDIO_UPI" ? "bg-white/10 text-white border-cyan-500/50 shadow-sm" : "bg-black/50 text-zinc-400 border-white/5 hover:text-white"}`}>
-        <div className="flex items-center gap-3"><CreditCard className="w-4 h-4 text-cyan-400" /> Pick Up (Pay via UPI)</div>
-        {orderMode === "STUDIO_UPI" && <CheckCircle2 className="w-4 h-4 text-cyan-400" />}
-      </button>
-
-      <button onClick={() => setOrderMode("HOME_UPI")} className={`w-full flex justify-between items-center px-4 py-3 text-sm font-medium rounded-xl transition-all border ${orderMode === "HOME_UPI" ? "bg-white/10 text-white border-cyan-500/50 shadow-sm" : "bg-black/50 text-zinc-400 border-white/5 hover:text-white"}`}>
-        <div className="flex items-center gap-3"><Truck className="w-4 h-4 text-cyan-400" /> Courier Delivery (Pay via UPI)</div>
-        <div className="flex items-center gap-2">
-           <span className="text-xs bg-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded-full">+₹50</span>
-           {orderMode === "HOME_UPI" && <CheckCircle2 className="w-4 h-4 text-cyan-400" />}
-        </div>
-      </button>
-    </div>
+  <div className={`bg-zinc-900 border-2 border-amber-500/40 rounded-3xl p-6 shadow-[0_20px_60px_rgba(0,0,0,0.8)] transition-all duration-300 ${!isOpen && 'opacity-70 hover:opacity-100'}`}>
+  {/* Cart Header */}
+  <div className="flex justify-between items-center mb-6 border-b border-amber-500/20 pb-4">
+  <h2 className="text-xl font-serif font-bold flex items-center gap-2 text-white">
+  <ShoppingBag className="w-5 h-5 text-amber-400" /> Your Order
+  </h2>
+  <span className="bg-amber-500/20 text-amber-300 font-extrabold text-xs px-3 py-1 rounded-full border border-amber-500/40">
+  {items.length} Items
+  </span>
   </div>
 
-  {orderMode === "HOME_UPI" && (
-   <div className="mt-2">
-    <textarea
-     rows={2}
-     value={address}
-     onChange={(e) => { setAddress(e.target.value); if(e.target.value.trim()) setFieldErrors(prev => ({...prev, address: false})); }}
-     placeholder="Delivery Address..."
-     className={`w-full bg-black/50 rounded-xl px-4 py-3 focus:outline-none text-sm text-white placeholder-zinc-600 border ${
-      fieldErrors.address ? 'border-red-500/70 focus:border-red-500' : 'border-white/10 focus:border-cyan-500'
-     }`}
-    />
-    {fieldErrors.address && <p className="text-red-400 text-xs mt-1 flex items-center gap-1">⚠ Delivery address is required</p>}
-   </div>
+  {/* Cart Items */}
+  <div className="space-y-4">
+  <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" multiple />
+  <AnimatePresence>
+  {items.length === 0 ? (
+  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-10 text-zinc-400 font-medium">
+  Your cart is empty.
+  </motion.div>
+  ) : (
+  items.map((item) => (
+  <motion.div
+  key={item.cartId}
+  initial={{ opacity: 0, y: 10 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, x: -20 }}
+  className="flex gap-4 items-center bg-zinc-950 p-3 rounded-2xl border border-amber-500/25 relative group shadow-md"
+  >
+  <div className="relative shrink-0">
+  {item.image ? (
+  <img src={item.image} alt={item.name} className="w-16 h-16 rounded-xl object-cover border border-amber-500/30" />
+  ) : (
+  <div className="w-16 h-16 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-400">
+  <ImageIcon className="w-6 h-6" />
+  </div>
+  )}
+  {['Frame', 'Collage', 'Gift'].includes(item.category) && (
+  <button 
+  onClick={() => triggerUpload(item.cartId)}
+  className="absolute -bottom-2 -right-2 bg-amber-400 text-black p-1.5 rounded-full shadow-md hover:scale-110 transition-transform"
+  >
+  <Upload className="w-3 h-3" />
+  </button>
+  )}
+  </div>
+  <div className="flex-1">
+  <h4 className="font-bold text-white text-sm leading-snug">{item.name}</h4>
+  <div className="flex items-center justify-between mt-2">
+  <p className="font-extrabold text-amber-400 font-mono">₹{item.price * (item.quantity || 1)}</p>
+  <div className="flex items-center gap-3 bg-zinc-900 border border-zinc-700 rounded-lg px-2 py-1">
+  <button onClick={() => (item.quantity || 1) > 1 ? onUpdateItem(item.cartId, { quantity: item.quantity - 1 }) : onRemove(item.cartId)} className="text-zinc-300 hover:text-white font-bold cursor-pointer"><Minus className="w-3 h-3" /></button>
+  <span className="text-xs font-black text-white w-4 text-center">{item.quantity || 1}</span>
+  <button onClick={() => onUpdateItem(item.cartId, { quantity: (item.quantity || 1) + 1 })} className="text-zinc-300 hover:text-white font-bold cursor-pointer"><Plus className="w-3 h-3" /></button>
+  </div>
+  </div>
+  </div>
+  <button onClick={() => onRemove(item.cartId)} className="absolute right-3 top-3 text-zinc-400 hover:text-red-400 cursor-pointer"><X className="w-4 h-4" /></button>
+  </motion.div>
+  ))
+  )}
+  </AnimatePresence>
+  </div>
+
+  {/* Checkout Section */}
+  {items.length > 0 && (
+  <div className="mt-6 space-y-4">
+  
+  {hasPhotoItem && (
+  <div className="bg-amber-400 text-black rounded-xl p-3 shadow-md">
+  <p className="text-xs font-black flex items-center justify-center gap-2 uppercase tracking-wide">
+  <Upload className="w-4 h-4 shrink-0" />
+  Upload photos for your customized items
+  </p>
+  </div>
   )}
 
- </div>
-
- <div className="flex flex-col gap-1 py-4 border-t border-white/10">
- <div className="flex justify-between items-center text-zinc-500 text-sm"><span>Subtotal</span><span>₹{itemTotal}</span></div>
- {discountAmount > 0 && <div className="flex justify-between items-center text-green-400 text-sm font-medium"><span>Discount</span><span>-₹{discountAmount}</span></div>}
- {deliveryCharge > 0 && <div className="flex justify-between items-center text-zinc-500 text-sm"><span>Delivery</span><span>+₹{deliveryCharge}</span></div>}
- <div className="flex justify-between items-center pt-3 mt-2 border-t border-white/10">
- <span className="text-white font-bold text-lg">Total Amount</span>
- <span className="text-3xl font-bold text-brand-gradient drop-shadow-[0_0_15px_rgba(6,182,212,0.4)]">₹{totalAmount}</span>
- </div>
- </div>
-
- {error && (
-  <div className="bg-red-500/10 border border-red-500/40 text-red-400 px-4 py-3 rounded-xl text-sm flex items-start gap-2">
-   <span className="text-lg leading-none mt-0.5">⚠</span>
-   <span>{error}</span>
+  <div className="space-y-4">
+  <div>
+   <label className="text-xs font-bold text-zinc-200 block mb-1">
+    Full Name <span className="text-amber-400">*</span>
+   </label>
+   <input
+    type="text"
+    value={name}
+    onChange={(e) => { setName(e.target.value); if(e.target.value.trim()) setFieldErrors(prev => ({...prev, name: false})); }}
+    placeholder="e.g. Ramesh Kumar"
+    className={`w-full bg-zinc-950 rounded-xl px-4 py-3 focus:outline-none text-sm font-semibold text-white placeholder-zinc-500 border ${
+     fieldErrors.name ? 'border-red-500 focus:border-red-500' : 'border-zinc-700 focus:border-amber-400'
+    }`}
+   />
+   {fieldErrors.name && <p className="text-red-400 text-xs mt-1 flex items-center gap-1 font-bold">⚠ Name is required</p>}
   </div>
- )}
- <button onClick={handleCheckout} disabled={isSubmitting} className="w-full bg-brand-gradient hover-glow-brand text-black py-4 rounded-xl font-bold text-lg hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:-translate-y-1 transition-all disabled:opacity-50">
-  {isSubmitting ? "Processing..." : "Confirm Order"}
- </button>
+  <div>
+   <label className="text-xs font-bold text-zinc-200 block mb-1">
+    WhatsApp Number (10 Digits) <span className="text-amber-400">*</span>
+   </label>
+   <input
+    type="tel"
+    maxLength={10}
+    value={phone}
+    onChange={(e) => { 
+      const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 10);
+      setPhone(digitsOnly); 
+      if(digitsOnly.length === 10) setFieldErrors(prev => ({...prev, phone: false})); 
+    }}
+    placeholder="9876543210"
+    className={`w-full bg-zinc-950 rounded-xl px-4 py-3 focus:outline-none text-sm font-semibold text-white placeholder-zinc-500 border ${
+     fieldErrors.phone ? 'border-red-500 focus:border-red-500' : 'border-zinc-700 focus:border-amber-400'
+    }`}
+   />
+   {fieldErrors.phone && <p className="text-red-400 text-xs mt-1 flex items-center gap-1 font-bold">⚠ Valid 10-digit phone number is required</p>}
+  </div>
+
+  <div className="pt-2">
+  <label className="text-xs font-bold text-zinc-200 block mb-1">Promo Code (Optional)</label>
+  <div className="flex gap-2">
+  <input 
+  type="text" 
+  value={promoCode} 
+  onChange={(e) => setPromoCode(e.target.value.toUpperCase())} 
+  placeholder="e.g. FESTIVAL20" 
+  className="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-2.5 focus:outline-none focus:border-amber-400 text-sm font-bold text-white placeholder-zinc-500 uppercase" 
+  disabled={appliedPromo !== null}
+  />
+  {!appliedPromo ? (
+  <button onClick={applyPromo} className="bg-amber-400 hover:bg-amber-300 text-black px-4 py-2.5 rounded-xl text-sm font-extrabold transition-colors cursor-pointer">
+  Apply
+  </button>
+  ) : (
+  <button onClick={() => { setAppliedPromo(null); setPromoCode(""); }} className="bg-red-500/20 text-red-400 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-red-500/30 transition-colors">
+  Remove
+  </button>
+  )}
+  </div>
+  </div>
+
+  <div className="pt-2 border-t border-amber-500/20">
+     <label className="text-xs font-bold text-zinc-200 block mb-3">Order & Payment Option</label>
+     <div className="flex flex-col gap-2">
+       <button onClick={() => setOrderMode("STUDIO_CASH")} className={`w-full flex justify-between items-center px-4 py-3 text-sm font-bold rounded-xl transition-all border cursor-pointer ${orderMode === "STUDIO_CASH" ? "bg-amber-500/20 text-white border-amber-400 shadow-sm" : "bg-zinc-950 text-zinc-300 border-zinc-700 hover:text-white"}`}>
+         <div className="flex items-center gap-3"><Home className="w-4 h-4 text-amber-400" /> Pick Up (Pay at Studio)</div>
+         {orderMode === "STUDIO_CASH" && <CheckCircle2 className="w-4 h-4 text-amber-400" />}
+       </button>
+       
+       <button onClick={() => setOrderMode("STUDIO_UPI")} className={`w-full flex justify-between items-center px-4 py-3 text-sm font-bold rounded-xl transition-all border cursor-pointer ${orderMode === "STUDIO_UPI" ? "bg-amber-500/20 text-white border-amber-400 shadow-sm" : "bg-zinc-950 text-zinc-300 border-zinc-700 hover:text-white"}`}>
+         <div className="flex items-center gap-3"><CreditCard className="w-4 h-4 text-amber-400" /> Pick Up (Pay via UPI)</div>
+         {orderMode === "STUDIO_UPI" && <CheckCircle2 className="w-4 h-4 text-amber-400" />}
+       </button>
+
+       <button onClick={() => setOrderMode("HOME_UPI")} className={`w-full flex justify-between items-center px-4 py-3 text-sm font-bold rounded-xl transition-all border cursor-pointer ${orderMode === "HOME_UPI" ? "bg-amber-500/20 text-white border-amber-400 shadow-sm" : "bg-zinc-950 text-zinc-300 border-zinc-700 hover:text-white"}`}>
+         <div className="flex items-center gap-3"><Truck className="w-4 h-4 text-amber-400" /> Courier Delivery (Pay via UPI)</div>
+         <div className="flex items-center gap-2">
+            <span className="text-xs bg-amber-500/30 text-amber-300 px-2 py-0.5 rounded-full font-extrabold">+₹50</span>
+            {orderMode === "HOME_UPI" && <CheckCircle2 className="w-4 h-4 text-amber-400" />}
+         </div>
+       </button>
+     </div>
+   </div>
+
+   {orderMode === "HOME_UPI" && (
+    <div className="mt-2">
+     <textarea
+      rows={2}
+      value={address}
+      onChange={(e) => { setAddress(e.target.value); if(e.target.value.trim()) setFieldErrors(prev => ({...prev, address: false})); }}
+      placeholder="Full Delivery Address with Pincode..."
+      className={`w-full bg-zinc-950 rounded-xl px-4 py-3 focus:outline-none text-sm font-semibold text-white placeholder-zinc-500 border ${
+       fieldErrors.address ? 'border-red-500 focus:border-red-500' : 'border-zinc-700 focus:border-amber-400'
+      }`}
+     />
+     {fieldErrors.address && <p className="text-red-400 text-xs mt-1 flex items-center gap-1 font-bold">⚠ Delivery address is required</p>}
+    </div>
+   )}
+
+  </div>
+
+  <div className="flex flex-col gap-1 py-4 border-t border-amber-500/20">
+  <div className="flex justify-between items-center text-zinc-300 text-sm font-medium"><span>Subtotal</span><span>₹{itemTotal}</span></div>
+  {discountAmount > 0 && <div className="flex justify-between items-center text-emerald-400 text-sm font-bold"><span>Discount</span><span>-₹{discountAmount}</span></div>}
+  {deliveryCharge > 0 && <div className="flex justify-between items-center text-zinc-300 text-sm font-medium"><span>Delivery</span><span>+₹{deliveryCharge}</span></div>}
+  <div className="flex justify-between items-center pt-3 mt-2 border-t border-amber-500/20">
+  <span className="text-white font-serif font-bold text-lg">Total Amount</span>
+  <span className="text-3xl font-extrabold text-amber-400 font-mono drop-shadow">₹{totalAmount}</span>
+  </div>
+  </div>
+
+  {error && (
+   <div className="bg-red-500/15 border border-red-500/50 text-red-300 px-4 py-3 rounded-xl text-xs font-bold flex items-start gap-2">
+    <span className="text-sm leading-none">⚠️</span>
+    <span>{error}</span>
+   </div>
+  )}
+  <button onClick={handleCheckout} disabled={isSubmitting} className="w-full bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-black py-4 rounded-xl font-extrabold text-base uppercase tracking-wider hover:from-amber-300 hover:to-yellow-400 hover:scale-[1.02] transition-all disabled:opacity-50 cursor-pointer shadow-lg">
+   {isSubmitting ? "Processing..." : "Confirm Order"}
+  </button>
  
  <p className="text-center text-xs text-zinc-500 mt-4 flex items-center justify-center gap-1">
  <Lock className="w-3 h-3" /> Secure Order Processing

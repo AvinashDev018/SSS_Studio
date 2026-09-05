@@ -69,7 +69,7 @@ export async function addPackage(formData) {
  const price = formData.get("price");
  const description = formData.get("description");
  const featuresStr = formData.get("features") || "";
- const popular = formData.get("popular") === "on";
+ const popular = formData.get("popular") === "on" || formData.get("popular") === "true";
 
  const pkg = await prisma.package.create({
  data: {

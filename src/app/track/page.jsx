@@ -208,7 +208,9 @@ export default function TrackOrderPage() {
                         {item.type === "booking" ? `${item.eventType} Photoshoot` : (item.items?.[0]?.name || "Photo Frame Order")}
                       </h4>
                       <p className="text-xs text-zinc-400">
-                        {item.type === "booking" && item.date ? `Event: ${new Date(item.date).toLocaleDateString()}` : `Placed: ${new Date(item.createdAt).toLocaleDateString()}`}
+                        {item.type === "booking" && item.date 
+                          ? `Shoot Date: ${new Date(item.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}` 
+                          : `Placed: ${item.createdAt ? new Date(item.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "Today"}`}
                       </p>
                     </div>
 
@@ -245,7 +247,7 @@ export default function TrackOrderPage() {
                   </button>
                 </div>
                 <p className="text-zinc-400 text-xs mt-1">
-                  Customer: <strong className="text-white print:text-black">{order.customerName}</strong> • {new Date(order.createdAt).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" })}
+                  Customer: <strong className="text-white print:text-black">{order.customerName}</strong> • {order.createdAt ? new Date(order.createdAt).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" }) : (order.date ? `Shoot Date: ${new Date(order.date).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" })}` : "Recent")}
                 </p>
 
                 {order.courierTrackingId && (

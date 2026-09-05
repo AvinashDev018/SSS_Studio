@@ -187,7 +187,7 @@ export default function SSSServices({ onOpenBooking }) {
     : services.filter(s => s.category.toLowerCase().includes(activeCategory));
 
   const filterTabs = [
-    { id: "all", label: "All 6 Services" },
+    { id: "all", label: "All Services" },
     { id: "wedding", label: "Weddings" },
     { id: "pre-wedding", label: "Pre / Post Wedding" },
     { id: "baby", label: "Baby & Maternity" },

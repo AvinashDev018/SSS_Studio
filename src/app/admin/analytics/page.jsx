@@ -66,29 +66,31 @@ export default function AnalyticsDashboard() {
       <AdminNav currentPath="/admin/analytics" />
 
       {/* Friendly Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 bg-gradient-to-r from-[#0c221e]/80 via-[#0a1815]/60 to-transparent p-6 rounded-3xl border border-teal-500/20 shadow-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 bg-[#14120c] p-6 rounded-3xl border border-amber-500/40 shadow-2xl">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="p-1.5 rounded-xl bg-teal-500/15 text-teal-300 border border-teal-500/30">
+            <span className="p-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-400/40">
               <BarChart3 className="w-4 h-4" />
             </span>
-            <span className="text-xs uppercase tracking-wider font-extrabold text-teal-400">
-              Studio Financials & Pipeline
+            <span className="text-xs uppercase tracking-wider font-black text-amber-400">
+              Studio Financials &amp; Pipeline
             </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white tracking-tight">
-            Studio Performance & Analytics
+          <h1 className="text-2xl sm:text-3xl font-serif font-extrabold text-white tracking-tight">
+            Studio Performance &amp; Analytics
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-300 mt-1 font-light max-w-2xl">
+          <p className="text-xs sm:text-sm text-zinc-200 mt-1 font-normal max-w-2xl leading-relaxed">
             Real-time tracking of studio revenue, client order delivery pipeline, and photo print fulfillment.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-center px-4 py-2 rounded-2xl bg-teal-500/10 border border-teal-500/30 shrink-0">
-          <span className="text-xs text-zinc-400">Fulfillment Rate:</span>
-          <span className="text-base font-black text-emerald-300">
-            {stats.totalOrders > 0 ? `${Math.round((stats.deliveredOrders / stats.totalOrders) * 100)}%` : "100%"}
+        <div className="flex items-center gap-2 self-start sm:self-center px-4 py-2.5 rounded-2xl bg-amber-400 text-black border border-amber-300 shrink-0 font-extrabold shadow-lg">
+          <span className="text-xs font-bold text-black uppercase tracking-wider">Fulfillment Rate:</span>
+          <span className="text-lg font-black text-black">
+            {orders.length > 0
+              ? `${Math.round((orders.filter((o) => o.status === "Delivered").length / orders.length) * 100)}%`
+              : "100%"}
           </span>
         </div>
       </div>

@@ -40,6 +40,7 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
   const [isGift, setIsGift] = useState(true);
   const [giftWish, setGiftWish] = useState("");
   const [recipientName, setRecipientName] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen || !selectedFrame) return null;
 
@@ -93,16 +94,71 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
     setTimeout(() => setCopiedUPI(false), 2500);
   };
 
-  const handleDispatchWhatsApp = () => {
+  const handleDispatchWhatsApp = async () => {
     if (!clientName.trim() || !clientPhone.trim()) {
       setErrorMsg("Please provide your name and WhatsApp phone number.");
       setStep(2);
       return;
     }
 
+    setIsSubmitting(true);
+    setErrorMsg("");
+
+    let uploadedPhotoUrl = "";
+    if (photoPreview && photoPreview.startsWith("data:image")) {
+      try {
+        const { uploadImageToCloud } = await import("@/app/actions/upload");
+        const uploadRes = await uploadImageToCloud(photoPreview);
+        if (uploadRes.success) {
+          uploadedPhotoUrl = uploadRes.url;
+        }
+      } catch (err) {
+        console.error("Failed to upload photo to Cloudinary:", err);
+      }
+    } else if (photoPreview && photoPreview.startsWith("http")) {
+      uploadedPhotoUrl = photoPreview;
+    }
+
+    let createdOrderId = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
+
+    try {
+      const itemPayload = {
+        name: `${selectedFrame.size} Inch Custom Frame (${finishLabel})`,
+        size: selectedFrame.size,
+        finishLabel: finishLabel,
+        quantity: quantity,
+        price: Math.round(baseNum * finishMultiplier),
+        image: uploadedPhotoUrl || null,
+        isGift: isGift,
+        recipientName: recipientName.trim(),
+        giftWish: giftWish.trim(),
+      };
+
+      const res = await fetch("/api/payment/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: finalTotal,
+          customerName: clientName.trim(),
+          customerPhone: clientPhone.trim(),
+          address: deliveryType === "pickup" ? "Studio Pickup (Madurai)" : address.trim() || "Courier Delivery",
+          items: [itemPayload],
+          paymentMode: "CASH",
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success && data.dbOrderId) {
+        createdOrderId = data.dbOrderId;
+      }
+    } catch (err) {
+      console.error("Error creating order in DB:", err);
+    }
+
     const receipt = 
       `🎁 *NEW PERSONALIZED PHOTO GIFT ORDER* 🎁\n` +
       `----------------------------------------\n` +
+      `🔖 *Order ID:* #${createdOrderId}\n` +
       `📐 *Size:* ${selectedFrame.size} Inches\n` +
       `✨ *Finish:* ${finishLabel}\n` +
       `🔢 *Quantity:* ${quantity} Units\n` +
@@ -110,10 +166,10 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
       (isCouponApplied ? `🏷️ *Coupon:* ${couponCode.toUpperCase()} (₹${discount.toLocaleString("en-IN")} OFF)\n` : "") +
       `💰 *Total Order Value:* ₹${finalTotal.toLocaleString("en-IN")}\n` +
       `----------------------------------------\n` +
-      (isGift ? `🎀 *GIFT PACKAGING & WISH:*\n` +
-        `• *Gift Wish:* "${giftWish.trim() || "With Best Wishes!"}"\n` +
-        (recipientName.trim() ? `• *For Recipient:* ${recipientName.trim()}\n` : "") +
-        `• *Packaging:* Complimentary Luxury Gift Wrapping & Handwritten Card\n` +
+      (isGift ? `🎀 *GIFT PACKAGING & WISH CARD:*\n` +
+        (recipientName.trim() ? `• *To Recipient:* ${recipientName.trim()}\n` : "") +
+        `• *Handwritten Wish Message:* "${giftWish.trim() || "With Best Wishes!"}"\n` +
+        `• *Packaging:* Complimentary Luxury Gift Wrapping & Card\n` +
         `----------------------------------------\n` : "") +
       `👤 *CLIENT DETAILS:*\n` +
       `• *Name:* ${clientName.trim()}\n` +
@@ -121,12 +177,18 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
       `• *Fulfillment:* ${deliveryType === "pickup" ? "Studio Pickup (Avaniyapuram, Madurai)" : `Courier Delivery to:\n  ${address.trim()}`}\n` +
       `• *Payment Mode:* ${paymentOption === "upi" ? "UPI / Google Pay (6383565425@upi)" : "Pay at Studio Counter"}\n` +
       `----------------------------------------\n` +
-      `📸 *Photo Attachment:* Attached below in this chat.\n\n` +
-      `Hello SSS Studio! Please confirm my personalized photo gift order. I am attaching the high-resolution photo now! ✨`;
+      (uploadedPhotoUrl ? `🖼️ *Custom Photo Link:* ${uploadedPhotoUrl}\n\n` : `📸 *Photo Attachment:* Attached below in this chat.\n\n`) +
+      `Hello SSS Studio! Please confirm my personalized photo gift order #${createdOrderId}.`;
 
     const waUrl = `https://wa.me/916383565425?text=${encodeURIComponent(receipt)}`;
-    window.open(waUrl, "_blank");
+    setIsSubmitting(false);
     onClose();
+    
+    // Attempt popup first, fallback to direct location redirection if blocked
+    const win = window.open(waUrl, "_blank");
+    if (!win || win.closed || typeof win.closed === "undefined") {
+      window.location.href = waUrl;
+    }
   };
 
   return (
@@ -366,12 +428,16 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-zinc-900 mb-1">WhatsApp Phone Number *</label>
+                    <label className="block text-[11px] font-bold text-zinc-900 mb-1">WhatsApp Phone Number (10 Digits) *</label>
                     <input
                       type="tel"
-                      placeholder="e.g. 98765 43210"
+                      maxLength={10}
+                      placeholder="e.g. 9876543210"
                       value={clientPhone}
-                      onChange={(e) => setClientPhone(e.target.value)}
+                      onChange={(e) => {
+                        const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 10);
+                        setClientPhone(digitsOnly);
+                      }}
                       className="w-full bg-[#FAFAFA] border border-black/15 rounded-xl px-3.5 py-2.5 text-xs text-zinc-900 font-semibold placeholder-zinc-400 focus:outline-none focus:border-[#d4af37]"
                     />
                   </div>
@@ -448,8 +514,12 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
                   <button
                     type="button"
                     onClick={() => {
-                      if (!clientName.trim() || !clientPhone.trim()) {
-                        setErrorMsg("Please enter your name and phone number.");
+                      if (!clientName.trim()) {
+                        setErrorMsg("Please enter your full name.");
+                        return;
+                      }
+                      if (!clientPhone.trim() || clientPhone.length !== 10) {
+                        setErrorMsg("Please enter a valid 10-digit WhatsApp phone number.");
                         return;
                       }
                       setErrorMsg("");
@@ -525,10 +595,11 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
                 <button
                   type="button"
                   onClick={handleDispatchWhatsApp}
-                  className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-2xl shadow-xl hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2.5 text-xs sm:text-sm uppercase tracking-wider cursor-pointer"
+                  disabled={isSubmitting}
+                  className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 text-white font-black rounded-2xl shadow-xl hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2.5 text-xs sm:text-sm uppercase tracking-wider cursor-pointer"
                 >
                   <MessageCircle size={18} className="stroke-[2.5]" />
-                  <span>Submit Order to SSS Studio WhatsApp</span>
+                  <span>{isSubmitting ? "Processing & Uploading..." : "Submit Order to SSS Studio WhatsApp"}</span>
                 </button>
 
                 <div className="flex items-center justify-between text-xs text-zinc-600 font-bold pt-1">

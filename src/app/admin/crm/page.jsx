@@ -127,31 +127,28 @@ export default function CRMDashboard() {
   });
 
   return (
-    <div className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen text-zinc-100 font-sans bg-[#050907]">
+    <div className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen text-zinc-100 font-sans bg-[#090906]">
       <AdminNav currentPath="/admin/crm" />
 
-      {/* Friendly Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 bg-gradient-to-r from-[#181308]/90 via-[#100d05]/80 to-transparent p-6 rounded-3xl border border-amber-500/25 shadow-xl">
+      {/* Hero Section */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 bg-[#14120c] p-6 rounded-3xl border border-amber-500/40 shadow-2xl">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="p-1.5 rounded-xl bg-amber-500/15 text-amber-300 border border-amber-400/30">
+            <span className="p-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-400/40">
               <ShoppingBag className="w-4 h-4" />
             </span>
-            <span className="text-xs uppercase tracking-wider font-extrabold text-amber-400">
-              Order Fulfillment &amp; Client CRM
+            <span className="text-xs uppercase tracking-wider font-black text-amber-400">
+              Customer Orders &amp; Studio CRM
             </span>
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white tracking-tight">
-            CRM &amp; Studio Print Orders
+          <h1 className="text-2xl sm:text-3xl font-serif font-extrabold text-white tracking-tight">
+            Order Management &amp; Client Hub
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-300 mt-1 font-light max-w-2xl">
-            Live database-backed order fulfillment board. Advance orders through production, download client high-res photos, and send 1-click WhatsApp updates.
-          </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-[#0a0c06] border border-amber-500/30">
+          <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-[#0a0c06] border border-amber-500/40 shadow-inner">
             <Filter className="w-3.5 h-3.5 text-amber-400" />
             <select
               value={filterType}
@@ -209,47 +206,66 @@ export default function CRMDashboard() {
                         <span className="text-zinc-400">{order.createdAt ? new Date(order.createdAt).toLocaleDateString() : "Today"}</span>
                       </div>
 
-                      {/* Uploaded Customer Photos Preview */}
+                      {/* Uploaded Customer Photos & Gift Wish Card Preview */}
                       {(() => {
                         const items = order.items || [];
+                        const giftItem = items.find((i) => i.isGift || i.giftWish || i.recipientName);
                         const images = items.filter((item) => item.image).map((item) => item.image);
-                        if (images.length > 0) {
-                          return (
-                            <div className="flex gap-2 mb-3 overflow-x-auto pb-1 no-scrollbar pt-1">
-                              {images.map((img, i) => (
-                                <div key={i} className="relative group/img shrink-0">
-                                  <a href={img} target="_blank" rel="noopener noreferrer">
-                                    <img src={img} alt="Order Upload" className="w-12 h-12 rounded-xl object-cover border border-amber-500/30 hover:border-amber-400 transition-colors shadow-sm" />
-                                  </a>
-                                  <button
-                                    onClick={async (e) => {
-                                      e.stopPropagation();
-                                      try {
-                                        const response = await fetch(img);
-                                        const blob = await response.blob();
-                                        const blobUrl = window.URL.createObjectURL(blob);
-                                        const a = document.createElement("a");
-                                        a.href = blobUrl;
-                                        a.download = `${order.orderId}-image-${i + 1}.jpg`;
-                                        document.body.appendChild(a);
-                                        a.click();
-                                        window.URL.revokeObjectURL(blobUrl);
-                                        document.body.removeChild(a);
-                                      } catch (err) {
-                                        window.open(img, "_blank");
-                                      }
-                                    }}
-                                    className="absolute top-1 right-1 bg-amber-400 text-black p-1 rounded-full shadow-lg opacity-0 group-hover/img:opacity-100 transition-all z-10 hover:scale-110"
-                                    title="Download High-Res Image"
-                                  >
-                                    <Download className="w-2.5 h-2.5 stroke-[2.5]" />
-                                  </button>
+
+                        return (
+                          <div className="space-y-2 mb-3">
+                            {/* Gift Wish Card Box */}
+                            {giftItem && (
+                              <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs space-y-1">
+                                <div className="flex items-center gap-1.5 font-bold text-amber-400">
+                                  <span>🎁</span>
+                                  <span>Gift Card {giftItem.recipientName ? `for ${giftItem.recipientName}` : ""}</span>
                                 </div>
-                              ))}
-                            </div>
-                          );
-                        }
-                        return null;
+                                {giftItem.giftWish && (
+                                  <p className="italic text-zinc-300 bg-black/40 p-2 rounded-lg border border-amber-500/20 text-[11px] leading-relaxed">
+                                    "{giftItem.giftWish}"
+                                  </p>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Photos */}
+                            {images.length > 0 && (
+                              <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar pt-1">
+                                {images.map((img, i) => (
+                                  <div key={i} className="relative group/img shrink-0">
+                                    <a href={img} target="_blank" rel="noopener noreferrer">
+                                      <img src={img} alt="Order Upload" className="w-12 h-12 rounded-xl object-cover border border-amber-500/30 hover:border-amber-400 transition-colors shadow-sm" />
+                                    </a>
+                                    <button
+                                      onClick={async (e) => {
+                                        e.stopPropagation();
+                                        try {
+                                          const response = await fetch(img);
+                                          const blob = await response.blob();
+                                          const blobUrl = window.URL.createObjectURL(blob);
+                                          const a = document.createElement("a");
+                                          a.href = blobUrl;
+                                          a.download = `${order.orderId}-image-${i + 1}.jpg`;
+                                          document.body.appendChild(a);
+                                          a.click();
+                                          window.URL.revokeObjectURL(blobUrl);
+                                          document.body.removeChild(a);
+                                        } catch (err) {
+                                          window.open(img, "_blank");
+                                        }
+                                      }}
+                                      className="absolute top-1 right-1 bg-amber-400 text-black p-1 rounded-full shadow-lg opacity-0 group-hover/img:opacity-100 transition-all z-10 hover:scale-110"
+                                      title="Download High-Res Image"
+                                    >
+                                      <Download className="w-2.5 h-2.5 stroke-[2.5]" />
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
                       })()}
 
                       <div className="mb-3 flex justify-between items-center">
@@ -292,9 +308,9 @@ export default function CRMDashboard() {
                         {activeStatuses.indexOf(status) === activeStatuses.length - 1 && (
                           <button
                             onClick={() => deleteOrder(order.orderId)}
-                            className="flex-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-xs font-bold py-1.5 rounded-xl transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                            className="flex-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold py-1.5 rounded-xl transition-colors flex items-center justify-center gap-1 cursor-pointer"
                           >
-                            <Check className="w-3 h-3" /> Delivered
+                            <Check className="w-3.5 h-3.5 stroke-[2.5]" /> Delivered
                           </button>
                         )}
                       </div>

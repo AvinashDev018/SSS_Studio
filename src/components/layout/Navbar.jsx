@@ -83,8 +83,8 @@ export default function Navbar() {
           
           {/* Left: Brand Logo */}
           <div className="shrink-0 flex items-center">
-            <StudioLogo size="sm" href="/" className="sm:hidden" />
-            <StudioLogo size="md" href="/" className="hidden sm:flex" />
+            <StudioLogo size="sm" href="/" variant="dark" className="sm:hidden" />
+            <StudioLogo size="md" href="/" variant="dark" className="hidden sm:flex" />
           </div>
 
           {/* Center: Desktop Nav Links (Clean, Centered, Perfectly Spaced) */}

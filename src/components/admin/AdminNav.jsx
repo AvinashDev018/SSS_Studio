@@ -41,7 +41,7 @@ export default function AdminNav({ currentPath: propPath }) {
       <div className="bg-[#0b0c07]/90 backdrop-blur-xl border border-amber-500/25 rounded-2xl px-5 py-3.5 shadow-2xl flex items-center justify-between gap-4">
         {/* Left: Studio Identity */}
         <div className="flex items-center gap-3">
-          <StudioLogo size="sm" />
+          <StudioLogo size="sm" variant="light" />
           <div>
             <div className="flex items-center gap-2">
               <span className="font-bold text-white text-base tracking-wide">SSS Studio</span>

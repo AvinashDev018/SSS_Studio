@@ -13,17 +13,18 @@ export async function createBooking(formData) {
  // Determine the final event type
  const finalEventType = eventType === "Other" ? customEventType : eventType;
 
- // Check if the specific time slot on that date is already booked
- const existingBooking = await prisma.booking.findFirst({
- where: {
- date: new Date(date),
- timeSlot: timeSlot
- }
- });
+  // Check if slot is already confirmed
+  const existingBooking = await prisma.booking.findFirst({
+    where: {
+      date: new Date(date),
+      timeSlot: timeSlot,
+      status: "CONFIRMED"
+    }
+  });
 
- if (existingBooking) {
- return { success: false, error: "This time slot is already booked. Please choose another time." };
- }
+  if (existingBooking) {
+    return { success: false, error: "This time slot is already confirmed for another shoot." };
+  }
 
  // Save to database
  await prisma.booking.create({

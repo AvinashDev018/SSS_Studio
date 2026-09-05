@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 
 import { useState, useEffect } from "react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
@@ -7,6 +7,7 @@ import Gifts from "@/components/store/Gifts";
 import OrderCart from "@/components/store/OrderCart";
 import SSSPhotoFramePricing from "@/components/sections/SSSPhotoFramePricing";
 import BirthdayGiftOrderModal from "@/components/ui/BirthdayGiftOrderModal";
+import PhotoFrameOrderModal from "@/components/ui/PhotoFrameOrderModal";
 import { Package, Camera, Gift, ShoppingCart, Plus, Loader2 } from "lucide-react";
 
 export default function StorePage() {
@@ -21,6 +22,7 @@ export default function StorePage() {
  const [giftMessages, setGiftMessages] = useState({});
  const [giftImages, setGiftImages] = useState({});
  const [selectedGiftForOrder, setSelectedGiftForOrder] = useState(null);
+ const [selectedPassportForOrder, setSelectedPassportForOrder] = useState(null);
 
 
  useEffect(() => {
@@ -146,30 +148,30 @@ export default function StorePage() {
  </p>
  </AnimatedSection>
 
- {/* Tabs */}
- <div className="w-full overflow-x-auto no-scrollbar mb-12 relative z-10 pb-4">
- <div className="flex sm:justify-center min-w-max px-4">
- <div className="bg-black/40 backdrop-blur-md p-1.5 rounded-full inline-flex border border-white/10 shadow-2xl">
- {tabs.map(tab => (
- <button
- key={tab.id}
- onClick={() => setActiveTab(tab.id)}
- className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
- activeTab === tab.id
- ? "bg-brand-gradient hover-glow-brand text-black shadow-[0_0_20px_rgba(6,182,212,0.4)]"
- : "text-zinc-400 hover:text-white hover:bg-white/5"
- }`}
- >
- {tab.icon} {tab.label}
- </button>
- ))}
- </div>
- </div>
- </div>
+  {/* Tabs */}
+  <div className="w-full overflow-x-auto no-scrollbar mb-12 relative z-10 pb-4">
+  <div className="flex sm:justify-center min-w-max px-4">
+  <div className="bg-zinc-900/90 dark:bg-zinc-900/95 backdrop-blur-xl p-2 rounded-full inline-flex border border-amber-500/30 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+  {tabs.map(tab => (
+  <button
+  key={tab.id}
+  onClick={() => setActiveTab(tab.id)}
+  className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold tracking-wide transition-all duration-300 cursor-pointer ${
+  activeTab === tab.id
+  ? "bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-black font-extrabold shadow-[0_0_20px_rgba(212,175,55,0.5)] scale-105"
+  : "text-zinc-200 hover:text-white hover:bg-white/10"
+  }`}
+  >
+  {tab.icon} {tab.label}
+  </button>
+  ))}
+  </div>
+  </div>
+  </div>
 
- <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
+ <div className="grid grid-cols-1 gap-8 relative">
  {/* Main Content Area */}
- <div className={activeTab === "frames" || activeTab === "gifts" ? "lg:col-span-12" : "lg:col-span-8"}>
+ <div className="w-full">
  {activeTab === "frames" && (
  <AnimatedSection>
    <SSSPhotoFramePricing />
@@ -179,40 +181,46 @@ export default function StorePage() {
  {activeTab === "passport" && (
   isLoadingProducts ? (
     <div className="flex justify-center items-center h-48">
-      <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
+      <Loader2 className="w-8 h-8 animate-spin text-amber-400" />
     </div>
   ) : (
  <AnimatedSection className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
  {passportPackages.map((pkg) => (
- <div key={pkg.id} className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-500 group flex flex-col h-full relative">
- <div className="h-48 overflow-hidden shrink-0 relative">
+ <div key={pkg.id} className="bg-zinc-900/90 border border-amber-500/30 rounded-3xl overflow-hidden hover:border-amber-400 hover:shadow-[0_0_30px_rgba(212,175,55,0.3)] transition-all duration-500 group flex flex-col h-full relative">
+ <div className="h-48 overflow-hidden shrink-0 relative bg-black">
  <img src={pkg.image} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
- <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500"></div>
+ <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-black/30 to-transparent opacity-80 group-hover:opacity-40 transition-opacity duration-500"></div>
  </div>
- <div className="p-5 flex flex-col flex-1 relative z-10">
- <h3 className="font-serif font-bold text-xl text-white mb-1">{pkg.name}</h3>
- <p className="text-brand-gradient font-bold text-lg mb-4">₹{pkg.price}</p>
+ <div className="p-6 flex flex-col flex-1 relative z-10 bg-zinc-900">
+ <h3 className="font-serif font-bold text-xl text-white mb-1.5 drop-shadow">{pkg.name}</h3>
+ <p className="text-amber-400 font-extrabold text-xl mb-4 font-mono">₹{pkg.price}</p>
  
  <div className="mt-auto pt-4">
  <div className="mb-4">
- <label className="text-xs font-medium text-zinc-400 mb-1 block">
- Old Studio Photo? (Optional)
+ <label className="text-xs font-bold text-zinc-300 mb-1.5 block">
+ Old Studio Photo Ref Code? (Optional)
  </label>
  <input 
  type="text" 
  placeholder="e.g. A123" 
  value={passportRefs[pkg.id] || ""}
  onChange={(e) => setPassportRefs(prev => ({...prev, [pkg.id]: e.target.value}))}
- className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 uppercase placeholder-zinc-600 transition-colors"
+ className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-white focus:outline-none focus:border-amber-400 uppercase placeholder-zinc-500 transition-colors"
  />
  </div>
 
  <button 
- onClick={() => addToCart(pkg)}
- className="w-full bg-brand-gradient hover-glow-brand text-black py-2.5 rounded-xl font-bold hover:bg-brand-gradient hover-glow-brand text-white border-transparent hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all flex items-center justify-center gap-2"
- >
- <Plus className="w-4 h-4" /> Add to Order
- </button>
+  onClick={() => {
+    setSelectedPassportForOrder({
+      id: pkg.id,
+      size: pkg.name,
+      price: `₹${pkg.price}`,
+    });
+  }}
+  className="w-full bg-gradient-to-r from-amber-400 to-amber-500 text-black py-3 rounded-xl font-extrabold text-xs uppercase tracking-wider hover:from-amber-300 hover:to-amber-400 shadow-md hover:scale-[1.02] transition-all flex items-center justify-center gap-2 cursor-pointer"
+  >
+  <Plus className="w-4 h-4 stroke-[3]" /> Order Passport Photos
+  </button>
  </div>
  </div>
  </div>
@@ -267,40 +275,6 @@ export default function StorePage() {
   )
  )}
  </div>
-
-  {/* Sidebar Cart for Passport photos */}
-  {activeTab === "passport" && (
-  <div className="lg:col-span-4" id="cart-section">
-  <div className="sticky top-24">
-  <OrderCart 
-  items={cartItems} 
-  onRemove={removeFromCart} 
-  onUpdateItem={updateCartItem}
-  isOpen={isCartOpen}
-  />
-  </div>
-  </div>
-  )}
- {/* Mobile Floating Cart Button */}
- {cartItems.length > 0 && activeTab === "passport" && (
- <div className="lg:hidden fixed bottom-6 right-6 z-50">
- <button
- onClick={() => {
- const el = document.getElementById('cart-section');
- if (el) el.scrollIntoView({ behavior: 'smooth' });
- }}
- className="bg-brand-gradient hover-glow-brand hover:bg-brand-gradient hover-glow-brand text-white rounded-full p-4 shadow-2xl flex items-center gap-2 transition-transform active:scale-95"
- >
- <div className="relative">
- <ShoppingCart className="w-6 h-6" />
- <span className="absolute -top-2 -right-2 bg-zinc-900 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-cyan-500">
- {cartItems.length}
- </span>
- </div>
- <span className="font-bold">View Cart</span>
- </button>
- </div>
- )}
  </div>
 
  {/* Birthday Gift Order Modal matching user screenshot */}
@@ -308,6 +282,13 @@ export default function StorePage() {
    isOpen={!!selectedGiftForOrder}
    onClose={() => setSelectedGiftForOrder(null)}
    selectedGift={selectedGiftForOrder}
+ />
+
+ {/* Passport Photo Order Modal */}
+ <PhotoFrameOrderModal
+   isOpen={!!selectedPassportForOrder}
+   onClose={() => setSelectedPassportForOrder(null)}
+   selectedFrame={selectedPassportForOrder}
  />
  </div>
  );

@@ -5,17 +5,14 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function POST(req) {
-  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-    return NextResponse.json({ error: "Razorpay API keys are not configured" }, { status: 500 });
-  }
-
-  const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET,
-  });
-
   try {
-    const session = await getServerSession(authOptions);
+    let session = null;
+    try {
+      session = await getServerSession(authOptions);
+    } catch (e) {
+      session = null;
+    }
+
     const body = await req.json();
     const { amount, customerName, customerPhone, address, items, paymentMode } = body;
 
@@ -23,15 +20,17 @@ export async function POST(req) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    if (paymentMode === "CASH") {
+    const cleanOrderId = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
+
+    if (paymentMode === "CASH" || !process.env.RAZORPAY_KEY_ID) {
       const dbOrder = await prisma.order.create({
         data: {
-          orderId: `ORD-${Date.now().toString().slice(-6)}`,
+          orderId: cleanOrderId,
           customerName,
           customerPhone,
           address,
-          items,
-          totalAmount: amount,
+          items: typeof items === "string" ? items : JSON.stringify(items),
+          totalAmount: Number(amount),
           status: "PENDING",
           userId: session?.user?.id || null,
         },
@@ -43,6 +42,11 @@ export async function POST(req) {
         dbOrderId: dbOrder.orderId,
       });
     }
+
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
 
     // Razorpay requires amount in smallest currency unit (e.g., paise for INR)
     // Assuming amount is in INR (e.g. 500 = 500 INR -> 50000 paise)

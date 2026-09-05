@@ -7,6 +7,7 @@ export default function StudioLogo({
   size = "md", 
   showSubtitle = true, 
   href = "/", 
+  variant = "auto", // "dark" (for light backgrounds), "light" (for dark backgrounds), or "auto"
   className = "" 
 }) {
   // Size configurations
@@ -35,6 +36,19 @@ export default function StudioLogo({
   };
 
   const currentSize = sizes[size] || sizes.md;
+
+  // Title text color determination based on variant
+  const titleColor = variant === "dark" 
+    ? "text-zinc-950" 
+    : variant === "light" 
+    ? "text-white" 
+    : "text-zinc-900 dark:text-white";
+
+  const subtitleColor = variant === "dark"
+    ? "text-[#a67c13]"
+    : variant === "light"
+    ? "text-amber-300"
+    : "text-[#b8860b] dark:text-amber-300";
 
   const content = (
     <div className={`flex items-center gap-1.5 sm:gap-2.5 group shrink-0 ${className}`}>
@@ -68,11 +82,11 @@ export default function StudioLogo({
 
       {/* 2. SSS Monogram & Subtitle Stack */}
       <div className="flex flex-col items-start justify-center select-none shrink-0 leading-none">
-        <span className={`font-serif font-black ${currentSize.title} tracking-wider text-zinc-900 leading-none drop-shadow-sm`}>
+        <span className={`font-serif font-black ${currentSize.title} tracking-wider ${titleColor} leading-none drop-shadow-sm`}>
           SSS
         </span>
         {showSubtitle && (
-          <span className={`font-sans font-bold ${currentSize.tag} text-zinc-600 uppercase tracking-[0.16em] leading-none mt-0.5 whitespace-nowrap`}>
+          <span className={`font-sans font-extrabold ${currentSize.tag} ${subtitleColor} uppercase tracking-[0.16em] leading-none mt-0.5 whitespace-nowrap`}>
             STUDIO
           </span>
         )}
