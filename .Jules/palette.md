@@ -5,3 +5,7 @@
 ## 2024-08-30 - Custom Selection Controls & ARIA States
 **Learning:** When building custom selection controls (like selectable package cards, time slots, or event type chips), relying only on CSS classes for visual state (like borders and gradients) hides the selection state from screen reader users. Furthermore, using a `div` with an `onClick` for custom interactive cards prevents keyboard users from focusing and activating them.
 **Action:** Always use semantic `<button>` elements for custom selectable cards to get keyboard focus and activation for free. Combine this with appropriate ARIA attributes (e.g., `aria-pressed={isActive}`) on all selection buttons so screen readers announce their selected state context.
+
+## 2026-09-05 - Gallery Button Semantics
+**Learning:** Using `<div role="button" tabIndex={0}>` for gallery items requires manual keyboard event handling (Enter/Space) and often misses explicit ARIA bindings for complex interactive contents, reducing screen reader clarity.
+**Action:** Always use semantic `<button type="button">` elements for actionable grid/gallery items to automatically gain keyboard activation, and use `aria-haspopup="dialog"` alongside clear `aria-label` for image-only modal triggers.
