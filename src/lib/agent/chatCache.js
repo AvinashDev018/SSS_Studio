@@ -71,7 +71,8 @@ export async function getCachedResponse(normalizedKey) {
       };
     }
   } catch (err) {
-    console.warn("ChatCache lookup error:", err.message);
+    // Table missing or DB unavailable — fall through cleanly to live AI model
+    return null;
   }
 
   return null;
@@ -86,7 +87,6 @@ export async function saveToCacheAndLog({ userPrompt, normalizedKey, result, lan
   try {
     // Check if Prisma Client has ChatCache delegate generated
     if (!prisma?.chatCache) {
-      console.warn("ChatCache delegate not available on Prisma Client for saving.");
       return;
     }
 
@@ -124,6 +124,7 @@ export async function saveToCacheAndLog({ userPrompt, normalizedKey, result, lan
       });
     }
   } catch (err) {
-    console.warn("ChatCache save error:", err.message);
+    // Silently ignore if table is not created yet
+    return;
   }
 }

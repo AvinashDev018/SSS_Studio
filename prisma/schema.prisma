@@ -121,12 +121,13 @@ model Order {
 }
 
 model Product {
-  id        String   @id @default(uuid())
-  name      String
-  price     Float
-  category  String
-  image     String
-  createdAt DateTime @default(now())
+  id             String   @id @default(uuid())
+  name           String
+  price          Float
+  category       String
+  image          String
+  hasCustomPhoto Boolean  @default(false)
+  createdAt      DateTime @default(now())
 }
 
 model ChatCache {
