@@ -233,6 +233,32 @@ export default function BookingQuoteModal({
                 </div>
               </div>
 
+              {/* Live Time Slot Selector */}
+              <div>
+                <label className="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1 flex items-center gap-1.5">
+                  <Clock size={13} className="text-amber-400" /> Select Studio Time Slot
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {TIME_SLOTS.map((slot) => {
+                    const isSelected = selectedSlot === slot;
+                    return (
+                      <button
+                        key={slot}
+                        type="button"
+                        onClick={() => setSelectedSlot(slot)}
+                        className={`py-2 px-2 text-center rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border ${
+                          isSelected
+                            ? "bg-amber-400 text-black border-amber-300 shadow-md"
+                            : "bg-zinc-900 text-zinc-300 border-zinc-700 hover:border-amber-400/50"
+                        }`}
+                      >
+                        {slot}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Type of Shoot */}
               <div>
                 <label className="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1 flex items-center gap-1.5">

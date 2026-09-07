@@ -150,3 +150,36 @@ model ChatLog {
   wasCached  Boolean  @default(false)
   createdAt  DateTime @default(now())
 }
+
+model ClientGallery {
+  id            String         @id @default(uuid())
+  slug          String         @unique
+  clientName    String
+  clientPhone   String
+  passcode      String
+  eventDate     DateTime
+  maxSelections Int            @default(40)
+  status        String         @default("OPEN") // OPEN, SUBMITTED, PRINTING, DELIVERED
+  photos        GalleryPhoto[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model GalleryPhoto {
+  id         String        @id @default(uuid())
+  galleryId  String
+  gallery    ClientGallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+  url        String
+  filename   String
+  isSelected Boolean       @default(false)
+  comment    String?
+  createdAt  DateTime      @default(now())
+}
+
+model BookedSlot {
+  id        String   @id @default(uuid())
+  date      DateTime
+  timeSlot  String   // e.g. "09:00 AM", "02:00 PM", "FULL_DAY"
+  bookingId String?
+  createdAt DateTime @default(now())
+}
