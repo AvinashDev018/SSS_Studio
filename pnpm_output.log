@@ -1,0 +1,47 @@
+
+> photo-studio@0.1.0 start /app
+> next start
+
+▲ Next.js 16.3.4
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+✓ Ready in 195ms
+✓ Running next.config.mjs took 21ms
+[next-auth][error][NO_SECRET]
+https://next-auth.js.org/errors#no_secret Please define a `secret` in production. Error [MissingSecretError]: Please define a `secret` in production.
+    at r.assertConfig (.next/server/chunks/_145ldqn._.js:34:11887)
+    at _ (.next/server/chunks/_145ldqn._.js:34:17756)
+    at async a (.next/server/chunks/_145ldqn._.js:34:109700)
+    at async e.length.t (.next/server/chunks/_145ldqn._.js:34:111143)
+    at async Z (.next/server/chunks/[root-of-the-server]__0pksghv._.js:1:5142)
+    at async J (.next/server/chunks/[root-of-the-server]__0pksghv._.js:1:6220) {
+  code: 'NO_SECRET'
+}
+[next-auth][error][NO_SECRET]
+https://next-auth.js.org/errors#no_secret Please define a `secret` in production. Error [MissingSecretError]: Please define a `secret` in production.
+    at r.assertConfig (.next/server/chunks/_145ldqn._.js:34:11887)
+    at _ (.next/server/chunks/_145ldqn._.js:34:17756)
+    at async a (.next/server/chunks/_145ldqn._.js:34:109700)
+    at async e.length.t (.next/server/chunks/_145ldqn._.js:34:111143)
+    at async Z (.next/server/chunks/[root-of-the-server]__0pksghv._.js:1:5142)
+    at async J (.next/server/chunks/[root-of-the-server]__0pksghv._.js:1:6220) {
+  code: 'NO_SECRET'
+}
+Error fetching photos: Error [PrismaClientInitializationError]:
+Invalid `prisma.photo.findMany()` invocation:
+
+
+error: Environment variable not found: DATABASE_URL.
+  -->  schema.prisma:7
+   |
+ 6 |   provider  = "postgresql"
+ 7 |   url       = env("DATABASE_URL")
+   |
+
+Validation Error Count: 1
+    at <unknown> (-->  schema.prisma:7)
+    at async e (.next/server/chunks/ssr/_035s8j0._.js:1:533)
+    at async l (.next/server/chunks/ssr/10k7_next_dist_0-shf1v._.js:1:10913) {
+  clientVersion: '5.22.0',
+  errorCode: undefined
+}
