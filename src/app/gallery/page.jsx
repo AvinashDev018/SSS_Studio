@@ -12,6 +12,7 @@ export default function GalleryPage() {
  const [activeCategory, setActiveCategory] = useState("All");
  const [selectedIndex, setSelectedIndex] = useState(null);
  const [galleryItems, setGalleryItems] = useState([]);
+ const [isLoading, setIsLoading] = useState(true);
 
  useEffect(() => {
    const loadPhotos = async () => {
@@ -21,10 +22,14 @@ export default function GalleryPage() {
        setGalleryItems(photos.map(p => ({ ...p, src: p.url })));
      } catch (error) {
        console.error("Failed to load photos", error);
+     } finally {
+       setIsLoading(false);
      }
    };
    loadPhotos();
  }, []);
+
+ const skeletonHeights = [300, 400, 250, 350, 450, 300];
 
  const filteredItems = activeCategory === "All" 
  ? galleryItems 
@@ -87,6 +92,17 @@ export default function GalleryPage() {
 
  {/* Masonry Grid (Using CSS columns) */}
  <AnimatedSection delay={0.2}>
+ {isLoading ? (
+ <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
+ {skeletonHeights.map((h, i) => (
+ <div
+ key={`skeleton-${i}`}
+ className="break-inside-avoid rounded-2xl bg-zinc-200 dark:bg-zinc-800/50 animate-pulse w-full"
+ style={{ height: `${h}px` }}
+ />
+ ))}
+ </div>
+ ) : (
  <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
  {filteredItems.map((item, idx) => (
  <div 
@@ -124,8 +140,9 @@ export default function GalleryPage() {
  </div>
  ))}
  </div>
+ )}
 
- {filteredItems.length === 0 && (
+ {!isLoading && filteredItems.length === 0 && (
  <div className="text-center py-20">
  <p className="text-zinc-500 dark:text-zinc-400 text-lg">No images found in this category.</p>
  </div>

@@ -5,3 +5,7 @@
 ## 2024-08-30 - Custom Selection Controls & ARIA States
 **Learning:** When building custom selection controls (like selectable package cards, time slots, or event type chips), relying only on CSS classes for visual state (like borders and gradients) hides the selection state from screen reader users. Furthermore, using a `div` with an `onClick` for custom interactive cards prevents keyboard users from focusing and activating them.
 **Action:** Always use semantic `<button>` elements for custom selectable cards to get keyboard focus and activation for free. Combine this with appropriate ARIA attributes (e.g., `aria-pressed={isActive}`) on all selection buttons so screen readers announce their selected state context.
+
+## 2024-11-20 - Skeleton Loading vs Empty States in Client Components
+**Learning:** In Next.js client components, initializing state to an empty array before data fetching can cause a flash of "Empty State" UI to users before the data resolves. This layout shift and false negative is jarring.
+**Action:** Use an explicit `isLoading` state (defaulting to `true` on mount) and show fixed-height skeleton loaders. Only render the empty state if data fetching completes AND the resulting array is empty.
