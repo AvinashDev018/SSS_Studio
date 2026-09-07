@@ -27,6 +27,7 @@ export default function AdminNav({ currentPath: propPath }) {
   const links = [
     { name: "Bookings", href: "/admin", icon: Calendar, badge: null },
     { name: "CRM / Orders", href: "/admin/crm", icon: ShoppingBag, badge: null },
+    { name: "Proofing Galleries", href: "/admin/galleries", icon: Frame, badge: null },
     { name: "Frames & Gifts", href: "/admin/frames-gifts", icon: Gift, badge: null },
     { name: "Gallery", href: "/admin/gallery", icon: ImageIcon, badge: null },
     { name: "Packages", href: "/admin/packages", icon: Package, badge: null },

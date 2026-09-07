@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, X, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import MoodboardMatcherModal from "@/components/ui/MoodboardMatcherModal";
 
 const PORTFOLIO_PROJECTS = [
   {
@@ -92,6 +93,7 @@ export default function SSSPortfolio() {
   const [activeTab, setActiveTab] = useState("all");
   const [selectedProject, setSelectedProject] = useState(null);
   const [mediaIndex, setMediaIndex] = useState(0);
+  const [isMoodboardOpen, setIsMoodboardOpen] = useState(false);
 
   const categories = [
     { id: "all", label: t.portfolio.all },
@@ -129,7 +131,14 @@ export default function SSSPortfolio() {
           <h2 className="text-3xl md:text-5xl font-serif font-normal text-zinc-900 mb-3 sm:mb-4">
             {t.portfolio.title}
           </h2>
-          <div className="w-16 h-0.5 bg-[#d4af37] mx-auto rounded-full" />
+          <div className="w-16 h-0.5 bg-[#d4af37] mx-auto rounded-full mb-6" />
+
+          <button
+            onClick={() => setIsMoodboardOpen(true)}
+            className="px-5 py-2.5 bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-500 text-black font-extrabold rounded-full shadow-lg hover:scale-105 transition-all text-xs uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer"
+          >
+            <Sparkles size={16} /> ✨ Match Your Pinterest/Instagram Moodboard (AI)
+          </button>
         </div>
 
         {/* Instagram-Style Recent Shoot Story Bubbles (Mobile & Tablet Showcase) */}
@@ -378,6 +387,12 @@ export default function SSSPortfolio() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Moodboard AI Modal */}
+      <MoodboardMatcherModal
+        isOpen={isMoodboardOpen}
+        onClose={() => setIsMoodboardOpen(false)}
+      />
     </section>
   );
 }

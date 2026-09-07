@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Globe, Sparkles } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import ChatbotWidget from "@/components/ChatbotWidget";
 
 export default function MultilingualWhatsAppWidget({ whatsappNumber = "916383565425" }) {
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
