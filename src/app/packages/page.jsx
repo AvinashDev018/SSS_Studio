@@ -20,78 +20,10 @@ export default async function PackagesPage() {
     console.error("Failed to load db packages", e);
   }
 
-  const defaultPackages = [
-    {
-      id: "1",
-      name: "Premium Wedding & Cinematic",
-      price: "₹75,000",
-      description: "Our flagship signature package for comprehensive wedding day coverage & memories.",
-      features: [
-        "Full Day Coverage (12 Hours)",
-        "2 Senior Photographers & 1 Cinema Videographer",
-        "Licensed 4K Aerial Drone Coverage",
-        "FREE Outdoor Pre-Wedding Shoot Perk",
-        "Handcrafted 40-Page Layflat Master Album",
-        "1-Month Delivery Guarantee (or ₹1,000 Cash Credit)"
-      ],
-      popular: true
-    },
-    {
-      id: "2",
-      name: "Standard Muhurtham & Event",
-      price: "₹18,000",
-      description: "Traditional ceremony rituals, candid portraits & master photobook album.",
-      features: [
-        "Traditional Rituals & Stage Coverage",
-        "1 Senior Photographer & 1 Videographer",
-        "30-Page Master Leather Photobook Album",
-        "1-Month Delivery Guarantee"
-      ],
-      popular: false
-    },
-    {
-      id: "3",
-      name: "Outdoor Pre-Wedding Shoot",
-      price: "₹8,000",
-      description: "Scenic hill stations (Kodaikanal, Munnar), tea estates or heritage temple shoots.",
-      features: [
-        "4-6 Hours Outdoor Session",
-        "Creative Couple & Bridal Styling",
-        "30 Master Retouched High-Res Photos",
-        "3-Minute HD Cinematic Teaser"
-      ],
-      popular: false
-    },
-    {
-      id: "4",
-      name: "Maternity Portrait Shoot",
-      price: "₹6,000",
-      description: "Safe, tender & creative indoor studio or outdoor couple maternity session.",
-      features: [
-        "Studio Gowns & Backdrop Access",
-        "Indoor & Outdoor Posing Concepts",
-        "25 Master Retouched High-Res Photos",
-        "1-Month Delivery Guarantee"
-      ],
-      popular: false
-    },
-    {
-      id: "5",
-      name: "Baby Milestone & Birthday",
-      price: "₹5,000",
-      description: "Sanitized wooden props, wraps & cake smash themes for 3M, 6M, 1Y milestones.",
-      features: [
-        "Full Birthday / Milestone Session",
-        "Sanitized Props & Baby Wraps",
-        "20 Master Retouched High-Res Photos",
-        "Private Digital Cloud Gallery (6 Months)"
-      ],
-      popular: false
-    }
-  ];
 
-  // Merge database packages added in Admin CMS with default packages
-  const displayPackages = [...dbPackages, ...defaultPackages];
+
+  // Use database packages directly (which fall back to standard studio packages if DB is empty)
+  const displayPackages = dbPackages;
 
   const travelTiers = [
     {

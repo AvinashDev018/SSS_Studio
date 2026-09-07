@@ -88,6 +88,7 @@ model Testimonial {
   event     String
   text      String
   rating    Int      @default(5)
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
   createdAt DateTime @default(now())
 }
 

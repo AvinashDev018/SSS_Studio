@@ -21,7 +21,26 @@ import { execSync } from "child_process";
 import readline from "readline";
 import OpenAI from "openai";
 
-const API_KEY = process.env.NVIDIA_API_KEY;
+// Load environment variables from .env file if available
+function loadEnv() {
+  const envPath = path.resolve(process.cwd(), ".env");
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, "utf-8");
+    envContent.split("\n").forEach((line) => {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith("#") && trimmed.includes("=")) {
+        const [key, ...valueParts] = trimmed.split("=");
+        const value = valueParts.join("=").trim().replace(/^["']|["']$/g, "");
+        if (key && value && !process.env[key.trim()]) {
+          process.env[key.trim()] = value;
+        }
+      }
+    });
+  }
+}
+loadEnv();
+
+const API_KEY = process.env.NVIDIA_API_KEY || process.env.DEEPSEEK_API_KEY || "dummy_key_placeholder";
 
 const openai = new OpenAI({
   apiKey: API_KEY,
@@ -146,34 +165,41 @@ async function runCodingAgent(userTask) {
   console.log(`🎯 Task: "${userTask}"`);
   console.log(`======================================================\n`);
 
+  if (!process.env.NVIDIA_API_KEY && !process.env.DEEPSEEK_API_KEY) {
+    console.error(`❌ Error: Neither NVIDIA_API_KEY nor DEEPSEEK_API_KEY is defined in your environment or .env file.`);
+    console.error(`👉 Please add NVIDIA_API_KEY="nvapi-..." to your .env file or set it in your environment before running.`);
+    return;
+  }
+
   const messages = [
     {
       role: "system",
-      content: `You are an expert Autonomous Coding Agent (like Google Antigravity) running inside a Next.js 16 project.
-You have hands-on tools: read_file, write_file, list_directory, and run_terminal_command.
-Your workflow:
-1. Inspect the relevant files using read_file or list_directory.
-2. Formulate the precise code changes and write them using write_file.
-3. Test your changes by running 'npm run build' or relevant tests using run_terminal_command.
-4. If an error occurs, analyze the error and fix it immediately.
-5. When complete, provide a concise summary of what was accomplished.`,
+      content: `You are Antigravity-Coder, an elite Autonomous AI Coding Assistant powered by DeepSeek.
+You operate directly inside the user's codebase with full tool capabilities:
+- read_file: inspect source code and configuration files.
+- write_file: apply clean, bug-free modifications or create new components.
+- list_directory: explore project structure.
+- run_terminal_command: test builds, check syntax, or query environment.
+
+Instructions for your responses:
+1. Always analyze user questions thoroughly. If the user asks an exploratory question (e.g., "Analyze the project which backend we can use"), inspect the relevant codebase files first, synthesize your technical analysis, and provide a clear, comprehensive, and well-structured markdown answer.
+2. When performing code edits, inspect existing code patterns first, write complete production-grade code, and test your changes.
+3. Keep your explanation concise, technical, and formatted in clean markdown.`,
     },
     { role: "user", content: userTask },
   ];
 
   let iterations = 0;
-  const maxIterations = 8;
+  const maxIterations = 15;
 
   while (iterations < maxIterations) {
     iterations++;
-    console.log(`🔄 [Agent Step ${iterations}]: Thinking...`);
-
-    const isPureCaptionPrompt = /^(caption|promo|slogan|quote)\b/i.test(userTask);
+    console.log(`\n🔄 [Agent Step ${iterations}]: Thinking...`);
 
     const candidateModels = [
-      "nvidia/nemotron-3-super-120b-a12b",
-      "mistralai/mistral-7b-instruct-v0.2",
-      "nvidia/neva-22b"
+      "deepseek-ai/deepseek-r1",
+      "meta/llama-3.3-70b-instruct",
+      "nvidia/nemotron-3-super-120b-a12b"
     ];
 
     let response = null;
@@ -184,9 +210,10 @@ Your workflow:
         response = await openai.chat.completions.create({
           model: modelId,
           messages,
-          ...(isPureCaptionPrompt ? {} : { tools: CODING_TOOLS, tool_choice: "auto" }),
+          tools: CODING_TOOLS,
+          tool_choice: "auto",
           temperature: 0.3,
-          max_tokens: 2000,
+          max_tokens: 2500,
         });
         if (response) break;
       } catch (err) {
@@ -206,7 +233,7 @@ Your workflow:
 
     // If agent replied with text
     if (msg.content) {
-      console.log(`\n💬 [DeepSeek]:\n${msg.content}\n`);
+      console.log(`\n💬 [DeepSeek Agent Output]:\n${msg.content}\n`);
     }
 
     // Check if tools were called
@@ -231,9 +258,29 @@ Your workflow:
         });
       }
     } else {
-      // Agent finished its work
+      // Agent finished tool usage and gave final text response
       console.log(`\n✅ [DeepSeek Agent]: Task complete!`);
       break;
+    }
+  }
+
+  // If the agent hit max iterations while doing tool calls, force a final text response turn
+  const lastMsg = messages[messages.length - 1];
+  if (lastMsg.role === "tool" || (lastMsg.role === "assistant" && !lastMsg.content)) {
+    console.log(`\n📝 [DeepSeek Agent]: Generating final summary response...`);
+    try {
+      const finalSummary = await openai.chat.completions.create({
+        model: "deepseek-ai/deepseek-r1",
+        messages,
+        temperature: 0.3,
+        max_tokens: 2000,
+      });
+      const summaryText = finalSummary.choices[0]?.message?.content;
+      if (summaryText) {
+        console.log(`\n💬 [DeepSeek Agent Final Analysis]:\n${summaryText}\n`);
+      }
+    } catch (e) {
+      // Fallback summary attempt
     }
   }
 }

@@ -88,8 +88,8 @@ export default function AnalyticsDashboard() {
         <div className="flex items-center gap-2 self-start sm:self-center px-4 py-2.5 rounded-2xl bg-amber-400 text-black border border-amber-300 shrink-0 font-extrabold shadow-lg">
           <span className="text-xs font-bold text-black uppercase tracking-wider">Fulfillment Rate:</span>
           <span className="text-lg font-black text-black">
-            {orders.length > 0
-              ? `${Math.round((orders.filter((o) => o.status === "Delivered").length / orders.length) * 100)}%`
+            {stats.totalOrders > 0
+              ? `${Math.round((stats.deliveredOrders / stats.totalOrders) * 100)}%`
               : "100%"}
           </span>
         </div>
