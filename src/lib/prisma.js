@@ -4,7 +4,11 @@ const globalForPrisma = globalThis;
 
 // If global instance exists but lacks new model delegates (e.g. chatCache after schema updates), re-instantiate
 function getPrismaClient() {
-  if (globalForPrisma.prisma && globalForPrisma.prisma.chatCache) {
+  if (
+    globalForPrisma.prisma &&
+    globalForPrisma.prisma.clientGallery &&
+    globalForPrisma.prisma.chatCache
+  ) {
     return globalForPrisma.prisma;
   }
   const client = new PrismaClient({

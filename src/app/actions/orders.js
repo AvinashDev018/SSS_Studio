@@ -232,3 +232,17 @@ export async function updateOrderTrackingId(orderId, trackingId) {
  return { success: false, error: "Failed to update tracking ID" };
  }
 }
+
+export async function deleteOrder(orderId) {
+  try {
+    await prisma.order.delete({
+      where: { orderId }
+    });
+    revalidatePath("/admin/orders");
+    revalidatePath("/admin/crm");
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting order:", error);
+    return { success: false, error: "Failed to delete order" };
+  }
+}

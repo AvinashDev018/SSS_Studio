@@ -48,8 +48,8 @@ export default function Navbar() {
   const desktopLinks = [
     { name: t.nav.services, href: "/#services" },
     { name: t.nav.portfolio, href: "/#portfolio" },
-    { name: currentLang === "ta" ? "பிரேம்கள்" : currentLang === "hi" ? "फोटो फ्रेम" : "Frames", href: "/#frames" },
-    { name: currentLang === "ta" ? "ஸ்டோர்" : currentLang === "hi" ? "स्टोर" : "Store", href: "/store" },
+    { name: currentLang === "ta" ? "பிரேம்கள்" : "Frames", href: "/#frames" },
+    { name: currentLang === "ta" ? "ஸ்டோர்" : "Store", href: "/store" },
     { name: t.nav.pricing, href: "/packages" },
     { name: t.nav.track || "Track", href: "/track", highlight: true },
     { name: t.nav.about, href: "/#about" },
@@ -61,9 +61,9 @@ export default function Navbar() {
     { name: t.nav.home, href: "/" },
     { name: t.nav.services, href: "/#services" },
     { name: t.nav.portfolio, href: "/#portfolio" },
-    { name: currentLang === "ta" ? "பிரேம்கள்" : currentLang === "hi" ? "फोटो फ्रेम" : "Frames", href: "/#frames" },
+    { name: currentLang === "ta" ? "பிரேம்கள்" : "Frames", href: "/#frames" },
     { name: t.nav.pricing, href: "/packages" },
-    { name: currentLang === "ta" ? "ஸ்டோர்" : currentLang === "hi" ? "स्टोर" : "Store", href: "/store" },
+    { name: currentLang === "ta" ? "ஸ்டோர்" : "Store", href: "/store" },
     { name: t.nav.track || "Track", href: "/track", highlight: true },
     { name: t.nav.about, href: "/#about" },
     { name: t.nav.testimonials, href: "/#testimonials" },
@@ -73,7 +73,6 @@ export default function Navbar() {
   const languages = [
     { code: "en", label: "English", short: "EN" },
     { code: "ta", label: "தமிழ் (Tamil)", short: "தமிழ்" },
-    { code: "hi", label: "हिंदी (Hindi)", short: "हिंदी" },
   ];
 
   return (

@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 // Fetch client gallery by slug
 export async function getClientGallery(slug) {
   try {
+    if (!prisma?.clientGallery) return null;
     const gallery = await prisma.clientGallery.findUnique({
       where: { slug },
       include: {
@@ -24,6 +25,7 @@ export async function getClientGallery(slug) {
 // Toggle photo selection
 export async function togglePhotoSelection(photoId, isSelected, comment = "") {
   try {
+    if (!prisma?.galleryPhoto) return { success: false, error: "Database not initialized" };
     const photo = await prisma.galleryPhoto.update({
       where: { id: photoId },
       data: {
@@ -41,6 +43,7 @@ export async function togglePhotoSelection(photoId, isSelected, comment = "") {
 // Submit album selection for printing
 export async function submitGallerySelections(galleryId) {
   try {
+    if (!prisma?.clientGallery) return { success: false, error: "Database not initialized" };
     const gallery = await prisma.clientGallery.update({
       where: { id: galleryId },
       data: { status: "SUBMITTED" }
@@ -57,6 +60,7 @@ export async function submitGallerySelections(galleryId) {
 // Admin: Create new client gallery
 export async function createClientGallery(data) {
   try {
+    if (!prisma?.clientGallery) return { success: false, error: "Database not initialized" };
     const gallery = await prisma.clientGallery.create({
       data: {
         slug: data.slug,
@@ -79,11 +83,50 @@ export async function createClientGallery(data) {
   }
 }
 
+// Admin: Add batch of photos to existing gallery
+export async function addPhotosToGallery(galleryId, photos) {
+  try {
+    if (!prisma?.galleryPhoto) return { success: false, error: "Database not initialized" };
+    await prisma.galleryPhoto.createMany({
+      data: photos.map((p) => ({
+        galleryId,
+        url: p.url,
+        filename: p.filename,
+        isSelected: false,
+      })),
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Error adding batch photos to gallery:", error);
+    return { success: false, error: "Failed to upload photo batch" };
+  }
+}
+
+// Admin: Delete client gallery and all associated photos
+export async function deleteClientGallery(id) {
+  try {
+    if (!prisma?.clientGallery) return { success: false, error: "Database not initialized" };
+    await prisma.clientGallery.delete({
+      where: { id },
+    });
+    revalidatePath("/admin/galleries");
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting client gallery:", error);
+    return { success: false, error: "Failed to delete gallery" };
+  }
+}
+
 // Admin: Get all galleries
 export async function getAllClientGalleries() {
   try {
+    if (!prisma?.clientGallery) {
+      console.warn("prisma.clientGallery is not initialized on the Prisma client.");
+      return [];
+    }
     const galleries = await prisma.clientGallery.findMany({
       include: {
+        photos: true,
         _count: {
           select: { photos: true }
         }

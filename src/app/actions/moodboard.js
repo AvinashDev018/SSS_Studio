@@ -18,129 +18,174 @@ export async function analyzeMoodboardAI(base64Images) {
 
   const apiKey = process.env.NVIDIA_API_KEY || process.env.DEEPSEEK_API_KEY;
   if (!apiKey || apiKey === "dummy_key_placeholder") {
-    // Graceful fallback response if API key is not yet configured
     return getFallbackAnalysis();
   }
 
   try {
-    const userContent = [
-      {
-        type: "text",
-        text: `You are the Lead Master Visual Director and AI Chief Colorist for SSS Studio (Madurai, South India).
-Examine ALL attached image(s) with extreme care before making any decision.
+    // 1. Analyze each image individually to get reliable zero-ambiguity subject classification
+    const imageClassifications = await Promise.all(
+      base64Images.slice(0, 3).map(async (imgUrl) => {
+        try {
+          const resp = await openai.chat.completions.create({
+            model: "meta/llama-3.2-11b-vision-instruct",
+            messages: [
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "text",
+                    text: `Analyze this single image and classify it into ONE category.
+Look for:
+- "BABY" (baby, toddler, balloons, cake smash, "ONE" prop)
+- "WEDDING" (bride, groom, marriage mandap, saree couple, garlands)
+- "COUPLE" (outdoor couple, beach, hill station pre-wedding)
+- "MATERNITY" (pregnant woman, bump shoot, studio gown)
+- "PORTRAIT" (single adult fashion portrait)
 
-==================================================
-PRE-STEP VISUAL INSPECTION (Mental Check):
-1. Count the number of people/subjects.
-2. Identify distinct props: balloons, "ONE" / age signage, cake, flowers, mandap, sarees, gowns, camera lens, hill estate, beach.
-3. Check lighting & color temperature: bright pastel, warm gold, sunset teal/amber, dark moody, studio strobe.
-==================================================
+Respond ONLY with a single word: BABY, WEDDING, COUPLE, MATERNITY, or PORTRAIT.`
+                  },
+                  {
+                    type: "image_url",
+                    image_url: { url: imgUrl }
+                  }
+                ]
+              }
+            ],
+            max_tokens: 10,
+            temperature: 0.1,
+          });
 
-EDGE-CASE & CATEGORY CLASSIFICATION MATRIX:
+          const text = (resp.choices[0]?.message?.content || "").toUpperCase().trim();
+          if (text.includes("BABY")) return "BABY";
+          if (text.includes("WEDDING")) return "WEDDING";
+          if (text.includes("COUPLE")) return "COUPLE";
+          if (text.includes("MATERNITY")) return "MATERNITY";
+          return "PORTRAIT";
+        } catch (err) {
+          console.error("Individual vision classification error:", err);
+          return "BABY";
+        }
+      })
+    );
 
-Case 1: BABY / TODDLER / CAKE SMASH / 1st BIRTHDAY
-(Visual cues: Baby/toddler alone, balloons, 'ONE' prop, toy bunny, cake smash, pastel background, party hats)
-- detectedTone: "Soft Pastel Baby & Birthday Tones"
-- presetName: "Pastel Dreamland Baby Preset"
-- recommendedPackage: "Baby Milestone & Birthday (₹5,000)"
-- features: ["Sanitized Props & Baby Wraps Included", "Cake Smash & Milestone Themes (3M, 6M, 1Y)", "20 Master Retouched High-Res Photos", "Guaranteed 1-Month Album Delivery"]
+    console.log("AI Detected Subject Categories per Image:", imageClassifications);
 
-Case 2: MATERNITY / PREGNANCY / BABY BUMP
-(Visual cues: Pregnant woman, belly bump pose, floral studio gown, romantic indoor studio setup)
-- detectedTone: "Warm Gentle Glow & Tender Studio Tones"
-- presetName: "Maternity Warm Elegance Preset"
-- recommendedPackage: "Maternity Portrait Shoot (₹6,000)"
-- features: ["Studio Gowns & Backdrop Access Included", "Indoor & Outdoor Posing Concepts", "25 Master Retouched High-Res Photos", "Guaranteed 1-Month Album Delivery"]
+    const uniqueCategories = Array.from(new Set(imageClassifications));
 
-Case 3: OUTDOOR PRE-WEDDING / COUPLE ROMANCE / HILL STATION
-(Visual cues: Unmarried couple posing outdoors, beach, Kodaikanal/Munnar tea gardens, casual romantic attire)
-- detectedTone: "Sunset Amber & Outdoor Cinematic Tones"
-- presetName: "Cinematic Sunset & Teal LUT"
-- recommendedPackage: "Outdoor Pre-Wedding Shoot (₹8,000)"
-- features: ["4-6 Hours Outdoor Session (Hill Stations/Beach)", "Creative Couple & Bridal Styling Guidance", "30 Master Retouched High-Res Photos", "3-Minute HD Cinematic Teaser"]
-
-Case 4: TRADITIONAL CEREMONY / MUHURTHAM RITUALS / HALDI / MEHENDI / PUBERTY SAREE
-(Visual cues: Silk sarees, yellow haldi paste, mehendi hands, temple stage, traditional South Indian rituals)
-- detectedTone: "Vibrant Haldi & Traditional Silk Tones"
-- presetName: "Madurai Temple Rituals Preset"
-- recommendedPackage: "Standard Muhurtham & Event (₹18,000)"
-- features: ["Traditional Rituals & Stage Coverage", "1 Senior Photographer & 1 Videographer", "30-Page Master Leather Photobook Album", "Guaranteed 1-Month Album Delivery"]
-
-Case 5: GRAND WEDDING CEREMONY / RECEPTION / BRIDE & GROOM
-(Visual cues: Grand marriage mandap, bride in heavy bridal saree/lehenga + groom in sherwani/veshti, wedding garlands)
-- detectedTone: "Warm Royal Gold & Candid Ceremony Tones"
-- presetName: "Madurai Regal Wedding Color Preset"
-- recommendedPackage: "Premium Wedding & Cinematic (₹75,000)"
-- features: ["Full Day Coverage (12 Hours) with Dual Photographers", "Licensed 4K Aerial Drone & Cinematic Teaser", "Handcrafted 40-Page Layflat Master Album", "Guaranteed 1-Month Delivery (or ₹1,000 Cash Credit)"]
-
-Case 6: FASHION / MODEL PORTRAIT / INDIVIDUAL HEADSHOT
-(Visual cues: Single adult model, fashion posing, studio portrait, dramatic lighting)
-- detectedTone: "Studio Glamour & High Contrast Tones"
-- presetName: "Vogue Studio Fine-Art Preset"
-- recommendedPackage: "Royal Baby & Family Portrait (₹25,000)"
-- features: ["3 Hours High-Fashion Studio Session", "Master Retouched High-Resolution Files", "Custom Lighting & Backdrop Concepts", "Guaranteed 1-Month Delivery"]
-
-Case 7: MIXED MULTI-EVENT COMBO (Multiple uploaded photos belong to DIFFERENT categories, e.g., 1 Baby + 1 Wedding)
-- detectedTone: "Bespoke Multi-Event Heritage Tones"
-- presetName: "SSS Signature Hybrid Master Grade Suite"
-- recommendedPackage: "Grand Multi-Event Milestone Combo (₹95,000)"
-- features: ["Comprehensive Multi-Event Coverage (Pre-Wedding, Wedding & Family)", "Custom Unified Color Science & LUTs", "Dual Photographers + 4K Aerial Drone", "Guaranteed 1-Month Delivery Across All Albums"]
-
-Case 8: NON-HUMAN / SCENERY / DECOR / ARCHITECTURE ONLY
-(Visual cues: Flower decor, venue lighting, landscape, ring photos with no people)
-- detectedTone: "Cinematic Aesthetic & Fine-Art Lighting"
-- presetName: "SSS Architectural & Decor LUT"
-- recommendedPackage: "Standard Muhurtham & Event (₹18,000)"
-- features: ["Detail & Decor Focused Photography", "High-Resolution Color Graded Masters", "30-Page Master Leather Album", "Guaranteed 1-Month Delivery"]
-
-OUTPUT INSTRUCTIONS:
-Evaluate the images against Cases 1-8. Return ONLY raw valid JSON (no markdown formatting, no code blocks):
-{
-  "detectedTone": "String",
-  "presetName": "String",
-  "recommendedPackage": "String",
-  "matchScore": integer (88 to 99),
-  "features": ["String", "String", "String", "String"]
-}`
-      }
-    ];
-
-    // Append up to 3 image URLs
-    base64Images.slice(0, 3).forEach((imgDataUrl) => {
-      userContent.push({
-        type: "image_url",
-        image_url: { url: imgDataUrl }
-      });
-    });
-
-    const response = await openai.chat.completions.create({
-      model: "meta/llama-3.2-11b-vision-instruct",
-      messages: [{ role: "user", content: userContent }],
-      max_tokens: 600,
-      temperature: 0.2,
-    });
-
-    let rawText = response.choices[0]?.message?.content || "";
+    // 2. Deterministic Combination Logic & SSS Studio Catalog Mapping
     
-    // Clean codeblock wrappers if any
-    rawText = rawText.replace(/```json/gi, "").replace(/```/g, "").trim();
-
-    try {
-      const parsedData = JSON.parse(rawText);
+    // MIXED MULTI-EVENT COMBO
+    if (uniqueCategories.length > 1) {
       return {
         success: true,
-        data: parsedData
-      };
-    } catch (parseErr) {
-      console.warn("NVIDIA Vision JSON parse warning, extracting formatted fallback:", parseErr);
-      return {
-        success: true,
-        data: getFallbackAnalysis()
+        data: {
+          detectedTone: "Bespoke Multi-Event Heritage Tones",
+          presetName: "SSS Signature Hybrid Master Grade Suite",
+          recommendedPackage: "Grand Multi-Event Milestone Combo (₹95,000)",
+          matchScore: 98,
+          features: [
+            "Comprehensive Multi-Event Coverage (Pre-Wedding, Wedding & Family)",
+            "Custom Unified Color Science & LUTs",
+            "Dual Photographers + 4K Aerial Drone",
+            "Guaranteed 1-Month Delivery Across All Albums"
+          ]
+        }
       };
     }
+
+    // SINGLE CATEGORY MATCHES
+    const primaryCat = uniqueCategories[0] || "BABY";
+
+    if (primaryCat === "BABY") {
+      return {
+        success: true,
+        data: {
+          detectedTone: "Soft Pastel Baby & Birthday Tones",
+          presetName: "Pastel Dreamland Baby Preset",
+          recommendedPackage: "Baby Milestone & Birthday (₹5,000)",
+          matchScore: 97,
+          features: [
+            "Sanitized Props & Baby Wraps Included",
+            "Cake Smash & Milestone Themes (3M, 6M, 1Y)",
+            "20 Master Retouched High-Res Photos",
+            "Guaranteed 1-Month Album Delivery"
+          ]
+        }
+      };
+    }
+
+    if (primaryCat === "WEDDING") {
+      return {
+        success: true,
+        data: {
+          detectedTone: "Warm Royal Gold & Candid Ceremony Tones",
+          presetName: "Madurai Regal Wedding Color Preset",
+          recommendedPackage: "Premium Wedding & Cinematic (₹75,000)",
+          matchScore: 99,
+          features: [
+            "Full Day Coverage (12 Hours) with Dual Photographers",
+            "Licensed 4K Aerial Drone & Cinematic Teaser",
+            "Handcrafted 40-Page Layflat Master Album",
+            "Guaranteed 1-Month Delivery (or ₹1,000 Cash Credit)"
+          ]
+        }
+      };
+    }
+
+    if (primaryCat === "COUPLE") {
+      return {
+        success: true,
+        data: {
+          detectedTone: "Sunset Amber & Outdoor Cinematic Tones",
+          presetName: "Cinematic Sunset & Teal LUT",
+          recommendedPackage: "Outdoor Pre-Wedding Shoot (₹8,000)",
+          matchScore: 96,
+          features: [
+            "4-6 Hours Outdoor Session (Hill Stations/Beach)",
+            "Creative Couple & Bridal Styling Guidance",
+            "30 Master Retouched High-Res Photos",
+            "3-Minute HD Cinematic Teaser"
+          ]
+        }
+      };
+    }
+
+    if (primaryCat === "MATERNITY") {
+      return {
+        success: true,
+        data: {
+          detectedTone: "Warm Gentle Glow & Tender Studio Tones",
+          presetName: "Maternity Warm Elegance Preset",
+          recommendedPackage: "Maternity Portrait Shoot (₹6,000)",
+          matchScore: 95,
+          features: [
+            "Studio Gowns & Backdrop Access Included",
+            "Indoor & Outdoor Posing Concepts",
+            "25 Master Retouched High-Res Photos",
+            "Guaranteed 1-Month Album Delivery"
+          ]
+        }
+      };
+    }
+
+    // Default Portrait
+    return {
+      success: true,
+      data: {
+        detectedTone: "Studio Fine-Art Portrait Tones",
+        presetName: "Vogue Studio Fine-Art Preset",
+        recommendedPackage: "Standard Muhurtham & Event (₹18,000)",
+        matchScore: 94,
+        features: [
+          "Studio Portrait Session with Professional Lighting",
+          "30 Master Retouched High-Res Photos",
+          "Custom Lighting & Backdrop Concepts",
+          "Guaranteed 1-Month Album Delivery"
+        ]
+      }
+    };
   } catch (error) {
-    console.error("NVIDIA Vision AI API execution error:", error);
-    // Fallback gracefully to signature preset if model call fails
+    console.error("NVIDIA Vision AI execution error:", error);
     return {
       success: true,
       data: getFallbackAnalysis()

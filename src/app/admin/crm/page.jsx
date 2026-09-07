@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Copy, Plus, ArrowRight, MessageCircle, Check, Trash2, Printer, ShoppingBag, Filter, Download } from "lucide-react";
 import Link from "next/link";
 import AdminNav from "@/components/admin/AdminNav";
-import { getOrders, updateOrderStatus as updateDbOrderStatus } from "@/app/actions/orders";
+import { getOrders, updateOrderStatus as updateDbOrderStatus, deleteOrder as deleteDbOrder } from "@/app/actions/orders";
 
 export default function CRMDashboard() {
   const [orders, setOrders] = useState([]);
@@ -46,10 +46,14 @@ export default function CRMDashboard() {
     await updateDbOrderStatus(id, newStatus);
   };
 
-  const deleteOrder = (id) => {
-    if (window.confirm("Are you sure you want to hide this order?")) {
-      const newOrders = orders.filter((o) => o.orderId !== id);
-      setOrders(newOrders);
+  const deleteOrder = async (id) => {
+    if (window.confirm(`Are you sure you want to PERMANENTLY delete order #${id} from the database?`)) {
+      setOrders((prev) => prev.filter((o) => o.orderId !== id));
+      const res = await deleteDbOrder(id);
+      if (!res.success) {
+        alert("Failed to delete order from database.");
+        window.location.reload();
+      }
     }
   };
 
