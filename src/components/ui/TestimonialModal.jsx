@@ -16,13 +16,27 @@ export default function TestimonialModal({
   const [review, setReview] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     if (!name.trim() || !review.trim()) {
       setError("Please fill in your name and review.");
       return;
+    }
+
+    try {
+      // Import and call server action dynamically or pass to DB
+      const { addTestimonial } = await import("@/app/actions/testimonials");
+      await addTestimonial({
+        name: name.trim(),
+        event: category,
+        text: review.trim(),
+        rating: rating,
+        status: "PENDING"
+      });
+    } catch (e) {
+      console.error("Failed to save pending testimonial to DB:", e);
     }
 
     const starsStr = "★".repeat(rating) + "☆".repeat(5 - rating);
@@ -33,7 +47,7 @@ export default function TestimonialModal({
       `⭐ *Rating:* ${starsStr} (${rating}/5)\n` +
       `💬 *Review:* "${review.trim()}"\n` +
       `--------------------------------\n` +
-      `Please add this to the studio website reviews!`;
+      `Please review and approve this testimonial in the Admin Reviews Panel!`;
 
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");

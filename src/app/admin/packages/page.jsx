@@ -140,10 +140,13 @@ export default async function AdminPackages() {
                     <p className="text-zinc-200 text-xs mb-4 font-normal leading-relaxed bg-zinc-950/70 p-3 rounded-xl border border-zinc-800/80">{pkg.description}</p>
 
                     <ul className="space-y-2 mb-6">
-                      {pkg.features.map((feature, idx) => (
+                      {(Array.isArray(pkg.features) 
+                        ? pkg.features 
+                        : (typeof pkg.features === 'string' ? pkg.features.split(',') : [])
+                      ).map((feature, idx) => (
                         <li key={idx} className="flex items-start gap-2.5 text-zinc-100 text-xs font-semibold">
                           <Check className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                          <span>{feature}</span>
+                          <span>{typeof feature === 'string' ? feature.trim() : feature}</span>
                         </li>
                       ))}
                     </ul>

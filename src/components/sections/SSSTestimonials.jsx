@@ -98,7 +98,33 @@ export default function SSSTestimonials({ onOpenReviewModal }) {
     ]
   };
 
-  const testimonials = testimonialsData[currentLang] || testimonialsData.en;
+  const defaultTestimonials = testimonialsData[currentLang] || testimonialsData.en;
+  const [dbTestimonials, setDbTestimonials] = React.useState([]);
+
+  React.useEffect(() => {
+    async function loadApproved() {
+      try {
+        const { getTestimonials } = await import("@/app/actions/testimonials");
+        const approved = await getTestimonials(true);
+        if (approved && approved.length > 0) {
+          setDbTestimonials(approved.map(t => ({
+            id: t.id,
+            name: t.name,
+            role: t.event || "Client Testimonial",
+            rating: t.rating || 5,
+            text: t.text,
+            date: new Date(t.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" }),
+            location: "Tamil Nadu",
+          })));
+        }
+      } catch (e) {
+        console.error("Failed to load approved testimonials:", e);
+      }
+    }
+    loadApproved();
+  }, []);
+
+  const testimonials = [...dbTestimonials, ...defaultTestimonials];
 
   return (
     <section id="testimonials" className="py-24 bg-[#060807] relative overflow-hidden border-t border-amber-500/15">
