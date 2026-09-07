@@ -208,7 +208,6 @@ export default function RootLayout({ children }) {
             <Navbar />
             <main className="flex-grow w-full max-w-full overflow-x-hidden">{children}</main>
             <Footer />
-            <ChatbotWidget />
             <MultilingualWhatsAppWidget whatsappNumber="916383565425" />
           </Providers>
         </div>

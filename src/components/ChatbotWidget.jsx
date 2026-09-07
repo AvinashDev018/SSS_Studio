@@ -80,8 +80,13 @@ const FAQ_RESPONSES = {
   },
 };
 
-export default function ChatbotWidget() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function ChatbotWidget({ forcedOpen, onClose }) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isOpen = forcedOpen !== undefined ? forcedOpen : internalOpen;
+  const setIsOpen = (val) => {
+    if (onClose && val === false) onClose();
+    setInternalOpen(val);
+  };
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -268,38 +273,40 @@ export default function ChatbotWidget() {
 
   return (
     <div className="fixed bottom-5 right-4 sm:bottom-6 sm:right-6 z-[95]">
-      {/* Floating Agent Button & Label */}
-      <div className="flex items-center gap-2">
-        {!isOpen && (
-          <div
-            onClick={() => setIsOpen(true)}
-            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-[#051410]/90 backdrop-blur-md border border-amber-400/40 text-amber-300 rounded-full text-[11px] font-extrabold shadow-lg shadow-amber-500/10 cursor-pointer hover:bg-emerald-950 transition-all hover:scale-105"
-          >
-            <Sparkles size={12} className="text-amber-400 animate-pulse" />
-            <span>Ask AI Concierge</span>
-          </div>
-        )}
+      {/* Floating Agent Button & Label (only if uncontrolled) */}
+      {forcedOpen === undefined && (
+        <div className="flex items-center gap-2">
+          {!isOpen && (
+            <div
+              onClick={() => setIsOpen(true)}
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-[#051410]/90 backdrop-blur-md border border-amber-400/40 text-amber-300 rounded-full text-[11px] font-extrabold shadow-lg shadow-amber-500/10 cursor-pointer hover:bg-emerald-950 transition-all hover:scale-105"
+            >
+              <Sparkles size={12} className="text-amber-400 animate-pulse" />
+              <span>Ask AI Concierge</span>
+            </div>
+          )}
 
-        <button
-          suppressHydrationWarning
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Open Studio AI Concierge"
-          className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${
-            isOpen ? "bg-red-500 hover:bg-red-600 rotate-90" : "bg-gradient-to-r from-teal-400 to-emerald-500 hover:scale-105 shadow-teal-500/50 shadow-lg text-black font-bold"
-          } cursor-pointer`}
-        >
-        {isOpen ? (
-          <X size={22} />
-        ) : (
-          <>
-            <MessageCircle size={24} className="sm:w-6 sm:h-6" />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-teal-300 rounded-full border-2 border-zinc-900 animate-pulse flex items-center justify-center">
-              <Sparkles size={8} className="text-black" />
-            </span>
-          </>
-        )}
-        </button>
-      </div>
+          <button
+            suppressHydrationWarning
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Open Studio AI Concierge"
+            className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${
+              isOpen ? "bg-red-500 hover:bg-red-600 rotate-90" : "bg-gradient-to-r from-teal-400 to-emerald-500 hover:scale-105 shadow-teal-500/50 shadow-lg text-black font-bold"
+            } cursor-pointer`}
+          >
+            {isOpen ? (
+              <X size={22} />
+            ) : (
+              <>
+                <MessageCircle size={24} className="sm:w-6 sm:h-6" />
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-teal-300 rounded-full border-2 border-zinc-900 animate-pulse flex items-center justify-center">
+                  <Sparkles size={8} className="text-black" />
+                </span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* Chat Window */}
       {isOpen && (
