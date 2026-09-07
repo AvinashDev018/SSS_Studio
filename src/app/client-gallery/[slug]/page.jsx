@@ -1,8 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { getClientGallery, togglePhotoSelection, submitGallerySelections } from "@/app/actions/gallery";
-import { Lock, Heart, CheckCircle, ShieldCheck, Sparkles, MessageSquare, ArrowLeft, Send } from "lucide-react";
+import {
+  Lock,
+  Heart,
+  CheckCircle,
+  Sparkles,
+  Send,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
+  Minimize2,
+  Eye,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function ClientGalleryPage({ params }) {
@@ -18,7 +32,11 @@ export default function ClientGalleryPage({ params }) {
   const [comments, setComments] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
-  React.useEffect(() => {
+  // Full-Screen Lightbox & Zoom State
+  const [activePhotoIndex, setActivePhotoIndex] = useState(null);
+  const [zoomLevel, setZoomLevel] = useState(1); // 1 = 100%, 1.5 = 150%, 2 = 200%, 3 = 300%
+
+  useEffect(() => {
     async function loadData() {
       const data = await getClientGallery(slug);
       setGallery(data);
@@ -36,6 +54,23 @@ export default function ClientGalleryPage({ params }) {
     }
     loadData();
   }, [slug]);
+
+  // Keyboard navigation for Lightbox (Esc to close, Left/Right arrows to switch photos)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (activePhotoIndex === null || !gallery?.photos) return;
+      if (e.key === "Escape") {
+        setActivePhotoIndex(null);
+        setZoomLevel(1);
+      } else if (e.key === "ArrowLeft") {
+        navigatePhoto(-1);
+      } else if (e.key === "ArrowRight") {
+        navigatePhoto(1);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activePhotoIndex, gallery]);
 
   const handlePasscodeSubmit = (e) => {
     e.preventDefault();
@@ -87,6 +122,14 @@ export default function ClientGalleryPage({ params }) {
       setGallery((prev) => ({ ...prev, status: "SUBMITTED" }));
       alert("🎉 Your album photo choices have been sent directly to the SSS Studio printing lab in Avaniyapuram!");
     }
+  };
+
+  const navigatePhoto = (direction) => {
+    if (activePhotoIndex === null || !gallery?.photos) return;
+    const total = gallery.photos.length;
+    const nextIndex = (activePhotoIndex + direction + total) % total;
+    setActivePhotoIndex(nextIndex);
+    setZoomLevel(1); // Reset zoom when switching photos
   };
 
   if (loading) {
@@ -164,11 +207,12 @@ export default function ClientGalleryPage({ params }) {
 
   const selectedCount = Object.values(selectedPhotos).filter(Boolean).length;
   const isSubmitted = gallery.status === "SUBMITTED" || gallery.status === "PRINTING";
+  const activePhoto = activePhotoIndex !== null ? gallery.photos[activePhotoIndex] : null;
 
   return (
     <div className="min-h-screen bg-[#070908] text-white py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header Sticky Floating Bar */}
-      <div className="sticky top-4 z-50 bg-[#121614]/90 backdrop-blur-xl border border-amber-500/40 rounded-3xl p-4 sm:p-5 shadow-2xl mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="sticky top-4 z-40 bg-[#121614]/90 backdrop-blur-xl border border-amber-500/40 rounded-3xl p-4 sm:p-5 shadow-2xl mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
           <span className="text-[10px] uppercase font-black tracking-widest text-amber-400 flex items-center gap-1.5 mb-1">
             <Sparkles className="w-3.5 h-3.5" /> SSS Studio Album Proofing
@@ -207,7 +251,7 @@ export default function ClientGalleryPage({ params }) {
 
       {/* Proofing Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {gallery.photos.map((photo) => {
+        {gallery.photos.map((photo, index) => {
           const isSel = !!selectedPhotos[photo.id];
           return (
             <div
@@ -218,18 +262,34 @@ export default function ClientGalleryPage({ params }) {
                   : "border-zinc-800 hover:border-amber-500/40"
               }`}
             >
-              <div className="relative aspect-[4/3] overflow-hidden bg-zinc-900">
+              {/* Clickable Image Thumbnail to open Full-Screen Lightbox */}
+              <div
+                onClick={() => {
+                  setActivePhotoIndex(index);
+                  setZoomLevel(1);
+                }}
+                className="relative aspect-[4/3] overflow-hidden bg-zinc-900 cursor-pointer"
+              >
                 <img
                   src={photo.url}
                   alt={photo.filename}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
 
+                {/* Click to Zoom Hover Badge */}
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white font-bold text-xs">
+                  <ZoomIn className="w-5 h-5 text-amber-400" />
+                  <span>Click to View Full-Screen &amp; Zoom</span>
+                </div>
+
                 {/* Heart Toggle Button Overlay */}
                 <button
-                  onClick={() => !isSubmitted && handleTogglePhoto(photo.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!isSubmitted) handleTogglePhoto(photo.id);
+                  }}
                   disabled={isSubmitted}
-                  className={`absolute top-3 right-3 p-3 rounded-full backdrop-blur-md transition-all shadow-xl cursor-pointer ${
+                  className={`absolute top-3 right-3 p-3 rounded-full backdrop-blur-md transition-all shadow-xl cursor-pointer z-10 ${
                     isSel
                       ? "bg-amber-400 text-black scale-110"
                       : "bg-black/60 text-white/70 hover:text-white hover:bg-black/80"
@@ -265,6 +325,133 @@ export default function ClientGalleryPage({ params }) {
           );
         })}
       </div>
+
+      {/* FULL-SCREEN ZOOMABLE LIGHTBOX MODAL */}
+      {activePhoto && (
+        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex flex-col justify-between overflow-hidden select-none">
+          {/* Lightbox Top Header Bar */}
+          <div className="p-4 bg-black/70 border-b border-zinc-800 flex items-center justify-between z-20">
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-amber-400 font-bold">
+                {activePhotoIndex + 1} / {gallery.photos.length}
+              </span>
+              <span className="text-xs font-mono text-zinc-300">{activePhoto.filename}</span>
+            </div>
+
+            {/* Zoom Controls & Close Button */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 bg-zinc-900/90 p-1 rounded-xl border border-zinc-800 mr-2">
+                <button
+                  onClick={() => setZoomLevel((prev) => Math.max(1, +(prev - 0.5).toFixed(1)))}
+                  disabled={zoomLevel <= 1}
+                  className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 disabled:opacity-30 cursor-pointer"
+                  title="Zoom Out (-)"
+                >
+                  <ZoomOut className="w-4 h-4" />
+                </button>
+                <span className="text-xs font-mono text-amber-300 font-bold px-2">
+                  {Math.round(zoomLevel * 100)}%
+                </span>
+                <button
+                  onClick={() => setZoomLevel((prev) => Math.min(3.5, +(prev + 0.5).toFixed(1)))}
+                  disabled={zoomLevel >= 3.5}
+                  className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 disabled:opacity-30 cursor-pointer"
+                  title="Zoom In (+)"
+                >
+                  <ZoomIn className="w-4 h-4" />
+                </button>
+                {zoomLevel !== 1 && (
+                  <button
+                    onClick={() => setZoomLevel(1)}
+                    className="px-2 py-1 text-[10px] font-extrabold uppercase bg-amber-400/20 text-amber-300 rounded-md hover:bg-amber-400 hover:text-black transition-all ml-1"
+                  >
+                    Reset Zoom
+                  </button>
+                )}
+              </div>
+
+              <button
+                onClick={() => {
+                  setActivePhotoIndex(null);
+                  setZoomLevel(1);
+                }}
+                className="p-2.5 rounded-xl bg-zinc-800 text-white hover:bg-red-500 transition-colors cursor-pointer"
+                title="Close (Esc)"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Lightbox Main Image Stage */}
+          <div className="relative flex-1 flex items-center justify-center p-4 overflow-auto">
+            {/* Previous Arrow */}
+            <button
+              onClick={() => navigatePhoto(-1)}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-black/60 border border-zinc-700 text-white hover:bg-amber-400 hover:text-black transition-all cursor-pointer shadow-2xl"
+              title="Previous Photo (Left Arrow)"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+
+            {/* Main Interactive Zoom Image */}
+            <div
+              className="relative max-w-full max-h-full flex items-center justify-center transition-transform duration-300 ease-out cursor-zoom-in"
+              onClick={() => setZoomLevel((prev) => (prev > 1 ? 1 : 2))}
+            >
+              <img
+                src={activePhoto.url}
+                alt={activePhoto.filename}
+                style={{ transform: `scale(${zoomLevel})` }}
+                className="max-h-[75vh] max-w-[90vw] object-contain rounded-2xl shadow-2xl transition-transform duration-300"
+              />
+            </div>
+
+            {/* Next Arrow */}
+            <button
+              onClick={() => navigatePhoto(1)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-black/60 border border-zinc-700 text-white hover:bg-amber-400 hover:text-black transition-all cursor-pointer shadow-2xl"
+              title="Next Photo (Right Arrow)"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Lightbox Bottom Action Bar (Select Heart & Editing Notes) */}
+          <div className="p-4 bg-black/90 border-t border-zinc-800 z-20 flex flex-col sm:flex-row items-center justify-between gap-4">
+            {/* Left: Selection Toggle */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => !isSubmitted && handleTogglePhoto(activePhoto.id)}
+                disabled={isSubmitted}
+                className={`px-5 py-2.5 rounded-2xl font-black text-xs uppercase flex items-center gap-2 transition-all cursor-pointer ${
+                  selectedPhotos[activePhoto.id]
+                    ? "bg-amber-400 text-black shadow-lg shadow-amber-400/30 scale-105"
+                    : "bg-zinc-800 text-white hover:bg-zinc-700"
+                }`}
+              >
+                <Heart className={`w-4 h-4 ${selectedPhotos[activePhoto.id] ? "fill-black" : ""}`} />
+                <span>
+                  {selectedPhotos[activePhoto.id] ? "★ Included in Album" : "Select for Album"}
+                </span>
+              </button>
+            </div>
+
+            {/* Middle: Editing Note Input */}
+            {!isSubmitted && (
+              <div className="w-full sm:max-w-md">
+                <input
+                  type="text"
+                  placeholder="Add editing note for lab (e.g. Use for front cover)..."
+                  value={comments[activePhoto.id] || ""}
+                  onChange={(e) => handleCommentChange(activePhoto.id, e.target.value)}
+                  className="w-full text-xs bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

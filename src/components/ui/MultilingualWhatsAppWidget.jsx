@@ -18,8 +18,6 @@ export default function MultilingualWhatsAppWidget({ whatsappNumber = "916383565
       message = "Hello SSS Photography Studio! I would like to enquire about your photography packages and date availability.";
     } else if (lang === "ta") {
       message = "வணக்கம் SSS போட்டோகிராபி! உங்கள் புகைப்பட சேவைகள் மற்றும் கட்டண விவரங்களை அறிய விரும்புகிறேன்.";
-    } else if (lang === "hi") {
-      message = "नमस्ते SSS फोटोग्राफी! मैं आपकी फोटोग्राफी सेवाओं और पैकेज के बारे में पूछताछ करना चाहता हूँ।";
     }
 
     changeLanguage(lang);
@@ -107,17 +105,6 @@ export default function MultilingualWhatsAppWidget({ whatsappNumber = "916383565
                   </div>
                   <span className="text-[10px] text-emerald-300 font-bold font-mono">தமிழ்</span>
                 </button>
-
-                <button
-                  onClick={() => startChat("hi")}
-                  className="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-4 text-xs font-semibold flex justify-between items-center cursor-pointer transition-all hover:scale-[1.01]"
-                >
-                  <div className="flex flex-col text-left">
-                    <span>हिंदी में चैट करें (Hindi)</span>
-                    <span className="text-[9px] text-amber-400 font-normal">नमस्ते! हमसे बात करें</span>
-                  </div>
-                  <span className="text-[10px] text-amber-300 font-bold font-mono">हिंदी</span>
-                </button>
               </div>
             </motion.div>
           </div>
@@ -158,18 +145,19 @@ export default function MultilingualWhatsAppWidget({ whatsappNumber = "916383565
                 className="flex items-center gap-3 px-4 py-2.5 bg-gradient-to-r from-[#071c18] via-[#0b2b25] to-[#051410] border border-emerald-400/60 text-white rounded-full shadow-2xl backdrop-blur-xl group cursor-pointer"
               >
                 <span className="text-xs font-extrabold text-emerald-300 group-hover:text-emerald-200">
-                  Chat on WhatsApp (3 Languages)
+                  Chat on WhatsApp (English / தமிழ்)
                 </span>
                 <span className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold shadow-md relative">
                   <MessageCircle size={16} />
                   <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-400 text-black text-[9px] font-black rounded-full flex items-center justify-center border border-black">
-                    3
+                    2
                   </span>
                 </span>
               </motion.button>
             </motion.div>
           )}
         </AnimatePresence>
+
 
         <div className="flex items-center gap-3">
           {!isSpeedDialOpen && !isAiChatOpen && !isWhatsAppModalOpen && (
@@ -185,6 +173,7 @@ export default function MultilingualWhatsAppWidget({ whatsappNumber = "916383565
           )}
 
           <motion.button
+            suppressHydrationWarning
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
