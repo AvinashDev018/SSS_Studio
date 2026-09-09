@@ -35,6 +35,10 @@ export default function Navbar() {
 
   const triggerModal = (mode = "booking", shootType = "Wedding & Event Photo Shoot") => {
     if (typeof window !== "undefined") {
+      if (pathname !== "/") {
+        window.location.href = `/?modal=${mode}&shootType=${encodeURIComponent(shootType)}`;
+        return;
+      }
       window.dispatchEvent(
         new CustomEvent("open-sss-modal", {
           detail: { mode, shootType },
@@ -75,41 +79,43 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-40 bg-white/95 backdrop-blur-2xl border-b border-black/10 transition-all duration-300 shadow-md w-full max-w-full overflow-x-clip">
-      <div className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 w-full">
-        <div className="flex items-center justify-between h-16 sm:h-20 gap-1.5 sm:gap-4">
+    <nav className="sticky top-0 z-40 bg-white/95 backdrop-blur-2xl border-b border-black/10 transition-all duration-300 shadow-md w-full">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="flex items-center justify-between h-16 sm:h-20 gap-2 lg:gap-4">
           
-          {/* Left: Brand Logo */}
-          <div className="shrink-0 flex items-center">
+          {/* Left: Brand Logo (Left-aligned & balanced flex) */}
+          <div className="shrink-0 flex items-center lg:flex-1 lg:justify-start">
             <StudioLogo size="sm" href="/" variant="dark" className="sm:hidden" />
             <StudioLogo size="md" href="/" variant="dark" className="hidden sm:flex" />
           </div>
 
           {/* Center: Desktop Nav Links (Clean, Centered, Perfectly Spaced) */}
-          <div className="hidden lg:flex items-center space-x-1 xl:space-x-1.5 px-2.5 py-1.5 rounded-full bg-black/[0.04] border border-black/10 backdrop-blur-md shrink-0">
-            {desktopLinks.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className={`relative px-2.5 xl:px-3 py-1.5 text-[11px] xl:text-xs font-medium uppercase tracking-[0.08em] transition-all duration-300 rounded-full whitespace-nowrap flex items-center gap-1 ${
-                    isActive
-                      ? "text-[#8b6508] bg-[#d4af37]/25 font-bold border border-[#d4af37]/60 shadow-sm"
-                      : link.highlight
-                      ? "text-amber-700 font-bold hover:text-amber-900 hover:bg-amber-100/60"
-                      : "text-zinc-700 hover:text-black hover:bg-black/5"
-                  }`}
-                >
-                  {link.highlight && <Package size={13} className="text-[#b8860b] inline-block animate-pulse" />}
-                  {link.name}
-                </Link>
-              );
-            })}
+          <div className="hidden lg:flex items-center justify-center shrink-0">
+            <div className="flex items-center space-x-1 xl:space-x-1.5 px-2 xl:px-3 py-1.5 rounded-full bg-black/[0.04] border border-black/10 backdrop-blur-md">
+              {desktopLinks.map((link) => {
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className={`relative px-2.5 xl:px-3 py-1.5 text-[11px] xl:text-xs font-medium uppercase tracking-[0.06em] xl:tracking-[0.08em] transition-all duration-300 rounded-full whitespace-nowrap flex items-center gap-1 ${
+                      isActive
+                        ? "text-[#8b6508] bg-[#d4af37]/25 font-bold border border-[#d4af37]/60 shadow-sm"
+                        : link.highlight
+                        ? "text-amber-700 font-bold hover:text-amber-900 hover:bg-amber-100/60"
+                        : "text-zinc-700 hover:text-black hover:bg-black/5"
+                    }`}
+                  >
+                    {link.highlight && <Package size={13} className="text-[#b8860b] inline-block animate-pulse" />}
+                    {link.name}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Right: Streamlined Action CTAs (Desktop) */}
-          <div className="hidden lg:flex items-center gap-2 xl:gap-3 shrink-0">
+          {/* Right: Streamlined Action CTAs (Desktop, Right-aligned & balanced flex) */}
+          <div className="hidden lg:flex items-center justify-end lg:flex-1 gap-2 xl:gap-3 shrink-0">
             
             {/* Interactive Language Selector Dropdown */}
             <div className="relative" ref={desktopLangRef}>
@@ -164,7 +170,7 @@ export default function Navbar() {
             <button
               suppressHydrationWarning
               onClick={() => triggerModal("offer", "Exclusive Wedding Season Gift Box")}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-bold text-[#8b6508] bg-[#d4af37]/15 border border-[#d4af37]/40 hover:bg-[#d4af37]/30 transition-all duration-300 cursor-pointer uppercase tracking-wider whitespace-nowrap shrink-0"
+              className="flex items-center gap-1.5 px-3 xl:px-3.5 py-1.5 rounded-full text-[11px] xl:text-xs font-bold text-[#8b6508] bg-[#d4af37]/15 border border-[#d4af37]/40 hover:bg-[#d4af37]/30 transition-all duration-300 cursor-pointer uppercase tracking-wider whitespace-nowrap shrink-0"
             >
               <Sparkles size={12} className="text-[#8b6508]" />
               <span suppressHydrationWarning>{t.nav.offer}</span>
@@ -174,14 +180,14 @@ export default function Navbar() {
             <button
               suppressHydrationWarning
               onClick={() => triggerModal("booking", "Wedding & Event Photo Shoot")}
-              className="px-4 py-2 rounded-full text-xs font-bold text-black bg-metallic-gold shadow-md hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 cursor-pointer uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap shrink-0 min-w-fit"
+              className="px-4 xl:px-5 py-2 rounded-full text-xs font-bold text-black bg-metallic-gold shadow-md hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 cursor-pointer uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap shrink-0"
             >
               <span suppressHydrationWarning>{t.nav.bookNow}</span>
               <ArrowRight size={13} />
             </button>
           </div>
 
-          {/* Mobile / Tablet View Controls (Zero Overflow, Fits perfectly on 320px-400px screens) */}
+          {/* Mobile / Tablet View Controls (Zero Overflow, Fits perfectly on all screens) */}
           <div className="flex lg:hidden items-center gap-1.5 sm:gap-2 shrink-0">
             {/* Quick Language Pill */}
             <div className="relative" ref={mobileLangRef}>
@@ -192,7 +198,7 @@ export default function Navbar() {
                   e.stopPropagation();
                   setIsMobileLangOpen((prev) => !prev);
                 }}
-                className="flex items-center gap-1 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold text-zinc-900 bg-black/5 border border-black/15 cursor-pointer hover:bg-black/10 transition-colors whitespace-nowrap"
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold text-zinc-900 bg-black/5 border border-black/15 cursor-pointer hover:bg-black/10 transition-colors whitespace-nowrap"
               >
                 <Globe size={12} className="text-[#b8860b]" />
                 <span suppressHydrationWarning>{translations[currentLang]?.langLabel || "EN"}</span>
@@ -230,10 +236,10 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Quick Mobile Offer Button (Visible on sm+, hidden on ultra-small screens to prevent wrap) */}
+            {/* Quick Mobile Offer Button */}
             <button
               onClick={() => triggerModal("offer", "Exclusive Wedding Season Gift Box")}
-              className="hidden xs:flex px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-[#d4af37]/20 text-[#8b6508] border border-[#d4af37]/50 items-center gap-1 cursor-pointer shadow-sm whitespace-nowrap"
+              className="flex px-2.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-[#d4af37]/20 text-[#8b6508] border border-[#d4af37]/50 items-center gap-1 cursor-pointer shadow-sm whitespace-nowrap"
             >
               <Sparkles size={11} className="text-[#8b6508]" /> {t.nav.offer}
             </button>
@@ -279,6 +285,17 @@ export default function Navbar() {
                 ))}
               </div>
             </div>
+
+            {/* Prominent Mobile Moodboard Matcher Action Card */}
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                triggerModal("moodboard");
+              }}
+              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-500 text-black font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md border border-amber-300 cursor-pointer"
+            >
+              <Sparkles size={15} className="text-black" /> ✨ Match Moodboard (AI Vision)
+            </button>
 
             {/* Nav Links Grid */}
             <div className="grid grid-cols-2 gap-1.5 pt-1">

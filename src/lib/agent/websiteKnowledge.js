@@ -75,9 +75,9 @@ export const WEBSITE_MAP = {
     },
     {
       path: "/visualizer",
-      name: "AI Visualizer / Moodboard",
-      purpose: "Creative visualizer and moodboard matching for shoot styling concepts.",
-      keywords: ["visualizer", "moodboard", "ai stylist", "style"],
+      name: "AI Visualizer / Moodboard", 
+      purpose: "Advanced AI-powered mood board creation with outfit recommendations, color palette analysis, cultural styling guidance, and location matching based on uploaded photos and preferences. Includes traditional Tamil heritage concepts and modern editorial styling.",
+      keywords: ["visualizer", "moodboard", "ai stylist", "style", "outfit", "color", "palette", "styling", "cultural", "tamil", "traditional", "modern", "heritage"],
     },
     {
       path: "/client-gallery/[slug]",
@@ -123,6 +123,8 @@ export const WEBSITE_MAP = {
       "Open homepage Portfolio or /gallery. Wedding album opens as a hardcover flipbook. Featured photos are starred in Admin → Gallery.",
     usePromo:
       "Admin creates promo in /admin/promos. Customer enters the same code in Store cart before checkout.",
+    useMoodboardAI:
+      "Visit /visualizer → Upload your photo or try demo → Select shoot type & style preference → Get AI-generated mood board with color palettes, outfit recommendations, cultural styling elements, and location suggestions. The MoodBoard AI analyzes your photo's dominant colors and provides expert styling advice tailored to Tamil cultural authenticity and modern aesthetics.",
   },
 };
 

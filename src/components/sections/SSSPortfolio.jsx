@@ -4,7 +4,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, X, ChevronLeft, ChevronRight, Sparkles, BookOpen, Upload, FileText, Play, Film } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import MoodboardMatcherModal from "@/components/ui/MoodboardMatcherModal";
 import WeddingAlbumPdfModal from "@/components/ui/WeddingAlbumPdfModal";
 import { getFeaturedPhotos } from "@/app/actions/gallery";
 
@@ -71,32 +70,6 @@ const PORTFOLIO_PROJECTS = [
     images: [],
   },
   {
-    id: 2,
-    title: "Hills Pre-Wedding Story",
-    category: "pre-wedding",
-    categoryLabel: "Pre / Post Wedding",
-    shortName: "Pre-Wedding Munnar",
-    avatar: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504211/tqb10uvuzmqdkuxyqmps.jpg",
-    description: "Golden hour romance and scenic landscape vistas captured across tea estates and misty hills.",
-    images: [
-      "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504211/tqb10uvuzmqdkuxyqmps.jpg",
-      "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504212/ksq2vkwzniqlgsly5k6p.jpg",
-    ],
-  },
-  {
-    id: 3,
-    title: "Serene Outdoor Maternity Shoot",
-    category: "baby-maternity",
-    categoryLabel: "Baby & Maternity",
-    shortName: "Maternity Story",
-    avatar: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787505577/iqimm503wxxauaksjjzt.jpg",
-    description: "Ethereal glow, custom gown styling, and tender candid love celebrating the arrival of new life.",
-    images: [
-      "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787505577/iqimm503wxxauaksjjzt.jpg",
-      "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504214/eill2s5uvoq7wwabeunx.jpg",
-    ],
-  },
-  {
     id: 4,
     title: "Master K.K. Sathvik 1st Birthday Royal Celebration",
     category: "birthday-events",
@@ -142,19 +115,6 @@ const PORTFOLIO_PROJECTS = [
     videoUrl: "/videos/loshi.mp4",
     images: [],
   },
-  {
-    id: 6,
-    title: "Newborn Dreamland Portraiture",
-    category: "baby-maternity",
-    categoryLabel: "Baby & Maternity",
-    shortName: "Newborn Story",
-    avatar: "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504214/eill2s5uvoq7wwabeunx.jpg",
-    description: "Safe, cozy setups with adorable organic wraps and handcrafted wooden cradles.",
-    images: [
-      "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504214/eill2s5uvoq7wwabeunx.jpg",
-      "https://res.cloudinary.com/e5pnwpo5/image/upload/v1787505577/iqimm503wxxauaksjjzt.jpg",
-    ],
-  },
 ];
 
 export default function SSSPortfolio() {
@@ -163,7 +123,6 @@ export default function SSSPortfolio() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [mediaIndex, setMediaIndex] = useState(0);
   const [mediaMode, setMediaMode] = useState("photos"); // "photos" | "video"
-  const [isMoodboardOpen, setIsMoodboardOpen] = useState(false);
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [isInfoExpanded, setIsInfoExpanded] = useState(true);
   const [featuredPhotos, setFeaturedPhotos] = useState([]);
@@ -174,13 +133,11 @@ export default function SSSPortfolio() {
       .catch(() => setFeaturedPhotos([]));
   }, []);
 
-  const categories = [
+  const categories = useMemo(() => [
     { id: "all", label: t.portfolio.all },
     { id: "wedding", label: t.portfolio.wedding },
-    { id: "pre-wedding", label: t.portfolio.preWedding },
-    { id: "baby-maternity", label: t.portfolio.maternity },
     { id: "birthday-events", label: t.portfolio.birthday },
-  ];
+  ], [t]);
 
   const portfolioProjects = useMemo(() => {
     const byCategory = {};
@@ -239,13 +196,6 @@ export default function SSSPortfolio() {
           <div className="w-16 h-0.5 bg-[#d4af37] mx-auto rounded-full mb-6" />
 
           <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
-            <button
-              onClick={() => setIsMoodboardOpen(true)}
-              className="px-5 py-2.5 bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-500 text-black font-extrabold rounded-full shadow-lg hover:scale-105 transition-all text-xs uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer"
-            >
-              <Sparkles size={16} /> ✨ Match Your Pinterest/Instagram Moodboard (AI)
-            </button>
-
             <button
               onClick={() => setIsPdfModalOpen(true)}
               className="px-5 py-2.5 bg-zinc-900 hover:bg-black text-[#d4af37] border border-[#d4af37]/60 hover:border-[#d4af37] font-extrabold rounded-full shadow-lg hover:scale-105 transition-all text-xs uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer"
@@ -719,12 +669,6 @@ export default function SSSPortfolio() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Moodboard AI Modal */}
-      <MoodboardMatcherModal
-        isOpen={isMoodboardOpen}
-        onClose={() => setIsMoodboardOpen(false)}
-      />
 
       {/* Wedding Album PDF Viewer & Upload Modal */}
       <WeddingAlbumPdfModal

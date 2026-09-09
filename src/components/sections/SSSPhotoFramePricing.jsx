@@ -1,8 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import Image from "next/image";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import React, { useState, useEffect } from "react";
 import {
   Frame,
   Check,
@@ -11,9 +9,6 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import PhotoFrameOrderModal from "@/components/ui/PhotoFrameOrderModal";
-
-const FRAME_PREVIEW_IMG =
-  "https://res.cloudinary.com/e5pnwpo5/image/upload/v1788884907/sss_wedding_srijitha_sreeraj/srijitha_sreeraj_arch_portrait.jpg";
 
 const FRAME_PRICE_LIST = [
   { id: 1, size: "8x10", price: "₹ 349", numPrice: 349, category: "compact", bestFor: "Desk, Bedside & Birthday Gift", popular: false, giftOccasion: "Birthday & Desk" },
@@ -55,84 +50,12 @@ const FINISHES = [
   },
 ];
 
-function FloatingTiltFrame({ sizeLabel, priceLabel, onOrder }) {
-  const ref = useRef(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [12, -12]), { stiffness: 120, damping: 18 });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-14, 14]), { stiffness: 120, damping: 18 });
-  const glareX = useTransform(x, [-0.5, 0.5], ["20%", "80%"]);
-  const glareY = useTransform(y, [-0.5, 0.5], ["15%", "85%"]);
-  const glareBg = useTransform(
-    [glareX, glareY],
-    ([gx, gy]) => `radial-gradient(circle at ${gx} ${gy}, rgba(255,255,255,0.28), transparent 45%)`
-  );
-
-  const onMove = (e) => {
-    const rect = ref.current?.getBoundingClientRect();
-    if (!rect) return;
-    x.set((e.clientX - rect.left) / rect.width - 0.5);
-    y.set((e.clientY - rect.top) / rect.height - 0.5);
-  };
-
-  return (
-    <div className="flex flex-col items-center">
-      <div className="w-full flex justify-center" style={{ perspective: "1200px" }}>
-        <motion.div
-          ref={ref}
-          onMouseMove={onMove}
-          onMouseLeave={() => {
-            x.set(0);
-            y.set(0);
-          }}
-          style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-          className="relative w-full max-w-[280px] sm:max-w-[320px]"
-        >
-          <div className="absolute -bottom-7 left-1/2 h-14 w-[78%] -translate-x-1/2 rounded-[100%] bg-black/55 blur-2xl" />
-          <div
-            className="relative overflow-hidden rounded-sm border-[10px] border-[#c9a227] bg-[#1a1408] p-3 shadow-[0_40px_80px_rgba(0,0,0,0.55)]"
-            style={{ transform: "translateZ(36px)" }}
-          >
-            <div className="relative aspect-[4/5] overflow-hidden bg-zinc-900">
-              <Image
-                src={FRAME_PREVIEW_IMG}
-                alt={`${sizeLabel} frame preview`}
-                fill
-                unoptimized
-                className="object-cover"
-                sizes="320px"
-              />
-              <motion.div className="pointer-events-none absolute inset-0" style={{ background: glareBg }} />
-            </div>
-            <div className="mt-3 text-center font-serif text-xs tracking-[0.22em] text-[#d4af37]/90 uppercase">
-              Handcrafted · {sizeLabel}
-            </div>
-          </div>
-        </motion.div>
-      </div>
-      <div className="mt-10 text-center">
-        <p className="font-serif text-2xl text-white">{sizeLabel}</p>
-        <p className="mt-1 text-[#d4af37] font-bold">{priceLabel}</p>
-        <button
-          type="button"
-          onClick={onOrder}
-          className="mt-4 px-5 py-2.5 rounded-xl bg-metallic-gold text-black font-bold text-xs uppercase tracking-wider transition-all duration-200 shadow-md hover:scale-105 inline-flex items-center gap-1.5 cursor-pointer"
-        >
-          Order This Size <ChevronRight size={13} />
-        </button>
-        <p className="mt-3 text-[11px] text-zinc-500">Move over the frame for the 3D tilt preview</p>
-      </div>
-    </div>
-  );
-}
-
 export default function SSSPhotoFramePricing() {
   const [frameList, setFrameList] = useState(FRAME_PRICE_LIST);
   const [activeFilter, setActiveFilter] = useState("all");
   const [selectedFrameForOrder, setSelectedFrameForOrder] = useState(null);
-  const [previewSize, setPreviewSize] = useState(FRAME_PRICE_LIST[5]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     async function loadFrames() {
       try {
         const res = await fetch("/api/frames");
@@ -140,8 +63,6 @@ export default function SSSPhotoFramePricing() {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
             setFrameList(data);
-            const found12x18 = data.find((f) => f.size === "12x18") || data[0];
-            setPreviewSize(found12x18);
           }
         }
       } catch (err) {
@@ -203,42 +124,6 @@ export default function SSSPhotoFramePricing() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-14">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center rounded-3xl border border-[#d4af37]/25 bg-[#0c1210] p-6 sm:p-10">
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#d4af37] mb-3">Live 3D Preview</p>
-            <h3 className="font-serif text-2xl sm:text-3xl text-white mb-3">See Your Frame in Depth</h3>
-            <p className="text-sm text-zinc-400 leading-relaxed mb-5">
-              Hover the frame for gold glass glare. Tap any size in the price list below to update this preview instantly.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {frameList
-                .filter((f) => f.popular)
-                .slice(0, 4)
-                .map((f) => (
-                  <button
-                    key={f.id}
-                    type="button"
-                    onClick={() => setPreviewSize(f)}
-                    className={`px-3 py-1.5 rounded-full text-[11px] font-bold border transition cursor-pointer ${
-                      previewSize?.id === f.id
-                        ? "bg-[#d4af37] text-black border-[#d4af37]"
-                        : "border-white/15 text-zinc-300 hover:border-[#d4af37]/60"
-                    }`}
-                  >
-                    {f.size}
-                  </button>
-                ))}
-            </div>
-          </div>
-          <FloatingTiltFrame
-            sizeLabel={previewSize?.size || "12x18"}
-            priceLabel={previewSize?.price || "₹ 1,199"}
-            onOrder={() => setSelectedFrameForOrder(previewSize)}
-          />
-        </div>
-      </div>
-
       <div className="max-w-5xl mx-auto w-full mb-16 px-4 sm:px-6 lg:px-8">
         <div className="bg-[#FAFAFA] border border-[#d4af37]/40 rounded-3xl p-4 sm:p-7 shadow-xl backdrop-blur-xl">
           <div className="flex items-center justify-between pb-4 mb-4 border-b border-black/10">
@@ -270,10 +155,8 @@ export default function SSSPhotoFramePricing() {
                 {filteredFrames.map((item) => (
                   <tr
                     key={item.id}
-                    onClick={() => setPreviewSize(item)}
-                    className={`hover:bg-black/[0.02] transition-colors duration-150 cursor-pointer ${
-                      previewSize?.id === item.id ? "bg-[#d4af37]/10" : ""
-                    }`}
+                    onClick={() => setSelectedFrameForOrder(item)}
+                    className="hover:bg-[#d4af37]/10 transition-colors duration-150 cursor-pointer"
                   >
                     <td className="py-3.5 px-3">
                       <div className="flex items-center gap-2">

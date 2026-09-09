@@ -90,7 +90,7 @@ function DepthHeroFrame() {
   );
 }
 
-export default function SSSHero({ onOpenBooking, onOpenQuote }) {
+export default function SSSHero({ onOpenBooking, onOpenQuote, onOpenMoodboard }) {
   const { t } = useLanguage();
 
   return (
@@ -145,27 +145,64 @@ export default function SSSHero({ onOpenBooking, onOpenQuote }) {
               Professional wedding, portrait, and milestone event photography with our guaranteed 1-month delivery promise.
             </p>
 
-            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-black/15 bg-black/[0.04] text-xs text-zinc-900 font-bold mb-8 shadow-sm">
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-black/15 bg-black/[0.04] text-xs text-zinc-900 font-bold mb-6 shadow-sm">
               <MapPin size={13} className="text-[#b8860b]" />
               <span>Madurai, Tamil Nadu</span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-4 w-full sm:w-auto">
+            {/* Primary Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto mb-5">
               <button
                 onClick={() => onOpenBooking && onOpenBooking("Wedding & Event Photo Shoot")}
-                className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-metallic-gold text-black font-bold text-xs tracking-wider uppercase shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-metallic-gold text-black font-extrabold text-xs tracking-wider uppercase shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>{t?.hero?.bookBtn || "Book a Consultation"}</span>
                 <ArrowRight size={14} />
               </button>
 
+              <button
+                onClick={() => onOpenMoodboard && onOpenMoodboard()}
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-500 text-black font-black text-xs tracking-wider uppercase shadow-xl hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] hover:scale-105 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border border-amber-300 group"
+              >
+                <Sparkles size={16} className="text-black group-hover:rotate-12 transition-transform duration-300" />
+                <span>✨ Match Moodboard (AI)</span>
+              </button>
+
               <Link
                 href="/#portfolio"
-                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-black/[0.04] hover:bg-black/[0.08] text-zinc-900 font-bold text-xs tracking-wider uppercase border border-[#d4af37]/40 hover:border-[#d4af37] transition-all duration-300 flex items-center justify-center gap-2 backdrop-blur-sm"
+                className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-black/[0.04] hover:bg-black/[0.08] text-zinc-900 font-bold text-xs tracking-wider uppercase border border-[#d4af37]/40 hover:border-[#d4af37] transition-all duration-300 flex items-center justify-center gap-2 backdrop-blur-sm"
               >
-                <span>Explore Portfolio</span>
+                <span>Portfolio</span>
                 <ArrowRight size={14} className="text-[#b8860b]" />
               </Link>
+            </div>
+
+            {/* Eye-Catching Moodboard Vision Matcher Banner Callout */}
+            <div
+              onClick={() => onOpenMoodboard && onOpenMoodboard()}
+              className="w-full max-w-lg p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-yellow-500/15 to-amber-500/10 border border-[#d4af37]/60 hover:border-[#d4af37] shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center justify-between gap-3 group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center text-black shrink-0 shadow-sm group-hover:scale-110 transition-transform">
+                  <Sparkles size={20} />
+                </div>
+                <div className="text-left">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] sm:text-xs font-black text-zinc-900 tracking-wide uppercase">
+                      Pinterest / Instagram Moodboard Matcher
+                    </span>
+                    <span className="text-[9px] font-extrabold bg-[#d4af37] text-black px-1.5 py-0.5 rounded-full uppercase">
+                      AI Vision
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-zinc-600 font-medium">
+                    Upload screenshots to match SSS Studio presets & styles instantly
+                  </p>
+                </div>
+              </div>
+              <span className="text-xs font-bold text-[#8b6508] shrink-0 group-hover:translate-x-1 transition-transform">
+                Try Now →
+              </span>
             </div>
           </motion.div>
         </div>

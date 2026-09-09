@@ -59,6 +59,30 @@ For ANY price question, call tools:
 Never invent prices. Prefer tool results.
 
 =========================
+5. MOODBOARD AI EXPERTISE
+=========================
+You are ALSO a Master MoodBoard AI Stylist with deep knowledge of:
+• Visual aesthetics, color psychology, and cultural styling
+• Tamil heritage & South Indian traditional elements
+• Modern editorial and contemporary styling approaches
+• Color combinations based on skin undertones and moods
+• Style personality analysis and outfit curation
+• Professional photography styling techniques
+
+For styling/moodboard questions, use these tools:
+• \`create_moodboard\` for comprehensive mood boards with cultural authenticity
+• \`analyze_style_personality\` to understand client preferences
+• \`suggest_color_combinations\` for expert color matching
+• \`recommend_styling_elements\` for detailed outfit/accessory guidance
+
+Always consider:
+- Cultural authenticity (especially Tamil/South Indian elements)
+- Client's skin undertone and personal style
+- Shoot type and desired mood/emotion
+- Budget constraints and practical considerations
+- Age-appropriate and occasion-specific styling
+
+=========================
 5. GUARANTEES
 =========================
 • 1-Month Album Delivery Guarantee (or ₹1,000 credit)
@@ -268,14 +292,34 @@ async function answerWebsiteIntent(lastUserMsg, analysis, catalog) {
     };
   }
 
-  if (lower.includes("visualizer") || lower.includes("moodboard") || lower.includes("ai stylist")) {
-    return {
-      reply:
-        lang === "tanglish"
-          ? `AI Visualizer / Moodboard: /visualizer — shoot style concepts match panna use pannunga.`
-          : `Open /visualizer for the AI moodboard / styling visualizer.`,
-      actionCards: [],
-    };
+  if (lower.includes("visualizer") || lower.includes("moodboard") || lower.includes("ai stylist") || lower.includes("styling") || lower.includes("outfit") || lower.includes("color palette")) {
+    // Check if they want specific styling advice
+    if (lower.includes("recommend") || lower.includes("suggest") || lower.includes("advice") || lower.includes("help me choose") || lower.includes("style me")) {
+      const toolRes = await executeAgentTool("create_moodboard", { 
+        shoot_type: lower.includes("wedding") ? "wedding" : lower.includes("maternity") ? "maternity" : lower.includes("birthday") ? "birthday" : "portrait",
+        style_preference: "traditional_heritage", // Default for Tamil studio
+        cultural_background: "tamil"
+      });
+      return {
+        reply:
+          lang === "tanglish"
+            ? `AI MoodBoard create pannirkken! Traditional Tamil styling-oda modern elements combine panni personalized recommendations kuduthirukken. /visualizer-layum try pannalam bro.`
+            : lang === "ta"
+            ? `AI மூட்போர்டு உருவாக்கப்பட்டது! பாரம்பரிய தமிழ் ஸ்டைலிங் மற்றும் நவீன கூறுகளை இணைத்து தனிப்பட்ட பரிந்துரைகள் வழங்கப்பட்டுள்ளன.`
+            : `Created an AI MoodBoard for you! Combining traditional Tamil styling with modern elements for personalized recommendations. Also try the interactive /visualizer page.`,
+        actionCards: [toolRes],
+      };
+    } else {
+      return {
+        reply:
+          lang === "tanglish"
+            ? `AI Visualizer / MoodBoard: /visualizer — photo upload panni, shoot type select panni, AI-generated mood board with color palettes, outfit recommendations, Tamil cultural styling kidu. Interactive styling experience!`
+            : lang === "ta" 
+            ? `AI விஷுவலைசர் / மூட்போர்டு: /visualizer — போட்டோ அப்லோடு செய்து, ஷூட் வகையைத் தேர்ந்தெடுத்து, வண்ணத் தொகுப்புகள், ஆடை பரிந்துரைகள், தமிழ் கலாச்சார ஸ்டைலிங்குடன் AI-உருவாக்கிய மூட் போர்டு பெறுங்கள்.`
+            : `AI Visualizer & MoodBoard: /visualizer — Upload photos, select shoot type, get AI-generated mood boards with color palettes, outfit recommendations, Tamil cultural styling elements, and location suggestions. Advanced styling intelligence!`,
+        actionCards: [],
+      };
+    }
   }
 
   if (lower.includes("client gallery") || lower.includes("proofing") || lower.includes("passcode") || lower.includes("select photos")) {
@@ -551,6 +595,54 @@ async function handleSmartFallback(lastUserMsg, analysis, catalog) {
         lang === "tanglish"
           ? "Recent shoots & portfolio samples 👇 Full gallery: /gallery | Wedding album flipbook: Home → Portfolio"
           : "Recent shoot samples 👇 Full gallery: /gallery | Wedding album flipbook: Home → Portfolio",
+      actionCards: [toolRes],
+    };
+  }
+
+  // MoodBoard AI and Styling Intelligence
+  if (
+    lower.includes("style") ||
+    lower.includes("outfit") ||
+    lower.includes("moodboard") ||
+    lower.includes("color") ||
+    lower.includes("palette") ||
+    lower.includes("styling") ||
+    lower.includes("dress") ||
+    lower.includes("saree") ||
+    lower.includes("traditional") ||
+    lower.includes("modern") ||
+    lower.includes("cultural") ||
+    lower.includes("aesthetic") ||
+    lower.includes("visual") ||
+    lower.includes("concept") ||
+    lower.includes("theme")
+  ) {
+    const shootType = lower.includes("wedding") || lower.includes("kalyanam") ? "wedding" 
+      : lower.includes("maternity") || lower.includes("pregnancy") ? "maternity"
+      : lower.includes("birthday") || lower.includes("birthday") ? "birthday"  
+      : lower.includes("corporate") || lower.includes("professional") ? "corporate"
+      : "portrait";
+
+    const stylePreference = lower.includes("traditional") || lower.includes("heritage") || lower.includes("tamil") ? "traditional_heritage"
+      : lower.includes("modern") || lower.includes("contemporary") ? "modern_editorial"
+      : lower.includes("romantic") || lower.includes("dreamy") ? "romantic_dreamy"
+      : lower.includes("vibrant") || lower.includes("colorful") || lower.includes("celebration") ? "vibrant_celebration"
+      : "traditional_heritage"; // Default for Tamil studio
+
+    const toolRes = await executeAgentTool("create_moodboard", { 
+      shoot_type: shootType,
+      style_preference: stylePreference,
+      cultural_background: "tamil",
+      occasion: "general"
+    });
+
+    return {
+      reply:
+        lang === "tanglish"
+          ? `MoodBoard AI recommendations ready! ${stylePreference.replace('_', ' ')} style-ku ${shootType} shoot-kaga comprehensive styling guide create pannirkken. /visualizer-layum interactive experience try pannalam!`
+          : lang === "ta"
+          ? `மூட்போர்டு AI பரிந்துரைகள் தயார்! ${stylePreference.replace('_', ' ')} பாணியில் ${shootType} ஷூட்டுக்கான விரிவான ஸ்டைலிங் வழிகாட்டி உருவாக்கப்பட்டுள்ளது.`
+          : `MoodBoard AI styling guide created! Comprehensive ${stylePreference.replace('_', ' ')} recommendations for your ${shootType} shoot with Tamil cultural authenticity. Also try /visualizer for interactive experience!`,
       actionCards: [toolRes],
     };
   }
