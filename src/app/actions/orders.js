@@ -111,7 +111,14 @@ export async function searchOrdersByPhoneOrId(query) {
           status: o.status,
           totalAmount: o.totalAmount,
           createdAt: o.createdAt,
-          items: typeof o.items === "string" ? JSON.parse(o.items) : o.items,
+          items: (() => {
+            if (typeof o.items !== "string") return o.items;
+            try {
+              return JSON.parse(o.items);
+            } catch {
+              return [];
+            }
+          })(),
           courierTrackingId: o.courierTrackingId,
           address: o.address,
         })),

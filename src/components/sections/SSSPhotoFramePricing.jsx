@@ -1,20 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { 
-  Sparkles, 
-  Frame, 
-  Check, 
-  ArrowRight, 
-  ShieldCheck, 
-  Layers, 
-  Eye, 
-  Truck, 
-  Star,
-  Info,
-  SlidersHorizontal,
-  ChevronRight
+import React, { useState, useEffect } from "react";
+import {
+  Frame,
+  Check,
+  ChevronRight,
+  Truck,
+  ShieldCheck,
 } from "lucide-react";
 import PhotoFrameOrderModal from "@/components/ui/PhotoFrameOrderModal";
 
@@ -40,31 +32,30 @@ const FINISHES = [
     name: "Synthetic Wood Frame",
     desc: "Matte black or rich walnut finish with crystal glass & museum backing.",
     icon: "🖼️",
-    features: ["Crystal Clear Glass", "Anti-Scratch Coating", "Wall Mount Hooks Included"]
+    features: ["Crystal Clear Glass", "Anti-Scratch Coating", "Wall Mount Hooks Included"],
   },
   {
     id: "acrylic",
     name: "Ultra-Gloss Floating Acrylic",
     desc: "Modern frameless 5mm high-definition acrylic with floating wall studs.",
     icon: "💎",
-    features: ["Vivid 3D Depth", "Shatterproof Acrylic", "Floating 1-Inch Wall Standoffs"]
+    features: ["Vivid 3D Depth", "Shatterproof Acrylic", "Floating 1-Inch Wall Standoffs"],
   },
   {
     id: "canvas",
     name: "Textured Canvas Wrap",
     desc: "Heavyweight 380 GSM textured artistic canvas stretched on pine wood.",
     icon: "🎨",
-    features: ["Fine-Art Matte Texture", "Fade-Proof Pigment Inks", "Ready-to-Hang Depth Edge"]
-  }
+    features: ["Fine-Art Matte Texture", "Fade-Proof Pigment Inks", "Ready-to-Hang Depth Edge"],
+  },
 ];
 
 export default function SSSPhotoFramePricing() {
   const [frameList, setFrameList] = useState(FRAME_PRICE_LIST);
   const [activeFilter, setActiveFilter] = useState("all");
   const [selectedFrameForOrder, setSelectedFrameForOrder] = useState(null);
-  const [previewSize, setPreviewSize] = useState(FRAME_PRICE_LIST[5]); // Default 12x18
 
-  React.useEffect(() => {
+  useEffect(() => {
     async function loadFrames() {
       try {
         const res = await fetch("/api/frames");
@@ -72,8 +63,6 @@ export default function SSSPhotoFramePricing() {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
             setFrameList(data);
-            const found12x18 = data.find((f) => f.size === "12x18") || data[0];
-            setPreviewSize(found12x18);
           }
         }
       } catch (err) {
@@ -93,16 +82,13 @@ export default function SSSPhotoFramePricing() {
 
   return (
     <section id="frames" className="py-20 relative bg-[#060c0a] text-zinc-100 overflow-hidden scroll-mt-24">
-      {/* Anchors for compatibility */}
       <span id="photo-frames" className="absolute -top-24 pointer-events-none" />
       <span id="gifts" className="absolute -top-24 pointer-events-none" />
 
-      {/* Ambient background glows */}
       <div className="absolute top-1/4 left-0 w-96 h-96 bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-widest mb-3.5 shadow-sm">
             <Frame size={13} /> Handcrafted Custom Photo Framing
@@ -111,11 +97,10 @@ export default function SSSPhotoFramePricing() {
             Photo Frame Price List
           </h2>
           <p className="text-zinc-300 text-sm sm:text-base font-light leading-relaxed">
-            Preserve your wedding rituals, portraits, and milestones with SSS Studio&apos;s handcrafted frames. 
+            Preserve your wedding rituals, portraits, and milestones with SSS Studio&apos;s handcrafted frames.
             All 13 standard sizes customized with crystal anti-fade prints and our 1-Month Delivery Guarantee.
           </p>
 
-          {/* Quick Filter Pill Tabs */}
           <div className="flex flex-wrap items-center justify-center gap-2 mt-8">
             {[
               { id: "all", label: "All 13 Standard Sizes" },
@@ -128,19 +113,18 @@ export default function SSSPhotoFramePricing() {
                 onClick={() => setActiveFilter(tab.id)}
                 className={`px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 cursor-pointer ${
                   activeFilter === tab.id
-                  ? "bg-metallic-gold text-black font-bold shadow-[0_0_20px_rgba(212,175,55,0.35)] scale-105"
-                  : "bg-white/5 hover:bg-white/10 text-zinc-300 border border-white/10"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+                    ? "bg-metallic-gold text-black font-bold shadow-[0_0_20px_rgba(212,175,55,0.35)] scale-105"
+                    : "bg-white/5 hover:bg-white/10 text-zinc-300 border border-white/10"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Main Grid: Price List Table */}
-      <div className="max-w-5xl mx-auto w-full mb-16">
-        {/* Table Container */}
+      <div className="max-w-5xl mx-auto w-full mb-16 px-4 sm:px-6 lg:px-8">
         <div className="bg-[#FAFAFA] border border-[#d4af37]/40 rounded-3xl p-4 sm:p-7 shadow-xl backdrop-blur-xl">
           <div className="flex items-center justify-between pb-4 mb-4 border-b border-black/10">
             <div>
@@ -168,53 +152,44 @@ export default function SSSPhotoFramePricing() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-black/5">
-                {filteredFrames.map((item) => {
-                  return (
-                    <tr
-                      key={item.id}
-                      className="hover:bg-black/[0.02] transition-colors duration-150"
-                    >
-                      {/* Size */}
-                      <td className="py-3.5 px-3">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-zinc-900 text-sm sm:text-base font-mono">
-                            {item.size}
+                {filteredFrames.map((item) => (
+                  <tr
+                    key={item.id}
+                    onClick={() => setSelectedFrameForOrder(item)}
+                    className="hover:bg-[#d4af37]/10 transition-colors duration-150 cursor-pointer"
+                  >
+                    <td className="py-3.5 px-3">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-zinc-900 text-sm sm:text-base font-mono">{item.size}</span>
+                        <span className="text-[10px] text-zinc-500">Inches</span>
+                        {item.tag && (
+                          <span className="hidden md:inline px-2 py-0.5 rounded-full bg-[#d4af37]/20 border border-[#d4af37]/40 text-[#8b6508] text-[9px] font-extrabold uppercase">
+                            {item.tag}
                           </span>
-                          <span className="text-[10px] text-zinc-500">Inches</span>
-                          {item.tag && (
-                            <span className="hidden md:inline px-2 py-0.5 rounded-full bg-[#d4af37]/20 border border-[#d4af37]/40 text-[#8b6508] text-[9px] font-extrabold uppercase">
-                              {item.tag}
-                            </span>
-                          )}
-                        </div>
-                      </td>
-
-                      {/* Best For */}
-                      <td className="py-3.5 px-3 hidden sm:table-cell text-xs text-zinc-700 font-light">
-                        {item.bestFor}
-                      </td>
-
-                      {/* Price */}
-                      <td className="py-3.5 px-3">
-                        <div className="font-serif font-extrabold text-sm sm:text-base text-[#b8860b] text-center sm:text-left whitespace-nowrap">
-                          {item.price}
-                        </div>
-                      </td>
-
-                      {/* Action */}
-                      <td className="py-3.5 px-3 text-right">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedFrameForOrder(item)}
-                          className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-metallic-gold text-black font-bold text-xs uppercase tracking-wider transition-all duration-200 shadow-md hover:scale-105 inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
-                        >
-                          <span>Order</span>
-                          <ChevronRight size={13} className="hidden sm:inline" />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
+                        )}
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-3 hidden sm:table-cell text-xs text-zinc-700 font-light">{item.bestFor}</td>
+                    <td className="py-3.5 px-3">
+                      <div className="font-serif font-extrabold text-sm sm:text-base text-[#b8860b] text-center sm:text-left whitespace-nowrap">
+                        {item.price}
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-3 text-right">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedFrameForOrder(item);
+                        }}
+                        className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-metallic-gold text-black font-bold text-xs uppercase tracking-wider transition-all duration-200 shadow-md hover:scale-105 inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                      >
+                        <span>Order</span>
+                        <ChevronRight size={13} className="hidden sm:inline" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -228,15 +203,10 @@ export default function SSSPhotoFramePricing() {
         </div>
       </div>
 
-      {/* 3 Premium Finish Materials Showcase */}
       <div className="mb-14 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
-          <span className="text-xs uppercase tracking-widest text-[#d4af37] font-bold">
-            Craftsmanship &amp; Finish Options
-          </span>
-          <h3 className="text-2xl sm:text-3xl font-serif font-bold text-white mt-1">
-            Choose Your Signature Frame Medium
-          </h3>
+          <span className="text-xs uppercase tracking-widest text-[#d4af37] font-bold">Craftsmanship &amp; Finish Options</span>
+          <h3 className="text-2xl sm:text-3xl font-serif font-bold text-white mt-1">Choose Your Signature Frame Medium</h3>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -248,9 +218,7 @@ export default function SSSPhotoFramePricing() {
               <div>
                 <div className="text-3xl mb-3">{fin.icon}</div>
                 <h4 className="text-lg font-bold text-white mb-2">{fin.name}</h4>
-                <p className="text-xs text-zinc-300 font-light leading-relaxed mb-4">
-                  {fin.desc}
-                </p>
+                <p className="text-xs text-zinc-300 font-light leading-relaxed mb-4">{fin.desc}</p>
                 <ul className="space-y-2 border-t border-white/10 pt-4 text-xs text-zinc-300">
                   {fin.features.map((feat, idx) => (
                     <li key={idx} className="flex items-center gap-2">
@@ -260,7 +228,6 @@ export default function SSSPhotoFramePricing() {
                   ))}
                 </ul>
               </div>
-
               <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs">
                 <span className="text-zinc-400">Available across all sizes</span>
                 <span className="text-[#d4af37] font-semibold">100% Archival Quality</span>
@@ -270,34 +237,32 @@ export default function SSSPhotoFramePricing() {
         </div>
       </div>
 
-      {/* Studio Assurance Bar */}
-      <div className="p-6 rounded-3xl bg-[#15171E] border border-[#d4af37]/30 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left shadow-2xl">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#d4af37]/20 text-[#d4af37] flex items-center justify-center shrink-0">
-            <ShieldCheck size={26} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="p-6 rounded-3xl bg-[#15171E] border border-[#d4af37]/30 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left shadow-2xl">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-[#d4af37]/20 text-[#d4af37] flex items-center justify-center shrink-0">
+              <ShieldCheck size={26} />
+            </div>
+            <div>
+              <h4 className="font-bold text-white text-sm sm:text-base">
+                SSS Studio 1-Month Delivery Guarantee &amp; Lifetime Anti-Fade Inks
+              </h4>
+              <p className="text-xs text-zinc-300 font-light">
+                Handcrafted at 34, Prasanna New Colony, Avaniyapuram, Madurai with strict quality inspection.
+              </p>
+            </div>
           </div>
-          <div>
-            <h4 className="font-bold text-white text-sm sm:text-base">
-              SSS Studio 1-Month Delivery Guarantee &amp; Lifetime Anti-Fade Inks
-            </h4>
-            <p className="text-xs text-zinc-300 font-light">
-              Handcrafted at 34, Prasanna New Colony, Avaniyapuram, Madurai with strict quality inspection.
-            </p>
-          </div>
+          <a
+            href="https://wa.me/916383565425?text=Hello%20SSS%20Studio!%20I%20would%20like%20to%20inquire%20about%20custom%20photo%20frames."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-3 rounded-full bg-metallic-gold text-black font-bold text-xs uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer hover:scale-105 shadow-xl"
+          >
+            Ask Us on WhatsApp
+          </a>
         </div>
-
-        <a
-          href="https://wa.me/916383565425?text=Hello%20SSS%20Studio!%20I%20would%20like%20to%20inquire%20about%20custom%20photo%20frames."
-          target="_blank"
-          rel="noopener noreferrer"
-          className="px-6 py-3 rounded-full bg-metallic-gold text-black font-bold text-xs uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer hover:scale-105 shadow-xl"
-        >
-          Ask Us on WhatsApp 💬
-        </a>
-      </div>
       </div>
 
-      {/* 4-Step Order Modal */}
       <PhotoFrameOrderModal
         isOpen={!!selectedFrameForOrder}
         onClose={() => setSelectedFrameForOrder(null)}

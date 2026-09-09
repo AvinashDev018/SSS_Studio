@@ -81,15 +81,13 @@ const SortableEvent = ({ id, label, duration, onRemove, index }) => {
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
-      className="flex items-center justify-between p-3.5 mb-2 bg-[#12141c]/90 hover:bg-[#171924] rounded-2xl shadow-md cursor-grab active:cursor-grabbing border border-white/10 transition-all group hover:border-[#c5a880]/50"
+      className="flex items-center justify-between p-3.5 mb-2 bg-[#12141c]/90 hover:bg-[#171924] rounded-2xl shadow-md border border-white/10 transition-all group hover:border-[#c5a880]/50"
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 min-w-0">
         <span className="w-6 h-6 rounded-full bg-[#c5a880]/20 text-[#e5c590] border border-[#c5a880]/30 flex items-center justify-center text-[11px] font-bold shrink-0">
           {index + 1}
         </span>
-        <div>
+        <div className="min-w-0">
           <span className="font-bold text-white text-xs sm:text-sm block">{label}</span>
           <span className="text-[11px] text-[#c5a880]/80 font-light flex items-center gap-1 mt-0.5">
             <Clock size={11} /> ~{duration} Hours Coverage
@@ -97,13 +95,19 @@ const SortableEvent = ({ id, label, duration, onRemove, index }) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <GripVertical size={16} className="text-zinc-500 group-hover:text-[#c5a880] transition-colors" />
+      <div className="flex items-center gap-2 shrink-0">
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove(id);
-          }}
+          type="button"
+          {...attributes}
+          {...listeners}
+          className="text-zinc-500 hover:text-[#c5a880] p-1.5 rounded-lg cursor-grab active:cursor-grabbing"
+          aria-label={`Reorder ${label}`}
+        >
+          <GripVertical size={16} />
+        </button>
+        <button
+          type="button"
+          onClick={() => onRemove(id)}
           className="text-zinc-500 hover:text-red-400 p-1.5 rounded-lg hover:bg-red-500/10 transition-colors cursor-pointer"
           aria-label={`Remove ${label}`}
         >
@@ -224,7 +228,7 @@ export default function PackageCalculator({ isEmbedded = false }) {
 
   return (
     <section className="max-w-5xl mx-auto my-16 px-4 sm:px-6">
-      <div className="relative bg-gradient-to-b from-[#0e1017]/95 via-[#0b0c11]/95 to-[#07080b]/98 backdrop-blur-2xl border border-white/[0.08] rounded-[32px] p-6 sm:p-10 shadow-[0_20px_80px_rgba(0,0,0,0.85)] overflow-hidden">
+      <div className="relative bg-gradient-to-b from-[#0e1017]/95 via-[#0b0c11]/95 to-[#07080b]/95 backdrop-blur-2xl border border-white/[0.08] rounded-[32px] p-6 sm:p-10 shadow-[0_20px_80px_rgba(0,0,0,0.85)] overflow-hidden">
         {/* Ambient Warm Gold Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-36 bg-[#c5a880]/10 blur-[130px] pointer-events-none" />
 
@@ -381,7 +385,7 @@ export default function PackageCalculator({ isEmbedded = false }) {
         </div>
 
         {/* Step 3: Receipt Summary & Investment Card */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-[#141620]/95 via-[#0e1017]/95 to-[#090a0e]/98 border border-[#c5a880]/30 shadow-2xl relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-6">
+        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-[#141620]/95 via-[#0e1017]/95 to-[#090a0e]/95 border border-[#c5a880]/30 shadow-2xl relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-6">
           {/* Subtle Decorative Warm Gold Orb */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#c5a880]/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -410,9 +414,14 @@ export default function PackageCalculator({ isEmbedded = false }) {
                 <Users size={16} className="text-[#c5a880]" />
                 ~{crewSize} Dedicated Artists
               </div>
-              <div className="mt-2 inline-flex items-center gap-1.5 bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 px-3 py-1 rounded-full text-[11px] font-semibold">
-                <ShieldCheck size={13} className="text-emerald-400" />
-                <span>1-Month (30 Days) Delivery Guarantee</span>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <div className="inline-flex items-center gap-1.5 bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 px-3 py-1 rounded-full text-[11px] font-semibold">
+                  <ShieldCheck size={13} className="text-emerald-400" />
+                  <span>1-Month Delivery Guarantee</span>
+                </div>
+                <span className="text-[11px] text-amber-300 font-medium bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-full">
+                  Matching: {estimate.min <= 55000 ? "Package 1 (₹45k)" : estimate.min <= 80000 ? "Package 2 (₹75k)" : estimate.min <= 115000 ? "Package 3 (₹90k)" : estimate.min <= 180000 ? "Package 5 (₹1.5L)" : estimate.min <= 240000 ? "Package 7 (₹2.2L)" : "Package 8 (₹2.8L)"}
+                </span>
               </div>
             </div>
           </div>

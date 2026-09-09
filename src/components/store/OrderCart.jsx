@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createOrder } from "@/app/actions/orders";
 import { uploadImageToCloud } from "@/app/actions/upload";
+import { validatePromoCode, incrementPromoUse } from "@/app/actions/promos";
 import { useSession } from "next-auth/react";
 
 const loadScript = (src) => {
@@ -48,31 +49,25 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
  
  let discountAmount = 0;
  if (appliedPromo) {
- if (appliedPromo.type === "PERCENTAGE") {
- discountAmount = (itemTotal * appliedPromo.value) / 100;
- } else if (appliedPromo.type === "FIXED") {
- discountAmount = appliedPromo.value;
+ if (appliedPromo.type === "percentage" || appliedPromo.type === "PERCENTAGE") {
+ discountAmount = (itemTotal * appliedPromo.discount) / 100;
+ } else {
+ discountAmount = Number(appliedPromo.discount) || 0;
  }
  }
  
- const totalAmount = itemTotal - discountAmount + deliveryCharge;
+ const totalAmount = Math.max(0, itemTotal - discountAmount + deliveryCharge);
  const hasPhotoItem = items.some(item => item.hasCustomPhoto);
 
- const applyPromo = () => {
- const saved = localStorage.getItem("studioPromos");
- if (!saved) {
- setError("Invalid promo code.");
- return;
- }
- const promos = JSON.parse(saved);
- const found = promos.find(p => p.code === promoCode.toUpperCase() && p.active);
- if (found) {
- setAppliedPromo(found);
- setError("");
- } else {
- setAppliedPromo(null);
- setError("Invalid or inactive promo code.");
- }
+ const applyPromo = async () => {
+   setError("");
+   const res = await validatePromoCode(promoCode);
+   if (res.success && res.promo) {
+     setAppliedPromo(res.promo);
+   } else {
+     setAppliedPromo(null);
+     setError(res.error || "Invalid or inactive promo code.");
+   }
  };
 
  const handleImageUpload = (e) => {
@@ -189,6 +184,7 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
     // 4. Handle Cash Payment directly
     if (orderData.isCash) {
       localStorage.removeItem("studioCart");
+      if (appliedPromo?.id) await incrementPromoUse(appliedPromo.id);
       setCreatedOrderId(orderData.dbOrderId); 
       setCheckoutSuccess(true);
       setIsSubmitting(false);
@@ -218,6 +214,7 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
 
         if (verifyRes.success) {
           localStorage.removeItem("studioCart");
+          if (appliedPromo?.id) await incrementPromoUse(appliedPromo.id);
           setCreatedOrderId(orderData.dbOrderId); // Short db ID for user
           setCheckoutSuccess(true);
         } else {

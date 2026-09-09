@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import AdminNav from "@/components/admin/AdminNav";
 import { TrendingUp, Users, DollarSign, Package, BarChart3, Clock, CheckCheck, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import { getOrders } from "@/app/actions/orders";
 
 export default function AnalyticsDashboard() {
   const [stats, setStats] = useState({
@@ -14,34 +15,39 @@ export default function AnalyticsDashboard() {
   });
 
   const [statusData, setStatusData] = useState({
-    Pending: 0,
-    Processing: 0,
-    Shipped: 0,
-    Delivered: 0,
+    PENDING: 0,
+    PROCESSING: 0,
+    SHIPPED: 0,
+    DELIVERED: 0,
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const saved = localStorage.getItem("crm_orders");
-    if (saved) {
+    async function load() {
       try {
-        const orders = JSON.parse(saved);
+        const res = await getOrders();
+        const orders = res?.success ? res.orders || [] : [];
 
         let revenue = 0;
         let delivered = 0;
         let pending = 0;
-        const statusCounts = { Pending: 0, Processing: 0, Shipped: 0, Delivered: 0 };
+        const statusCounts = { PENDING: 0, PROCESSING: 0, SHIPPED: 0, DELIVERED: 0 };
 
         orders.forEach((order) => {
-          if (order.status === "Delivered") {
-            revenue += parseInt(order.totalAmount) || 0;
+          const status = String(order.status || "PENDING").toUpperCase();
+          if (status === "DELIVERED" || status === "PICKED_UP") {
+            revenue += Number(order.totalAmount) || 0;
             delivered++;
-          }
-          if (order.status === "Pending") {
+            statusCounts.DELIVERED++;
+          } else if (status === "PENDING") {
             pending++;
-          }
-
-          if (statusCounts[order.status] !== undefined) {
-            statusCounts[order.status]++;
+            statusCounts.PENDING++;
+          } else if (status === "PROCESSING") {
+            statusCounts.PROCESSING++;
+          } else if (status === "SHIPPED" || status === "READY_FOR_PICKUP") {
+            statusCounts.SHIPPED++;
+          } else if (statusCounts[status] !== undefined) {
+            statusCounts[status]++;
           }
         });
 
@@ -51,15 +57,23 @@ export default function AnalyticsDashboard() {
           deliveredOrders: delivered,
           pendingOrders: pending,
         });
-
         setStatusData(statusCounts);
       } catch (e) {
-        console.error("Error parsing crm_orders:", e);
+        console.error("Error loading analytics from orders:", e);
+      } finally {
+        setLoading(false);
       }
     }
+    load();
   }, []);
 
   const maxStatusCount = Math.max(...Object.values(statusData), 1);
+  const statusLabels = {
+    PENDING: "Pending",
+    PROCESSING: "Processing",
+    SHIPPED: "Shipped / Ready",
+    DELIVERED: "Delivered",
+  };
 
   return (
     <div className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen text-zinc-100 font-sans">
@@ -81,7 +95,8 @@ export default function AnalyticsDashboard() {
             Studio Performance &amp; Analytics
           </h1>
           <p className="text-xs sm:text-sm text-zinc-200 mt-1 font-normal max-w-2xl leading-relaxed">
-            Real-time tracking of studio revenue, client order delivery pipeline, and photo print fulfillment.
+            Live Prisma order data — revenue, delivery pipeline, and print fulfillment.
+            {loading ? " Loading…" : ""}
           </p>
         </div>
 
@@ -189,7 +204,7 @@ export default function AnalyticsDashboard() {
                   style={{ height: `${heightPercent}%` }}
                 />
                 <div className="mt-4 text-[11px] sm:text-xs font-bold text-zinc-300 uppercase tracking-wider text-center">
-                  {status}
+                  {statusLabels[status] || status}
                 </div>
               </div>
             );

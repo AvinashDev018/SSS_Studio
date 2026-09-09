@@ -3,7 +3,6 @@ import SSSAnnouncementBar from "@/components/layout/SSSAnnouncementBar";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import MultilingualWhatsAppWidget from "@/components/ui/MultilingualWhatsAppWidget";
-import ChatbotWidget from "@/components/ChatbotWidget";
 import CursorGlow from "@/components/ui/CursorGlow";
 import { Providers } from "@/components/Providers";
 import "./globals.css";

@@ -1,25 +1,105 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, MapPin, Palette, Clock, Award, ShieldCheck } from "lucide-react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { ArrowRight, Sparkles, MapPin, Palette, Clock } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
-export default function SSSHero({ onOpenBooking, onOpenQuote }) {
+const HERO_IMG =
+  "https://res.cloudinary.com/e5pnwpo5/image/upload/v1788426852/sss-hero-wedding.jpg";
+const SPREAD_IMG =
+  "https://res.cloudinary.com/e5pnwpo5/image/upload/v1788882990/sss_wedding_srijitha_sreeraj/srijitha_sreeraj_spread_1.png";
+
+function DepthHeroFrame() {
+  const ref = useRef(null);
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const smx = useSpring(mx, { stiffness: 70, damping: 22 });
+  const smy = useSpring(my, { stiffness: 70, damping: 22 });
+
+  const backX = useTransform(smx, [-40, 40], [-8, 8]);
+  const backY = useTransform(smy, [-40, 40], [-5, 5]);
+  const midX = useTransform(smx, [-40, 40], [-18, 18]);
+  const midY = useTransform(smy, [-40, 40], [-12, 12]);
+  const frontX = useTransform(smx, [-40, 40], [-32, 32]);
+  const frontY = useTransform(smy, [-40, 40], [-20, 20]);
+
+  const onMove = (e) => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+    mx.set((e.clientX - (rect.left + rect.width / 2)) / 14);
+    my.set((e.clientY - (rect.top + rect.height / 2)) / 14);
+  };
+
+  return (
+    <div
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseLeave={() => {
+        mx.set(0);
+        my.set(0);
+      }}
+      className="relative rounded-2xl overflow-hidden border border-[#d4af37]/40 shadow-[0_20px_50px_rgba(0,0,0,0.12)] bg-zinc-900 aspect-[4/3] group-hover:border-[#d4af37] transition-colors duration-500"
+    >
+      <motion.div className="absolute inset-[-10%]" style={{ x: backX, y: backY }}>
+        <Image
+          src={HERO_IMG}
+          alt=""
+          fill
+          priority
+          unoptimized
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover object-center opacity-55 blur-[1.5px] scale-110"
+        />
+      </motion.div>
+
+      <motion.div
+        className="absolute left-[7%] top-[9%] right-[7%] bottom-[18%] overflow-hidden rounded-xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.45)]"
+        style={{ x: midX, y: midY }}
+      >
+        <Image
+          src={SPREAD_IMG}
+          alt="SSS Studio Luxury Editorial Wedding Photography"
+          fill
+          priority
+          unoptimized
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover object-center"
+        />
+      </motion.div>
+
+      <motion.div className="pointer-events-none absolute inset-0" style={{ x: frontX, y: frontY }}>
+        <div className="absolute right-[14%] top-[16%] h-24 w-24 rounded-full bg-[#d4af37]/30 blur-3xl" />
+        <div className="absolute bottom-[28%] left-[36%] h-14 w-14 rounded-full bg-white/25 blur-2xl" />
+        <div className="absolute right-[22%] bottom-[32%] h-1.5 w-1.5 rounded-full bg-[#d4af37]" />
+        <div className="absolute right-[28%] top-[34%] h-1 w-1 rounded-full bg-white/90" />
+      </motion.div>
+
+      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/20 pointer-events-none" />
+
+      <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between text-xs text-white/90 backdrop-blur-md bg-black/60 px-4 py-2.5 rounded-xl border border-white/10">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#d4af37]" />
+          <span className="font-serif italic text-sm tracking-wide text-white">The Royal Heritage Series</span>
+        </div>
+        <span className="text-[11px] tracking-widest text-[#d4af37] uppercase font-mono">Avaniyapuram Lab</span>
+      </div>
+    </div>
+  );
+}
+
+export default function SSSHero({ onOpenBooking, onOpenQuote, onOpenMoodboard }) {
   const { t } = useLanguage();
 
   return (
     <section className="relative min-h-[90vh] flex flex-col justify-center overflow-hidden pt-10 pb-14 bg-white text-zinc-900">
-      {/* Subtle Ambient Vignette & Warm Gold Spotlight */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[360px] bg-[#d4af37]/15 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[450px] h-[450px] bg-zinc-100/80 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(#00000008_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none opacity-60" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center">
-        
-        {/* Top Status Badge */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -33,40 +113,16 @@ export default function SSSHero({ onOpenBooking, onOpenQuote }) {
           <span className="truncate">Open for 2026-27 Bookings • Avaniyapuram, Madurai</span>
         </motion.div>
 
-        {/* Editorial Split Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center w-full">
-          
-          {/* Left Column: High-Fashion Editorial Wedding Photography Frame */}
           <motion.div
             initial={{ opacity: 0, x: -24 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
             className="lg:col-span-6 relative group"
           >
-            <div className="relative rounded-2xl overflow-hidden border border-[#d4af37]/40 shadow-[0_20px_50px_rgba(0,0,0,0.12)] bg-zinc-100 aspect-[4/3] group-hover:border-[#d4af37] transition-colors duration-500">
-              <Image
-                src="https://res.cloudinary.com/e5pnwpo5/image/upload/v1788426852/sss-hero-wedding.jpg"
-                alt="SSS Studio Luxury Editorial Wedding Photography"
-                fill
-                priority
-                unoptimized
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
-
-              {/* Editorial Frame Overlay Tag */}
-              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs text-white/90 backdrop-blur-md bg-black/60 px-4 py-2.5 rounded-xl border border-white/10">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#d4af37]" />
-                  <span className="font-serif italic text-sm tracking-wide text-white">The Royal Heritage Series</span>
-                </div>
-                <span className="text-[11px] tracking-widest text-[#d4af37] uppercase font-mono">Avaniyapuram Lab</span>
-              </div>
-            </div>
+            <DepthHeroFrame />
           </motion.div>
 
-          {/* Right Column: High-Fashion Typography & Actions */}
           <motion.div
             initial={{ opacity: 0, x: 24 }}
             animate={{ opacity: 1, x: 0 }}
@@ -89,34 +145,68 @@ export default function SSSHero({ onOpenBooking, onOpenQuote }) {
               Professional wedding, portrait, and milestone event photography with our guaranteed 1-month delivery promise.
             </p>
 
-            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-black/15 bg-black/[0.04] text-xs text-zinc-900 font-bold mb-8 shadow-sm">
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-black/15 bg-black/[0.04] text-xs text-zinc-900 font-bold mb-6 shadow-sm">
               <MapPin size={13} className="text-[#b8860b]" />
               <span>Madurai, Tamil Nadu</span>
             </div>
 
-            {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-4 w-full sm:w-auto">
+            {/* Primary Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto mb-5">
               <button
                 onClick={() => onOpenBooking && onOpenBooking("Wedding & Event Photo Shoot")}
-                className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-metallic-gold text-black font-bold text-xs tracking-wider uppercase shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-metallic-gold text-black font-extrabold text-xs tracking-wider uppercase shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>{t?.hero?.bookBtn || "Book a Consultation"}</span>
                 <ArrowRight size={14} />
               </button>
 
+              <button
+                onClick={() => onOpenMoodboard && onOpenMoodboard()}
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-500 text-black font-black text-xs tracking-wider uppercase shadow-xl hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] hover:scale-105 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border border-amber-300 group"
+              >
+                <Sparkles size={16} className="text-black group-hover:rotate-12 transition-transform duration-300" />
+                <span>✨ Match Moodboard (AI)</span>
+              </button>
+
               <Link
                 href="/#portfolio"
-                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-black/[0.04] hover:bg-black/[0.08] text-zinc-900 font-bold text-xs tracking-wider uppercase border border-[#d4af37]/40 hover:border-[#d4af37] transition-all duration-300 flex items-center justify-center gap-2 backdrop-blur-sm"
+                className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-black/[0.04] hover:bg-black/[0.08] text-zinc-900 font-bold text-xs tracking-wider uppercase border border-[#d4af37]/40 hover:border-[#d4af37] transition-all duration-300 flex items-center justify-center gap-2 backdrop-blur-sm"
               >
-                <span>Explore Portfolio</span>
+                <span>Portfolio</span>
                 <ArrowRight size={14} className="text-[#b8860b]" />
               </Link>
             </div>
-          </motion.div>
 
+            {/* Eye-Catching Moodboard Vision Matcher Banner Callout */}
+            <div
+              onClick={() => onOpenMoodboard && onOpenMoodboard()}
+              className="w-full max-w-lg p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-yellow-500/15 to-amber-500/10 border border-[#d4af37]/60 hover:border-[#d4af37] shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center justify-between gap-3 group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center text-black shrink-0 shadow-sm group-hover:scale-110 transition-transform">
+                  <Sparkles size={20} />
+                </div>
+                <div className="text-left">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] sm:text-xs font-black text-zinc-900 tracking-wide uppercase">
+                      Pinterest / Instagram Moodboard Matcher
+                    </span>
+                    <span className="text-[9px] font-extrabold bg-[#d4af37] text-black px-1.5 py-0.5 rounded-full uppercase">
+                      AI Vision
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-zinc-600 font-medium">
+                    Upload screenshots to match SSS Studio presets & styles instantly
+                  </p>
+                </div>
+              </div>
+              <span className="text-xs font-bold text-[#8b6508] shrink-0 group-hover:translate-x-1 transition-transform">
+                Try Now →
+              </span>
+            </div>
+          </motion.div>
         </div>
 
-        {/* Floating Studio Commitments Cards Strip (Matches Approved Mockup) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -128,7 +218,6 @@ export default function SSSHero({ onOpenBooking, onOpenQuote }) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* 100% Color Accuracy Card */}
             <div className="bg-[#FAFAFA] border border-[#d4af37]/30 hover:border-[#d4af37] p-6 rounded-2xl flex items-center gap-5 transition-all duration-300 shadow-md">
               <div className="w-14 h-14 rounded-xl bg-[#d4af37]/15 border border-[#d4af37]/30 flex items-center justify-center shrink-0">
                 <Palette className="w-7 h-7 text-[#b8860b]" />
@@ -140,7 +229,6 @@ export default function SSSHero({ onOpenBooking, onOpenQuote }) {
               </div>
             </div>
 
-            {/* 1-Month Delivery Guarantee Card */}
             <div className="bg-[#FAFAFA] border border-[#d4af37]/30 hover:border-[#d4af37] p-6 rounded-2xl flex items-center gap-5 transition-all duration-300 shadow-md">
               <div className="w-14 h-14 rounded-xl bg-[#d4af37]/15 border border-[#d4af37]/30 flex items-center justify-center shrink-0">
                 <Clock className="w-7 h-7 text-[#b8860b]" />
@@ -153,9 +241,7 @@ export default function SSSHero({ onOpenBooking, onOpenQuote }) {
             </div>
           </div>
         </motion.div>
-
       </div>
     </section>
   );
 }
-

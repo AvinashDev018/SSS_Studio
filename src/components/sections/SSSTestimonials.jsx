@@ -124,7 +124,8 @@ export default function SSSTestimonials({ onOpenReviewModal }) {
     loadApproved();
   }, []);
 
-  const testimonials = [...dbTestimonials, ...defaultTestimonials];
+  const testimonials =
+    dbTestimonials.length > 0 ? dbTestimonials : defaultTestimonials;
 
   return (
     <section id="testimonials" className="py-24 bg-[#060807] relative overflow-hidden border-t border-amber-500/15">
