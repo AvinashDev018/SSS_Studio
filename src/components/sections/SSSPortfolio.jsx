@@ -1,16 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, X, ChevronLeft, ChevronRight, Sparkles, BookOpen, Upload, FileText, Play, Film } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import MoodboardMatcherModal from "@/components/ui/MoodboardMatcherModal";
 import WeddingAlbumPdfModal from "@/components/ui/WeddingAlbumPdfModal";
+import { getFeaturedPhotos } from "@/app/actions/gallery";
 
 const getYouTubeEmbedUrl = (url) => {
   if (!url) return "";
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
   return match ? `https://www.youtube.com/embed/${match[1]}?autoplay=1&rel=0` : url;
+};
+
+const CATEGORY_MAP = {
+  Weddings: "wedding",
+  "Pre-Wedding & Post Wedding": "pre-wedding",
+  "Baby Photo Shoot": "baby-maternity",
+  "Maternity Shoot": "baby-maternity",
+  "Birthday Shoot": "birthday-events",
+  "School & College Events": "birthday-events",
 };
 
 const PORTFOLIO_PROJECTS = [
@@ -156,6 +166,13 @@ export default function SSSPortfolio() {
   const [isMoodboardOpen, setIsMoodboardOpen] = useState(false);
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [isInfoExpanded, setIsInfoExpanded] = useState(true);
+  const [featuredPhotos, setFeaturedPhotos] = useState([]);
+
+  useEffect(() => {
+    getFeaturedPhotos()
+      .then((photos) => setFeaturedPhotos(Array.isArray(photos) ? photos : []))
+      .catch(() => setFeaturedPhotos([]));
+  }, []);
 
   const categories = [
     { id: "all", label: t.portfolio.all },
@@ -165,7 +182,30 @@ export default function SSSPortfolio() {
     { id: "birthday-events", label: t.portfolio.birthday },
   ];
 
-  const filteredProjects = PORTFOLIO_PROJECTS.filter((proj) =>
+  const portfolioProjects = useMemo(() => {
+    const byCategory = {};
+    featuredPhotos.forEach((photo) => {
+      const key = CATEGORY_MAP[photo.category] || "wedding";
+      if (!byCategory[key]) byCategory[key] = [];
+      byCategory[key].push(photo.url);
+    });
+
+    return PORTFOLIO_PROJECTS.map((proj) => {
+      const featured = byCategory[proj.category];
+      if (!featured?.length || proj.videoUrl) return proj;
+      const mergedImages = [...featured, ...(proj.images || [])].filter(
+        (url, idx, arr) => arr.indexOf(url) === idx
+      );
+      return {
+        ...proj,
+        avatar: featured[0] || proj.avatar,
+        images: mergedImages,
+        description: `${proj.description} Featured gallery picks from the live studio CMS.`,
+      };
+    });
+  }, [featuredPhotos]);
+
+  const filteredProjects = portfolioProjects.filter((proj) =>
     activeTab === "all" ? true : proj.category === activeTab
   );
 

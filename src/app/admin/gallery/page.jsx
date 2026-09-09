@@ -13,9 +13,10 @@ import {
   CheckCircle2,
   ExternalLink,
   RefreshCw,
-  AlertCircle
+  AlertCircle,
+  Star
 } from "lucide-react";
-import { getPhotos, addPhoto, deletePhoto } from "@/app/actions/gallery";
+import { getPhotos, addPhoto, deletePhoto, togglePhotoFeatured } from "@/app/actions/gallery";
 import { uploadImageToCloud } from "@/app/actions/upload";
 
 const CATEGORIES = [
@@ -43,6 +44,12 @@ export default function AdminGalleryPage() {
 
   useEffect(() => {
     loadGallery();
+    fetch("/api/upload-pdf")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.url) setPdfUrl(data.url);
+      })
+      .catch(() => {});
   }, []);
 
   const loadGallery = async () => {
@@ -145,6 +152,15 @@ export default function AdminGalleryPage() {
       } else {
         alert("Failed to delete photo.");
       }
+    }
+  };
+
+  const handleToggleFeatured = async (item) => {
+    const result = await togglePhotoFeatured(item.id, !item.featured);
+    if (result.success) {
+      await loadGallery();
+    } else {
+      alert(result.error || "Failed to update featured status.");
     }
   };
 
@@ -368,17 +384,35 @@ export default function AdminGalleryPage() {
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4">
-                <span className="self-start px-2.5 py-1 bg-black/60 backdrop-blur-md rounded-full text-amber-300 text-[10px] font-bold uppercase tracking-wider border border-amber-500/30">
-                  {item.category}
-                </span>
+                <div className="flex items-start justify-between gap-2">
+                  <span className="self-start px-2.5 py-1 bg-black/60 backdrop-blur-md rounded-full text-amber-300 text-[10px] font-bold uppercase tracking-wider border border-amber-500/30">
+                    {item.category}
+                  </span>
+                  {item.featured && (
+                    <span className="px-2 py-1 rounded-full bg-amber-400 text-black text-[10px] font-black uppercase">Home</span>
+                  )}
+                </div>
 
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  className="self-end bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-xl shadow-lg transition-transform hover:scale-110 cursor-pointer"
-                  title="Delete Photo"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                <div className="flex items-center justify-end gap-2">
+                  <button
+                    onClick={() => handleToggleFeatured(item)}
+                    className={`p-2 rounded-xl shadow-lg transition-transform hover:scale-110 cursor-pointer ${
+                      item.featured
+                        ? "bg-amber-400 text-black"
+                        : "bg-black/70 text-amber-300 border border-amber-500/40"
+                    }`}
+                    title={item.featured ? "Remove from homepage" : "Feature on homepage"}
+                  >
+                    <Star className="w-4 h-4" fill={item.featured ? "currentColor" : "none"} />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-xl shadow-lg transition-transform hover:scale-110 cursor-pointer"
+                    title="Delete Photo"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
           ))

@@ -191,6 +191,7 @@ export async function addPhoto(formDataOrUrl, maybeCategory) {
     });
     revalidatePath("/gallery");
     revalidatePath("/admin/gallery");
+    revalidatePath("/");
     return { success: true, photo };
   } catch (error) {
     console.error("Error adding photo:", error);
@@ -205,9 +206,38 @@ export async function deletePhoto(id) {
  });
  revalidatePath("/gallery");
  revalidatePath("/admin/gallery");
+ revalidatePath("/");
  return { success: true };
  } catch (error) {
  console.error("Error deleting photo:", error);
  return { success: false, error: "Failed to delete photo." };
  }
+}
+
+export async function togglePhotoFeatured(id, featured) {
+  try {
+    const photo = await prisma.photo.update({
+      where: { id },
+      data: { featured: !!featured },
+    });
+    revalidatePath("/gallery");
+    revalidatePath("/admin/gallery");
+    revalidatePath("/");
+    return { success: true, photo };
+  } catch (error) {
+    console.error("Error toggling featured photo:", error);
+    return { success: false, error: "Failed to update featured status." };
+  }
+}
+
+export async function getFeaturedPhotos() {
+  try {
+    return await prisma.photo.findMany({
+      where: { featured: true },
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (error) {
+    console.error("Error fetching featured photos:", error);
+    return [];
+  }
 }

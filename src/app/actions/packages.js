@@ -240,11 +240,47 @@ export async function addPackage(formData) {
  });
  revalidatePath("/packages");
  revalidatePath("/admin/packages");
+ revalidatePath("/");
  return { success: true, pkg };
  } catch (error) {
  console.error("Error adding package:", error);
  return { success: false, error: "Failed to add package" };
  }
+}
+
+export async function updatePackage(formData) {
+  try {
+    const id = formData.get("id");
+    if (!id) return { success: false, error: "Package id is required" };
+
+    const name = formData.get("name");
+    const price = formData.get("price");
+    const description = formData.get("description");
+    const featuresStr = formData.get("features") || "";
+    const popular = formData.get("popular") === "on" || formData.get("popular") === "true";
+
+    const pkg = await prisma.package.update({
+      where: { id: String(id) },
+      data: {
+        name,
+        price,
+        description,
+        features: String(featuresStr)
+          .split(",")
+          .map((f) => f.trim())
+          .filter((f) => f.length > 0),
+        popular,
+      },
+    });
+
+    revalidatePath("/packages");
+    revalidatePath("/admin/packages");
+    revalidatePath("/");
+    return { success: true, pkg };
+  } catch (error) {
+    console.error("Error updating package:", error);
+    return { success: false, error: "Failed to update package" };
+  }
 }
 
 export async function deletePackage(id) {
@@ -254,6 +290,7 @@ export async function deletePackage(id) {
  });
  revalidatePath("/packages");
  revalidatePath("/admin/packages");
+ revalidatePath("/");
  return { success: true };
  } catch (error) {
  console.error("Error deleting package:", error);

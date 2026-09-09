@@ -1,5 +1,3 @@
-import fs from "fs";
-import path from "path";
 import { prisma } from "@/lib/prisma";
 
 // 1. Tool Schemas for DeepSeek Tool Calling
@@ -27,6 +25,23 @@ export const AGENT_TOOLS = [
           max_budget: {
             type: "number",
             description: "Maximum budget in INR (optional)",
+          },
+        },
+        required: [],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "query_packages",
+      description: "Fetch the live SSS Studio photography packages and current prices from the database (weddings, pre-wedding, maternity, baby/birthday).",
+      parameters: {
+        type: "object",
+        properties: {
+          event_hint: {
+            type: "string",
+            description: "Optional event type hint such as wedding, maternity, baby, prewedding",
           },
         },
         required: [],
@@ -105,6 +120,23 @@ export const AGENT_TOOLS = [
   {
     type: "function",
     function: {
+      name: "explain_website",
+      description: "Explain any SSS Studio website page or feature: Home, Packages, Store, Gallery, Book, Track Order, Visualizer, Contact, promo codes, how to book, how to order frames.",
+      parameters: {
+        type: "object",
+        properties: {
+          topic: {
+            type: "string",
+            description: "Page or topic, e.g. home, packages, store, gallery, book, track, frames, promo, visualizer, contact, website",
+          },
+        },
+        required: ["topic"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "fetch_recent_shoots",
       description: "Fetch recent portfolio photography shoots and real sample photos (Wedding, Muhurtham, Pre-Wedding, Maternity, Baby, 1st Birthday) to present to the user.",
       parameters: {
@@ -128,24 +160,18 @@ export async function executeAgentTool(name, args) {
   try {
     switch (name) {
       case "query_frames": {
-        const framesFilePath = path.join(process.cwd(), "src", "data", "frames.json");
-        let frames = [];
-        if (fs.existsSync(framesFilePath)) {
-          frames = JSON.parse(fs.readFileSync(framesFilePath, "utf-8"));
-        }
+        const { getFrames } = await import("@/app/actions/frames");
+        const frames = await getFrames({ admin: false });
 
         const maxBudget = args.max_budget || Infinity;
         const room = (args.room_type || "").toLowerCase();
         const wall = (args.wall_space || "").toLowerCase();
-        const photo = (args.photo_type || "").toLowerCase();
 
-        // Scoring frames based on room, wall space and budget
         const scored = frames
           .filter((f) => f.numericPrice <= maxBudget)
           .map((f) => {
             let score = 0;
             const bestFor = (f.bestFor || "").toLowerCase();
-            const tag = (f.tag || "").toLowerCase();
 
             if (wall.includes("sofa") || room.includes("living") || wall.includes("hall")) {
               if (f.width >= 16) score += 5;
@@ -176,6 +202,24 @@ export async function executeAgentTool(name, args) {
             popular: f.popular,
           })),
           finishesAvailable: ["Sparkle Lamination (Glitter/Luxury)", "Matte Finish (Anti-Glare)", "High Gloss"],
+        };
+      }
+
+      case "query_packages": {
+        const { getPackages } = await import("@/app/actions/packages");
+        const packages = await getPackages();
+        return {
+          action: "LIST_PACKAGES",
+          status: "success",
+          count: packages.length,
+          packages: packages.map((p) => ({
+            id: p.id,
+            name: p.name,
+            price: p.price,
+            description: p.description,
+            features: p.features,
+            popular: p.popular,
+          })),
         };
       }
 
@@ -368,6 +412,53 @@ export async function executeAgentTool(name, args) {
           summary,
           estimatedTotal: total,
           phone: "+91 63835 65425",
+        };
+      }
+
+      case "explain_website": {
+        const { WEBSITE_MAP, findRouteForQuery, buildWebsiteGuideReply } = await import("./websiteKnowledge.js");
+        const topic = String(args.topic || "website").toLowerCase();
+        const route = findRouteForQuery(topic) || WEBSITE_MAP.routes.find((r) => topic.includes(r.path.replace("/", "")) || topic.includes(r.name.toLowerCase()));
+
+        let packagesText = "";
+        let framesText = "";
+        try {
+          const { getPackages } = await import("@/app/actions/packages");
+          const { getFrames } = await import("@/app/actions/frames");
+          const pkgs = await getPackages();
+          const frames = await getFrames({ admin: false });
+          packagesText = pkgs.slice(0, 8).map((p) => `• ${p.name}: ${p.price}`).join("\n");
+          const prices = frames.map((f) => f.numericPrice);
+          framesText =
+            frames.length > 0
+              ? `• ${frames.length} live sizes from ₹${Math.min(...prices).toLocaleString("en-IN")} to ₹${Math.max(...prices).toLocaleString("en-IN")}`
+              : "";
+        } catch (_) {}
+
+        let howto = null;
+        if (topic.includes("book")) howto = WEBSITE_MAP.howTos.bookShoot;
+        if (topic.includes("frame") || topic.includes("buy") || topic.includes("order") || topic.includes("store")) howto = WEBSITE_MAP.howTos.buyFrame;
+        if (topic.includes("track")) howto = WEBSITE_MAP.howTos.trackOrder;
+        if (topic.includes("promo") || topic.includes("coupon") || topic.includes("voucher")) howto = WEBSITE_MAP.howTos.usePromo;
+        if (topic.includes("package") || topic.includes("price")) howto = WEBSITE_MAP.howTos.seePackages;
+        if (topic.includes("gallery") || topic.includes("portfolio")) howto = WEBSITE_MAP.howTos.seePortfolio;
+
+        return {
+          action: "EXPLAIN_WEBSITE",
+          status: "success",
+          topic,
+          route: route
+            ? { path: route.path, name: route.name, purpose: route.purpose }
+            : null,
+          howto,
+          homepageSections: WEBSITE_MAP.homepageSections,
+          guide: buildWebsiteGuideReply({
+            lang: "en",
+            route,
+            packagesText,
+            framesText,
+          }),
+          studio: WEBSITE_MAP.studio,
         };
       }
 

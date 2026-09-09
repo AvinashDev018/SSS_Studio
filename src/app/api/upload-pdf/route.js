@@ -1,7 +1,41 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import crypto from "crypto";
 import { PDFDocument, PDFName } from "pdf-lib";
+import { setSiteAsset } from "@/app/actions/frames";
+
+async function uploadPdfToCloudinary(buffer, filename) {
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+  const apiKey = process.env.CLOUDINARY_API_KEY;
+  const apiSecret = process.env.CLOUDINARY_API_SECRET;
+  if (!cloudName || !apiKey || !apiSecret) return null;
+
+  const timestamp = Math.round(Date.now() / 1000);
+  const publicId = `sss-wedding-album/${filename.replace(/\.pdf$/i, "")}`;
+  const folder = "sss-wedding-album";
+  const signatureString = `folder=${folder}&public_id=${publicId}&timestamp=${timestamp}${apiSecret}`;
+  const signature = crypto.createHash("sha1").update(signatureString).digest("hex");
+
+  const formData = new FormData();
+  const blob = new Blob([buffer], { type: "application/pdf" });
+  formData.append("file", blob, filename);
+  formData.append("api_key", apiKey);
+  formData.append("timestamp", String(timestamp));
+  formData.append("signature", signature);
+  formData.append("folder", folder);
+  formData.append("public_id", publicId);
+  formData.append("resource_type", "raw");
+
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, {
+    method: "POST",
+    body: formData,
+  });
+  const data = await res.json();
+  if (res.ok && data.secure_url) return data.secure_url;
+  console.warn("Cloudinary PDF upload failed:", data);
+  return null;
+}
 
 export async function POST(request) {
   try {
@@ -20,17 +54,28 @@ export async function POST(request) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Ensure public/docs folder exists
+    // Best-effort local copy for page extraction / local preview
     const docsDir = path.join(process.cwd(), "public", "docs");
     if (!fs.existsSync(docsDir)) {
       fs.mkdirSync(docsDir, { recursive: true });
     }
-
-    // Save both sample-wedding-album.pdf and srijitha-sreeraj-wedding-album.pdf
     fs.writeFileSync(path.join(docsDir, "sample-wedding-album.pdf"), buffer);
     fs.writeFileSync(path.join(docsDir, "srijitha-sreeraj-wedding-album.pdf"), buffer);
 
-    // Extract pages for zero-lag 60fps web viewer
+    let cloudUrl = null;
+    try {
+      cloudUrl = await uploadPdfToCloudinary(buffer, "srijitha-sreeraj-wedding-album.pdf");
+    } catch (cloudErr) {
+      console.warn("Cloudinary PDF upload error:", cloudErr.message);
+    }
+
+    const publicUrl = cloudUrl || `/docs/srijitha-sreeraj-wedding-album.pdf`;
+    await setSiteAsset("wedding_album_pdf", publicUrl, {
+      fileName: name,
+      fileSize: buffer.length,
+      cloudinary: !!cloudUrl,
+    });
+
     let extractedCount = 0;
     try {
       const pdfDoc = await PDFDocument.load(buffer);
@@ -77,14 +122,31 @@ export async function POST(request) {
 
     return NextResponse.json({
       success: true,
-      url: `/docs/sample-wedding-album.pdf?t=${Date.now()}`,
+      url: `${publicUrl}${publicUrl.includes("?") ? "&" : "?"}t=${Date.now()}`,
       fileName: name,
       fileSize: `${(buffer.length / (1024 * 1024)).toFixed(2)} MB`,
       pagesExtracted: extractedCount,
-      message: `Wedding Album PDF updated successfully (${(buffer.length / (1024 * 1024)).toFixed(2)} MB, ${extractedCount} pages extracted for instant viewer)!`,
+      hostedOn: cloudUrl ? "cloudinary" : "local",
+      message: `Wedding Album PDF updated successfully (${(buffer.length / (1024 * 1024)).toFixed(2)} MB, ${extractedCount} pages extracted)!`,
     });
   } catch (err) {
     console.error("PDF upload error:", err);
     return NextResponse.json({ error: "Failed to save PDF: " + err.message }, { status: 500 });
+  }
+}
+
+export async function GET() {
+  try {
+    const { getSiteAsset } = await import("@/app/actions/frames");
+    const asset = await getSiteAsset("wedding_album_pdf");
+    return NextResponse.json({
+      url: asset?.url || "/docs/srijitha-sreeraj-wedding-album.pdf",
+      meta: asset?.meta || null,
+    });
+  } catch (error) {
+    return NextResponse.json({
+      url: "/docs/srijitha-sreeraj-wedding-album.pdf",
+      meta: null,
+    });
   }
 }

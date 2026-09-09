@@ -49,6 +49,7 @@ export default function WeddingAlbumPdfModal({ isOpen, onClose }) {
   const [viewMode, setViewMode] = useState("spreads"); // 'spreads' | 'pdf'
   const [isAnimationDone, setIsAnimationDone] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState("/docs/srijitha-sreeraj-wedding-album.pdf");
   const thumbnailsRef = useRef(null);
 
   const handleNext = () => {
@@ -71,6 +72,12 @@ export default function WeddingAlbumPdfModal({ isOpen, onClose }) {
       setCurrentIndex(0);
       setIsAnimationDone(false);
       const timer = setTimeout(() => setIsAnimationDone(true), 250);
+      fetch("/api/upload-pdf")
+        .then((r) => r.json())
+        .then((data) => {
+          if (data?.url) setPdfUrl(data.url);
+        })
+        .catch(() => {});
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
@@ -222,7 +229,7 @@ export default function WeddingAlbumPdfModal({ isOpen, onClose }) {
 
               {/* Direct PDF Download */}
               <a
-                href="/docs/srijitha-sreeraj-wedding-album.pdf"
+                href={pdfUrl}
                 download="The_Wedding_of_Srijitha_Sreeraj_Album_40_Pages.pdf"
                 className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-[#d4af37] border border-[#d4af37]/40 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-md"
                 title="Download Full 40-Page Album PDF"
@@ -233,7 +240,7 @@ export default function WeddingAlbumPdfModal({ isOpen, onClose }) {
 
               {/* Open in New Tab */}
               <a
-                href="/docs/srijitha-sreeraj-wedding-album.pdf"
+                href={pdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-1.5 sm:p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white border border-zinc-700 transition-colors cursor-pointer"
@@ -268,7 +275,11 @@ export default function WeddingAlbumPdfModal({ isOpen, onClose }) {
             <div className="flex-1 w-full h-full bg-zinc-900 p-2 sm:p-3 relative overflow-hidden flex flex-col">
               {isAnimationDone ? (
                 <iframe
-                  src="/docs/srijitha-sreeraj-wedding-album.pdf#toolbar=1&navpanes=0&view=FitH"
+                  src={
+                    pdfUrl.includes("res.cloudinary.com")
+                      ? pdfUrl
+                      : `${pdfUrl.split("#")[0]}#toolbar=1&navpanes=0&view=FitH`
+                  }
                   className="w-full h-full rounded-xl bg-zinc-950 border border-[#d4af37]/20 shadow-2xl"
                   title="The Wedding of Srijitha + Sreeraj Album PDF"
                   loading="lazy"

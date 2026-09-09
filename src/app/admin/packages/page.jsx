@@ -1,8 +1,9 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { getPackages, addPackage, deletePackage } from "@/app/actions/packages";
+import { getPackages, addPackage } from "@/app/actions/packages";
 import AdminNav from "@/components/admin/AdminNav";
-import { Trash2, Plus, Check, Package, Sparkles } from "lucide-react";
+import PackageAdminCard from "@/components/admin/PackageAdminCard";
+import { Plus, Package } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -122,43 +123,7 @@ export default async function AdminPackages() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {packages.map((pkg) => (
-                <div
-                  key={pkg.id}
-                  className="relative group rounded-3xl p-6 bg-[#0e0e0a] border border-amber-500/40 hover:border-amber-400 transition-all duration-300 flex flex-col justify-between shadow-2xl"
-                >
-                  {pkg.popular && (
-                    <div className="absolute top-0 right-0 bg-gradient-to-r from-amber-400 to-yellow-500 text-black text-[11px] font-black uppercase tracking-wider px-3.5 py-1 rounded-bl-xl rounded-tr-2xl shadow-md z-10">
-                      ★ Popular Choice
-                    </div>
-                  )}
-
-                  <div>
-                    <h3 className="text-xl font-serif font-extrabold text-white mb-2 leading-tight pr-12">{pkg.name}</h3>
-                    <div className="text-3xl font-black text-amber-400 mb-3 font-mono tracking-tight drop-shadow-sm">
-                      {typeof pkg.price === 'number' ? `₹${pkg.price}` : pkg.price}
-                    </div>
-                    <p className="text-zinc-200 text-xs mb-4 font-normal leading-relaxed bg-zinc-950/70 p-3 rounded-xl border border-zinc-800/80">{pkg.description}</p>
-
-                    <ul className="space-y-2 mb-6">
-                      {(Array.isArray(pkg.features) 
-                        ? pkg.features 
-                        : (typeof pkg.features === 'string' ? pkg.features.split(',') : [])
-                      ).map((feature, idx) => (
-                        <li key={idx} className="flex items-start gap-2.5 text-zinc-100 text-xs font-semibold">
-                          <Check className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                          <span>{typeof feature === 'string' ? feature.trim() : feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <form action={deletePackage.bind(null, pkg.id)} className="mt-auto pt-4 border-t border-amber-500/25">
-                    <button className="w-full flex items-center justify-center gap-1.5 py-2.5 bg-red-500/15 hover:bg-red-500/25 text-red-200 border border-red-500/30 rounded-xl transition-colors font-extrabold text-xs cursor-pointer shadow-sm">
-                      <Trash2 className="w-3.5 h-3.5" />
-                      Delete Package
-                    </button>
-                  </form>
-                </div>
+                <PackageAdminCard key={pkg.id} pkg={pkg} />
               ))}
             </div>
           )}

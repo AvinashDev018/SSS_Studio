@@ -1,113 +1,135 @@
 import OpenAI from "openai";
 import { AGENT_TOOLS, executeAgentTool } from "./tools.js";
+import {
+  WEBSITE_MAP,
+  findRouteForQuery,
+  buildWebsiteGuideReply,
+  detectLangMode,
+} from "./websiteKnowledge.js";
 
-// Complete Grounded Studio Knowledge Base & System Training Prompt for SSS Photography Studio AI
-const SYSTEM_PROMPT = `You are the Official AI Studio Concierge for "SSS Photography Studio" (SSS போட்டோகிராபி ஸ்டுடியோ), based in Avaniyapuram, Madurai, Tamil Nadu (Phone & WhatsApp: +91 63835 65425).
+const SYSTEM_PROMPT = `You are the Official AI Studio Concierge AND product guide for the SSS Photography Studio website (built for Avaniyapuram, Madurai).
 
-=========================
-1. STRICT LANGUAGE MATCHING RULE (MANDATORY)
-=========================
-• IF THE USER ASKS IN TAMIL SCRIPT (e.g. "தமிழ்ல சொல்லு", "பிரேம் விலை என்ன?", "திருமண பேக்கேஜ்"):
-  -> RESPOND 100% IN ELEGANT, RESPECTFUL TAMIL SCRIPT!
-
-• IF THE USER ASKS IN TANGLISH / TAMIL IN ENGLISH ALPHABET (e.g. "tamil la pesu", "tamil la explain pannu", "bro frame rate enna", "wedding package eppadi book panradhu", "studio enga irukku"):
-  -> RESPOND 100% IN NATURAL, FRIENDLY TANGLISH! (e.g. "Sure bro! Naan SSS Studio pathi Tamil-la explain panren. Ungalukku entha service pathi therinjukanum?")
-
-• IF THE USER ASKS IN ENGLISH (e.g. "explain about photo frames", "what are the wedding packages", "where is the studio"):
-  -> RESPOND 100% IN PROFESSIONAL, ENTHUSIASTIC ENGLISH!
+You think like the developer who built this site: you know every public route, homepage section, checkout flow, and what is driven by the Admin CMS vs hardcoded.
 
 =========================
-2. STUDIO IDENTITY & CONTACT
+1. LANGUAGE RULE (MANDATORY)
 =========================
-• Studio Name: SSS Photography Studio (SSS போட்டோகிராபி ஸ்டுடியோ)
-• Address: 34, Prasanna New Colony, Avaniyapuram, Madurai, Tamil Nadu 625012 (Landmark near Avaniyapuram main junction).
-• Timings: Monday to Sunday, 9:00 AM – 8:00 PM
-• Phone & WhatsApp: +91 63835 65425
-• Lead Equipment: Sony FX3 & A7IV full-frame cinema cameras, prime master lenses, gimbal stabilization, wireless audio, licensed 4K aerial drone.
+• Tamil script → answer in elegant Tamil script
+• Tanglish → answer in friendly Tanglish
+• English → answer in clear professional English
+Never mix languages unless the customer mixes first.
 
 =========================
-3. SIGNATURE GUARANTEES & SPECIAL PERKS
+2. STUDIO FACTS
 =========================
-• "1-Month Album Delivery Guarantee": Handcrafted flush-mount leather photobook albums delivered within 30 days (1 month) of photo selection, or client gets ₹1,000 cash credit!
-• "Free Pre-Wedding Shoot Perk": Complete wedding packages include a complimentary outdoor pre-wedding couple photoshoot with styling concepts.
-• "Signature Color Grading": Skin-true, rich South Indian traditional ceremony tones and cinematic color grading.
-• "100% Transit Damage Guarantee": Free re-print and replacement if any photo frame or gift gets damaged in shipping.
+• Name: SSS Photography Studio
+• Address: 34, Prasanna New Colony, Avaniyapuram, Madurai, Tamil Nadu 625012
+• Hours: Mon–Sun, 9:00 AM – 8:00 PM
+• Phone / WhatsApp: +91 63835 65425
+• Gear: Sony FX3 & A7IV, drone, cinematic lighting
 
 =========================
-4. COMPREHENSIVE WALL FRAMES & SIZES GUIDE (13 TIERS)
+3. WEBSITE MAP (ALWAYS USE THESE PATHS)
 =========================
-Explain any frame size, placement, and finish in detail when requested:
-1. 8x10 Inch (₹349) - Compact Desk & Bedside Table Frame.
-2. 8x12 Inch (₹499) - Bookshelf & Dressing Mirror Display (Best Value).
-3. 10x12 Inch (₹699) - Console Table & Bedside Wall Hanging.
-4. 10x15 Inch (₹799) - Passage Gallery & Staircase Collage Wall.
-5. 12x15 Inch (₹899) - Bedroom Side Wall & Compact Dining Area.
+• / → Home (hero depth photo, guarantees, services, color grading slider, portfolio + wedding album flipbook, 3D frame pricing, about, testimonials, contact)
+• /packages → Live photography packages from Admin CMS
+• /store → Frames, gifts, passport photos + cart + promo codes
+• /gallery → Public gallery from Admin uploads
+• /book → Book consultation / shoot
+• /track → Track order by Order ID or phone
+• /services → Services overview
+• /about → Studio story
+• /contact → Contact details
+• /visualizer → AI moodboard / visualizer
+• /client-gallery/[slug] → Private proofing gallery (passcode)
+• /login → Customer login / profile
+• /support → Support
 
-• FEATURE WALL & BALLROOM FRAMES (12x18 up to 24x36 / 36x24):
-6. 12x18 Inch (₹1,099) - Living Room Accent & Compact Feature Wall (Most Popular).
-7. 14x20 Inch (₹1,299) - Hallway Centerpiece & Living Room Feature Wall.
-8. 16x20 Inch (₹1,799) - Drawing Room Feature Wall & Couple Portrait Feature.
-9. 16x24 Inch (₹1,999) - Grand Reception Backdrop & Main Living Room Gallery (Grand Pick).
-10. 18x24 Inch (₹2,499) - Large Bedroom Focal Wall & Over-Bed Centerpiece.
-11. 20x24 Inch (₹2,799) - Dining Area Feature & Family Portrait Wall.
-12. 20x30 Inch (₹3,499) - Luxury Living Room Wall & Villa Foyer (Statement Art).
-13. 24x36 / 36x24 Inch (₹4,999) - Grand Reception Hall, Hotel Ballroom Wall & Master Villa Wall (Royal Size Statement Piece).
-
-Frame Finish Options: Synthetic Wood, Sparkle Glitter Lamination (Luxury), Anti-Glare Matte, Floating Acrylic, Canvas Wrap.
+Admin CMS controls: Packages, Gallery photos (+ Featured on Home), Frames prices, Promos, Testimonials approval, Orders/CRM, Client galleries, Wedding album PDF.
 
 =========================
-5. BALLROOM & GRAND EVENT SETUP COVERAGE
+4. LIVE DATA RULE
 =========================
-When user asks about "ballroom", "ballroom frames", "feature wall & ballroom", or grand reception setups:
-• Explain Feature Wall & Ballroom frames (12x18 up to 24x36 / 36x24, ₹1,099 to ₹4,999) crafted for grand living room feature walls, reception halls, and hotel ballrooms.
-• Explain SSS Studio's Grand Ballroom Coverage:
-  1. Multiple Senior Camera Crews (Candid Photographers + Traditional Videographers).
-  2. Licensed 4K Aerial Drone Coverage for ballroom grand entrances and stage setups.
-  3. Live LED Wall Screen Output Streaming (RF Wireless Transmission).
-  4. High-Definition Wireless Audio recording for stage speeches and rituals.
+For ANY price question, call tools:
+• \`query_packages\` for shoot packages
+• \`query_frames\` for frame sizes/prices
+• \`explain_website\` for how a page works
+• \`track_order\` for order/phone lookups
+• \`fetch_recent_shoots\` for portfolio samples
+Never invent prices. Prefer tool results.
 
 =========================
-6. PHOTOGRAPHY PACKAGES & RATES
+5. GUARANTEES
 =========================
-• Package 1 (Budget Quality): ₹45,000 (1 Traditional Photo Unit, 1 Traditional Video Unit, 1 Basic Lighting Unit, 30x10 Album 40 sheets glossy/matte, Full length video in CDs, 1-Month Delivery Guarantee).
-• Package 2 (Classic Wedding): ₹75,000 (1 Traditional Photo, 1 Traditional Video, 1 Candid Photo, 1 Basic Lighting Unit, 36x12 Album 40 sheets, Full length video in Pendrive, 1-Month Delivery Guarantee).
-• Package 3 (Elevated Drone & Screen): ₹90,000 (1 Traditional Photo, 1 Traditional Video, 1 Candid Photo Pro, 1 Aerial Drone 4K, 2 LED TVs 44", 1 Standard Lighting, 36x12 Album 45 sheets with Hologram/Feather/Metallic, Promo video, Full video in Pendrive, 1-Month Delivery Guarantee).
-• Package 5 (Premium Cinematic Production): ₹1,50,000 (2 Traditional Photographers Pro, 2 Traditional Videographers, 1 Candid Photo Pro, 1 Candid Videographer with cinematic gear, 1 Aerial Drone, 1 360° Videography, 1 LED Wall 8x6, 2 LED TVs 50", Premium Lighting, Pre-Wedding Outdoor Shoot with Storyteller Video, 2x 36x12 Albums 50 sheets, Old memories slides, Full video in Pendrive, 1 Photo Frame A3, 1 VR Glass, 360° Video & Photos, 1-Month Delivery Guarantee).
-• Package 7 (Royal Cinematic Heritage): ₹2,20,000 (3 Traditional Photographers Pro, 2 Traditional Videographers Pro, 1 Candid Photo Pro+, 2 Candid Videographers with cinematic gear, 1 Aerial Drone Pro, 1 360° Videography, 2 LED Walls 8x6, 4 LED TVs 50", Live mixing, Superior lighting, Pre-wedding storyteller + outdoor video, Post-wedding shoot, 2x 36x12 albums 50 sheets, Old memories slides, Full video, Teaser, Trailer, 2 Large Frames, 2 VR Glasses, 360° Video & Photos).
-• Package 8 (Imperial Cinema 4K Ultra): ₹2,80,000 (3 Traditional Photographers Pro, 2 Traditional Videographers 4K, 2 Candid Photographers Pro, 2 Candid Videographers, 1 Aerial Drone 4K, 1 360° Videography, 2 LED Walls 8x6, 4 LED TVs 50", Live mixing, 2 Superior lighting, Pre & Post shoots, 2x 36x12 albums 50 sheets + 1x 24x15 outdoor album 30 sheets, Slides, Teaser, Trailer, 2 Large Frames, 2 VR Glasses, 360° Video & Photos).
-• Outdoor Pre-Wedding Shoot: ₹8,000 (4-6 Hours, Kodaikanal/Munnar/Temple background, 30 Retouched Photos, 3-Min HD Cinematic Teaser).
-• Maternity Portrait Shoot: ₹6,000 (Indoor Studio Gowns & Outdoor Posing Concepts, 25 Retouched Photos).
-• Baby Milestone & Birthday: ₹5,000 (Sanitized Props, Wraps & Cake Smash Themes for 3M, 6M, 1Y).
+• 1-Month Album Delivery Guarantee (or ₹1,000 credit)
+• Free Pre-Wedding perk on complete wedding packages
+• Signature South Indian color grading
+• Transit damage reprint guarantee on frames/gifts
 
 =========================
-7. PERSONALIZED GIFTS & PASSPORT PHOTOS
+6. HOW-TO ANSWERS (DEVELOPER STYLE)
 =========================
-• Biometric Passport Photos: 8 Photos for ₹100 | 8 Passport + 8 Stamp for ₹150 | 16 Stamp for ₹100.
-• Personalized Gifts: Magic Mug (₹499), 3D Crystal Photo Cube (₹1,499), 3D Moon Lamp (₹1,100), Acrylic Desk LED Lamp (₹1,199), Custom Photo Puzzle (₹550), LOVE Collage Frame (₹950), Classic Wooden Frame (₹899).
+• Book shoot → Home “Book a Consultation” or /book, or WhatsApp +91 63835 65425
+• Buy frame → /store or Home #frames → Order → upload photo → checkout (Cash / UPI) → optional promo
+• Track → /track or paste Order ID / phone in chat
+• See packages → /packages (live CMS)
+• Promo → Admin creates code; customer enters it in Store cart
+• Wedding album → Portfolio → open album (3D page flip). PDF hosted via admin upload (Cloudinary when configured)
 
 =========================
-8. OUT OF SCOPE TOPICS
+7. OUT OF SCOPE
 =========================
-Politely decline in the user's exact language (Tanglish, Tamil, or English) and invite them to explore SSS Studio's photo services.`;
+Politely refuse coding/politics/general trivia and redirect to SSS photography / website help.
 
-// Comprehensive Language & Intent Detector for deterministic fallbacks and domain boundaries
+=========================
+8. ANSWER STYLE
+=========================
+Be specific: mention exact page paths, buttons, and next steps. Keep answers short, useful, and confident.`;
+
+async function getLiveCatalogSnippets() {
+  try {
+    const [pkgsRes, framesRes] = await Promise.all([
+      executeAgentTool("query_packages", {}),
+      executeAgentTool("query_frames", { max_budget: 999999 }),
+    ]);
+    const packagesText = (pkgsRes.packages || [])
+      .slice(0, 10)
+      .map((p) => `• ${p.name}: ${p.price}`)
+      .join("\n");
+    const frames = pkgsRes && framesRes.recommendedFrames ? framesRes.recommendedFrames : [];
+    // Prefer full frame list via second fetch if needed
+    let framesText = "";
+    try {
+      const { getFrames } = await import("@/app/actions/frames");
+      const all = await getFrames({ admin: false });
+      if (all.length) {
+        framesText = all
+          .slice(0, 8)
+          .map((f) => `• ${f.size}: ${f.price}`)
+          .join("\n");
+        framesText += `\n(${all.length} live sizes)`;
+      }
+    } catch (_) {
+      framesText = frames.map((f) => `• ${f.size}: ${f.priceFormatted || f.numericPrice}`).join("\n");
+    }
+    return { packagesText, framesText, packages: pkgsRes, frames: framesRes };
+  } catch (e) {
+    return { packagesText: "", framesText: "", packages: null, frames: null };
+  }
+}
+
 function analyzeUserMessage(userMsg = "", messages = []) {
   const text = userMsg.trim();
   const lower = text.toLowerCase();
 
-  // 1. Language Script & Explicit Instruction Detection
   const isTamilScript = /[\u0B80-\u0BFF]/.test(text);
-
-  // Check if user explicitly requests a language (e.g. "tamil la pesu", "tamil la explain pannu", "speak in english", "tamil script-la sollu")
   const requestsTanglish = /tamil\s*(la|lo|le)\s*(pesu|explain|sollu|solunga|tell|chat)/i.test(lower) || /tanglish/i.test(lower);
   const requestsTamilScript = /pure\s*tamil/i.test(lower) || /tamil\s*script/i.test(lower) || /தமிழ்\s*(இல்|ல)/.test(text);
   const requestsEnglish = /english\s*(la|le|in|only)?\s*(pesu|speak|explain|tell|sollu)?/i.test(lower) && !requestsTanglish;
 
-  // Check if query is a Phone Number or Order ID or pure numbers (e.g. 6383565425, SSS-1002, 1002)
   const cleanDigits = text.replace(/[\s\-\+\(\)]/g, "");
   const isPhoneNumberOrOrderId = /^\d{5,15}$/.test(cleanDigits) || /^(sss|shoot|ord)-?\d{3,10}$/i.test(text);
 
-  // Check if conversation history has Tanglish
   let isPreviousTanglish = false;
   let isPreviousTamilScript = false;
   if (Array.isArray(messages) && messages.length > 0) {
@@ -121,7 +143,6 @@ function analyzeUserMessage(userMsg = "", messages = []) {
     }
   }
 
-  // Extensive Tanglish Vocabulary & Verb Particles
   const tanglishTokens = [
     "pathi", "sollu", "solunga", "solu", "solm", "enna", "eppadi", "epdi", "enga", "engae", "varum",
     "vandhu", "irukku", "irukaa", "iruka", "bro", "sis", "ji", "panra", "panradhu", "panla", "panren",
@@ -130,42 +151,149 @@ function analyzeUserMessage(userMsg = "", messages = []) {
     "kitta", "velai", "sonninga", "pottu", "namba", "unga", "vanakkam", "solanum", "mudiyuma", "mudiyaadhu",
     "kaelu", "vanganum", "vaanga", "evvalavu", "kuduka", "aana", "aachu", "solanga", "paakkanum", "aama",
     "illa", "rate", "kaasu", "vilai", "yaaru", "kalyanam", "seemantham", "valaikappu", "venum", "vendaam",
-    "dhaan", "thaan", "la", "le", "kulla", "oda", "nalladhaa", "tharuvingala", "tharrom", "venum", "solatuma",
-    "edhu", "ethu", "vango", "vangalam", "edukalam", "varuma", "kedaikuma", "kidaikuma", "parunga", "pesu"
+    "dhaan", "thaan", "la", "le", "kulla", "oda", "nalladhaa", "tharuvingala", "tharrom", "solatuma",
+    "edhu", "ethu", "vango", "vangalam", "edukalam", "varuma", "kedaikuma", "kidaikuma", "parunga", "pesu",
   ];
 
-  const hasTanglishWord = tanglishTokens.some(tok => new RegExp(`(?:^|\\s|\\b)${tok}(?:$|\\s|\\b)`, "i").test(lower));
+  const hasTanglishWord = tanglishTokens.some((tok) => new RegExp(`(?:^|\\s|\\b)${tok}(?:$|\\s|\\b)`, "i").test(lower));
   const isTanglish = !requestsEnglish && (requestsTanglish || (!isTamilScript && (hasTanglishWord || (isPhoneNumberOrOrderId && isPreviousTanglish))));
   const effectiveTamilScript = !requestsEnglish && !requestsTanglish && (requestsTamilScript || isTamilScript || (isPhoneNumberOrOrderId && isPreviousTamilScript));
 
-  // 2. Studio Domain Keywords
   const studioKeywords = [
     "frame", "photo", "wedding", "shoot", "package", "price", "cost", "location", "address",
     "madurai", "avaniyapuram", "album", "delivery", "track", "order", "maternity", "baby",
     "birthday", "gift", "crystal", "mug", "lamp", "deposit", "raw", "camera", "contact",
     "phone", "whatsapp", "guarantee", "muhurtham", "candid", "drone", "studio", "booking",
-    "rate", "vilai", "kaasu", "pathi", "sollu", "passport", "puzzle", "keychain", "heart", "moon",
-    "aprm", "epdi", "pakuradhu", "panna", "status", "explain", "page", "website", "home", "card",
-    "details", "recent", "sample", "gallery", "portfolio", "ballroom", "wall", "feature wall",
-    "பிரேம்", "போட்டோ", "திருமணம்", "விலை", "ஸ்டுடியோ", "மதுரை", "அவனியாபுரம்", "ஆல்பம்", "பரிசு"
+    "book", "rate", "vilai", "kaasu", "pathi", "sollu", "passport", "puzzle", "keychain",
+    "status", "explain", "page", "website", "site", "home", "homepage", "card", "details",
+    "recent", "sample", "gallery", "portfolio", "ballroom", "wall", "store", "shop", "cart",
+    "checkout", "promo", "coupon", "voucher", "discount", "login", "profile", "visualizer",
+    "moodboard", "services", "about", "support", "how to", "howto", "where", "open", "menu",
+    "navbar", "section", "flipbook", "pdf", "featured", "cms", "admin",
+    "பிரேம்", "போட்டோ", "திருமணம்", "விலை", "ஸ்டுடியோ", "மதுரை", "அவனியாபுரம்", "ஆல்பம்",
+    "பரிசு", "முகப்பு", "பேக்கேஜ்", "ஸ்டோர்", "கேலரி", "முன்பதிவு",
   ];
-  const isStudioRelated = isPhoneNumberOrOrderId || studioKeywords.some(kw => lower.includes(kw));
+  const isStudioRelated = isPhoneNumberOrOrderId || studioKeywords.some((kw) => lower.includes(kw));
 
-  // 3. Explicit Out-of-Scope Triggers (coding, weather, general trivia, politics, recipes, etc.)
   const outOfScopeTokens = [
     "python", "java", "code", "coding", "script", "html", "css", "react", "bug", "recipe",
     "biryani", "modi", "cricket", "football", "president", "prime minister",
-    "homework", "math", "solve", "calculator", "who is", "joke", "stock", "crypto", "news"
+    "homework", "math", "solve", "calculator", "who is", "joke", "stock", "crypto", "news",
   ];
-  const isExplicitOutOfScope = outOfScopeTokens.some(tok => lower.includes(tok));
+  // "react" alone shouldn't block website questions about "reaction" etc - keep as is
+  const isExplicitOutOfScope = outOfScopeTokens.some((tok) => lower.includes(tok));
 
   return {
     isTamilScript: effectiveTamilScript,
     isTanglish,
     isStudioRelated,
     isPhoneNumberOrOrderId,
-    isOutOfScope: isExplicitOutOfScope || (!isStudioRelated && text.length > 3 && !["hi", "hello", "vanakkam", "வணக்கம்"].includes(lower))
+    isOutOfScope: isExplicitOutOfScope || (!isStudioRelated && text.length > 3 && !["hi", "hello", "hey", "vanakkam", "வணக்கம்", "hi!", "hello!"].includes(lower)),
   };
+}
+
+/** Deterministic website Q&A — runs before LLM for perfect site answers */
+async function answerWebsiteIntent(lastUserMsg, analysis, catalog) {
+  const lower = lastUserMsg.toLowerCase();
+  const lang = detectLangMode(analysis);
+  const route = findRouteForQuery(lower);
+
+  const wantsWebsiteGuide =
+    lower.includes("website") ||
+    lower.includes("site map") ||
+    lower.includes("what pages") ||
+    lower.includes("which page") ||
+    lower.includes("how does this site") ||
+    lower.includes("explain the site") ||
+    lower.includes("enna pages") ||
+    lower.includes("site-la enna") ||
+    (lower.includes("explain") && (lower.includes("page") || lower.includes("website") || lower.includes("home")));
+
+  if (wantsWebsiteGuide || (lower.includes("explain") && route)) {
+    const guide = buildWebsiteGuideReply({
+      lang,
+      route: wantsWebsiteGuide && !route ? null : route,
+      packagesText: catalog.packagesText,
+      framesText: catalog.framesText,
+    });
+    const toolRes = await executeAgentTool("explain_website", { topic: route?.name || "website" });
+    return { reply: guide, actionCards: [toolRes] };
+  }
+
+  if (lower.includes("promo") || lower.includes("coupon") || lower.includes("voucher") || lower.includes("discount code")) {
+    const howto = WEBSITE_MAP.howTos.usePromo;
+    return {
+      reply:
+        lang === "ta"
+          ? `ப்ரோமோ கோடுகள் Admin → Promos-ல் உருவாக்கப்படும். வாடிக்கையாளர் /store கார்ட்டில் அதே கோட்டை உள்ளிட வேண்டும்.\n${howto}`
+          : lang === "tanglish"
+          ? `Promo codes Admin → Promos-la create aagum. Customer /store cart-la same code enter pannanum.\n${howto}`
+          : `Promo codes are created in Admin → Promos and redeemed in the Store cart at checkout.\n${howto}`,
+      actionCards: [],
+    };
+  }
+
+  if (lower.includes("how to book") || lower.includes("eppadi book") || (lower.includes("book") && (lower.includes("how") || lower.includes("epdi") || lower.includes("பதிவு")))) {
+    return {
+      reply:
+        lang === "ta"
+          ? WEBSITE_MAP.howTos.bookShoot
+          : lang === "tanglish"
+          ? `Shoot book panna: Home-la "Book a Consultation" click pannunga, illana /book open pannunga, illana WhatsApp ${WEBSITE_MAP.studio.phone}.`
+          : WEBSITE_MAP.howTos.bookShoot,
+      actionCards: [],
+    };
+  }
+
+  if (lower.includes("how to order") || lower.includes("how to buy") || (lower.includes("frame") && lower.includes("how"))) {
+    return {
+      reply:
+        lang === "tanglish"
+          ? `Frame order: /store illana Home frames section → size choose → Order → photo upload → checkout (Cash / UPI). Promo optional.`
+          : WEBSITE_MAP.howTos.buyFrame,
+      actionCards: [],
+    };
+  }
+
+  if (lower.includes("store") || lower.includes("shop") || lower.includes("cart") || lower.includes("checkout")) {
+    const toolRes = await executeAgentTool("explain_website", { topic: "store" });
+    return {
+      reply:
+        lang === "tanglish"
+          ? `Store page: /store — frames, gifts, passport photos. Cart-la promo code apply panni Cash pickup illana UPI home delivery choose pannalam.`
+          : lang === "ta"
+          ? `ஸ்டோர் பக்கம்: /store — பிரேம்கள், பரிசுகள், பாஸ்போர்ட் போட்டோ. கார்ட்டில் ப்ரோமோ கோடும் செக்அவுட்டும் உள்ளன.`
+          : `Store (/store): order frames, personalized gifts, and passport photos. Cart supports promo codes, studio cash pickup, or UPI home delivery.`,
+      actionCards: [toolRes],
+    };
+  }
+
+  if (lower.includes("visualizer") || lower.includes("moodboard") || lower.includes("ai stylist")) {
+    return {
+      reply:
+        lang === "tanglish"
+          ? `AI Visualizer / Moodboard: /visualizer — shoot style concepts match panna use pannunga.`
+          : `Open /visualizer for the AI moodboard / styling visualizer.`,
+      actionCards: [],
+    };
+  }
+
+  if (lower.includes("client gallery") || lower.includes("proofing") || lower.includes("passcode") || lower.includes("select photos")) {
+    return {
+      reply:
+        lang === "tanglish"
+          ? `Private client proofing gallery: Admin create pannuvanga. Client-ku special link /client-gallery/[slug] + passcode kidaikkum — photos select panni album-ku anupalam.`
+          : `Private proofing galleries live at /client-gallery/[slug] with a passcode. Admin creates them under Client Galleries so clients can select photos for album/print.`,
+      actionCards: [],
+    };
+  }
+
+  if (route && (lower.includes("open") || lower.includes("where") || lower.includes("link") || lower.includes("page") || lower.includes("section"))) {
+    const guide = buildWebsiteGuideReply({ lang, route, packagesText: catalog.packagesText, framesText: catalog.framesText });
+    return { reply: guide, actionCards: [] };
+  }
+
+  return null;
 }
 
 export async function runStudioAgent({ messages = [], apiKey = null }) {
@@ -182,60 +310,70 @@ export async function runStudioAgent({ messages = [], apiKey = null }) {
 
   const lastUserMsg = messages[messages.length - 1]?.content || "";
   const analysis = analyzeUserMessage(lastUserMsg, messages);
+  const catalog = await getLiveCatalogSnippets();
 
-  // If query is strictly out of scope, return immediate polite decline in user's exact language
   if (analysis.isOutOfScope) {
     if (analysis.isTamilScript) {
       return {
-        reply: "மன்னிக்கவும்! நான் SSS போட்டோகிராபி ஸ்டுடியோவின் AI உதவி மையம். புகைப்பட பிரேம்கள், திருமண பேக்கேஜ்கள் மற்றும் மதுரையில் உள்ள எங்கள் ஸ்டுடியோ பற்றிய தகவல்களை மட்டுமே என்னால் வழங்க முடியும். உங்களுக்கு போட்டோகிராபி சார்ந்த என்ன உதவி தேவை? 📸",
+        reply: "மன்னிக்கவும்! நான் SSS போட்டோகிராபி ஸ்டுடியோவின் AI உதவி. இணையதளப் பக்கங்கள், பிரேம்கள், பேக்கேஜ்கள், முன்பதிவு மற்றும் ஆர்டர் டிராக்கிங் பற்றி மட்டுமே உதவ முடியும். என்ன வேண்டும்? 📸",
         actionCards: [],
       };
     }
     if (analysis.isTanglish) {
       return {
-        reply: "Sorry bro! Naan SSS Studio-vodha AI Assistant. Naan photo frames, wedding packages, Avaniyapuram studio location & order tracking pathi thaan help panna mudiyum. Ungalukku photo sethu enna help venum bro? 📸",
+        reply: "Sorry bro! Naan SSS Studio website AI. Pages, frames, packages, booking & order tracking pathi thaan help panna mudiyum. Enna venum bro? 📸",
         actionCards: [],
       };
     }
     return {
-      reply: "Sorry! I am SSS Studio's AI Assistant. I can only assist with our photo frames, wedding/event packages, studio location in Avaniyapuram Madurai, and order tracking. How can I help with your photography or frame needs today? 📸",
+      reply: "I am SSS Studio’s website AI guide. I can help with our pages, packages, frames store, booking, gallery, and order tracking. What do you need? 📸",
       actionCards: [],
     };
   }
 
+  // Phone / Order ID → track immediately
+  if (analysis.isPhoneNumberOrOrderId) {
+    const toolResult = await executeAgentTool("track_order", { query: lastUserMsg });
+    const statusText = toolResult.stageLabel ? `${toolResult.stageLabel} (${toolResult.stageDesc || ""})` : "Under Processing";
+    return {
+      reply: analysis.isTanglish
+        ? `Unga Order / Mobile (${lastUserMsg}) track aachu bro! Status: ${statusText}. Full page: /track`
+        : analysis.isTamilScript
+        ? `ஆர்டர் / மொபைல் (${lastUserMsg}) நிலை: ${statusText}. முழு விவரம்: /track`
+        : `Tracking for ${lastUserMsg}: ${statusText}. See full details on /track`,
+      actionCards: [toolResult],
+    };
+  }
+
+  // Deterministic website answers first (developer-perfect)
+  const siteAnswer = await answerWebsiteIntent(lastUserMsg, analysis, catalog);
+  if (siteAnswer) return siteAnswer;
+
+  const liveContext = `
+=========================
+LIVE CMS SNAPSHOT (authoritative right now)
+=========================
+PACKAGES:
+${catalog.packagesText || "(load /packages)"}
+
+FRAMES:
+${catalog.framesText || "(load /store or homepage frames)"}
+`;
+
   const conversation = [
-    { role: "system", content: SYSTEM_PROMPT },
+    { role: "system", content: SYSTEM_PROMPT + "\n" + liveContext },
     ...messages,
   ];
 
   let actionCards = [];
 
   try {
-    // If input is explicitly a phone number or Order ID, trigger track_order immediately
-    if (analysis.isPhoneNumberOrOrderId) {
-      const toolResult = await executeAgentTool("track_order", { query: lastUserMsg });
-      actionCards.push(toolResult);
-
-      const statusText = toolResult.stageLabel ? `${toolResult.stageLabel} (${toolResult.stageDesc || ''})` : 'Under Processing';
-      return {
-        reply: analysis.isTanglish
-          ? `Unga Order / Mobile Number (${lastUserMsg}) track panni irukkom bro! 👇 Status: ${statusText}`
-          : analysis.isTamilScript
-          ? `உங்கள் ஆர்டர் / மொபைல் எண் (${lastUserMsg}) சரிபார்க்கப்பட்டது! நிலை: ${statusText}`
-          : `We found tracking details for ${lastUserMsg}! Current Status: ${statusText}`,
-        actionCards,
-      };
-    }
-
-    // 1. Initial agent call with tools enabled (with 18s timeout)
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("NVIDIA_TIMEOUT")), 18000)
-    );
+    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("NVIDIA_TIMEOUT")), 18000));
 
     const candidateModels = [
       "nvidia/nemotron-3-super-120b-a12b",
       "mistralai/mistral-7b-instruct-v0.2",
-      "nvidia/neva-22b"
+      "nvidia/neva-22b",
     ];
 
     let completion = null;
@@ -246,12 +384,12 @@ export async function runStudioAgent({ messages = [], apiKey = null }) {
           messages: conversation,
           tools: AGENT_TOOLS,
           tool_choice: "auto",
-          temperature: 0.6,
+          temperature: 0.45,
           max_tokens: 1500,
         });
         completion = await Promise.race([completionPromise, timeoutPromise]);
         if (completion) break;
-      } catch (err) {
+      } catch (_) {
         continue;
       }
     }
@@ -259,9 +397,9 @@ export async function runStudioAgent({ messages = [], apiKey = null }) {
     if (!completion) {
       throw new Error("All NVIDIA AI models are currently busy. Please try again.");
     }
+
     const responseMessage = completion.choices[0]?.message;
 
-    // 2. If agent calls tools:
     if (responseMessage?.tool_calls && responseMessage.tool_calls.length > 0) {
       conversation.push(responseMessage);
 
@@ -270,7 +408,7 @@ export async function runStudioAgent({ messages = [], apiKey = null }) {
         let args = {};
         try {
           args = JSON.parse(toolCall.function.arguments || "{}");
-        } catch (e) {
+        } catch (_) {
           args = {};
         }
 
@@ -285,214 +423,178 @@ export async function runStudioAgent({ messages = [], apiKey = null }) {
         });
       }
 
-      // 3. Second call so agent can speak naturally based on tool observations
       const finalCompletion = await openai.chat.completions.create({
         model: "nvidia/llama-3.1-nemotron-70b-instruct",
         messages: conversation,
-        temperature: 0.6,
+        temperature: 0.45,
         max_tokens: 1000,
       });
 
       let finalReply = finalCompletion.choices[0]?.message?.content || "";
 
-      // Ensure if user asked in Tanglish, reply NEVER slips into English
       if (analysis.isTanglish && (!finalReply || /^(?:vanakkam! )?here are/i.test(finalReply.trim()))) {
-        finalReply = "Vanakkam bro! Enga SSS Studio-la 13 custom photo frame sizes irukku (Starting at ₹349). Sparkle illana Matte lamination-oda custom-a mount panni 1-Month Delivery Guarantee-oda tharrom. Keelayulla sizes & prices paarkalam:";
+        finalReply = `Vanakkam bro! Live packages:\n${catalog.packagesText || "See /packages"}\nFrames: see /store. WhatsApp: ${WEBSITE_MAP.studio.phone}`;
       }
 
-      return {
-        reply: finalReply,
-        actionCards,
-      };
+      return { reply: finalReply, actionCards };
     }
 
-    // Direct answer if no tools needed
     return {
-      reply: responseMessage?.content || (analysis.isTanglish ? "Vanakkam bro! SSS Photography Studio-la ungalukku eppadi help pannanum?" : analysis.isTamilScript ? "வணக்கம்! SSS போட்டோகிராபி ஸ்டுடியோவில் உங்களுக்கு எவ்வாறு உதவ வேண்டும்?" : "Vanakkam! How can SSS Photography Studio make your celebration memorable today?"),
+      reply:
+        responseMessage?.content ||
+        (analysis.isTanglish
+          ? "Vanakkam bro! Website pages, packages, frames, booking — enna venum?"
+          : analysis.isTamilScript
+          ? "வணக்கம்! இணையதளம், பேக்கேஜ், பிரேம், முன்பதிவு — என்ன வேண்டும்?"
+          : "Vanakkam! Ask me about any page, package, frame, booking, or order tracking."),
       actionCards,
     };
   } catch (error) {
-    // Smart Multilingual Fallback Engine
-    const lower = lastUserMsg.toLowerCase();
+    return handleSmartFallback(lastUserMsg, analysis, catalog);
+  }
+}
 
-    // 1. Order Tracking / Order Status / Phone Number or Order ID input
-    if (analysis.isPhoneNumberOrOrderId || lower.includes("order") || lower.includes("track") || lower.includes("status") || lower.includes("pakuradhu") || lower.includes("pakradhu") || lower.includes("paarkka") || lower.includes("aprm")) {
-      const toolRes = await executeAgentTool("track_order", { query: lastUserMsg });
-      return {
-        reply: analysis.isTanglish
-          ? "Unga Order ID or Mobile Number vachu track panni irukkom bro! Website-la 'Track Order' page-lum live updates paarkalam 👇"
-          : analysis.isTamilScript
-          ? "உங்கள் ஆர்டர் எண் / மொபைல் எண் சரிபார்க்கப்பட்டது! விவரங்களை கீழே காணலாம் 👇"
-          : "We checked your order / mobile number details! You can see the live tracking details below 👇",
-        actionCards: [toolRes],
-      };
-    }
+async function handleSmartFallback(lastUserMsg, analysis, catalog) {
+  const lower = lastUserMsg.toLowerCase();
+  const lang = detectLangMode(analysis);
 
-    // 2. Passport Photos
-    if (lower.includes("passport") || lower.includes("stamp")) {
-      return {
-        reply: analysis.isTanglish
-          ? "Enga SSS Studio-la Passport Photos available bro! 8 Passport size ₹100, 8 Passport + 8 Stamp size ₹150, 16 Stamp size ₹100. Old photo record lookup-um irukku bro!"
-          : analysis.isTamilScript
-          ? "SSS ஸ்டுடியோவில் பாஸ்போர்ட் போட்டோக்கள் கிடைக்கும்! 8 பாஸ்போர்ட் அளவு ₹100, 8 பாஸ்போர்ட் + 8 ஸ்டாம்ப் அளவு ₹150, 16 ஸ்டாம்ப் அளவு ₹100."
-          : "We provide instant biometric passport & stamp size prints at SSS Studio! 8 Passport prints for ₹100, 8 Passport + 8 Stamp prints for ₹150, and 16 Stamp prints for ₹100.",
-        actionCards: [],
-      };
-    }
-
-    // 3. Personalized Store Gifts (Mug, Crystal, Lamp, Keychain, etc.)
-    if (lower.includes("gift") || lower.includes("mug") || lower.includes("crystal") || lower.includes("lamp") || lower.includes("keychain") || lower.includes("puzzle") || lower.includes("moon")) {
-      return {
-        reply: analysis.isTanglish
-          ? "Enga Studio Store-la custom personalized gifts irukku bro! 3D Crystal Photo Cube (₹1,499), Magic Photo Mug (₹499), 3D Moon Lamp (₹1,100), Acrylic LED Lamp (₹1,199), Metal Keychain (₹299), Custom Photo Puzzle (₹550). Complete catalog-ஐ Store page-ல பாக்கலாம் bro!"
-          : analysis.isTamilScript
-          ? "எங்கள் ஸ்டுடியோ ஸ்டோரில் 3D கிரிஸ்டல் கியூப் (₹1,499), மேஜிக் கப் (₹499), 3D மூன் லேம்ப் (₹1,100), அக்ரிலிக் எல்இடி லேம்ப் (₹1,199) போன்ற பல பிரத்யேக பிறந்தநாள் பரிசுகள் உள்ளன!"
-          : "Explore personalized gifts at SSS Studio Store: 3D Crystal Photo Cube (₹1,499), Magic Photo Mug (₹499), 3D Moon Lamp (₹1,100), Acrylic Desk LED Lamp (₹1,199), and Metal Keychain (₹299). Visit our Store tab to order online!",
-        actionCards: [],
-      };
-    }
-
-    // 4. Raw Photos Policy
-    if (lower.includes("raw") || lower.includes("unedited")) {
-      return {
-        reply: analysis.isTanglish
-          ? "Enga SSS Studio-la raw/unedited photos thara maattom bro. Absolute color accuracy, culling & master retouching panni perfect-a 1-Month Delivery Guarantee-oda tharrom!"
-          : analysis.isTamilScript
-          ? "நாங்கள் Raw புகைப்படங்களை வழங்குவதில்லை. உயர்தர கலர் கிரேடிங் மற்றும் பினிஷிங் செய்து மட்டுமே ஆல்பம் வழங்கி வருகிறோம்."
-          : "We do not provide raw or unedited files. Part of our premium service is meticulous culling, color grading, and retouching to ensure every delivered photograph meets SSS Studio's signature excellence.",
-        actionCards: [],
-      };
-    }
-
-    // 5. Studio Location & Timings
-    if (lower.includes("location") || lower.includes("address") || lower.includes("where") || lower.includes("எங்கே") || lower.includes("enga")) {
-      return {
-        reply: analysis.isTanglish
-          ? "Enga SSS Photography Studio location: 34, Prasanna New Colony, Avaniyapuram, Madurai - 625012. Morning 9 AM to Night 8 PM varai open-a irukku bro! Phone / WhatsApp: +91 63835 65425."
-          : analysis.isTamilScript
-          ? "SSS போட்டோகிராபி ஸ்டுடியோ முகவரி: 34, பிரசன்னா நியூ காலனி, அவனியாபுரம், மதுரை 625012. காலை 9 மணி முதல் இரவு 8 மணி வரை திறந்திருக்கும். தொடர்புக்கு: +91 63835 65425."
-          : "SSS Photography Studio is located at 34, Prasanna New Colony, Avaniyapuram, Madurai, Tamil Nadu 625012. We are open Monday to Sunday, 9:00 AM to 8:00 PM. Call or WhatsApp us at +91 63835 65425!",
-        actionCards: [],
-      };
-    }
-
-    // 6. Guarantees & Deliveries
-    if (lower.includes("guarantee") || lower.includes("delivery") || lower.includes("month") || lower.includes("உறுதி") || lower.includes("ஆல்பம்")) {
-      return {
-        reply: analysis.isTanglish
-          ? "Enga signature '1-Month Album Delivery Guarantee' la photo select panna 30 நாட்கள் (1 மாதம்)-kulla master album & HD photos kailae vandhurum! Delay aana ₹1,000 cash credit tharrom bro!"
-          : analysis.isTamilScript
-          ? "எங்களின் '1-மாத ஆல்பம் டெலிவரி உத்தரவாதம்' மூலம் போட்டோ தேர்வு செய்த 30 நாட்களுக்குள் உங்கள் பிரீமியம் லெதர் ஆல்பம் ஒப்படைக்கப்படும்!"
-          : "Our signature '1-Month Album Delivery Guarantee' promises your handcrafted flush-mount leather album and master retouched high-res photos within 30 days of photo selection — or you receive a ₹1,000 cash credit!",
-        actionCards: [],
-      };
-    }
-
-    // 7. Frames Recommendation & Sizing
-    if (lower.includes("frame") || lower.includes("wall") || lower.includes("size") || lower.includes("framing") || lower.includes("பிரேம்")) {
-      const toolRes = await executeAgentTool("query_frames", {
-        room_type: lower.includes("sofa") || lower.includes("hall") || lower.includes("living") ? "living room" : "bedroom",
-        wall_space: lower,
-      });
-      return {
-        reply: analysis.isTanglish
-          ? "Vanakkam bro! Enga SSS Studio-la 13 custom photo frame sizes irukku (Starting at ₹349). Sparkle illana Matte lamination-oda custom-a mount panni 1-Month Delivery Guarantee-oda tharrom. Keelayulla frame sizes & rates paarkalam:"
-          : analysis.isTamilScript
-          ? "வணக்கம்! SSS போட்டோகிராபி ஸ்டுடியோவின் 13 வகையான கஸ்டம் போட்டோ பிரேம்கள் (₹349 முதல்) விவரங்கள் கீழே உள்ளன:"
-          : "Vanakkam! Here are our top recommended handcrafted photo frame sizes for your wall. Each includes custom photo mounting with your choice of Sparkle or Matte lamination:",
-        actionCards: [toolRes],
-      };
-    }
-
-    // 8. Recent Photos / Portfolio Samples Trigger
-    if (lower.includes("recent") || lower.includes("photo") || lower.includes("sample") || lower.includes("portfolio") || lower.includes("gallery") || lower.includes("work") || lower.includes("image") || lower.includes("picture") || lower.includes("பார்க்க")) {
-      const toolRes = await executeAgentTool("fetch_recent_shoots", {
-        category: lower.includes("wedding") ? "wedding" : lower.includes("pre") ? "pre-wedding" : lower.includes("maternity") || lower.includes("baby") ? "baby-maternity" : lower.includes("birthday") ? "birthday-events" : "all",
-      });
-      return {
-        reply: analysis.isTanglish
-          ? "Vanakkam bro! Enga SSS Studio-vodha recent shoot photos & real client stories keenje irukku bro 👇 Tap panni HD photos paarkalam!"
-          : analysis.isTamilScript
-          ? "வணக்கம்! SSS போட்டோகிராபி ஸ்டுடியோவின் சமீபத்திய புகைப்படத் தொகுப்புகள் கீழே உள்ளன 👇 போட்டோக்களைக் கிளிக் செய்து காணலாம்:"
-          : "Vanakkam! Here are some of our recent photography shoots and real client stories at SSS Studio 👇 Tap to view high-resolution samples:",
-        actionCards: [toolRes],
-      };
-    }
-
-    // 9. Page Explanation (Explain Home, Services, Packages, Booking, Contact, Pricing)
-    if (lower.includes("explain") || lower.includes("page") || lower.includes("home") || lower.includes("card") || lower.includes("details")) {
-      if (lower.includes("home")) {
-        return {
-          reply: analysis.isTanglish
-            ? "Enga **Home Page** -la SSS Studio-vodha recent client stories, signature **1-Month Album Delivery Guarantee** badge, South Indian traditional ceremony color grading slider, customer reviews & direct booking quote forms irukku bro!"
-            : analysis.isTamilScript
-            ? "எங்கள் **முகப்பு பக்கத்தில் (Home Page)** சமீபத்திய போட்டோ கதைகள், **1-மாத ஆல்பம் டெலிவரி உத்தரவாதம்**, வாடிக்கையாளர் கருத்துக்கள் மற்றும் நேரடி முன்பதிவு படிவங்கள் உள்ளன!"
-            : "Our **Home Page** features our signature 1-Month Album Delivery Guarantee badge, recent client shoot stories, South Indian ceremony color grading comparison slider, authentic client reviews, and direct booking consultation forms!",
-          actionCards: [],
-        };
-      }
-      if (lower.includes("contact")) {
-        return {
-          reply: analysis.isTanglish
-            ? "Enga Studio Contact Details: 34, Prasanna New Colony, Avaniyapuram, Madurai 625012. Open all 7 days (9 AM to 8 PM). Call or WhatsApp: +91 63835 65425 📞"
-            : analysis.isTamilScript
-            ? "ஸ்டுடியோ முகவரி: 34, பிரசன்னா நியூ காலனி, அவனியாபுரம், மதுரை 625012. அனைத்து நாட்களும் திறந்திருக்கும் (காலை 9 முதல் இரவு 8 மணி வரை). தொடர்புக்கு: +91 63835 65425 📞"
-            : "SSS Studio Contact Info: 34, Prasanna New Colony, Avaniyapuram, Madurai, Tamil Nadu 625012. Open Mon-Sun (9:00 AM - 8:00 PM). Phone & WhatsApp: +91 63835 65425 📞",
-          actionCards: [],
-        };
-      }
-      if (lower.includes("booking") || lower.includes("package") || lower.includes("pricing") || lower.includes("card")) {
-        const toolRes = await executeAgentTool("calculate_package_quote", {
-          event_type: "wedding",
-          include_drone: true,
-          include_master_album: true,
-        });
-        return {
-          reply: analysis.isTanglish
-            ? "Enga **Official Packages & Pricing** page-la Weddings (Package 1: ₹45,000, Package 2: ₹75,000, Package 3: ₹90,000, Package 5: ₹1,50,000, Package 7: ₹2,20,000, Package 8: ₹2,80,000), Pre-wedding (₹8,000), Maternity (₹6,000), Baby/Birthday (₹5,000) default rates irukku. 1-Month Delivery Guarantee-oda tharrom bro! Sample quote card 👇"
-            : analysis.isTamilScript
-            ? "எங்களின் **கட்டணம் & பேக்கேஜ் (Pricing & Packages)** பக்கத்தில் அதிகாரப்பூர்வ திருமண பேக்கேஜ்கள் (பேக்கேஜ் 1: ₹45,000 முதல் பேக்கேஜ் 8: ₹2,80,000 வரை), ப்ரீ-வெடிங் (₹8,000), மெட்டர்னிட்டி (₹6,000) போன்ற தெளிவான கட்டண விவரங்கள் உள்ளன. மாதிரி கார்டு கீழே உள்ளது 👇"
-            : "Our **Official Packages & Pricing** catalog features 6 transparent wedding tiers (Package 1: ₹45,000, Package 2: ₹75,000, Package 3: ₹90,000, Package 5: ₹1,50,000, Package 7: ₹2,20,000, Package 8: ₹2,80,000, plus Pre-wedding ₹8,000, Maternity ₹6,000, Baby ₹5,000) with our 1-Month Album Delivery Guarantee! Here is an itemized estimate card 👇",
-          actionCards: [toolRes],
-        };
-      }
-
-      // General Page Explanation Fallback
-      return {
-        reply: analysis.isTanglish
-          ? "Enga **SSS Photography Studio Website** -la Home (Client Stories & 1-Month Album Guarantee), Services & Packages (Weddings Package 1 to 8: ₹45k-₹2.8L, Pre-wedding ₹8k, Maternity ₹6k, Baby ₹5k), 13 Photo Frame Visualizer Store (₹349-₹4,999) & Live Track Order features irukku bro! Enna section pathi theriya venum?"
-          : analysis.isTamilScript
-          ? "எங்கள் **SSS போட்டோகிராபி ஸ்டுடியோ இணையதளத்தில்** முகப்பு (சமீபத்திய கதைகள் & 1-மாத ஆல்பம் உத்தரவாதம்), சேவைகள் & பேக்கேஜ்கள் (திருமணம் ₹45,000 முதல் ₹2,80,000 வரை), 13 பிரேம் சைஸ் ஸ்டோர் மற்றும் ஆர்டர் டிராக்கிங் வசதிகள் உள்ளன!"
-          : "Welcome to SSS Photography Studio! Our website includes:\n• **Home Page**: Recent client shoot stories, signature 1-Month Album Delivery Guarantee, and color grading comparison.\n• **Packages & Pricing**: 5 Official Wedding Tiers (Package 1: ₹45,000 up to Package 8: ₹2,80,000), Pre-wedding (₹8,000), Maternity (₹6,000), Baby (₹5,000).\n• **Frame Studio**: 13 custom handcrafted photo frame sizes (₹349 to ₹4,999).\n• **Track Order**: Live real-time order status tracking with your Order ID or Mobile Number.",
-        actionCards: [],
-      };
-    }
-
-    // 10. Package Quotes & Pricing
-    if (lower.includes("quote") || lower.includes("price") || lower.includes("cost") || lower.includes("wedding") || lower.includes("package") || lower.includes("maternity") || lower.includes("baby") || lower.includes("birthday") || lower.includes("திருமணம்") || lower.includes("விலை") || lower.includes("evvalavu") || lower.includes("rate")) {
-      const toolRes = await executeAgentTool("calculate_package_quote", {
-        event_type: lower.includes("maternity") ? "maternity" : lower.includes("baby") || lower.includes("birthday") ? "birthday" : "wedding",
-        include_drone: lower.includes("drone"),
-        include_master_album: true,
-      });
-      return {
-        reply: analysis.isTanglish
-          ? "Vanakkam bro! SSS Studio Wedding & Event Photography Package Quote estimate keenje irukku bro. 1-Month Album Delivery Guarantee-oda tharrom. Tap panni details paarkalam:"
-          : analysis.isTamilScript
-          ? "வணக்கம்! உங்கள் விசேஷத்திற்கான கணக்கிடப்பட்ட பேக்கேஜ் விவரங்கள் கீழே கொடுக்கப்பட்டுள்ளன:"
-          : "Here is the estimated quote for your session with our signature 1-Month Delivery Guarantee! You can tap below to customize or chat directly on WhatsApp:",
-        actionCards: [toolRes],
-      };
-    }
-
-    // Default Fallback
+  if (analysis.isPhoneNumberOrOrderId || lower.includes("order") || lower.includes("track") || lower.includes("status") || lower.includes("pakuradhu")) {
+    const toolRes = await executeAgentTool("track_order", { query: lastUserMsg });
     return {
-      reply: analysis.isTanglish
-        ? "Vanakkam bro! 🙏 SSS Photography Studio-la ungalukku photo frames (13 sizes), wedding packages, passport photos, personalized gifts, illana order status pathi help pannanuma? Ungalukku enna details venum bro?"
-        : analysis.isTamilScript
-        ? "வணக்கம்! 🙏 SSS போட்டோகிராபி ஸ்டுடியோவில் புகைப்பட பிரேம்கள், திருமண பேக்கேஜ்கள், பாஸ்போர்ட் போட்டோக்கள் மற்றும் ஆர்டர் நிலைகள் பற்றிய விவரங்களை அறிய கேட்கலாம்."
-        : "Vanakkam! 🙏 Welcome to SSS Photography Studio in Avaniyapuram, Madurai. We specialize in weddings, outdoor pre-wedding shoots, maternity, baby milestones, 13 sizes of handcrafted custom photo frames, passport photos, and personalized gifts with our 1-Month Album Delivery Guarantee. How can we help you today?",
+      reply:
+        lang === "tanglish"
+          ? "Order track panni irukkom bro! /track page-layum paarkalam 👇"
+          : lang === "ta"
+          ? "ஆர்டர் விவரங்கள் கீழே. முழு பக்கம்: /track 👇"
+          : "Tracking details below. Full page: /track 👇",
+      actionCards: [toolRes],
+    };
+  }
+
+  if (lower.includes("passport") || lower.includes("stamp")) {
+    return {
+      reply:
+        lang === "tanglish"
+          ? "Passport photos /store-la: 8 Passport ₹100 | 8 Passport + 8 Stamp ₹150 | 16 Stamp ₹100."
+          : lang === "ta"
+          ? "பாஸ்போர்ட் போட்டோ (/store): 8 பாஸ்போர்ட் ₹100 | 8+8 ஸ்டாம்ப் ₹150 | 16 ஸ்டாம்ப் ₹100."
+          : "Passport prints on /store: 8 Passport ₹100 | 8 Passport + 8 Stamp ₹150 | 16 Stamp ₹100.",
       actionCards: [],
     };
   }
+
+  if (lower.includes("gift") || lower.includes("mug") || lower.includes("crystal") || lower.includes("lamp") || lower.includes("puzzle")) {
+    return {
+      reply:
+        lang === "tanglish"
+          ? "Personalized gifts /store-la irukku bro (Magic Mug, Crystal Cube, Moon Lamp, Puzzle...). Order online pannalam."
+          : "Personalized gifts are on /store (Magic Mug, Crystal Cube, Moon Lamp, Puzzle, and more).",
+      actionCards: [],
+    };
+  }
+
+  if (lower.includes("raw") || lower.includes("unedited")) {
+    return {
+      reply:
+        lang === "tanglish"
+          ? "Raw photos thara maattom bro — graded + retouched masters thaan 1-Month Guarantee-oda deliver aagum."
+          : "We don’t deliver raw/unedited files — only graded, retouched masters under the 1-Month Delivery Guarantee.",
+      actionCards: [],
+    };
+  }
+
+  if (lower.includes("location") || lower.includes("address") || lower.includes("where") || lower.includes("enga") || lower.includes("எங்கே")) {
+    return {
+      reply: `${WEBSITE_MAP.studio.address}. Hours: ${WEBSITE_MAP.studio.hours}. WhatsApp: ${WEBSITE_MAP.studio.phone}. Contact page: /contact`,
+      actionCards: [],
+    };
+  }
+
+  if (lower.includes("guarantee") || lower.includes("delivery") || lower.includes("month") || lower.includes("ஆல்பம்")) {
+    return {
+      reply:
+        lang === "tanglish"
+          ? "1-Month Album Delivery Guarantee: photo select panna 30 days-kulla album. Delay aana ₹1,000 credit."
+          : "1-Month Album Delivery Guarantee: album within 30 days of photo selection, or ₹1,000 credit.",
+      actionCards: [],
+    };
+  }
+
+  if (lower.includes("frame") || lower.includes("wall") || lower.includes("size") || lower.includes("பிரேம்")) {
+    const toolRes = await executeAgentTool("query_frames", {
+      room_type: lower.includes("sofa") || lower.includes("living") ? "living room" : "bedroom",
+      wall_space: lower,
+    });
+    return {
+      reply:
+        lang === "tanglish"
+          ? `Live frame rates:\n${catalog.framesText || "See /store"}\nHome-la 3D tilt preview-um irukku. Recommend sizes 👇`
+          : `Live frame catalog:\n${catalog.framesText || "See /store or homepage #frames"}\nRecommendations 👇`,
+      actionCards: [toolRes],
+    };
+  }
+
+  if (lower.includes("portfolio") || lower.includes("gallery") || lower.includes("sample") || lower.includes("recent") || lower.includes("photo")) {
+    const toolRes = await executeAgentTool("fetch_recent_shoots", {
+      category: lower.includes("wedding")
+        ? "wedding"
+        : lower.includes("pre")
+          ? "pre-wedding"
+          : lower.includes("maternity") || lower.includes("baby")
+            ? "baby-maternity"
+            : lower.includes("birthday")
+              ? "birthday-events"
+              : "all",
+    });
+    return {
+      reply:
+        lang === "tanglish"
+          ? "Recent shoots & portfolio samples 👇 Full gallery: /gallery | Wedding album flipbook: Home → Portfolio"
+          : "Recent shoot samples 👇 Full gallery: /gallery | Wedding album flipbook: Home → Portfolio",
+      actionCards: [toolRes],
+    };
+  }
+
+  if (
+    lower.includes("package") ||
+    lower.includes("price") ||
+    lower.includes("cost") ||
+    lower.includes("quote") ||
+    lower.includes("wedding") ||
+    lower.includes("maternity") ||
+    lower.includes("birthday") ||
+    lower.includes("விலை") ||
+    lower.includes("rate") ||
+    lower.includes("evvalavu")
+  ) {
+    const livePackages = catalog.packages || (await executeAgentTool("query_packages", {}));
+    const toolRes = await executeAgentTool("calculate_package_quote", {
+      event_type: lower.includes("maternity")
+        ? "maternity"
+        : lower.includes("baby") || lower.includes("birthday")
+          ? "birthday"
+          : "wedding",
+      include_drone: lower.includes("drone"),
+      include_master_album: true,
+    });
+    return {
+      reply:
+        lang === "tanglish"
+          ? `Live packages (/packages):\n${catalog.packagesText}\nEstimate card 👇`
+          : lang === "ta"
+          ? `நேரடி பேக்கேஜ்கள் (/packages):\n${catalog.packagesText}\nமதிப்பீடு 👇`
+          : `Live packages from CMS (/packages):\n${catalog.packagesText}\nSample estimate 👇`,
+      actionCards: [toolRes, livePackages].filter(Boolean),
+    };
+  }
+
+  // Default: website map + live rates
+  return {
+    reply: buildWebsiteGuideReply({
+      lang,
+      packagesText: catalog.packagesText,
+      framesText: catalog.framesText,
+    }),
+    actionCards: [],
+  };
 }
