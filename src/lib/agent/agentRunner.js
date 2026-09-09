@@ -69,8 +69,12 @@ When user asks about "ballroom", "ballroom frames", "feature wall & ballroom", o
 =========================
 6. PHOTOGRAPHY PACKAGES & RATES
 =========================
-• Premium Wedding & Cinematic: ₹75,000 (Full Day 12h, 2 Photographers, 1 Videographer, 4K Drone, Free Outdoor Pre-Wedding Shoot, 40-Page Layflat Master Album, 1-Month Delivery Guarantee).
-• Standard Muhurtham & Event: ₹18,000 (Traditional Rituals & Stage, 1 Photographer, 1 Videographer, 30-Page Master Leather Album, 1-Month Delivery Guarantee).
+• Package 1 (Budget Quality): ₹45,000 (1 Traditional Photo Unit, 1 Traditional Video Unit, 1 Basic Lighting Unit, 30x10 Album 40 sheets glossy/matte, Full length video in CDs, 1-Month Delivery Guarantee).
+• Package 2 (Classic Wedding): ₹75,000 (1 Traditional Photo, 1 Traditional Video, 1 Candid Photo, 1 Basic Lighting Unit, 36x12 Album 40 sheets, Full length video in Pendrive, 1-Month Delivery Guarantee).
+• Package 3 (Elevated Drone & Screen): ₹90,000 (1 Traditional Photo, 1 Traditional Video, 1 Candid Photo Pro, 1 Aerial Drone 4K, 2 LED TVs 44", 1 Standard Lighting, 36x12 Album 45 sheets with Hologram/Feather/Metallic, Promo video, Full video in Pendrive, 1-Month Delivery Guarantee).
+• Package 5 (Premium Cinematic Production): ₹1,50,000 (2 Traditional Photographers Pro, 2 Traditional Videographers, 1 Candid Photo Pro, 1 Candid Videographer with cinematic gear, 1 Aerial Drone, 1 360° Videography, 1 LED Wall 8x6, 2 LED TVs 50", Premium Lighting, Pre-Wedding Outdoor Shoot with Storyteller Video, 2x 36x12 Albums 50 sheets, Old memories slides, Full video in Pendrive, 1 Photo Frame A3, 1 VR Glass, 360° Video & Photos, 1-Month Delivery Guarantee).
+• Package 7 (Royal Cinematic Heritage): ₹2,20,000 (3 Traditional Photographers Pro, 2 Traditional Videographers Pro, 1 Candid Photo Pro+, 2 Candid Videographers with cinematic gear, 1 Aerial Drone Pro, 1 360° Videography, 2 LED Walls 8x6, 4 LED TVs 50", Live mixing, Superior lighting, Pre-wedding storyteller + outdoor video, Post-wedding shoot, 2x 36x12 albums 50 sheets, Old memories slides, Full video, Teaser, Trailer, 2 Large Frames, 2 VR Glasses, 360° Video & Photos).
+• Package 8 (Imperial Cinema 4K Ultra): ₹2,80,000 (3 Traditional Photographers Pro, 2 Traditional Videographers 4K, 2 Candid Photographers Pro, 2 Candid Videographers, 1 Aerial Drone 4K, 1 360° Videography, 2 LED Walls 8x6, 4 LED TVs 50", Live mixing, 2 Superior lighting, Pre & Post shoots, 2x 36x12 albums 50 sheets + 1x 24x15 outdoor album 30 sheets, Slides, Teaser, Trailer, 2 Large Frames, 2 VR Glasses, 360° Video & Photos).
 • Outdoor Pre-Wedding Shoot: ₹8,000 (4-6 Hours, Kodaikanal/Munnar/Temple background, 30 Retouched Photos, 3-Min HD Cinematic Teaser).
 • Maternity Portrait Shoot: ₹6,000 (Indoor Studio Gowns & Outdoor Posing Concepts, 25 Retouched Photos).
 • Baby Milestone & Birthday: ₹5,000 (Sanitized Props, Wraps & Cake Smash Themes for 3M, 6M, 1Y).
@@ -150,7 +154,7 @@ function analyzeUserMessage(userMsg = "", messages = []) {
   // 3. Explicit Out-of-Scope Triggers (coding, weather, general trivia, politics, recipes, etc.)
   const outOfScopeTokens = [
     "python", "java", "code", "coding", "script", "html", "css", "react", "bug", "recipe",
-    "biryani", "weather", "modi", "cricket", "football", "president", "prime minister",
+    "biryani", "modi", "cricket", "football", "president", "prime minister",
     "homework", "math", "solve", "calculator", "who is", "joke", "stock", "crypto", "news"
   ];
   const isExplicitOutOfScope = outOfScopeTokens.some(tok => lower.includes(tok));
@@ -445,10 +449,10 @@ export async function runStudioAgent({ messages = [], apiKey = null }) {
         });
         return {
           reply: analysis.isTanglish
-            ? "Enga **Packages & Pricing** page-la Weddings (Starting ₹18,000 to ₹75,000+ Premium), Pre-wedding (₹8,000), Maternity (₹6,000), Baby/Birthday (₹5,000) default rates irukku. 1-Month Delivery Guarantee & free pre-wedding shoot perk-oda tharrom bro! Sample quote card 👇"
+            ? "Enga **Official Packages & Pricing** page-la Weddings (Package 1: ₹45,000, Package 2: ₹75,000, Package 3: ₹90,000, Package 5: ₹1,50,000, Package 7: ₹2,20,000, Package 8: ₹2,80,000), Pre-wedding (₹8,000), Maternity (₹6,000), Baby/Birthday (₹5,000) default rates irukku. 1-Month Delivery Guarantee-oda tharrom bro! Sample quote card 👇"
             : analysis.isTamilScript
-            ? "எங்களின் **கட்டணம் & பேக்கேஜ் (Pricing & Packages)** பக்கத்தில் திருமணம் (₹18,000 முதல்), ப்ரீ-வெடிங் (₹8,000), மெட்டர்னிட்டி (₹6,000) போன்ற தெளிவான கட்டண விவரங்கள் உள்ளன. கணக்கிடப்பட்ட மாதிரி கார்டு கீழே உள்ளது 👇"
-            : "Our **Packages & Pricing** section features transparent default rates (Weddings starting ₹18,000 up to ₹75,000+ Premium, Pre-wedding ₹8,000, Maternity ₹6,000, Baby/Birthday ₹5,000) with our 1-Month Album Delivery Guarantee! Here is an itemized estimate card 👇",
+            ? "எங்களின் **கட்டணம் & பேக்கேஜ் (Pricing & Packages)** பக்கத்தில் அதிகாரப்பூர்வ திருமண பேக்கேஜ்கள் (பேக்கேஜ் 1: ₹45,000 முதல் பேக்கேஜ் 8: ₹2,80,000 வரை), ப்ரீ-வெடிங் (₹8,000), மெட்டர்னிட்டி (₹6,000) போன்ற தெளிவான கட்டண விவரங்கள் உள்ளன. மாதிரி கார்டு கீழே உள்ளது 👇"
+            : "Our **Official Packages & Pricing** catalog features 6 transparent wedding tiers (Package 1: ₹45,000, Package 2: ₹75,000, Package 3: ₹90,000, Package 5: ₹1,50,000, Package 7: ₹2,20,000, Package 8: ₹2,80,000, plus Pre-wedding ₹8,000, Maternity ₹6,000, Baby ₹5,000) with our 1-Month Album Delivery Guarantee! Here is an itemized estimate card 👇",
           actionCards: [toolRes],
         };
       }
@@ -456,10 +460,10 @@ export async function runStudioAgent({ messages = [], apiKey = null }) {
       // General Page Explanation Fallback
       return {
         reply: analysis.isTanglish
-          ? "Enga **SSS Photography Studio Website** -la Home (Client Stories & 1-Month Album Guarantee), Services & Packages (Weddings ₹18k-₹75k, Pre-wedding ₹8k, Maternity ₹6k, Baby ₹5k), 13 Photo Frame Visualizer Store (₹349-₹4,999) & Live Track Order features irukku bro! Enna section pathi theriya venum?"
+          ? "Enga **SSS Photography Studio Website** -la Home (Client Stories & 1-Month Album Guarantee), Services & Packages (Weddings Package 1 to 8: ₹45k-₹2.8L, Pre-wedding ₹8k, Maternity ₹6k, Baby ₹5k), 13 Photo Frame Visualizer Store (₹349-₹4,999) & Live Track Order features irukku bro! Enna section pathi theriya venum?"
           : analysis.isTamilScript
-          ? "எங்கள் **SSS போட்டோகிராபி ஸ்டுடியோ இணையதளத்தில்** முகப்பு (சமீபத்திய கதைகள் & 1-மாத ஆல்பம் உத்தரவாதம்), சேவைகள் & பேக்கேஜ்கள் (திருமணம் ₹18,000 முதல், மெட்டர்னிட்டி ₹6,000), 13 பிரேம் சைஸ் ஸ்டோர் மற்றும் ஆர்டர் டிராக்கிங் வசதிகள் உள்ளன!"
-          : "Welcome to SSS Photography Studio! Our website includes:\n• **Home Page**: Recent client shoot stories, signature 1-Month Album Delivery Guarantee, and color grading comparison.\n• **Packages & Pricing**: Weddings (starting ₹18,000 to ₹75,000+), Pre-wedding (₹8,000), Maternity (₹6,000), Baby (₹5,000).\n• **Frame Studio**: 13 custom handcrafted photo frame sizes (₹349 to ₹4,999).\n• **Track Order**: Live real-time order status tracking with your Order ID or Mobile Number.",
+          ? "எங்கள் **SSS போட்டோகிராபி ஸ்டுடியோ இணையதளத்தில்** முகப்பு (சமீபத்திய கதைகள் & 1-மாத ஆல்பம் உத்தரவாதம்), சேவைகள் & பேக்கேஜ்கள் (திருமணம் ₹45,000 முதல் ₹2,80,000 வரை), 13 பிரேம் சைஸ் ஸ்டோர் மற்றும் ஆர்டர் டிராக்கிங் வசதிகள் உள்ளன!"
+          : "Welcome to SSS Photography Studio! Our website includes:\n• **Home Page**: Recent client shoot stories, signature 1-Month Album Delivery Guarantee, and color grading comparison.\n• **Packages & Pricing**: 5 Official Wedding Tiers (Package 1: ₹45,000 up to Package 8: ₹2,80,000), Pre-wedding (₹8,000), Maternity (₹6,000), Baby (₹5,000).\n• **Frame Studio**: 13 custom handcrafted photo frame sizes (₹349 to ₹4,999).\n• **Track Order**: Live real-time order status tracking with your Order ID or Mobile Number.",
         actionCards: [],
       };
     }

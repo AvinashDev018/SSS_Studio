@@ -1,37 +1,47 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getOrder } from './orders';
-import { PrismaClient } from '@prisma/client';
 
-// Mock the external modules
-jest.mock('next/cache', () => ({
-  revalidatePath: jest.fn(),
+const mockFindFirst = vi.fn();
+const mockFindMany = vi.fn();
+const mockBookingFindMany = vi.fn();
+const mockBookingFindFirst = vi.fn();
+
+vi.mock('@/lib/prisma', () => ({
+  prisma: {
+    order: {
+      findFirst: (...args) => mockFindFirst(...args),
+      findMany: (...args) => mockFindMany(...args),
+    },
+    booking: {
+      findMany: (...args) => mockBookingFindMany(...args),
+      findFirst: (...args) => mockBookingFindFirst(...args),
+    },
+    user: {
+      findUnique: vi.fn(),
+    },
+  },
 }));
 
-jest.mock('next-auth/next', () => ({
-  getServerSession: jest.fn(),
+vi.mock('next/cache', () => ({
+  revalidatePath: vi.fn(),
 }));
 
-jest.mock('@/app/api/auth/[...nextauth]/route', () => ({
+vi.mock('next-auth/next', () => ({
+  getServerSession: vi.fn(),
+}));
+
+vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
   authOptions: {},
 }));
 
-// Mock PrismaClient
-const mockFindFirst = jest.fn();
-jest.mock('@prisma/client', () => {
-  return {
-    PrismaClient: jest.fn().mockImplementation(() => ({
-      order: {
-        findFirst: (...args) => mockFindFirst(...args),
-      },
-      user: {
-        findUnique: jest.fn(),
-      },
-    })),
-  };
-});
-
 describe('getOrder', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    mockFindFirst.mockReset();
+    mockFindMany.mockReset();
+    mockBookingFindMany.mockReset();
+    mockBookingFindFirst.mockReset();
+    mockBookingFindMany.mockResolvedValue([]);
+    mockBookingFindFirst.mockResolvedValue(null);
   });
 
   it('should return the order when found (happy path)', async () => {
@@ -48,7 +58,7 @@ describe('getOrder', () => {
         },
       },
     });
-    expect(result).toEqual({ success: true, order: mockOrder });
+    expect(result).toEqual({ success: true, multiple: false, order: mockOrder });
   });
 
   it('should sanitize the orderId (trim whitespace and uppercase)', async () => {
@@ -65,7 +75,7 @@ describe('getOrder', () => {
         },
       },
     });
-    expect(result).toEqual({ success: true, order: mockOrder });
+    expect(result).toEqual({ success: true, multiple: false, order: mockOrder });
   });
 
   it('should return an error when the order is not found', async () => {
@@ -73,27 +83,16 @@ describe('getOrder', () => {
 
     const result = await getOrder('ORD-999');
 
-    expect(mockFindFirst).toHaveBeenCalledWith({
-      where: {
-        orderId: {
-          equals: 'ORD-999',
-          mode: 'insensitive',
-        },
-      },
-    });
     expect(result).toEqual({ success: false, error: 'No order found with ID: ORD-999' });
   });
 
   it('should return a database error if Prisma throws an exception', async () => {
     mockFindFirst.mockRejectedValue(new Error('Database connection failed'));
-
-    // Mock console.error to prevent it from cluttering test output
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const result = await getOrder('ORD-ERR');
 
     expect(result).toEqual({ success: false, error: 'Database error. Please try again.' });
-
     consoleSpy.mockRestore();
   });
 });

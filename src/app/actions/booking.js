@@ -71,7 +71,7 @@ export async function getBookedSlots() {
 
  // Return array of objects with formatted date strings
  return bookings.map(b => ({
- date: b.date.toISOString().split('T')[0],
+ date: b.date.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" }),
  timeSlot: b.timeSlot
  }));
  } catch (error) {

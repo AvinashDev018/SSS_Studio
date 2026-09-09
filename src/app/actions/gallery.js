@@ -156,28 +156,38 @@ export async function getPhotos() {
  }
 }
 
-export async function addPhoto(formData) {
- const url = formData.get("url");
- const category = formData.get("category");
+export async function addPhoto(formDataOrUrl, maybeCategory) {
+  let url, category;
 
- if (!url || !category) {
- return { success: false, error: "URL and Category are required." };
- }
+  if (formDataOrUrl && typeof formDataOrUrl.get === "function") {
+    url = formDataOrUrl.get("url");
+    category = formDataOrUrl.get("category");
+  } else if (typeof formDataOrUrl === "object" && formDataOrUrl !== null && !Array.isArray(formDataOrUrl)) {
+    url = formDataOrUrl.url;
+    category = formDataOrUrl.category || maybeCategory;
+  } else {
+    url = formDataOrUrl;
+    category = maybeCategory;
+  }
 
- try {
- await prisma.photo.create({
- data: {
- url,
- category,
- },
- });
- revalidatePath("/gallery");
- revalidatePath("/admin/gallery");
- return { success: true };
- } catch (error) {
- console.error("Error adding photo:", error);
- return { success: false, error: "Failed to save photo to database." };
- }
+  if (!url || !category) {
+    return { success: false, error: "URL and Category are required." };
+  }
+
+  try {
+    const photo = await prisma.photo.create({
+      data: {
+        url,
+        category,
+      },
+    });
+    revalidatePath("/gallery");
+    revalidatePath("/admin/gallery");
+    return { success: true, photo };
+  } catch (error) {
+    console.error("Error adding photo:", error);
+    return { success: false, error: "Failed to save photo to database." };
+  }
 }
 
 export async function deletePhoto(id) {

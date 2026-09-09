@@ -65,7 +65,7 @@ export default function TestimonialModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ duration: 0.3, type: "spring", bounce: 0.2 }}
-            className="bg-gradient-to-br from-[#0c3530]/98 via-[#104b43]/98 to-[#166055]/98 border border-white/15 text-white rounded-3xl p-6 md:p-8 w-full max-w-lg shadow-2xl relative z-10 overflow-hidden text-left my-auto"
+            className="bg-gradient-to-br from-[#0c3530] via-[#104b43] to-[#166055] border border-white/15 text-white rounded-3xl p-6 md:p-8 w-full max-w-lg shadow-2xl relative z-10 overflow-hidden text-left my-auto"
           >
             <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-teal-400 via-emerald-400 to-teal-400" />
             

@@ -13,11 +13,6 @@ export default function Navbar() {
   const [isMobileLangOpen, setIsMobileLangOpen] = useState(false);
   const pathname = usePathname();
   const { currentLang, changeLanguage, t, translations } = useLanguage();
-
-  if (pathname?.startsWith("/admin")) {
-    return null;
-  }
-  
   const desktopLangRef = useRef(null);
   const mobileLangRef = useRef(null);
 
@@ -33,6 +28,10 @@ export default function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   const triggerModal = (mode = "booking", shootType = "Wedding & Event Photo Shoot") => {
     if (typeof window !== "undefined") {
@@ -255,7 +254,7 @@ export default function Navbar() {
 
       {/* Mobile Drawer Menu (Pure Luxury Light Theme, Zero Overflow) */}
       {isOpen && (
-        <div className="lg:hidden bg-white/98 backdrop-blur-2xl border-b border-black/15 shadow-2xl animate-in slide-in-from-top-3 duration-200">
+        <div className="lg:hidden bg-white/95 backdrop-blur-2xl border-b border-black/15 shadow-2xl animate-in slide-in-from-top-3 duration-200">
           <div className="px-4 sm:px-5 pt-4 pb-6 space-y-3">
             {/* Language Selector in Drawer */}
             <div className="flex items-center justify-between pb-3 border-b border-black/10">

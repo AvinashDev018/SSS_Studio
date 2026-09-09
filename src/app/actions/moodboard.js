@@ -18,7 +18,7 @@ export async function analyzeMoodboardAI(base64Images) {
 
   const apiKey = process.env.NVIDIA_API_KEY || process.env.DEEPSEEK_API_KEY;
   if (!apiKey || apiKey === "dummy_key_placeholder") {
-    return getFallbackAnalysis();
+    return { success: true, data: getFallbackAnalysis() };
   }
 
   try {
@@ -120,12 +120,12 @@ Respond ONLY with a single word: BABY, WEDDING, COUPLE, MATERNITY, or PORTRAIT.`
         data: {
           detectedTone: "Warm Royal Gold & Candid Ceremony Tones",
           presetName: "Madurai Regal Wedding Color Preset",
-          recommendedPackage: "Premium Wedding & Cinematic (₹75,000)",
+          recommendedPackage: "Package 3 - Elevated Drone & Screen (₹90,000)",
           matchScore: 99,
           features: [
-            "Full Day Coverage (12 Hours) with Dual Photographers",
-            "Licensed 4K Aerial Drone & Cinematic Teaser",
-            "Handcrafted 40-Page Layflat Master Album",
+            "Traditional + Candid Pro + Aerial 4K Drone Coverage",
+            "Dual 44\" LED TV Live Telecast Screens",
+            "Handcrafted 36x12 Master Album (45 Sheets with Hologram/Feather/Metallic)",
             "Guaranteed 1-Month Delivery (or ₹1,000 Cash Credit)"
           ]
         }
