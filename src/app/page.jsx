@@ -10,7 +10,6 @@ import SSSColorGradingComparison from "@/components/sections/SSSColorGradingComp
 import SSSPhotoFramePricing from "@/components/sections/SSSPhotoFramePricing";
 import SSSTestimonials from "@/components/sections/SSSTestimonials";
 import SSSStudioInfo from "@/components/sections/SSSStudioInfo";
-import SSSMuhurthamWeatherPlanner from "@/components/sections/SSSMuhurthamWeatherPlanner";
 import BookingQuoteModal from "@/components/ui/BookingQuoteModal";
 import TestimonialModal from "@/components/ui/TestimonialModal";
 import LuckyGiftModal from "@/components/ui/LuckyGiftModal";
@@ -69,12 +68,7 @@ export default function Home() {
       {/* 3. Complete SSS Photography & Visual Services */}
       <SSSServices onOpenBooking={handleOpenBooking} />
 
-      {/* 4. Tamil Subha Muhurtham & Live Outdoor Shoot Weather Intelligence Planner */}
-      <div className="bg-[#090b12] py-4">
-        <SSSMuhurthamWeatherPlanner onOpenBooking={handleOpenBooking} />
-      </div>
-
-      {/* 5. Interactive Before / After Color Grading Slider */}
+      {/* 4. Interactive Before / After Color Grading Slider */}
       <SSSColorGradingComparison onOpenBooking={handleOpenBooking} />
 
 
