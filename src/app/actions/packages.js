@@ -186,15 +186,27 @@ const TIER_ORDER = {
 
 export async function getPackages() {
   try {
-    const packages = await prisma.package.findMany({
-      orderBy: [
-        { createdAt: "asc" }
-      ]
+    let packages = await prisma.package.findMany({
+      orderBy: [{ createdAt: "asc" }],
     });
-    
-    const list = (!packages || packages.length === 0) ? [...FALLBACK_PACKAGES] : packages;
-    
-    return list.sort((a, b) => {
+
+    // First run / empty DB: seed official catalog so admin edits stay on a full live list
+    if (!packages || packages.length === 0) {
+      await prisma.package.createMany({
+        data: FALLBACK_PACKAGES.map(({ name, price, description, features, popular }) => ({
+          name,
+          price,
+          description,
+          features,
+          popular,
+        })),
+      });
+      packages = await prisma.package.findMany({
+        orderBy: [{ createdAt: "asc" }],
+      });
+    }
+
+    return packages.sort((a, b) => {
       const orderA = TIER_ORDER[a.name] ?? 99;
       const orderB = TIER_ORDER[b.name] ?? 99;
       return orderA - orderB;

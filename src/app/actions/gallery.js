@@ -95,6 +95,14 @@ export async function addPhotosToGallery(galleryId, photos) {
         isSelected: false,
       })),
     });
+    const gallery = await prisma.clientGallery.findUnique({
+      where: { id: galleryId },
+      select: { slug: true },
+    });
+    if (gallery?.slug) {
+      revalidatePath(`/client-gallery/${gallery.slug}`);
+    }
+    revalidatePath("/admin/galleries");
     return { success: true };
   } catch (error) {
     console.error("Error adding batch photos to gallery:", error);

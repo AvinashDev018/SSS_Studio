@@ -64,7 +64,7 @@ export default function AdminFramesGifts() {
   const fetchFrames = async () => {
     setLoadingFrames(true);
     try {
-      const res = await fetch("/api/frames");
+      const res = await fetch("/api/frames?admin=1");
       if (res.ok) {
         const data = await res.json();
         setFrames(data);

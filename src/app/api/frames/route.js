@@ -33,9 +33,12 @@ async function writeFramesData(data) {
   await fs.writeFile(framesFilePath, JSON.stringify(data, null, 2), "utf8");
 }
 
-export async function GET() {
+export async function GET(req) {
   const frames = await readFramesData();
-  return NextResponse.json(frames);
+  const { searchParams } = new URL(req.url);
+  const admin = searchParams.get("admin") === "1";
+  const list = admin ? frames : frames.filter((f) => f.active !== false);
+  return NextResponse.json(list);
 }
 
 export async function POST(req) {

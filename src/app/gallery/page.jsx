@@ -6,7 +6,15 @@ import { X, ZoomIn, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getPhotos } from "@/app/actions/gallery";
 
-const CATEGORIES = ["All", "Weddings", "Portraits", "Birthdays", "Events"];
+const CATEGORIES = [
+  "All",
+  "Weddings",
+  "Pre-Wedding & Post Wedding",
+  "Baby Photo Shoot",
+  "Maternity Shoot",
+  "Birthday Shoot",
+  "School & College Events",
+];
 
 export default function GalleryPage() {
  const [activeCategory, setActiveCategory] = useState("All");

@@ -45,17 +45,25 @@ export const WEDDING_ALBUM_PAGES = Array.from({ length: 41 }, (_, i) => {
 
 export default function WeddingAlbumPdfModal({ isOpen, onClose }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [flipDir, setFlipDir] = useState(1);
   const [viewMode, setViewMode] = useState("spreads"); // 'spreads' | 'pdf'
   const [isAnimationDone, setIsAnimationDone] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(false);
   const thumbnailsRef = useRef(null);
 
   const handleNext = () => {
+    setFlipDir(1);
     setCurrentIndex((prev) => (prev === WEDDING_ALBUM_PAGES.length - 1 ? 0 : prev + 1));
   };
 
   const handlePrev = () => {
+    setFlipDir(-1);
     setCurrentIndex((prev) => (prev === 0 ? WEDDING_ALBUM_PAGES.length - 1 : prev - 1));
+  };
+
+  const jumpToPage = (idx) => {
+    setFlipDir(idx >= currentIndex ? 1 : -1);
+    setCurrentIndex(idx);
   };
 
   useEffect(() => {
@@ -106,8 +114,8 @@ export default function WeddingAlbumPdfModal({ isOpen, onClose }) {
       if (viewMode === "spreads") {
         if (e.key === "ArrowLeft") handlePrev();
         if (e.key === "ArrowRight") handleNext();
-        if (e.key === "Home") setCurrentIndex(0);
-        if (e.key === "End") setCurrentIndex(WEDDING_ALBUM_PAGES.length - 1);
+        if (e.key === "Home") jumpToPage(0);
+        if (e.key === "End") jumpToPage(WEDDING_ALBUM_PAGES.length - 1);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -290,7 +298,7 @@ export default function WeddingAlbumPdfModal({ isOpen, onClose }) {
                 {/* Quick Nav: First Page */}
                 {currentIndex > 0 && (
                   <button
-                    onClick={() => setCurrentIndex(0)}
+                    onClick={() => jumpToPage(0)}
                     className="absolute left-2 sm:left-4 top-4 z-20 px-2.5 py-1 rounded-lg bg-black/70 hover:bg-[#d4af37] text-white hover:text-black border border-white/20 text-[10px] font-bold transition-all cursor-pointer shadow-lg backdrop-blur-md hidden sm:flex items-center gap-1"
                     title="Jump to Cover"
                   >
@@ -308,17 +316,20 @@ export default function WeddingAlbumPdfModal({ isOpen, onClose }) {
                   <ChevronLeft size={22} />
                 </button>
 
-                {/* Animated Spread Image with Instant Loading */}
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentPage.id}
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.18 }}
-                    className="w-full h-full flex flex-col items-center justify-center p-2 sm:p-3"
-                  >
-                    <div className="relative flex items-center justify-center">
+                {/* Animated Spread Image — hardcover page flip */}
+                <div className="w-full h-full flex flex-col items-center justify-center p-2 sm:p-3" style={{ perspective: "1600px" }}>
+                  <AnimatePresence mode="wait" custom={flipDir}>
+                    <motion.div
+                      key={currentPage.id}
+                      custom={flipDir}
+                      initial={{ rotateY: flipDir * -65, opacity: 0, transformOrigin: "left center" }}
+                      animate={{ rotateY: 0, opacity: 1 }}
+                      exit={{ rotateY: flipDir * 65, opacity: 0 }}
+                      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                      className="relative flex items-center justify-center w-full"
+                      style={{ transformStyle: "preserve-3d" }}
+                    >
+                      <div className="absolute left-0 top-0 bottom-0 w-1.5 sm:w-2 rounded-l-sm bg-gradient-to-r from-[#8a7020] via-[#d4af37] to-[#8a7020] z-10 shadow-md" />
                       {isImageLoading && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg backdrop-blur-sm z-10 pointer-events-none">
                           <div className="w-6 h-6 border-2 border-[#d4af37] border-t-transparent rounded-full animate-spin" />
@@ -328,24 +339,24 @@ export default function WeddingAlbumPdfModal({ isOpen, onClose }) {
                         src={currentPage.image}
                         alt={currentPage.title}
                         onLoad={() => setIsImageLoading(false)}
-                        className="max-h-[60vh] sm:max-h-[64vh] max-w-full object-contain rounded-lg shadow-2xl border border-white/10"
+                        className="max-h-[60vh] sm:max-h-[64vh] max-w-full object-contain rounded-lg shadow-2xl border border-white/10 ml-1.5 sm:ml-2"
                         onError={(e) => {
                           e.currentTarget.onerror = null;
                           e.currentTarget.src = currentPage.original || "/images/wedding/spread-1.png";
                           setIsImageLoading(false);
                         }}
                       />
-                    </div>
-                    <div className="mt-2 text-center">
-                      <h4 className="text-xs sm:text-sm font-serif font-bold text-white tracking-wide">
-                        {currentPage.title}
-                      </h4>
-                      <p className="text-[11px] text-zinc-400 mt-0.5">
-                        {currentPage.subtitle} • <span className="text-[#d4af37]">{currentPage.details}</span>
-                      </p>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
+                    </motion.div>
+                  </AnimatePresence>
+                  <div className="mt-2 text-center">
+                    <h4 className="text-xs sm:text-sm font-serif font-bold text-white tracking-wide">
+                      {currentPage.title}
+                    </h4>
+                    <p className="text-[11px] text-zinc-400 mt-0.5">
+                      {currentPage.subtitle} • <span className="text-[#d4af37]">{currentPage.details}</span>
+                    </p>
+                  </div>
+                </div>
 
                 {/* Right Next Arrow */}
                 <button
@@ -360,7 +371,7 @@ export default function WeddingAlbumPdfModal({ isOpen, onClose }) {
                 {/* Quick Nav: Last Page */}
                 {currentIndex < WEDDING_ALBUM_PAGES.length - 1 && (
                   <button
-                    onClick={() => setCurrentIndex(WEDDING_ALBUM_PAGES.length - 1)}
+                    onClick={() => jumpToPage(WEDDING_ALBUM_PAGES.length - 1)}
                     className="absolute right-2 sm:right-4 top-4 z-20 px-2.5 py-1 rounded-lg bg-black/70 hover:bg-[#d4af37] text-white hover:text-black border border-white/20 text-[10px] font-bold transition-all cursor-pointer shadow-lg backdrop-blur-md hidden sm:flex items-center gap-1"
                     title="Jump to End"
                   >
@@ -379,7 +390,7 @@ export default function WeddingAlbumPdfModal({ isOpen, onClose }) {
                   {WEDDING_ALBUM_PAGES.map((page, idx) => (
                     <button
                       key={page.id}
-                      onClick={() => setCurrentIndex(idx)}
+                      onClick={() => jumpToPage(idx)}
                       className={`relative w-12 h-9 sm:w-16 sm:h-11 rounded-lg overflow-hidden border-2 transition-all cursor-pointer shrink-0 ${
                         currentIndex === idx
                           ? "border-[#d4af37] scale-105 shadow-md shadow-[#d4af37]/40 ring-2 ring-[#d4af37]/50"
