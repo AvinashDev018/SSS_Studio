@@ -521,7 +521,9 @@ export async function executeAgentTool(name, args) {
             name: p.name,
             price: p.price,
             description: p.description,
-            features: p.features,
+            features: typeof p.features === "string"
+              ? p.features.split(",").map((f) => f.trim()).filter(Boolean)
+              : p.features,
             popular: p.popular,
           })),
         };
@@ -874,18 +876,13 @@ export async function executeAgentTool(name, args) {
           lighting_recommendations: recommendations.lighting_recommendations || "Soft, warm lighting to enhance the chosen color palette",
           clothing_recommendations: recommendations.clothing_recommendations.slice(0, 6),
           makeup_hair_tips: recommendations.makeup_hair_tips || `Hair and makeup should complement the ${style_preference.replace('_', ' ')} aesthetic with attention to ${cultural_background} cultural elements`,
-          shoot_specific_concepts: Object.keys(shootSpecificTips).map(key => ({
+          shoot_specific_concepts: Object.keys(shootSpecificTips).slice(0, 3).map(key => ({
             concept: key.replace('_', ' '),
-            description: shootSpecificTips[key].description,
-            must_haves: shootSpecificTips[key].must_haves || [],
-            color_scheme: shootSpecificTips[key].color_scheme || []
+            description: shootSpecificTips[key].description || "Shoot-specific styling concept",
+            key_elements: (shootSpecificTips[key].must_haves || []).slice(0, 3).join(", "),
+            colors: (shootSpecificTips[key].color_scheme || []).slice(0, 3).join(", ")
           })),
-          expert_tips: [
-            `This ${style_preference.replace('_', ' ')} approach works exceptionally well for ${shoot_type} sessions`,
-            `Incorporate ${cultural_background} cultural elements authentically without overwhelming the composition`,
-            `The ${color_preference.replace('_', ' ')} palette will create the perfect emotional atmosphere`,
-            "Consider the client's comfort level with traditional vs. modern styling elements"
-          ]
+          expert_tips: `${style_preference.replace('_', ' ')} approach for ${shoot_type} with ${cultural_background} cultural elements. ${color_preference.replace('_', ' ')} palette creates ideal atmosphere.`
         };
       }
 

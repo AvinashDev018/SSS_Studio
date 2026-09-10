@@ -2,65 +2,70 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Sparkles, Upload, CheckCircle2, Image as ImageIcon, Send } from "lucide-react";
+import { X, Sparkles, Upload, CheckCircle2, Send } from "lucide-react";
+
+function featuresToList(data) {
+  if (!data) return [];
+  if (Array.isArray(data.features)) return data.features;
+  if (typeof data.featuresText === "string" && data.featuresText.trim()) {
+    return data.featuresText.split("|").map((s) => s.trim()).filter(Boolean);
+  }
+  return [];
+}
 
 export default function MoodboardMatcherModal({ isOpen, onClose, whatsappNumber = "916383565425" }) {
-  const [images, setImages] = useState([]);
+  const [files, setFiles] = useState([]);
+  const [previews, setPreviews] = useState([]);
   const [analyzing, setAnalyzing] = useState(false);
   const [matchResult, setMatchResult] = useState(null);
 
   if (!isOpen) return null;
 
   const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length === 0) return;
+    const selected = Array.from(e.target.files || []).slice(0, 3);
+    if (selected.length === 0) return;
 
-    // Convert uploaded files to base64 Data URLs for NVIDIA Vision API
-    const promises = files.slice(0, 3).map((file) => {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsDataURL(file);
-      });
-    });
-
-    Promise.all(promises).then((base64Urls) => {
-      setImages(base64Urls);
-      setMatchResult(null);
-    });
+    // Keep File objects for FormData — never push giant base64 arrays through Server Actions / React Flight
+    setFiles(selected);
+    setPreviews(selected.map((file) => URL.createObjectURL(file)));
+    setMatchResult(null);
   };
 
   const handleAnalyzeStyle = async () => {
-    if (images.length === 0) return;
+    if (files.length === 0) return;
     setAnalyzing(true);
 
     try {
-      // Import and call Server Action powered by NVIDIA Llama 3.2 Vision
-      const { analyzeMoodboardAI } = await import("@/app/actions/moodboard");
-      const res = await analyzeMoodboardAI(images);
+      const formData = new FormData();
+      files.forEach((file) => formData.append("images", file));
 
-      if (res && res.data) {
-        setMatchResult(res.data);
+      const res = await fetch("/api/moodboard/analyze", {
+        method: "POST",
+        body: formData,
+      });
+      const json = await res.json();
+
+      if (json?.data) {
+        setMatchResult(json.data);
+      } else {
+        throw new Error(json?.error || "Analysis failed");
       }
     } catch (err) {
-      console.error("NVIDIA Vision AI error:", err);
-      // Fallback
+      console.error("Moodboard analyze error:", err);
       setMatchResult({
         detectedTone: "Soft Pastel Baby & Birthday Tones",
         presetName: "Pastel Dreamland Baby Preset",
         recommendedPackage: "Royal Baby & Family Portrait (₹25,000)",
         matchScore: 96,
-        features: [
-          "3 Hours Studio / Outdoor Creative Shoot",
-          "Custom Props, Costumes & Setup Included",
-          "Handcrafted 15-Page Layflat Baby Album",
-          "Guaranteed 1-Month Delivery"
-        ]
+        featuresText:
+          "3 Hours Studio / Outdoor Creative Shoot | Custom Props, Costumes & Setup Included | Handcrafted 15-Page Layflat Baby Album | Guaranteed 1-Month Delivery",
       });
     } finally {
       setAnalyzing(false);
     }
   };
+
+  const featureList = featuresToList(matchResult);
 
   return (
     <AnimatePresence>
@@ -114,10 +119,10 @@ export default function MoodboardMatcherModal({ isOpen, onClose, whatsappNumber 
                 </label>
               </div>
 
-              {images.length > 0 && (
+              {previews.length > 0 && (
                 <div>
                   <div className="grid grid-cols-3 gap-2 mb-4">
-                    {images.map((img, idx) => (
+                    {previews.map((img, idx) => (
                       <div key={idx} className="aspect-square rounded-xl overflow-hidden border border-amber-400/60 shadow-md">
                         <img src={img} alt="Uploaded inspiration" className="w-full h-full object-cover" />
                       </div>
@@ -163,7 +168,7 @@ export default function MoodboardMatcherModal({ isOpen, onClose, whatsappNumber 
                 </div>
 
                 <ul className="space-y-1.5 text-xs text-zinc-200">
-                  {matchResult.features.map((f, i) => (
+                  {featureList.map((f, i) => (
                     <li key={i} className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                       <span>{f}</span>

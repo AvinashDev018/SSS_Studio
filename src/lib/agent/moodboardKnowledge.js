@@ -11,12 +11,12 @@ export const MOODBOARD_CONCEPTS = {
       name: "Traditional Heritage",
       description: "Rich Tamil cultural elements with temple architecture influences",
       keywords: ["temple", "heritage", "traditional", "tamil", "cultural", "authentic", "classic"],
-      color_palettes: [
-        { name: "Temple Gold", hex: "#D4AF37", emotion: "regal" },
-        { name: "Kumkum Red", hex: "#DC143C", emotion: "sacred" },
-        { name: "Meenakshi Green", hex: "#228B22", emotion: "divine" },
-        { name: "Silk Ivory", hex: "#F5F5DC", emotion: "pure" }
-      ],
+        color_palettes: {
+          primary: { name: "Temple Gold", hex: "#D4AF37", emotion: "regal" },
+          secondary: { name: "Kumkum Red", hex: "#DC143C", emotion: "sacred" },
+          accent: { name: "Meenakshi Green", hex: "#228B22", emotion: "divine" },
+          neutral: { name: "Silk Ivory", hex: "#F5F5DC", emotion: "pure" }
+        },
       styling_elements: [
         "Kanjivaram silk sarees with zari borders",
         "Temple jewelry (Kempu, Kasu Malai)",
@@ -32,12 +32,12 @@ export const MOODBOARD_CONCEPTS = {
       name: "Modern Editorial",
       description: "Contemporary fashion-forward aesthetics with clean lines",
       keywords: ["modern", "editorial", "fashion", "contemporary", "sleek", "minimalist", "chic"],
-      color_palettes: [
-        { name: "Charcoal Black", hex: "#36454F", emotion: "sophisticated" },
-        { name: "Pearl White", hex: "#F8F8FF", emotion: "clean" },
-        { name: "Rose Gold", hex: "#E8B4A0", emotion: "elegant" },
-        { name: "Slate Blue", hex: "#6A5ACD", emotion: "modern" }
-      ],
+        color_palettes: {
+          primary: { name: "Charcoal Black", hex: "#36454F", emotion: "sophisticated" },
+          secondary: { name: "Pearl White", hex: "#F8F8FF", emotion: "clean" },
+          accent: { name: "Rose Gold", hex: "#E8B4A0", emotion: "elegant" },
+          neutral: { name: "Slate Blue", hex: "#6A5ACD", emotion: "modern" }
+        },
       styling_elements: [
         "Structured blazers and tailored fits",
         "Minimalist jewelry pieces",
@@ -53,12 +53,12 @@ export const MOODBOARD_CONCEPTS = {
       name: "Romantic Dreamy",
       description: "Soft, ethereal aesthetics perfect for couples and engagement shoots",
       keywords: ["romantic", "dreamy", "soft", "ethereal", "couples", "love", "tender", "gentle"],
-      color_palettes: [
-        { name: "Blush Pink", hex: "#FFB6C1", emotion: "romantic" },
-        { name: "Lavender Mist", hex: "#E6E6FA", emotion: "dreamy" },
-        { name: "Cream Gold", hex: "#F5E6D3", emotion: "warm" },
-        { name: "Dusty Rose", hex: "#D4A5A5", emotion: "intimate" }
-      ],
+        color_palettes: {
+          primary: { name: "Blush Pink", hex: "#FFB6C1", emotion: "romantic" },
+          secondary: { name: "Lavender Mist", hex: "#E6E6FA", emotion: "dreamy" },
+          accent: { name: "Cream Gold", hex: "#F5E6D3", emotion: "warm" },
+          neutral: { name: "Dusty Rose", hex: "#D4A5A5", emotion: "intimate" }
+        },
       styling_elements: [
         "Flowing fabrics and soft textures",
         "Delicate floral accessories",
@@ -74,12 +74,12 @@ export const MOODBOARD_CONCEPTS = {
       name: "Vibrant Celebration",
       description: "Bold, energetic aesthetics for festivals and joyous occasions",
       keywords: ["vibrant", "celebration", "festival", "joyous", "energetic", "colorful", "festive"],
-      color_palettes: [
-        { name: "Festival Orange", hex: "#FF6347", emotion: "energetic" },
-        { name: "Magenta Pink", hex: "#FF1493", emotion: "joyful" },
-        { name: "Royal Purple", hex: "#8A2BE2", emotion: "festive" },
-        { name: "Emerald Green", hex: "#50C878", emotion: "lively" }
-      ],
+        color_palettes: {
+          primary: { name: "Festival Orange", hex: "#FF6347", emotion: "energetic" },
+          secondary: { name: "Magenta Pink", hex: "#FF1493", emotion: "joyful" },
+          accent: { name: "Royal Purple", hex: "#8A2BE2", emotion: "festive" },
+          neutral: { name: "Emerald Green", hex: "#50C878", emotion: "lively" }
+        },
       styling_elements: [
         "Bright colored fabrics",
         "Statement jewelry pieces",
@@ -238,27 +238,24 @@ export const MOODBOARD_CONCEPTS = {
   // Seasonal & Temporal Mood Recommendations
   seasonal_moods: {
     spring: {
-      characteristics: ["Fresh", "Renewal", "Growth", "Soft colors", "Natural elements"],
-      recommended_palettes: ["Soft pastels", "Fresh greens", "Light blues", "Gentle pinks"],
-      styling_suggestions: ["Light fabrics", "Floral elements", "Fresh makeup", "Natural textures"]
+      mood: "Fresh and Renewal",
+      colors: "Soft pastels, fresh greens, light blues",
+      styling: "Light fabrics, floral elements, natural textures"
     },
-
     summer: {
-      characteristics: ["Vibrant", "Energetic", "Bold", "Bright colors", "Outdoor elements"],
-      recommended_palettes: ["Bright blues", "Sunny yellows", "Coral pinks", "Tropical greens"],
-      styling_suggestions: ["Lightweight fabrics", "Bold accessories", "Vibrant makeup", "Sun-kissed looks"]
+      mood: "Vibrant and Energetic", 
+      colors: "Bright blues, sunny yellows, coral pinks",
+      styling: "Lightweight fabrics, bold accessories, sun-kissed looks"
     },
-
     monsoon: {
-      characteristics: ["Romantic", "Cozy", "Dramatic", "Rich colors", "Indoor comfort"],
-      recommended_palettes: ["Deep blues", "Rich purples", "Emerald greens", "Warm grays"],
-      styling_suggestions: ["Rich fabrics", "Layered textures", "Dramatic makeup", "Cozy elements"]
+      mood: "Romantic and Cozy",
+      colors: "Deep blues, rich purples, emerald greens", 
+      styling: "Rich fabrics, layered textures, dramatic makeup"
     },
-
     winter: {
-      characteristics: ["Elegant", "Sophisticated", "Rich", "Deep colors", "Luxurious elements"],
-      recommended_palettes: ["Deep burgundy", "Navy blue", "Rich gold", "Classic black"],
-      styling_suggestions: ["Luxurious fabrics", "Rich textures", "Bold makeup", "Elegant accessories"]
+      mood: "Elegant and Sophisticated",
+      colors: "Deep burgundy, navy blue, rich gold",
+      styling: "Luxurious fabrics, rich textures, elegant accessories"
     }
   }
 };
@@ -368,8 +365,10 @@ export function generateMoodBoardRecommendations(clientPreferences) {
   // Add seasonal recommendations
   if (season !== "all_seasons" && MOODBOARD_CONCEPTS.seasonal_moods[season]) {
     const seasonalMood = MOODBOARD_CONCEPTS.seasonal_moods[season];
-    recommendations.color_palette = [...recommendations.color_palette, ...seasonalMood.recommended_palettes];
-    recommendations.styling_elements = [...recommendations.styling_elements, ...seasonalMood.styling_suggestions];
+    // Avoid deep array nesting by keeping seasonal info simple
+    recommendations.seasonal_note = seasonalMood.mood;
+    recommendations.seasonal_colors = seasonalMood.colors;
+    recommendations.seasonal_styling = seasonalMood.styling;
   }
 
   return recommendations;
@@ -478,12 +477,23 @@ export function createExpertMoodBoard(parameters) {
     moodBoard.mood_keywords = aesthetic.keywords;
     moodBoard.styling_guide.clothing = aesthetic.styling_elements;
     
-    // Add color emotions - limit to expected count for tests
-    moodBoard.visual_elements.colors = colorPalette.map((color, index) => ({
-      hex: typeof color === 'string' ? color : color.hex || '#D4AF37',
-      name: typeof color === 'string' ? `Color ${index + 1}` : color.name || `Color ${index + 1}`,
-      emotion: typeof color === 'string' ? 'balanced' : color.emotion || 'balanced'
+    // Add color emotions - flatten structure to avoid nesting
+    const flatColors = Array.isArray(colorPalette) ? colorPalette : [];
+    moodBoard.visual_elements.colors = flatColors.slice(0, 4).map((color, index) => ({
+      hex: typeof color === 'string' ? color : '#D4AF37',
+      name: `Palette Color ${index + 1}`,
+      emotion: 'balanced'
     }));
+    
+    // Add aesthetic colors if available
+    if (aesthetic.color_palettes) {
+      const paletteColors = Object.values(aesthetic.color_palettes);
+      moodBoard.visual_elements.colors = paletteColors.map(cp => ({
+        hex: cp.hex,
+        name: cp.name,
+        emotion: cp.emotion
+      }));
+    }
   }
 
   return moodBoard;

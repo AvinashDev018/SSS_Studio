@@ -102,7 +102,7 @@ export default async function ProfilePage() {
                       <p className="text-white font-medium mb-1 group-hover:text-cyan-400 transition-colors">
                         Order #{order.orderId || order.id.substring(0, 8).toUpperCase()}
                       </p>
-                      <p className="text-sm text-zinc-400">{new Date(order.createdAt).toLocaleDateString()} &middot; {order.items.length} items</p>
+                      <p className="text-sm text-zinc-400">{new Date(order.createdAt).toLocaleDateString()} &middot; {Array.isArray(order.items) ? order.items.length : 1} items</p>
                     </div>
                     <div className="flex items-center gap-6">
                       <div className="text-right">

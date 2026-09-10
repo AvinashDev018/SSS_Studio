@@ -336,15 +336,13 @@ export default function SSSPortfolio() {
         </div>
 
         {/* Projects Container: Horizontal Snap Carousel on Mobile (< md), Grid on Desktop (md+) */}
-        <motion.div 
-          layout 
+        <div 
           className="flex md:grid overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar pb-6 gap-4 sm:gap-6 md:gap-8 -mx-4 px-4 md:mx-0 md:px-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
         >
           <AnimatePresence mode="popLayout">
             {filteredProjects.map((proj, idx) => (
               <motion.div
                 key={proj.id}
-                layout
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
@@ -448,7 +446,7 @@ export default function SSSPortfolio() {
               </motion.div>
             ))}
           </AnimatePresence>
-        </motion.div>
+        </div>
       </div>
 
       {/* Fullscreen Lightbox Modal */}
