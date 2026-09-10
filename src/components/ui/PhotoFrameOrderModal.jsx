@@ -5,8 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   X, 
   Upload, 
-  Check, 
-  Copy, 
   MessageCircle, 
   Sparkles, 
   ArrowRight, 
@@ -15,9 +13,7 @@ import {
   ShieldCheck, 
   MapPin, 
   User, 
-  Phone, 
-  CreditCard,
-  QrCode,
+  Phone,
   CheckCircle2,
   Tag
 } from "lucide-react";
@@ -34,8 +30,6 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
   const [address, setAddress] = useState("");
   const [couponCode, setCouponCode] = useState("");
   const [isCouponApplied, setIsCouponApplied] = useState(false);
-  const [paymentOption, setPaymentOption] = useState("upi");
-  const [copiedUPI, setCopiedUPI] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [isGift, setIsGift] = useState(true);
   const [giftWish, setGiftWish] = useState("");
@@ -86,12 +80,6 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
     } else {
       setErrorMsg("Invalid coupon code. Try SSS-LUCKY2026");
     }
-  };
-
-  const handleCopyUPI = () => {
-    navigator.clipboard.writeText("6383565425@upi");
-    setCopiedUPI(true);
-    setTimeout(() => setCopiedUPI(false), 2500);
   };
 
   const handleDispatchWhatsApp = async () => {
@@ -175,12 +163,12 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
       `• *Name:* ${clientName.trim()}\n` +
       `• *Phone:* ${clientPhone.trim()}\n` +
       `• *Fulfillment:* ${deliveryType === "pickup" ? "Studio Pickup (Avaniyapuram, Madurai)" : `Courier Delivery to:\n  ${address.trim()}`}\n` +
-      `• *Payment Mode:* ${paymentOption === "upi" ? "UPI / Google Pay (6383565425@upi)" : "Pay at Studio Counter"}\n` +
+      `• *Payment:* Confirm with SSS Studio on WhatsApp (pay at studio / as advised)\n` +
       `----------------------------------------\n` +
       (uploadedPhotoUrl ? `🖼️ *Custom Photo Link:* ${uploadedPhotoUrl}\n\n` : `📸 *Photo Attachment:* Attached below in this chat.\n\n`) +
       `Hello SSS Studio! Please confirm my personalized photo gift order #${createdOrderId}.`;
 
-    const waUrl = `https://wa.me/916383565425?text=${encodeURIComponent(receipt)}`;
+    const waUrl = `https://wa.me/919865992379?text=${encodeURIComponent(receipt)}`;
     setIsSubmitting(false);
     onClose();
     
@@ -527,14 +515,14 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
                     }}
                     className="px-6 py-3 rounded-xl bg-metallic-gold text-black font-bold text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-md hover:scale-105 transition-all"
                   >
-                    <span>Proceed to Payment</span>
+                    <span>Review Order</span>
                     <ArrowRight size={14} />
                   </button>
                 </div>
               </div>
             )}
 
-            {/* STEP 3: Instant UPI Payment & WhatsApp Dispatch */}
+            {/* STEP 3: Order summary + WhatsApp dispatch (UPI/GPay temporarily disabled for launch) */}
             {step === 3 && (
               <div className="space-y-5">
                 {/* Total Bill Box */}
@@ -559,37 +547,9 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
                   </div>
                 </div>
 
-                {/* Studio Official UPI Payment Box */}
-                <div className="p-4 rounded-2xl bg-[#FAFAFA] border border-black/10 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
-                      <CreditCard size={14} className="text-[#8b6508]" />
-                      Studio Direct UPI / Google Pay
-                    </span>
-                    <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full">
-                      Zero Processing Fee
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-white border border-black/15 shadow-sm">
-                    <div>
-                      <span className="text-[10px] text-zinc-500 block uppercase font-bold">Official Studio UPI ID</span>
-                      <span className="font-mono font-bold text-sm text-[#8b6508]">6383565425@upi</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleCopyUPI}
-                      className="px-3 py-1.5 rounded-lg bg-[#d4af37]/20 hover:bg-[#d4af37]/30 text-[#8b6508] text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
-                    >
-                      {copiedUPI ? <Check size={13} className="text-emerald-700" /> : <Copy size={13} />}
-                      <span>{copiedUPI ? "Copied" : "Copy UPI"}</span>
-                    </button>
-                  </div>
-
-                  <p className="text-[11px] text-zinc-600 font-medium">
-                    Pay via Google Pay, PhonePe, or Paytm using the UPI ID above, or pay directly upon Studio Pickup at Avaniyapuram, Madurai.
-                  </p>
-                </div>
+                <p className="text-[11px] text-zinc-600 font-medium text-center px-1">
+                  Submit your order on WhatsApp. Our studio team will confirm payment &amp; delivery details with you.
+                </p>
 
                 {/* Final WhatsApp Order Button */}
                 <button

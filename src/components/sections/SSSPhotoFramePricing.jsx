@@ -248,12 +248,12 @@ export default function SSSPhotoFramePricing() {
                 SSS Studio 1-Month Delivery Guarantee &amp; Lifetime Anti-Fade Inks
               </h4>
               <p className="text-xs text-zinc-300 font-light">
-                Handcrafted at 34, Prasanna New Colony, Avaniyapuram, Madurai with strict quality inspection.
+                Handcrafted at 7th Street, Prasanna Colony, Avaniyapuram, Madurai with strict quality inspection.
               </p>
             </div>
           </div>
           <a
-            href="https://wa.me/916383565425?text=Hello%20SSS%20Studio!%20I%20would%20like%20to%20inquire%20about%20custom%20photo%20frames."
+            href="https://wa.me/919865992379?text=Hello%20SSS%20Studio!%20I%20would%20like%20to%20inquire%20about%20custom%20photo%20frames."
             target="_blank"
             rel="noopener noreferrer"
             className="px-6 py-3 rounded-full bg-metallic-gold text-black font-bold text-xs uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer hover:scale-105 shadow-xl"

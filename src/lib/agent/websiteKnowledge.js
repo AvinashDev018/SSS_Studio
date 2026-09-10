@@ -7,9 +7,9 @@ export const WEBSITE_MAP = {
   studio: {
     name: "SSS Photography Studio",
     nameTa: "SSS போட்டோகிராபி ஸ்டுடியோ",
-    phone: "+91 63835 65425",
-    whatsapp: "https://wa.me/916383565425",
-    address: "34, Prasanna New Colony, Avaniyapuram, Madurai, Tamil Nadu 625012",
+    phone: "+91 98659 92379",
+    whatsapp: "https://wa.me/919865992379",
+    address: "7th Street, Prasanna Colony, Avaniyapuram, Madurai",
     hours: "Monday–Sunday, 9:00 AM – 8:00 PM",
   },
   routes: [
@@ -112,7 +112,7 @@ export const WEBSITE_MAP = {
   ],
   howTos: {
     bookShoot:
-      "Open Home → tap Book a Consultation, or visit /book. Share event type, date, and requirements. You can also WhatsApp +91 63835 65425.",
+      "Open Home → tap Book a Consultation, or visit /book. Share event type, date, and requirements. You can also WhatsApp +91 98659 92379.",
     buyFrame:
       "Open /store or homepage #frames section → choose size → Order → upload custom photo if needed → checkout with promo code optional → pay Cash at studio or UPI home delivery.",
     trackOrder:

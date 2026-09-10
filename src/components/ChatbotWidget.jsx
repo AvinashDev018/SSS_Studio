@@ -37,7 +37,7 @@ const QUICK_SUGGESTIONS = [
   "📍 Studio Location & Timings",
 ];
 
-const WHATSAPP_URL = "https://wa.me/916383565425?text=Hi!%20I%27m%20interested%20in%20booking%20a%20photography%20session%20with%20SSS%20Studio.";
+const WHATSAPP_URL = "https://wa.me/919865992379?text=Hi!%20I%27m%20interested%20in%20booking%20a%20photography%20session%20with%20SSS%20Studio.";
 
 const FAQ_RESPONSES = {
   pricing: {
@@ -59,13 +59,13 @@ const FAQ_RESPONSES = {
     title: "Visit SSS Studio in Madurai",
     text: "Here is everything you need before visiting or planning your session:",
     details: [
-      "Address: 34, Prasanna New Colony, Avaniyapuram, Madurai, Tamil Nadu.",
+      "Address: 7th Street, Prasanna Colony, Avaniyapuram, Madurai, Tamil Nadu.",
       "Opening hours: Monday to Sunday, 9:00 AM to 8:00 PM.",
-      "Call / WhatsApp: +91 63835 65425.",
+      "Call / WhatsApp: +91 98659 92379.",
     ],
     actions: [
-      { label: "Get Directions", href: "https://maps.google.com/?q=34%2C%20Prasanna%20New%20Colony%2C%20Avaniyapuram%2C%20Madurai", external: true },
-      { label: "Call Studio", href: "tel:+916383565425", external: true }
+      { label: "Get Directions", href: "https://maps.google.com/?q=7th%20Street%2C%20Prasanna%20Colony%2C%20Avaniyapuram%2C%20Madurai", external: true },
+      { label: "Call Studio", href: "tel:+919865992379", external: true }
     ],
   },
   delivery: {
@@ -494,7 +494,7 @@ export default function ChatbotWidget({ forcedOpen, onClose }) {
                             <ShieldCheck size={12} /> 1-Month Delivery Guaranteed
                           </span>
                           <a
-                            href={`https://wa.me/916383565425?text=${encodeURIComponent(
+                            href={`https://wa.me/919865992379?text=${encodeURIComponent(
                               `Hi SSS Studio! I got an AI package quote for ${msg.cardData.eventType} (${msg.cardData.totalEstimated}). Can we finalize the date?`
                             )}`}
                             target="_blank"
@@ -566,7 +566,7 @@ export default function ChatbotWidget({ forcedOpen, onClose }) {
                                 View Timeline →
                               </a>
                               <a
-                                href={`https://wa.me/916383565425?text=${encodeURIComponent(
+                                href={`https://wa.me/919865992379?text=${encodeURIComponent(
                                   `Hi SSS Studio! Checking on status of order ${msg.cardData.orderId} (${msg.cardData.customerName}).`
                                 )}`}
                                 target="_blank"

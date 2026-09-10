@@ -50,7 +50,7 @@ export default function LuckyGiftModal({ isOpen, onClose }) {
       `Promo Code: *${text.promoCode}*\n` +
       `Unlocked Perk: *${text.giftPerk}*\n\n` +
       `Please apply this gift perk to my shoot inquiry!`;
-    const url = `https://wa.me/916383565425?text=${encodeURIComponent(msg)}`;
+    const url = `https://wa.me/919865992379?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank");
     onClose();
   };

@@ -104,7 +104,7 @@ export const AGENT_TOOLS = [
     type: "function",
     function: {
       name: "create_whatsapp_deal",
-      description: "Generate a formatted 1-click WhatsApp booking quote for the studio owner (+91 63835 65425) with client package details.",
+      description: "Generate a formatted 1-click WhatsApp booking quote for the studio owner (+91 98659 92379) with client package details.",
       parameters: {
         type: "object",
         properties: {
@@ -661,7 +661,7 @@ export async function executeAgentTool(name, args) {
           } else if (status === "READY_FOR_PICKUP") {
             progress = 90;
             stageLabel = "Ready for Studio Pickup";
-            stageDesc = "Ready at Studio: 34, Prasanna New Colony, Avaniyapuram.";
+            stageDesc = "Ready at Studio: 7th Street, Prasanna Colony, Avaniyapuram.";
           } else if (status === "SHIPPED") {
             progress = 85;
             stageLabel = "Shipped via Courier";
@@ -696,7 +696,7 @@ export async function executeAgentTool(name, args) {
           action: "TRACK_ORDER",
           found: false,
           query: rawQuery,
-          message: `No active order found for '${rawQuery}'. You can search on our track page or contact studio WhatsApp directly (+91 63835 65425).`,
+          message: `No active order found for '${rawQuery}'. You can search on our track page or contact studio WhatsApp directly (+91 98659 92379).`,
         };
       }
 
@@ -710,14 +710,14 @@ export async function executeAgentTool(name, args) {
           `Hi SSS Studio! 👋\nI am interested in booking:\n• Package: ${summary}\n• Estimated Total: ${total}\n• Name: ${clientName}\n• Date: ${eventDate}\n\nPlease confirm availability and let's finalize the date!`
         );
 
-        const whatsappUrl = `https://wa.me/916383565425?text=${text}`;
+        const whatsappUrl = `https://wa.me/919865992379?text=${text}`;
 
         return {
           action: "WHATSAPP_DEAL",
           whatsappUrl,
           summary,
           estimatedTotal: total,
-          phone: "+91 63835 65425",
+          phone: "+91 98659 92379",
         };
       }
 

@@ -97,11 +97,11 @@ export default function Footer() {
             <ul className="space-y-3.5 text-sm">
               <li className="flex items-start gap-3 text-zinc-900 font-bold">
                 <MapPin className="w-4 h-4 shrink-0 mt-1 text-[#8b6508]" />
-                <span className="font-semibold">34, Prasanna New Colony, Avaniyapuram, Madurai, TN 625012</span>
+                <span className="font-semibold">7th Street, Prasanna Colony, Avaniyapuram, Madurai</span>
               </li>
               <li className="flex items-center gap-3 text-zinc-900 font-bold">
                 <Phone className="w-4 h-4 shrink-0 text-[#8b6508]" />
-                <span className="font-bold">+91 63835 65425</span>
+                <span className="font-bold">+91 98659 92379</span>
               </li>
               <li className="flex items-center gap-3 text-zinc-900 font-bold">
                 <Mail className="w-4 h-4 shrink-0 text-[#8b6508]" />

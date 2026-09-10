@@ -114,7 +114,7 @@ export default function TrackOrderPage() {
 
   const getWhatsAppHelpLink = () => {
     const text = `Vanakkam SSS Studio! 👋 I am checking the status of my order/booking *#${order?.orderId}* for ${order?.customerName}. Could you share an update?`;
-    return `https://wa.me/916383565425?text=${encodeURIComponent(text)}`;
+    return `https://wa.me/919865992379?text=${encodeURIComponent(text)}`;
   };
 
   return (
@@ -139,7 +139,7 @@ export default function TrackOrderPage() {
         {/* Printable Header */}
         <div className="hidden print:block text-center mb-8 border-b border-zinc-200 pb-8 text-black">
           <h1 className="font-serif text-4xl font-bold mb-2">SSS Photography Studio</h1>
-          <p className="text-zinc-600">34, Prasanna New Colony, Avaniyapuram, Madurai - 625012 | +91 63835 65425</p>
+          <p className="text-zinc-600">7th Street, Prasanna Colony, Avaniyapuram, Madurai | +91 98659 92379</p>
           <p className="text-sm font-mono mt-4">Order ID: {order?.orderId}</p>
         </div>
 

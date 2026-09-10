@@ -22,7 +22,7 @@ export default function Contact() {
  </div>
  <div>
  <h3 className="font-serif font-bold text-xl text-zinc-900 dark:text-brand-gradient">Visit Our Studio</h3>
- <p className="text-zinc-600 dark:text-zinc-300 mt-1 leading-relaxed text-lg">34, prasanna new colony, Avaniyapuram,<br/>Madurai.</p>
+ <p className="text-zinc-600 dark:text-zinc-300 mt-1 leading-relaxed text-lg">7th Street, Prasanna Colony, Avaniyapuram,<br/>Madurai.</p>
  </div>
  </div>
  
@@ -32,7 +32,7 @@ export default function Contact() {
  </div>
  <div>
  <h3 className="font-serif font-bold text-xl text-zinc-900 dark:text-brand-gradient">Call Us</h3>
- <p className="text-zinc-600 dark:text-zinc-300 mt-1 text-lg">+91 63835 65425</p>
+ <p className="text-zinc-600 dark:text-zinc-300 mt-1 text-lg">+91 98659 92379</p>
  </div>
  </div>
 
@@ -60,7 +60,7 @@ export default function Contact() {
  {/* Map */}
  <AnimatedSection delay={0.4} className="bg-zinc-100 dark:bg-zinc-900 h-96 rounded-3xl border border-zinc-200 dark:border-zinc-800 overflow-hidden relative shadow-2xl">
  <iframe 
- src="https://maps.google.com/maps?q=34,%20prasanna%20new%20colony,%20Avaniyapuram,%20Madurai&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+ src="https://maps.google.com/maps?q=7th%20Street,%20Prasanna%20Colony,%20Avaniyapuram,%20Madurai&t=&z=15&ie=UTF8&iwloc=&output=embed" 
  width="100%" 
  height="100%" 
  style={{ border: 0 }} 

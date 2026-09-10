@@ -228,7 +228,7 @@ export default function PackagesClientContent({ displayPackages }) {
                     </button>
 
                     <a
-                      href={`https://wa.me/916383565425?text=${encodeURIComponent(
+                      href={`https://wa.me/919865992379?text=${encodeURIComponent(
                         `Vanakkam SSS Studio! I am interested in *${pkg.name}* (${pkg.price}). Please share availability and booking details for our celebration dates.`
                       )}`}
                       target="_blank"

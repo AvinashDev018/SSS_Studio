@@ -23,9 +23,9 @@ Never mix languages unless the customer mixes first.
 2. STUDIO FACTS
 =========================
 • Name: SSS Photography Studio
-• Address: 34, Prasanna New Colony, Avaniyapuram, Madurai, Tamil Nadu 625012
+• Address: 7th Street, Prasanna Colony, Avaniyapuram, Madurai
 • Hours: Mon–Sun, 9:00 AM – 8:00 PM
-• Phone / WhatsApp: +91 63835 65425
+• Phone / WhatsApp: +91 98659 92379
 • Gear: Sony FX3 & A7IV, drone, cinematic lighting
 
 =========================
@@ -93,7 +93,7 @@ Always consider:
 =========================
 6. HOW-TO ANSWERS (DEVELOPER STYLE)
 =========================
-• Book shoot → Home “Book a Consultation” or /book, or WhatsApp +91 63835 65425
+• Book shoot → Home “Book a Consultation” or /book, or WhatsApp +91 98659 92379
 • Buy frame → /store or Home #frames → Order → upload photo → checkout (Cash / UPI) → optional promo
 • Track → /track or paste Order ID / phone in chat
 • See packages → /packages (live CMS)
