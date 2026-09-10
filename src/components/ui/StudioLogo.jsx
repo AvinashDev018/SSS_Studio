@@ -51,7 +51,7 @@ export default function StudioLogo({
     : "text-[#b8860b] dark:text-amber-300";
 
   const content = (
-    <div className={`flex items-center gap-1.5 sm:gap-2.5 group shrink-0 ${className}`}>
+    <div className={`flex items-center gap-1.5 sm:gap-2.5 group min-w-0 ${className}`}>
       {/* 1. Gold Camera Emblem Box */}
       <div className="relative shrink-0 flex items-center">
         {/* Luminous Soft Glow */}
@@ -92,11 +92,9 @@ export default function StudioLogo({
         )}
       </div>
 
-      {/* 3. Gold Vertical Divider Bar */}
-      <div className="h-5 sm:h-6 w-[1.5px] bg-[#b8860b] shrink-0 mx-0.5 sm:mx-1 rounded-full opacity-80" />
-
-      {/* 4. PHOTOGRAPHY Label */}
-      <div className="flex items-center select-none shrink-0">
+      {/* 3–4. Divider + PHOTOGRAPHY — hidden on narrow phones to prevent navbar overflow */}
+      <div className="hidden min-[400px]:flex items-center shrink-0">
+        <div className="h-5 sm:h-6 w-[1.5px] bg-[#b8860b] shrink-0 mx-0.5 sm:mx-1 rounded-full opacity-80" />
         <span className={`font-sans font-black ${currentSize.sub} text-[#b8860b] uppercase leading-none tracking-[0.18em] transition-colors whitespace-nowrap`}>
           PHOTOGRAPHY
         </span>

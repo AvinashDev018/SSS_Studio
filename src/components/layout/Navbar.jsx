@@ -79,13 +79,13 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-40 bg-white/95 backdrop-blur-2xl border-b border-black/10 transition-all duration-300 shadow-md w-full">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="flex items-center justify-between h-16 sm:h-20 gap-2 lg:gap-4">
+    <nav className="sticky top-0 z-40 bg-white/95 backdrop-blur-2xl border-b border-black/10 transition-all duration-300 shadow-md w-full overflow-x-clip">
+      <div className="max-w-[1440px] mx-auto px-3 sm:px-6 lg:px-8 w-full min-w-0">
+        <div className="flex items-center justify-between h-14 sm:h-20 gap-1.5 sm:gap-2 lg:gap-4 min-w-0">
           
-          {/* Left: Brand Logo (Left-aligned & balanced flex) */}
-          <div className="shrink-0 flex items-center lg:flex-1 lg:justify-start">
-            <StudioLogo size="sm" href="/" variant="dark" className="sm:hidden" />
+          {/* Left: Brand Logo — can shrink; never pushes menu off-screen */}
+          <div className="min-w-0 flex-1 flex items-center overflow-hidden lg:flex-1 lg:justify-start">
+            <StudioLogo size="sm" href="/" variant="dark" className="sm:hidden max-w-full" />
             <StudioLogo size="md" href="/" variant="dark" className="hidden sm:flex" />
           </div>
 
@@ -187,10 +187,10 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* Mobile / Tablet View Controls (Zero Overflow, Fits perfectly on all screens) */}
-          <div className="flex lg:hidden items-center gap-1.5 sm:gap-2 shrink-0">
-            {/* Quick Language Pill */}
-            <div className="relative" ref={mobileLangRef}>
+          {/* Mobile / Tablet controls — compact so hamburger never clips */}
+          <div className="flex lg:hidden items-center gap-1 sm:gap-1.5 shrink-0 ml-1">
+            {/* Language — icon + short label */}
+            <div className="relative shrink-0" ref={mobileLangRef}>
               <button
                 type="button"
                 suppressHydrationWarning
@@ -198,10 +198,13 @@ export default function Navbar() {
                   e.stopPropagation();
                   setIsMobileLangOpen((prev) => !prev);
                 }}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold text-zinc-900 bg-black/5 border border-black/15 cursor-pointer hover:bg-black/10 transition-colors whitespace-nowrap"
+                className="inline-flex items-center justify-center gap-0.5 h-9 min-w-9 px-2 rounded-xl text-[10px] font-bold text-zinc-900 bg-black/5 border border-black/15 cursor-pointer hover:bg-black/10 transition-colors"
+                aria-label="Change language"
               >
-                <Globe size={12} className="text-[#b8860b]" />
-                <span suppressHydrationWarning>{translations[currentLang]?.langLabel || "EN"}</span>
+                <Globe size={14} className="text-[#b8860b] shrink-0" />
+                <span className="hidden sm:inline" suppressHydrationWarning>
+                  {translations[currentLang]?.langLabel || "EN"}
+                </span>
               </button>
 
               {isMobileLangOpen && (
@@ -236,19 +239,22 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Quick Mobile Offer Button */}
+            {/* Offer — icon-only on phones; label from sm+. Full offer CTA lives in drawer too. */}
             <button
               onClick={() => triggerModal("offer", "Exclusive Wedding Season Gift Box")}
-              className="flex px-2.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-[#d4af37]/20 text-[#8b6508] border border-[#d4af37]/50 items-center gap-1 cursor-pointer shadow-sm whitespace-nowrap"
+              className="inline-flex shrink-0 items-center justify-center gap-1 h-9 min-w-9 px-2 sm:px-2.5 rounded-xl text-[10px] sm:text-[11px] font-bold bg-[#d4af37]/20 text-[#8b6508] border border-[#d4af37]/50 cursor-pointer shadow-sm"
+              aria-label={t.nav.offer}
             >
-              <Sparkles size={11} className="text-[#8b6508]" /> {t.nav.offer}
+              <Sparkles size={14} className="text-[#8b6508] shrink-0" />
+              <span className="hidden sm:inline whitespace-nowrap">{t.nav.offer}</span>
             </button>
 
-            {/* Hamburger Button */}
+            {/* Hamburger — always fully visible */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-xl text-zinc-900 bg-black/5 border border-black/15 hover:bg-black/10 focus:outline-none cursor-pointer"
+              className="inline-flex shrink-0 items-center justify-center h-9 w-9 rounded-xl text-zinc-900 bg-black/5 border border-black/15 hover:bg-black/10 focus:outline-none cursor-pointer"
               aria-expanded={isOpen}
+              aria-label={isOpen ? "Close menu" : "Open menu"}
             >
               <span className="sr-only">{isOpen ? "Close menu" : "Open menu"}</span>
               {isOpen ? <X className="block h-5 w-5 text-[#8b6508]" /> : <Menu className="block h-5 w-5 text-zinc-900" />}
