@@ -184,6 +184,21 @@ const TIER_ORDER = {
   "Baby Milestone & Birthday": 9
 };
 
+/** Flatten String[] features so React Flight never sees packages[] → features[] nesting */
+function serializePackageForClient(pkg) {
+  return {
+    id: pkg.id,
+    name: pkg.name,
+    price: pkg.price,
+    description: pkg.description,
+    popular: !!pkg.popular,
+    createdAt: pkg.createdAt || null,
+    features: Array.isArray(pkg.features)
+      ? pkg.features.join(", ")
+      : String(pkg.features || ""),
+  };
+}
+
 export async function getPackages() {
   try {
     let packages = await prisma.package.findMany({
@@ -206,18 +221,22 @@ export async function getPackages() {
       });
     }
 
-    return packages.sort((a, b) => {
-      const orderA = TIER_ORDER[a.name] ?? 99;
-      const orderB = TIER_ORDER[b.name] ?? 99;
-      return orderA - orderB;
-    });
+    return packages
+      .sort((a, b) => {
+        const orderA = TIER_ORDER[a.name] ?? 99;
+        const orderB = TIER_ORDER[b.name] ?? 99;
+        return orderA - orderB;
+      })
+      .map(serializePackageForClient);
   } catch (error) {
     console.error("Error fetching packages:", error);
-    return [...FALLBACK_PACKAGES].sort((a, b) => {
-      const orderA = TIER_ORDER[a.name] ?? 99;
-      const orderB = TIER_ORDER[b.name] ?? 99;
-      return orderA - orderB;
-    });
+    return [...FALLBACK_PACKAGES]
+      .sort((a, b) => {
+        const orderA = TIER_ORDER[a.name] ?? 99;
+        const orderB = TIER_ORDER[b.name] ?? 99;
+        return orderA - orderB;
+      })
+      .map(serializePackageForClient);
   }
 }
 

@@ -16,6 +16,25 @@ function generateOrderId() {
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
+/** Flatten nested items arrays for React Flight / Server Action payloads */
+function serializeOrderForClient(order) {
+  if (!order) return order;
+  let itemsText = "[]";
+  try {
+    if (typeof order.items === "string") {
+      itemsText = order.items;
+    } else {
+      itemsText = JSON.stringify(order.items ?? []);
+    }
+  } catch {
+    itemsText = "[]";
+  }
+  return {
+    ...order,
+    items: itemsText,
+  };
+}
+
 export async function createOrder(data) {
   try {
     const session = await getServerSession(authOptions);
@@ -94,13 +113,13 @@ export async function searchOrdersByPhoneOrId(query) {
           where: { orderId: { equals: cleanId, mode: "insensitive" } },
         });
         if (orderById) {
-          return { success: true, multiple: false, order: orderById };
+          return { success: true, multiple: false, order: serializeOrderForClient(orderById) };
         }
         return { success: false, error: `No active orders or shoots found for mobile number ending in ${digitsOnly.slice(-4)}` };
       }
 
       if (totalMatches === 1 && orders.length === 1) {
-        return { success: true, multiple: false, order: orders[0] };
+        return { success: true, multiple: false, order: serializeOrderForClient(orders[0]) };
       }
 
       const unifiedOrders = [
@@ -111,14 +130,11 @@ export async function searchOrdersByPhoneOrId(query) {
           status: o.status,
           totalAmount: o.totalAmount,
           createdAt: o.createdAt,
-          items: (() => {
-            if (typeof o.items !== "string") return o.items;
-            try {
-              return JSON.parse(o.items);
-            } catch {
-              return [];
-            }
-          })(),
+          // Flatten nested items[] → string for React Flight safety
+          items:
+            typeof o.items === "string"
+              ? o.items
+              : JSON.stringify(o.items ?? []),
           courierTrackingId: o.courierTrackingId,
           address: o.address,
         })),
@@ -134,7 +150,7 @@ export async function searchOrdersByPhoneOrId(query) {
           createdAt: b.createdAt,
           totalAmount: 0,
           address: b.location,
-          items: [{ name: `${b.eventType} Photoshoot Coverage`, quantity: 1, price: 0 }],
+          items: JSON.stringify([{ name: `${b.eventType} Photoshoot Coverage`, quantity: 1, price: 0 }]),
         })),
       ].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
 
@@ -156,7 +172,7 @@ export async function searchOrdersByPhoneOrId(query) {
     });
 
     if (order) {
-      return { success: true, multiple: false, order };
+      return { success: true, multiple: false, order: serializeOrderForClient(order) };
     }
 
     // 3. Search booking by SHOOT-ID or raw UUID
@@ -169,7 +185,7 @@ export async function searchOrdersByPhoneOrId(query) {
         return {
           success: true,
           multiple: false,
-          order: {
+          order: serializeOrderForClient({
             type: "booking",
             orderId: cleanId,
             customerName: booking.name,
@@ -182,7 +198,7 @@ export async function searchOrdersByPhoneOrId(query) {
             totalAmount: 0,
             address: booking.location,
             items: [{ name: `${booking.eventType} Photoshoot Coverage`, quantity: 1, price: 0 }],
-          },
+          }),
         };
       }
     }
@@ -203,7 +219,7 @@ export async function getOrders() {
  const orders = await prisma.order.findMany({
  orderBy: { createdAt: "desc" }
  });
- return { success: true, orders };
+ return { success: true, orders: orders.map(serializeOrderForClient) };
  } catch (error) {
  console.error("Error fetching orders:", error);
  return { success: false, error: "Failed to fetch orders" };
