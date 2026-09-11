@@ -17,9 +17,14 @@ function signedOffset(i, active, count) {
   return d;
 }
 
-function FlippablePackageFace({ card, isFront, onBook }) {
+function PackageDetailFace({ pkg, isFront, onBook }) {
   const [flipped, setFlipped] = useState(false);
-  const features = card.features || [];
+  const features = normalizeFeatures(pkg.features);
+  const badge = pkg.popular
+    ? pkg.name?.toLowerCase().includes("8")
+      ? "Flagship Favorite"
+      : "Most Popular"
+    : (pkg.name || "").split("-")[0]?.trim() || "Package";
 
   useEffect(() => {
     if (!isFront) setFlipped(false);
@@ -35,36 +40,40 @@ function FlippablePackageFace({ card, isFront, onBook }) {
         }}
       >
         <div
-          className="absolute inset-0 rounded-2xl overflow-hidden border-2 border-[#d4af37]/90 bg-[#0d0f14] flex flex-col p-4"
+          className="absolute inset-0 rounded-2xl overflow-hidden border-2 border-[#d4af37]/90 bg-[#0d0f14] flex flex-col p-4 sm:p-5"
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
         >
-          {card.popular && (
+          {pkg.popular && (
             <div className="absolute top-0 inset-x-0 py-1.5 text-center text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-black z-10">
               ★ Most Popular · Favorite
             </div>
           )}
-          <div className={`flex flex-wrap items-start justify-between gap-2 ${card.popular ? "pt-8" : "pt-0.5"} mb-2`}>
+
+          <div className={`flex flex-wrap items-start justify-between gap-2 ${pkg.popular ? "pt-8" : "pt-0.5"} mb-2`}>
             <span className="px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-400/30 text-[10px] font-black uppercase tracking-wider">
-              {card.badge || "Package"}
+              {badge}
             </span>
             <span className="text-[9px] font-bold text-emerald-400 bg-emerald-950/60 px-2 py-1 rounded-full border border-emerald-800/60 whitespace-nowrap">
               1-Month Guarantee
             </span>
           </div>
+
           <h3 className="text-white font-serif font-bold text-[15px] sm:text-lg leading-snug mb-2 break-words line-clamp-3">
-            {card.label}
+            {pkg.name}
           </h3>
-          {card.description && (
+          {pkg.description && (
             <p className="text-zinc-400 text-[11px] sm:text-xs leading-relaxed mb-3 font-light line-clamp-4">
-              {card.description}
+              {pkg.description}
             </p>
           )}
+
           <div className="mt-auto mb-3 rounded-xl bg-zinc-950/80 border border-zinc-800 px-3.5 py-3">
-            <span className="text-[#d4af37] font-mono font-black text-2xl block leading-none">
-              {card.meta || "—"}
+            <span className="text-[#d4af37] font-mono font-black text-2xl sm:text-[28px] block leading-none">
+              {pkg.price || "—"}
             </span>
             <span className="text-[10px] text-zinc-500 font-medium">Studio catalog rate</span>
           </div>
+
           <button
             type="button"
             disabled={!isFront}
@@ -73,24 +82,25 @@ function FlippablePackageFace({ card, isFront, onBook }) {
               if (!isFront) return;
               setFlipped(true);
             }}
-            className="w-full py-3 rounded-xl text-xs font-extrabold bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-400/40 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+            className="w-full py-3 rounded-xl text-xs font-extrabold bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-400/40 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
           >
             <RefreshCw className="w-3.5 h-3.5" /> Flip for inclusions
           </button>
         </div>
 
         <div
-          className="absolute inset-0 rounded-2xl overflow-hidden border-2 border-amber-400/60 bg-[#12151c] flex flex-col p-4"
+          className="absolute inset-0 rounded-2xl overflow-hidden border-2 border-amber-400/60 bg-[#12151c] flex flex-col p-4 sm:p-5"
           style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
           }}
         >
-          <div className="text-[11px] font-black uppercase tracking-wider text-amber-400/90 mb-2 flex items-center gap-1.5">
+          <div className="text-[11px] font-black uppercase tracking-wider text-amber-400/90 mb-2 flex items-center gap-1.5 shrink-0">
             <Layers className="w-3.5 h-3.5" />
             Inclusions &amp; deliverables
           </div>
+
           <ul className="space-y-1.5 overflow-y-auto flex-1 pr-1 mb-3 min-h-0">
             {features.map((f, i) => (
               <li key={i} className="flex items-start gap-2 text-[11px] sm:text-xs text-zinc-200 leading-snug">
@@ -102,15 +112,16 @@ function FlippablePackageFace({ card, isFront, onBook }) {
               <li className="text-xs text-zinc-500">Details confirmed on booking.</li>
             )}
           </ul>
+
           <div className="space-y-2 pt-2 border-t border-zinc-800 shrink-0">
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                onBook?.(card.raw);
+                onBook?.(pkg);
               }}
               className={`w-full py-3 rounded-xl text-xs font-extrabold cursor-pointer ${
-                card.popular
+                pkg.popular
                   ? "bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-black"
                   : "bg-amber-500/20 text-amber-300 border border-amber-400/40"
               }`}
@@ -119,7 +130,7 @@ function FlippablePackageFace({ card, isFront, onBook }) {
             </button>
             <a
               href={`https://wa.me/919865992379?text=${encodeURIComponent(
-                `Vanakkam SSS Studio! I am interested in *${card.label}* (${card.meta || ""}). Please share availability.`
+                `Vanakkam SSS Studio! I am interested in *${pkg.name}* (${pkg.price || ""}). Please share availability.`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -145,132 +156,24 @@ function FlippablePackageFace({ card, isFront, onBook }) {
   );
 }
 
-function PhotoCardFace({ card, isFront, frontHint = "Tap to open", onAction }) {
-  const looksLikePrice =
-    typeof card.meta === "string" &&
-    (card.meta.includes("₹") || /starting/i.test(card.meta) || /\d/.test(card.meta));
-  const isBook = /book/i.test(frontHint);
-
-  return (
-    <div className="relative w-full h-full bg-zinc-950 border-2 border-white/80 rounded-2xl overflow-hidden">
-      {card.videoUrl && !card.image ? (
-        <video
-          src={`${card.videoUrl}#t=1`}
-          muted
-          playsInline
-          preload="metadata"
-          className="w-full h-full object-cover pointer-events-none"
-        />
-      ) : (
-        <img
-          src={card.image}
-          alt={card.label}
-          className="w-full h-full object-cover pointer-events-none"
-          draggable={false}
-        />
-      )}
-      {card.badge && (
-        <span className="absolute top-3 left-3 z-10 text-[10px] font-black uppercase tracking-wider bg-white/95 text-[#8b6508] border border-[#d4af37]/40 px-2 py-0.5 rounded-full">
-          {card.badge}
-        </span>
-      )}
-      {card.meta && looksLikePrice && (
-        <span className="absolute top-3 right-3 z-10 max-w-[58%] text-right px-2.5 py-1.5 rounded-lg bg-[#d4af37] text-black text-[11px] sm:text-xs font-black shadow-md leading-tight">
-          {card.meta}
-        </span>
-      )}
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent p-3 sm:p-4 pt-14">
-        <p className="text-[10px] font-black uppercase tracking-wider text-[#d4af37] pointer-events-none">
-          {isFront ? frontHint : "Swipe"}
-        </p>
-        <p className="text-sm sm:text-base font-bold text-white leading-tight line-clamp-2 pointer-events-none">
-          {card.label}
-        </p>
-        {card.meta && (
-          <p
-            className={`mt-1.5 font-black leading-none pointer-events-none ${
-              looksLikePrice
-                ? "text-base sm:text-lg text-[#f5d76e]"
-                : "text-xs font-extrabold text-amber-200/95 truncate"
-            }`}
-          >
-            {card.meta}
-          </p>
-        )}
-        {isFront && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onAction?.();
-            }}
-            className="mt-3 w-full py-2.5 rounded-xl text-xs font-extrabold bg-[#d4af37] text-black hover:bg-amber-300 transition-colors cursor-pointer shadow-md"
-          >
-            {isBook ? "Book this service" : "Open story"}
-          </button>
-        )}
-      </div>
-      {isFront && (
-        <div className="absolute inset-0 rounded-2xl ring-2 ring-[#d4af37]/70 pointer-events-none" />
-      )}
-    </div>
-  );
-}
-
 /**
- * Cover-flow 360 (Client Stories style) — mobile swipe + side-card peek.
- * Used by Portfolio, Services, and any photo/package cards.
+ * Same cover-flow 360 style as Client Stories, with full package detail cards.
+ * Mobile: swipe · side cards peek · front card readable (no overlay).
  */
-export default function RoundMemoryCarousel({
-  items = [],
-  onSelect,
-  title = "Browse cards",
-  subtitle = "Swipe to browse · Tap the front card to open",
-  frontHint = "Tap to open",
-  className = "",
-  popularFirst = true,
-}) {
+export default function PackageCoverFlow({ packages = [], onBook }) {
+  const cards = useMemo(() => {
+    return [...(packages || [])]
+      .filter((p) => p?.name)
+      .sort((a, b) => Number(!!b.popular) - Number(!!a.popular));
+  }, [packages]);
+
+  const count = cards.length;
   const [active, setActive] = useState(0);
-  const [layout, setLayout] = useState({ w: 260, h: 390, gap: 145, stageH: 450 });
+  const [layout, setLayout] = useState({ w: 280, h: 440, gap: 150, stageH: 480 });
   const [dragDelta, setDragDelta] = useState(0);
   const [dragging, setDragging] = useState(false);
   const stageRef = useRef(null);
-  const dragRef = useRef({ startX: 0, moved: false, active: false });
-
-  const cards = useMemo(() => {
-    let list = (items || []).map((item, idx) => {
-      const raw = item.raw !== undefined ? item.raw : item;
-      const popular = !!(item.popular ?? raw?.popular);
-      const features = normalizeFeatures(item.features ?? raw?.features);
-      const flippable =
-        item.flippable === true ||
-        (!item.image && !item.videoUrl && features.length > 0);
-      return {
-        id: item.id ?? idx,
-        label: item.label || item.title || item.name || item.shortName || `Item ${idx + 1}`,
-        image: item.image || item.avatar || item.images?.[0] || null,
-        videoUrl: item.videoUrl || null,
-        badge:
-          item.badge ||
-          item.categoryLabel ||
-          item.tag ||
-          (popular ? "Most Popular" : null),
-        meta: item.meta || item.price || item.priceFormatted || null,
-        description: item.description || raw?.description || "",
-        features,
-        flippable,
-        popular,
-        raw,
-      };
-    });
-    list = list.filter((c) => c.label);
-    if (popularFirst) {
-      list = [...list].sort((a, b) => Number(b.popular) - Number(a.popular));
-    }
-    return list.slice(0, 14);
-  }, [items, popularFirst]);
-
-  const count = cards.length;
+  const dragRef = useRef({ startX: 0, moved: false });
 
   useEffect(() => {
     setActive(0);
@@ -281,11 +184,11 @@ export default function RoundMemoryCarousel({
       const stageW = stageRef.current?.offsetWidth || window.innerWidth || 360;
       const mobile = stageW < 768;
       const w = mobile
-        ? Math.min(Math.round(stageW * 0.72), 300)
-        : Math.min(Math.round(stageW * 0.3), 280);
-      const h = Math.round(w * 1.48);
-      const gap = mobile ? Math.round(w * 0.52) : Math.round(w * 0.58);
-      setLayout({ w, h, gap, stageH: h + (mobile ? 56 : 80) });
+        ? Math.min(Math.round(stageW * 0.78), 320)
+        : Math.min(Math.round(stageW * 0.34), 300);
+      const h = Math.round(w * 1.55);
+      const gap = mobile ? Math.round(w * 0.55) : Math.round(w * 0.62);
+      setLayout({ w, h, gap, stageH: h + (mobile ? 64 : 88) });
     };
     measure();
     window.addEventListener("resize", measure);
@@ -304,7 +207,7 @@ export default function RoundMemoryCarousel({
 
   const onPointerDown = (e) => {
     if (e.target?.closest?.("button, a")) return;
-    dragRef.current = { startX: getX(e), moved: false, active: true };
+    dragRef.current = { startX: getX(e), moved: false };
     setDragging(true);
     setDragDelta(0);
     try {
@@ -313,49 +216,39 @@ export default function RoundMemoryCarousel({
   };
 
   const onPointerMove = (e) => {
-    if (!dragRef.current.active) return;
+    if (!dragging) return;
     const delta = getX(e) - dragRef.current.startX;
-    if (Math.abs(delta) > 12) dragRef.current.moved = true;
+    if (Math.abs(delta) > 8) dragRef.current.moved = true;
     setDragDelta(delta);
   };
 
   const endDrag = (e) => {
-    if (!dragRef.current.active) return;
+    if (!dragging) return;
     const delta = getX(e) - dragRef.current.startX;
-    const wasTap = !dragRef.current.moved && Math.abs(delta) < 40;
-    dragRef.current.active = false;
     setDragging(false);
     setDragDelta(0);
-
-    if (Math.abs(delta) > 45) {
-      go(delta < 0 ? 1 : -1);
-      return;
-    }
-
-    // Tap on front card → open booking / story (pointer capture blocks normal click)
-    if (wasTap) {
-      const card = cards[active];
-      if (card && !card.flippable) onSelect?.(card.raw);
-    }
+    if (Math.abs(delta) > 45) go(delta < 0 ? 1 : -1);
   };
 
   const current = cards[active];
 
   return (
-    <div className={`mb-8 sm:mb-12 ${className}`}>
+    <div className="mb-2">
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-3 px-1">
         <div className="min-w-0">
           <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-widest text-[#8b6508] mb-1">
-            <Sparkles size={13} /> {title}
+            <Sparkles size={13} /> Photography Packages
           </div>
-          <p className="text-xs text-zinc-500 font-medium">{subtitle}</p>
+          <p className="text-xs text-zinc-500 font-medium">
+            Swipe to browse · Flip front card for inclusions · Book on back
+          </p>
         </div>
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <button
             type="button"
             onClick={() => go(-1)}
             className="w-11 h-11 sm:w-9 sm:h-9 rounded-full border border-black/10 hover:border-[#d4af37]/60 bg-white shadow-sm flex items-center justify-center text-zinc-700 hover:text-[#8b6508] cursor-pointer active:scale-95"
-            aria-label="Previous"
+            aria-label="Previous package"
           >
             <ChevronLeft size={18} />
           </button>
@@ -363,7 +256,7 @@ export default function RoundMemoryCarousel({
             type="button"
             onClick={() => go(1)}
             className="w-11 h-11 sm:w-9 sm:h-9 rounded-full border border-black/10 hover:border-[#d4af37]/60 bg-white shadow-sm flex items-center justify-center text-zinc-700 hover:text-[#8b6508] cursor-pointer active:scale-95"
-            aria-label="Next"
+            aria-label="Next package"
           >
             <ChevronRight size={18} />
           </button>
@@ -383,7 +276,7 @@ export default function RoundMemoryCarousel({
         <div className="pointer-events-none absolute left-1/2 bottom-2 -translate-x-1/2 w-[55%] h-4 rounded-[100%] bg-black/10 blur-md" />
 
         <div className="absolute inset-0 flex items-center justify-center" style={{ transformStyle: "preserve-3d" }}>
-          {cards.map((card, i) => {
+          {cards.map((pkg, i) => {
             const d = signedOffset(i, active, count);
             const abs = Math.abs(d);
             if (abs > 2) return null;
@@ -396,9 +289,9 @@ export default function RoundMemoryCarousel({
 
             return (
               <motion.div
-                key={card.id}
+                key={pkg.id}
                 className={`absolute rounded-2xl overflow-hidden ${
-                  isFront ? "shadow-[0_18px_40px_rgba(184,134,11,0.35)]" : "shadow-lg"
+                  isFront ? "shadow-[0_18px_40px_rgba(184,134,11,0.38)]" : "shadow-lg"
                 }`}
                 style={{
                   width: layout.w,
@@ -425,28 +318,10 @@ export default function RoundMemoryCarousel({
                 }
                 onClick={() => {
                   if (dragRef.current.moved) return;
-                  if (!isFront) {
-                    jumpTo(i);
-                    return;
-                  }
-                  if (card.flippable) return;
-                  onSelect?.(card.raw);
+                  if (!isFront) jumpTo(i);
                 }}
               >
-                {card.flippable ? (
-                  <FlippablePackageFace
-                    card={card}
-                    isFront={isFront}
-                    onBook={(raw) => onSelect?.(raw)}
-                  />
-                ) : (
-                  <PhotoCardFace
-                    card={card}
-                    isFront={isFront}
-                    frontHint={frontHint}
-                    onAction={() => onSelect?.(card.raw)}
-                  />
-                )}
+                <PackageDetailFace pkg={pkg} isFront={isFront} onBook={onBook} />
               </motion.div>
             );
           })}
@@ -458,7 +333,7 @@ export default function RoundMemoryCarousel({
           <button
             key={`dot-${c.id}`}
             type="button"
-            aria-label={c.label}
+            aria-label={c.name}
             onClick={() => jumpTo(i)}
             className={`h-1.5 rounded-full transition-all cursor-pointer ${
               i === active ? "w-6 bg-[#d4af37]" : "w-1.5 bg-zinc-300"
@@ -467,23 +342,13 @@ export default function RoundMemoryCarousel({
         ))}
       </div>
 
-      <p className="text-center text-[11px] sm:text-xs text-zinc-500 font-medium mt-3 px-3">
+      <p className="text-center text-[11px] text-zinc-500 font-medium mt-3 px-3">
         Showing{" "}
-        <span className="text-[#8b6508] font-bold">{current?.label}</span>
-        {current?.meta ? (
+        <span className="text-[#8b6508] font-bold">{current?.name}</span>
+        {current?.price ? (
           <>
             {" "}
-            ·{" "}
-            <span
-              className={
-                typeof current.meta === "string" &&
-                (current.meta.includes("₹") || /starting/i.test(current.meta))
-                  ? "inline-flex items-center px-2 py-0.5 rounded-md bg-amber-100 text-[#8b6508] font-black text-[12px] sm:text-sm"
-                  : "font-semibold text-zinc-700"
-              }
-            >
-              {current.meta}
-            </span>
+            · <span className="font-semibold text-zinc-700">{current.price}</span>
           </>
         ) : null}{" "}
         · {active + 1} / {count}

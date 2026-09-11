@@ -219,7 +219,7 @@ export default function SSSServices({ onOpenBooking }) {
           </div>
         </div>
 
-          {/* 360° services ring — mobile responsive */}
+          {/* Services cover-flow 360 */}
           <RoundMemoryCarousel
             items={filteredServices.map((service) => ({
               id: service.id,
@@ -231,12 +231,13 @@ export default function SSSServices({ onOpenBooking }) {
             }))}
             onSelect={(service) => onOpenBooking?.(service.category)}
             title="Our Services"
-            subtitle="Swipe to browse · Tap front card to book"
+            subtitle="Swipe to browse · Tap the front card to book"
+            frontHint="Tap to book"
             className="mt-2"
           />
 
           <p className="text-center text-xs text-zinc-500 mt-2 mb-2">
-            Front card opens booking for that service · Full packages on{" "}
+            Tap front card to book that service · Full packages on{" "}
             <a href="/packages" className="text-[#8b6508] font-bold underline underline-offset-2">
               /packages
             </a>
