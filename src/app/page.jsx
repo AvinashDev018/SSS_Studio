@@ -13,7 +13,6 @@ import SSSStudioInfo from "@/components/sections/SSSStudioInfo";
 import BookingQuoteModal from "@/components/ui/BookingQuoteModal";
 import TestimonialModal from "@/components/ui/TestimonialModal";
 import LuckyGiftModal from "@/components/ui/LuckyGiftModal";
-import MoodboardMatcherModal from "@/components/ui/MoodboardMatcherModal";
 
 export default function Home() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -21,16 +20,13 @@ export default function Home() {
   const [modalMode, setModalMode] = useState("booking");
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isLuckyGiftOpen, setIsLuckyGiftOpen] = useState(false);
-  const [isMoodboardOpen, setIsMoodboardOpen] = useState(false);
 
   useEffect(() => {
     // Handle cross-page URL query parameter triggers
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const modalParam = params.get("modal");
-      if (modalParam === "moodboard") {
-        setIsMoodboardOpen(true);
-      } else if (modalParam === "offer") {
+      if (modalParam === "offer") {
         setIsLuckyGiftOpen(true);
       } else if (modalParam === "booking" || modalParam === "quote") {
         const shoot = params.get("shootType");
@@ -44,10 +40,6 @@ export default function Home() {
       const { mode, shootType } = e.detail || {};
       if (mode === "offer") {
         setIsLuckyGiftOpen(true);
-        return;
-      }
-      if (mode === "moodboard") {
-        setIsMoodboardOpen(true);
         return;
       }
       if (shootType) setModalShootType(shootType);
@@ -75,21 +67,12 @@ export default function Home() {
     setIsReviewModalOpen(true);
   };
 
-  const handleOpenGift = () => {
-    setIsLuckyGiftOpen(true);
-  };
-
-  const handleOpenMoodboard = () => {
-    setIsMoodboardOpen(true);
-  };
-
   return (
     <div className="bg-[#FFFFFF] text-zinc-900 selection:bg-[#d4af37]/30 selection:text-black">
       {/* 1. Luxury Editorial Hero Section with Cinematic Photography Frame */}
       <SSSHero 
         onOpenBooking={handleOpenBooking} 
         onOpenQuote={handleOpenQuote} 
-        onOpenMoodboard={handleOpenMoodboard}
       />
 
       {/* 2. SSS Studio Guarantees & 1-Month Delivery Promise */}
@@ -135,12 +118,6 @@ export default function Home() {
       <LuckyGiftModal
         isOpen={isLuckyGiftOpen}
         onClose={() => setIsLuckyGiftOpen(false)}
-      />
-
-      {/* Interactive Pinterest / Instagram Moodboard Matcher Modal (AI) */}
-      <MoodboardMatcherModal
-        isOpen={isMoodboardOpen}
-        onClose={() => setIsMoodboardOpen(false)}
       />
     </div>
   );

@@ -5,6 +5,9 @@ import {
   findRouteForQuery,
   buildWebsiteGuideReply,
   detectLangMode,
+  formatPackagesCatalog,
+  formatFramesCatalog,
+  orderGuideBlock,
 } from "./websiteKnowledge.js";
 
 const SYSTEM_PROMPT = `You are the Official AI Studio Concierge AND product guide for the SSS Photography Studio website (built for Avaniyapuram, Madurai).
@@ -40,7 +43,7 @@ Never mix languages unless the customer mixes first.
 • /services → Services overview
 • /about → Studio story
 • /contact → Contact details
-• /visualizer → AI moodboard / visualizer
+• /visualizer → AI outfit / style visualizer
 • /client-gallery/[slug] → Private proofing gallery (passcode)
 • /login → Customer login / profile
 • /support → Support
@@ -50,37 +53,13 @@ Admin CMS controls: Packages, Gallery photos (+ Featured on Home), Frames prices
 =========================
 4. LIVE DATA RULE
 =========================
-For ANY price question, call tools:
-• \`query_packages\` for shoot packages
-• \`query_frames\` for frame sizes/prices
-• \`explain_website\` for how a page works
-• \`track_order\` for order/phone lookups
-• \`fetch_recent_shoots\` for portfolio samples
-Never invent prices. Prefer tool results.
-
-=========================
-5. MOODBOARD AI EXPERTISE
-=========================
-You are ALSO a Master MoodBoard AI Stylist with deep knowledge of:
-• Visual aesthetics, color psychology, and cultural styling
-• Tamil heritage & South Indian traditional elements
-• Modern editorial and contemporary styling approaches
-• Color combinations based on skin undertones and moods
-• Style personality analysis and outfit curation
-• Professional photography styling techniques
-
-For styling/moodboard questions, use these tools:
-• \`create_moodboard\` for comprehensive mood boards with cultural authenticity
-• \`analyze_style_personality\` to understand client preferences
-• \`suggest_color_combinations\` for expert color matching
-• \`recommend_styling_elements\` for detailed outfit/accessory guidance
-
-Always consider:
-- Cultural authenticity (especially Tamil/South Indian elements)
-- Client's skin undertone and personal style
-- Shoot type and desired mood/emotion
-- Budget constraints and practical considerations
-- Age-appropriate and occasion-specific styling
+For ANY catalog / price / sample question, ALWAYS call tools (never invent):
+• \`query_packages\` → list ALL live packages with prices & features
+• \`query_frames\` → list ALL frame sizes/prices (plus top recommendations)
+• \`fetch_recent_shoots\` → recent portfolio photos/videos samples
+• \`explain_website\` → how a page works
+• \`track_order\` → Order ID / phone lookup
+• \`calculate_package_quote\` → itemized estimate when they ask for quote
 
 =========================
 5. GUARANTEES
@@ -91,14 +70,14 @@ Always consider:
 • Transit damage reprint guarantee on frames/gifts
 
 =========================
-6. HOW-TO ANSWERS (DEVELOPER STYLE)
+6. HOW-TO (ALWAYS TEACH THE NEXT STEP)
 =========================
-• Book shoot → Home “Book a Consultation” or /book, or WhatsApp +91 98659 92379
-• Buy frame → /store or Home #frames → Order → upload photo → checkout (Cash / UPI) → optional promo
-• Track → /track or paste Order ID / phone in chat
-• See packages → /packages (live CMS)
-• Promo → Admin creates code; customer enters it in Store cart
-• Wedding album → Portfolio → open album (3D page flip). PDF hosted via admin upload (Cloudinary when configured)
+When listing products, ALWAYS end with a clear order/book guide:
+• Frames → /store or Home #frames → size → Order → upload photo → cart → Cash / UPI → /track
+• Packages → show full list → /book or WhatsApp +91 98659 92379 to confirm date
+• Portfolio → Home Portfolio flipbook + /gallery; private proofing /client-gallery/[slug]
+• Gifts / passport → /store checkout
+• Track → /track or paste ID/phone here
 
 =========================
 7. OUT OF SCOPE
@@ -106,9 +85,19 @@ Always consider:
 Politely refuse coding/politics/general trivia and redirect to SSS photography / website help.
 
 =========================
-8. ANSWER STYLE
+8. ANSWER STYLE (DETAILED — MANDATORY)
 =========================
-Be specific: mention exact page paths, buttons, and next steps. Keep answers short, useful, and confident.`;
+NEVER give one-line answers when catalog data exists.
+Structure every product reply like this:
+1) Short friendly intro
+2) FULL numbered list (all packages OR all frames — not 2–3 items)
+3) Include size/price (and best-for / popular tags when available)
+4) Finishes / what’s included when relevant
+5) Step-by-step “How to order / book” (paths + buttons)
+6) Offer WhatsApp +91 98659 92379 and ask one clarifying question (room size, event date, budget)
+
+If the user seems unsure (“epdi order”, “enna irukku”, “list”, “show all”), be EXTRA thorough.
+Use line breaks so lists are easy to read. Be confident, warm, and specific.`;
 
 async function getLiveCatalogSnippets() {
   try {
@@ -116,29 +105,50 @@ async function getLiveCatalogSnippets() {
       executeAgentTool("query_packages", {}),
       executeAgentTool("query_frames", { max_budget: 999999 }),
     ]);
-    const packagesText = (pkgsRes.packages || [])
-      .slice(0, 10)
-      .map((p) => `• ${p.name}: ${p.price}`)
-      .join("\n");
-    const frames = pkgsRes && framesRes.recommendedFrames ? framesRes.recommendedFrames : [];
-    // Prefer full frame list via second fetch if needed
-    let framesText = "";
+
+    let allFrames = framesRes?.allFrames || [];
     try {
       const { getFrames } = await import("@/app/actions/frames");
-      const all = await getFrames({ admin: false });
-      if (all.length) {
-        framesText = all
-          .slice(0, 8)
-          .map((f) => `• ${f.size}: ${f.price}`)
-          .join("\n");
-        framesText += `\n(${all.length} live sizes)`;
+      const fetched = await getFrames({ admin: false });
+      if (fetched?.length) {
+        allFrames = fetched.map((f) => ({
+          id: f.id,
+          size: f.size || `${f.width}x${f.height}`,
+          width: f.width,
+          height: f.height,
+          price: f.price,
+          priceFormatted: f.price,
+          numericPrice: f.numericPrice,
+          bestFor: f.bestFor,
+          tag: f.tag,
+          popular: f.popular,
+        }));
       }
     } catch (_) {
-      framesText = frames.map((f) => `• ${f.size}: ${f.priceFormatted || f.numericPrice}`).join("\n");
+      /* keep tool frames */
     }
-    return { packagesText, framesText, packages: pkgsRes, frames: framesRes };
+
+    const packagesList = pkgsRes?.packages || [];
+    const packagesText = formatPackagesCatalog(packagesList, "en");
+    const framesText = formatFramesCatalog(allFrames, "en");
+
+    return {
+      packagesText,
+      framesText,
+      packages: pkgsRes,
+      frames: framesRes,
+      packagesList,
+      allFrames,
+    };
   } catch (e) {
-    return { packagesText: "", framesText: "", packages: null, frames: null };
+    return {
+      packagesText: "",
+      framesText: "",
+      packages: null,
+      frames: null,
+      packagesList: [],
+      allFrames: [],
+    };
   }
 }
 
@@ -192,7 +202,7 @@ function analyzeUserMessage(userMsg = "", messages = []) {
     "status", "explain", "page", "website", "site", "home", "homepage", "card", "details",
     "recent", "sample", "gallery", "portfolio", "ballroom", "wall", "store", "shop", "cart",
     "checkout", "promo", "coupon", "voucher", "discount", "login", "profile", "visualizer",
-    "moodboard", "services", "about", "support", "how to", "howto", "where", "open", "menu",
+    "services", "about", "support", "how to", "howto", "where", "open", "menu",
     "navbar", "section", "flipbook", "pdf", "featured", "cms", "admin",
     "பிரேம்", "போட்டோ", "திருமணம்", "விலை", "ஸ்டுடியோ", "மதுரை", "அவனியாபுரம்", "ஆல்பம்",
     "பரிசு", "முகப்பு", "பேக்கேஜ்", "ஸ்டோர்", "கேலரி", "முன்பதிவு",
@@ -269,65 +279,145 @@ async function answerWebsiteIntent(lastUserMsg, analysis, catalog) {
     };
   }
 
-  if (lower.includes("how to order") || lower.includes("how to buy") || (lower.includes("frame") && lower.includes("how"))) {
+  if (lower.includes("how to order") || lower.includes("how to buy") || lower.includes("epdi order") || lower.includes("eppadi order") || (lower.includes("frame") && (lower.includes("how") || lower.includes("epdi") || lower.includes("order")))) {
+    const framesList = formatFramesCatalog(catalog.allFrames || [], lang);
     return {
       reply:
-        lang === "tanglish"
-          ? `Frame order: /store illana Home frames section → size choose → Order → photo upload → checkout (Cash / UPI). Promo optional.`
-          : WEBSITE_MAP.howTos.buyFrame,
-      actionCards: [],
+        (lang === "tanglish"
+          ? `Frame order guide ready bro!\n\n🖼 Full frame list:\n${framesList}\n`
+          : lang === "ta"
+          ? `பிரேம் ஆர்டர் வழிகாட்டி:\n\n🖼 முழு பிரேம் பட்டியல்:\n${framesList}\n`
+          : `Here’s exactly how to order a frame.\n\n🖼 Full frame catalog:\n${framesList}\n`) +
+        orderGuideBlock(lang, "frame") +
+        `\n\n${WEBSITE_MAP.howTos.buyFrame}`,
+      actionCards: [catalog.frames || (await executeAgentTool("query_frames", { max_budget: 999999 }))].filter(Boolean),
     };
   }
 
-  if (lower.includes("store") || lower.includes("shop") || lower.includes("cart") || lower.includes("checkout")) {
-    const toolRes = await executeAgentTool("explain_website", { topic: "store" });
+  // Full frames catalog + order guide
+  if (
+    lower.includes("frame") ||
+    lower.includes("frames") ||
+    lower.includes("பிரேம்") ||
+    lower.includes("wall size") ||
+    (lower.includes("size") && (lower.includes("photo") || lower.includes("inch")))
+  ) {
+    const framesList = formatFramesCatalog(catalog.allFrames || [], lang);
+    const toolRes = catalog.frames || (await executeAgentTool("query_frames", { max_budget: 999999, wall_space: lower }));
+    const intro =
+      lang === "tanglish"
+        ? `SSS Studio-la live custom photo frames (${(catalog.allFrames || []).length || "many"} sizes). Full list:`
+        : lang === "ta"
+        ? `SSS ஸ்டுடியோவின் நேரடி கஸ்டம் பிரேம்கள் (${(catalog.allFrames || []).length || "பல"} அளவுகள்):`
+        : `Here is our full live custom photo frame catalog (${(catalog.allFrames || []).length || "all"} sizes):`;
+    const finishes =
+      lang === "tanglish"
+        ? `\n\n✨ Finishes: Sparkle Lamination · Matte (anti-glare) · High Gloss`
+        : lang === "ta"
+        ? `\n\n✨ பூச்சுகள்: Sparkle Lamination · Matte · High Gloss`
+        : `\n\n✨ Finishes available: Sparkle Lamination · Matte (anti-glare) · High Gloss`;
     return {
-      reply:
+      reply: `${intro}\n\n${framesList}${finishes}${orderGuideBlock(lang, "frame")}\n\n${
         lang === "tanglish"
-          ? `Store page: /store — frames, gifts, passport photos. Cart-la promo code apply panni Cash pickup illana UPI home delivery choose pannalam.`
+          ? "Sofa / bedroom / budget sollunga — best size recommend panren."
           : lang === "ta"
-          ? `ஸ்டோர் பக்கம்: /store — பிரேம்கள், பரிசுகள், பாஸ்போர்ட் போட்டோ. கார்ட்டில் ப்ரோமோ கோடும் செக்அவுட்டும் உள்ளன.`
-          : `Store (/store): order frames, personalized gifts, and passport photos. Cart supports promo codes, studio cash pickup, or UPI home delivery.`,
+          ? "அறை / பட்ஜெட் சொல்லுங்கள் — சிறந்த அளவைப் பரிந்துரைக்கிறேன்."
+          : "Tell me your room (sofa wall / bedroom) or budget — I’ll recommend the best size."
+      }`,
       actionCards: [toolRes],
     };
   }
 
-  if (lower.includes("visualizer") || lower.includes("moodboard") || lower.includes("ai stylist") || lower.includes("styling") || lower.includes("outfit") || lower.includes("color palette")) {
-    // Check if they want specific styling advice
-    if (lower.includes("recommend") || lower.includes("suggest") || lower.includes("advice") || lower.includes("help me choose") || lower.includes("style me")) {
-      const toolRes = await executeAgentTool("create_moodboard", { 
-        shoot_type: lower.includes("wedding") ? "wedding" : lower.includes("maternity") ? "maternity" : lower.includes("birthday") ? "birthday" : "portrait",
-        style_preference: "traditional_heritage", // Default for Tamil studio
-        cultural_background: "tamil"
-      });
-      return {
-        reply:
-          lang === "tanglish"
-            ? `AI MoodBoard create pannirkken! Traditional Tamil styling-oda modern elements combine panni personalized recommendations kuduthirukken. /visualizer-layum try pannalam bro.`
-            : lang === "ta"
-            ? `AI மூட்போர்டு உருவாக்கப்பட்டது! பாரம்பரிய தமிழ் ஸ்டைலிங் மற்றும் நவீன கூறுகளை இணைத்து தனிப்பட்ட பரிந்துரைகள் வழங்கப்பட்டுள்ளன.`
-            : `Created an AI MoodBoard for you! Combining traditional Tamil styling with modern elements for personalized recommendations. Also try the interactive /visualizer page.`,
-        actionCards: [toolRes],
-      };
-    } else {
-      return {
-        reply:
-          lang === "tanglish"
-            ? `AI Visualizer / MoodBoard: /visualizer — photo upload panni, shoot type select panni, AI-generated mood board with color palettes, outfit recommendations, Tamil cultural styling kidu. Interactive styling experience!`
-            : lang === "ta" 
-            ? `AI விஷுவலைசர் / மூட்போர்டு: /visualizer — போட்டோ அப்லோடு செய்து, ஷூட் வகையைத் தேர்ந்தெடுத்து, வண்ணத் தொகுப்புகள், ஆடை பரிந்துரைகள், தமிழ் கலாச்சார ஸ்டைலிங்குடன் AI-உருவாக்கிய மூட் போர்டு பெறுங்கள்.`
-            : `AI Visualizer & MoodBoard: /visualizer — Upload photos, select shoot type, get AI-generated mood boards with color palettes, outfit recommendations, Tamil cultural styling elements, and location suggestions. Advanced styling intelligence!`,
-        actionCards: [],
-      };
-    }
+  // Full packages catalog + book guide
+  if (
+    lower.includes("package") ||
+    lower.includes("packages") ||
+    lower.includes("பேக்கேஜ்") ||
+    lower.includes("pricing") ||
+    (lower.includes("price") && !lower.includes("frame")) ||
+    lower.includes("rate list") ||
+    lower.includes("evvalavu") ||
+    lower.includes("விலை")
+  ) {
+    const pkgs = formatPackagesCatalog(catalog.packagesList || catalog.packages?.packages || [], lang);
+    const livePackages = catalog.packages || (await executeAgentTool("query_packages", {}));
+    const intro =
+      lang === "tanglish"
+        ? `Live photography packages (/packages) — full list:`
+        : lang === "ta"
+        ? `நேரடி போட்டோகிராபி பேக்கேஜ்கள் (/packages):`
+        : `Live photography packages from our CMS (/packages) — full list:`;
+    return {
+      reply: `${intro}\n\n${pkgs}${orderGuideBlock(lang, "package")}\n\n${WEBSITE_MAP.howTos.seePackages}\n\nEvent type (wedding / maternity / birthday) + date sollunga — quote refine panren.`,
+      actionCards: [livePackages],
+    };
+  }
+
+  // Portfolio / recent photos & videos
+  if (
+    lower.includes("portfolio") ||
+    lower.includes("gallery") ||
+    lower.includes("sample") ||
+    lower.includes("recent") ||
+    lower.includes("photos") ||
+    lower.includes("videos") ||
+    lower.includes("film") ||
+    lower.includes("shoots") ||
+    lower.includes("கேலரி")
+  ) {
+    const toolRes = await executeAgentTool("fetch_recent_shoots", {
+      category: lower.includes("wedding")
+        ? "wedding"
+        : lower.includes("pre")
+          ? "pre-wedding"
+          : lower.includes("maternity") || lower.includes("baby")
+            ? "baby-maternity"
+            : lower.includes("birthday")
+              ? "birthday-events"
+              : "all",
+    });
+    const guide =
+      lang === "tanglish"
+        ? `Recent shoots cards keezha irukku 👇\n\n${WEBSITE_MAP.howTos.seePortfolio}\n\nWedding album flipbook: Home → Portfolio. Full gallery: /gallery.`
+        : lang === "ta"
+        ? `சமீபத்திய ஷூட்கள் கீழே 👇\n\n${WEBSITE_MAP.howTos.seePortfolio}`
+        : `Recent studio shoots are below 👇\n\n${WEBSITE_MAP.howTos.seePortfolio}`;
+    return { reply: guide, actionCards: [toolRes] };
+  }
+
+  if (lower.includes("store") || lower.includes("shop") || lower.includes("cart") || lower.includes("checkout")) {
+    const framesList = formatFramesCatalog(catalog.allFrames || [], lang);
+    const toolRes = await executeAgentTool("explain_website", { topic: "store" });
+    return {
+      reply:
+        (lang === "tanglish"
+          ? `Store (/store): frames, gifts, passport photos + cart + promo.\n\n🖼 Frames:\n${framesList}`
+          : lang === "ta"
+          ? `ஸ்டோர் (/store): பிரேம்கள், பரிசுகள், பாஸ்போர்ட் + கார்ட் + ப்ரோமோ.\n\n🖼 பிரேம்கள்:\n${framesList}`
+          : `Store (/store): frames, personalized gifts, passport photos, cart, promos.\n\n🖼 Frames:\n${framesList}`) +
+        orderGuideBlock(lang, "frame"),
+      actionCards: [toolRes, catalog.frames].filter(Boolean),
+    };
+  }
+
+  if (lower.includes("visualizer") || lower.includes("ai stylist") || lower.includes("styling") || lower.includes("outfit") || lower.includes("color palette")) {
+    return {
+      reply:
+        lang === "tanglish"
+          ? `AI Visualizer detailed guide:\n${WEBSITE_MAP.howTos.useVisualizer}\nPath: /visualizer`
+          : lang === "ta"
+          ? `AI விஷுவலைசர்:\n${WEBSITE_MAP.howTos.useVisualizer}\nபாதை: /visualizer`
+          : `AI Visualizer detailed guide:\n${WEBSITE_MAP.howTos.useVisualizer}\nOpen: /visualizer`,
+      actionCards: [],
+    };
   }
 
   if (lower.includes("client gallery") || lower.includes("proofing") || lower.includes("passcode") || lower.includes("select photos")) {
     return {
       reply:
         lang === "tanglish"
-          ? `Private client proofing gallery: Admin create pannuvanga. Client-ku special link /client-gallery/[slug] + passcode kidaikkum — photos select panni album-ku anupalam.`
-          : `Private proofing galleries live at /client-gallery/[slug] with a passcode. Admin creates them under Client Galleries so clients can select photos for album/print.`,
+          ? `Private client proofing gallery:\n• Admin create pannuvanga after shoot\n• Link: /client-gallery/[slug] + passcode\n• Photos select panni album/print-ku confirm pannalam\nWhatsApp: ${WEBSITE_MAP.studio.phone}`
+          : `Private proofing galleries:\n• Created by studio after your shoot\n• Open /client-gallery/[slug] with your passcode\n• Select photos for album / print\nWhatsApp help: ${WEBSITE_MAP.studio.phone}`,
       actionCards: [],
     };
   }
@@ -429,7 +519,7 @@ ${catalog.framesText || "(load /store or homepage frames)"}
           tools: AGENT_TOOLS,
           tool_choice: "auto",
           temperature: 0.45,
-          max_tokens: 1500,
+          max_tokens: 2200,
         });
         completion = await Promise.race([completionPromise, timeoutPromise]);
         if (completion) break;
@@ -467,17 +557,23 @@ ${catalog.framesText || "(load /store or homepage frames)"}
         });
       }
 
+      conversation.push({
+        role: "system",
+        content:
+          "Write a DETAILED customer reply using the tool JSON. Include: full numbered list of all packages/frames/shoots returned, prices, then a step-by-step how-to-order/book section with exact paths (/store, /packages, /book, /gallery, /track). Do not summarize down to 1–2 items when more exist. End with WhatsApp +91 98659 92379 and one clarifying question.",
+      });
+
       const finalCompletion = await openai.chat.completions.create({
         model: "nvidia/llama-3.1-nemotron-70b-instruct",
         messages: conversation,
-        temperature: 0.45,
-        max_tokens: 1000,
+        temperature: 0.4,
+        max_tokens: 1800,
       });
 
       let finalReply = finalCompletion.choices[0]?.message?.content || "";
 
       if (analysis.isTanglish && (!finalReply || /^(?:vanakkam! )?here are/i.test(finalReply.trim()))) {
-        finalReply = `Vanakkam bro! Live packages:\n${catalog.packagesText || "See /packages"}\nFrames: see /store. WhatsApp: ${WEBSITE_MAP.studio.phone}`;
+        finalReply = `Vanakkam bro!\n\n📦 Packages:\n${catalog.packagesText || "See /packages"}\n\n🖼 Frames:\n${catalog.framesText || "See /store"}${orderGuideBlock("tanglish", "frame")}\n\nWhatsApp: ${WEBSITE_MAP.studio.phone}`;
       }
 
       return { reply: finalReply, actionCards };
@@ -515,70 +611,41 @@ async function handleSmartFallback(lastUserMsg, analysis, catalog) {
     };
   }
 
-  if (lower.includes("passport") || lower.includes("stamp")) {
-    return {
-      reply:
-        lang === "tanglish"
-          ? "Passport photos /store-la: 8 Passport ₹100 | 8 Passport + 8 Stamp ₹150 | 16 Stamp ₹100."
-          : lang === "ta"
-          ? "பாஸ்போர்ட் போட்டோ (/store): 8 பாஸ்போர்ட் ₹100 | 8+8 ஸ்டாம்ப் ₹150 | 16 ஸ்டாம்ப் ₹100."
-          : "Passport prints on /store: 8 Passport ₹100 | 8 Passport + 8 Stamp ₹150 | 16 Stamp ₹100.",
-      actionCards: [],
-    };
-  }
-
   if (lower.includes("gift") || lower.includes("mug") || lower.includes("crystal") || lower.includes("lamp") || lower.includes("puzzle")) {
     return {
       reply:
-        lang === "tanglish"
-          ? "Personalized gifts /store-la irukku bro (Magic Mug, Crystal Cube, Moon Lamp, Puzzle...). Order online pannalam."
-          : "Personalized gifts are on /store (Magic Mug, Crystal Cube, Moon Lamp, Puzzle, and more).",
+        (lang === "tanglish"
+          ? `Personalized gifts /store-la irukku (Magic Mug, Crystal Cube, Moon Lamp, Puzzle, keychain...).\n${WEBSITE_MAP.howTos.buyGift}`
+          : `${WEBSITE_MAP.howTos.buyGift}`) + orderGuideBlock(lang, "frame"),
       actionCards: [],
     };
   }
 
-  if (lower.includes("raw") || lower.includes("unedited")) {
+  if (lower.includes("passport") || lower.includes("stamp")) {
     return {
-      reply:
-        lang === "tanglish"
-          ? "Raw photos thara maattom bro — graded + retouched masters thaan 1-Month Guarantee-oda deliver aagum."
-          : "We don’t deliver raw/unedited files — only graded, retouched masters under the 1-Month Delivery Guarantee.",
-      actionCards: [],
-    };
-  }
-
-  if (lower.includes("location") || lower.includes("address") || lower.includes("where") || lower.includes("enga") || lower.includes("எங்கே")) {
-    return {
-      reply: `${WEBSITE_MAP.studio.address}. Hours: ${WEBSITE_MAP.studio.hours}. WhatsApp: ${WEBSITE_MAP.studio.phone}. Contact page: /contact`,
-      actionCards: [],
-    };
-  }
-
-  if (lower.includes("guarantee") || lower.includes("delivery") || lower.includes("month") || lower.includes("ஆல்பம்")) {
-    return {
-      reply:
-        lang === "tanglish"
-          ? "1-Month Album Delivery Guarantee: photo select panna 30 days-kulla album. Delay aana ₹1,000 credit."
-          : "1-Month Album Delivery Guarantee: album within 30 days of photo selection, or ₹1,000 credit.",
+      reply: WEBSITE_MAP.howTos.passport + orderGuideBlock(lang, "frame"),
       actionCards: [],
     };
   }
 
   if (lower.includes("frame") || lower.includes("wall") || lower.includes("size") || lower.includes("பிரேம்")) {
+    const framesList = formatFramesCatalog(catalog.allFrames || [], lang);
     const toolRes = await executeAgentTool("query_frames", {
       room_type: lower.includes("sofa") || lower.includes("living") ? "living room" : "bedroom",
       wall_space: lower,
+      max_budget: 999999,
     });
     return {
       reply:
-        lang === "tanglish"
-          ? `Live frame rates:\n${catalog.framesText || "See /store"}\nHome-la 3D tilt preview-um irukku. Recommend sizes 👇`
-          : `Live frame catalog:\n${catalog.framesText || "See /store or homepage #frames"}\nRecommendations 👇`,
+        (lang === "tanglish"
+          ? `Full live frame catalog:\n${framesList}`
+          : `Full live frame catalog:\n${framesList}`) +
+        orderGuideBlock(lang, "frame"),
       actionCards: [toolRes],
     };
   }
 
-  if (lower.includes("portfolio") || lower.includes("gallery") || lower.includes("sample") || lower.includes("recent") || lower.includes("photo")) {
+  if (lower.includes("portfolio") || lower.includes("gallery") || lower.includes("sample") || lower.includes("recent") || lower.includes("photo") || lower.includes("video")) {
     const toolRes = await executeAgentTool("fetch_recent_shoots", {
       category: lower.includes("wedding")
         ? "wedding"
@@ -593,56 +660,8 @@ async function handleSmartFallback(lastUserMsg, analysis, catalog) {
     return {
       reply:
         lang === "tanglish"
-          ? "Recent shoots & portfolio samples 👇 Full gallery: /gallery | Wedding album flipbook: Home → Portfolio"
-          : "Recent shoot samples 👇 Full gallery: /gallery | Wedding album flipbook: Home → Portfolio",
-      actionCards: [toolRes],
-    };
-  }
-
-  // MoodBoard AI and Styling Intelligence
-  if (
-    lower.includes("style") ||
-    lower.includes("outfit") ||
-    lower.includes("moodboard") ||
-    lower.includes("color") ||
-    lower.includes("palette") ||
-    lower.includes("styling") ||
-    lower.includes("dress") ||
-    lower.includes("saree") ||
-    lower.includes("traditional") ||
-    lower.includes("modern") ||
-    lower.includes("cultural") ||
-    lower.includes("aesthetic") ||
-    lower.includes("visual") ||
-    lower.includes("concept") ||
-    lower.includes("theme")
-  ) {
-    const shootType = lower.includes("wedding") || lower.includes("kalyanam") ? "wedding" 
-      : lower.includes("maternity") || lower.includes("pregnancy") ? "maternity"
-      : lower.includes("birthday") || lower.includes("birthday") ? "birthday"  
-      : lower.includes("corporate") || lower.includes("professional") ? "corporate"
-      : "portrait";
-
-    const stylePreference = lower.includes("traditional") || lower.includes("heritage") || lower.includes("tamil") ? "traditional_heritage"
-      : lower.includes("modern") || lower.includes("contemporary") ? "modern_editorial"
-      : lower.includes("romantic") || lower.includes("dreamy") ? "romantic_dreamy"
-      : lower.includes("vibrant") || lower.includes("colorful") || lower.includes("celebration") ? "vibrant_celebration"
-      : "traditional_heritage"; // Default for Tamil studio
-
-    const toolRes = await executeAgentTool("create_moodboard", { 
-      shoot_type: shootType,
-      style_preference: stylePreference,
-      cultural_background: "tamil",
-      occasion: "general"
-    });
-
-    return {
-      reply:
-        lang === "tanglish"
-          ? `MoodBoard AI recommendations ready! ${stylePreference.replace('_', ' ')} style-ku ${shootType} shoot-kaga comprehensive styling guide create pannirkken. /visualizer-layum interactive experience try pannalam!`
-          : lang === "ta"
-          ? `மூட்போர்டு AI பரிந்துரைகள் தயார்! ${stylePreference.replace('_', ' ')} பாணியில் ${shootType} ஷூட்டுக்கான விரிவான ஸ்டைலிங் வழிகாட்டி உருவாக்கப்பட்டுள்ளது.`
-          : `MoodBoard AI styling guide created! Comprehensive ${stylePreference.replace('_', ' ')} recommendations for your ${shootType} shoot with Tamil cultural authenticity. Also try /visualizer for interactive experience!`,
+          ? `Recent shoots 👇\n${WEBSITE_MAP.howTos.seePortfolio}`
+          : `${WEBSITE_MAP.howTos.seePortfolio}\n\nSample cards below 👇`,
       actionCards: [toolRes],
     };
   }
@@ -659,6 +678,7 @@ async function handleSmartFallback(lastUserMsg, analysis, catalog) {
     lower.includes("rate") ||
     lower.includes("evvalavu")
   ) {
+    const pkgs = formatPackagesCatalog(catalog.packagesList || catalog.packages?.packages || [], lang);
     const livePackages = catalog.packages || (await executeAgentTool("query_packages", {}));
     const toolRes = await executeAgentTool("calculate_package_quote", {
       event_type: lower.includes("maternity")
@@ -671,22 +691,53 @@ async function handleSmartFallback(lastUserMsg, analysis, catalog) {
     });
     return {
       reply:
-        lang === "tanglish"
-          ? `Live packages (/packages):\n${catalog.packagesText}\nEstimate card 👇`
+        (lang === "tanglish"
+          ? `Live packages (/packages):\n${pkgs}`
           : lang === "ta"
-          ? `நேரடி பேக்கேஜ்கள் (/packages):\n${catalog.packagesText}\nமதிப்பீடு 👇`
-          : `Live packages from CMS (/packages):\n${catalog.packagesText}\nSample estimate 👇`,
+          ? `நேரடி பேக்கேஜ்கள் (/packages):\n${pkgs}`
+          : `Live packages from CMS (/packages):\n${pkgs}`) +
+        orderGuideBlock(lang, "package") +
+        `\n\nSample estimate card 👇`,
       actionCards: [toolRes, livePackages].filter(Boolean),
+    };
+  }
+
+  if (lower.includes("raw") || lower.includes("unedited")) {
+    return {
+      reply:
+        lang === "tanglish"
+          ? "Raw / unedited files thara maattom bro — graded + retouched masters thaan 1-Month Guarantee-oda deliver aagum."
+          : "We don’t deliver raw/unedited files — only graded, retouched masters under the 1-Month Delivery Guarantee.",
+      actionCards: [],
+    };
+  }
+
+  if (lower.includes("location") || lower.includes("address") || lower.includes("where") || lower.includes("enga") || lower.includes("எங்கே")) {
+    return {
+      reply: `📍 ${WEBSITE_MAP.studio.address}\nHours: ${WEBSITE_MAP.studio.hours}\nWhatsApp: ${WEBSITE_MAP.studio.phone}\nMap / contact page: /contact\nBook shoot: /book`,
+      actionCards: [],
+    };
+  }
+
+  if (lower.includes("guarantee") || lower.includes("delivery") || lower.includes("month") || lower.includes("ஆல்பம்")) {
+    return {
+      reply:
+        lang === "tanglish"
+          ? "1-Month Album Delivery Guarantee: photo select pannathukku apram 30 days-kulla album. Delay aana ₹1,000 credit. Full story: Home → Guarantees."
+          : "1-Month Album Delivery Guarantee: album within 30 days of photo selection, or ₹1,000 studio credit. See Home → Guarantees.",
+      actionCards: [],
     };
   }
 
   // Default: website map + live rates
   return {
-    reply: buildWebsiteGuideReply({
-      lang,
-      packagesText: catalog.packagesText,
-      framesText: catalog.framesText,
-    }),
-    actionCards: [],
+    reply:
+      buildWebsiteGuideReply({
+        lang,
+        packagesText: catalog.packagesText,
+        framesText: catalog.framesText,
+      }) +
+      `\n\nTip: Ask “list frames”, “list packages”, or “recent shoots” for full detailed catalogs.`,
+    actionCards: [catalog.packages, catalog.frames].filter(Boolean),
   };
 }
