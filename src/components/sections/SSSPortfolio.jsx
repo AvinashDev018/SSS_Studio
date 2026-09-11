@@ -371,7 +371,7 @@ export default function SSSPortfolio() {
           </span>
         </div>
 
-        {/* Portfolio stories — rotating card carousel */}
+        {/* Portfolio stories — cover-flow 360 */}
         <RoundMemoryCarousel
           items={filteredProjects.map((proj) => ({
             id: proj.id,

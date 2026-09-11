@@ -10,7 +10,7 @@ import {
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import PackageCalculator from "@/components/PackageCalculator";
 import BookingQuoteModal from "@/components/ui/BookingQuoteModal";
-import RoundMemoryCarousel from "@/components/ui/RoundMemoryCarousel";
+import PackageCoverFlow from "@/components/ui/PackageCoverFlow";
 
 export default function PackagesClientContent({ displayPackages }) {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -48,7 +48,7 @@ export default function PackagesClientContent({ displayPackages }) {
     return true;
   });
 
-  // Popular / favorite packages lead the list (front card in 360 ring)
+  // Popular / favorite packages lead the list
   const orderedPackages = [...filteredPackages].sort(
     (a, b) => Number(!!b.popular) - Number(!!a.popular)
   );
@@ -112,30 +112,14 @@ export default function PackagesClientContent({ displayPackages }) {
           </button>
         </div>
 
-        {/* Packages — rotating carousel only (Most Popular first) */}
-        <div className="mb-14 sm:mb-20 rounded-3xl bg-zinc-950/40 border border-zinc-800 p-1 sm:p-4 overflow-visible">
-          <RoundMemoryCarousel
-            popularFirst
-            items={orderedPackages.map((pkg) => ({
-              id: pkg.id,
-              label: pkg.name,
-              image: null,
-              flippable: true,
-              popular: !!pkg.popular,
-              description: pkg.description,
-              features: pkg.features,
-              badge: pkg.popular
-                ? pkg.name?.toLowerCase().includes("8")
-                  ? "Flagship Favorite"
-                  : "Most Popular"
-                : (pkg.name || "").split("-")[0]?.trim() || "Package",
-              meta: pkg.price,
-              raw: pkg,
-            }))}
-            onSelect={(pkg) => handleOpenBooking(pkg.name)}
-            title="Photography Packages"
-            subtitle="Most Popular first · Swipe to rotate · Flip for inclusions · Book on back"
-          />
+        {/* Packages cover-flow 360 — detailed cards (Client Stories style) */}
+        <div className="mb-14 sm:mb-20">
+          <div className="rounded-2xl sm:rounded-3xl bg-zinc-50/80 dark:bg-zinc-950/40 border border-zinc-200/80 dark:border-zinc-800 p-2 sm:p-4 overflow-hidden">
+            <PackageCoverFlow
+              packages={orderedPackages}
+              onBook={(pkg) => handleOpenBooking(pkg.name)}
+            />
+          </div>
         </div>
 
         {/* District Travel Policy Section */}
