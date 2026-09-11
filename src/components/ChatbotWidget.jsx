@@ -37,7 +37,7 @@ const QUICK_SUGGESTIONS = [
   "📍 Studio Location & Timings",
 ];
 
-const WHATSAPP_URL = "https://wa.me/916383565425?text=Hi!%20I%27m%20interested%20in%20booking%20a%20photography%20session%20with%20SSS%20Studio.";
+const WHATSAPP_URL = "https://wa.me/919865992379?text=Hi!%20I%27m%20interested%20in%20booking%20a%20photography%20session%20with%20SSS%20Studio.";
 
 const FAQ_RESPONSES = {
   pricing: {
@@ -59,13 +59,13 @@ const FAQ_RESPONSES = {
     title: "Visit SSS Studio in Madurai",
     text: "Here is everything you need before visiting or planning your session:",
     details: [
-      "Address: 34, Prasanna New Colony, Avaniyapuram, Madurai, Tamil Nadu.",
+      "Address: 7th Street, Prasanna Colony, Avaniyapuram, Madurai, Tamil Nadu.",
       "Opening hours: Monday to Sunday, 9:00 AM to 8:00 PM.",
-      "Call / WhatsApp: +91 63835 65425.",
+      "Call / WhatsApp: +91 98659 92379.",
     ],
     actions: [
-      { label: "Get Directions", href: "https://maps.google.com/?q=34%2C%20Prasanna%20New%20Colony%2C%20Avaniyapuram%2C%20Madurai", external: true },
-      { label: "Call Studio", href: "tel:+916383565425", external: true }
+      { label: "Get Directions", href: "https://maps.google.com/?q=7th%20Street%2C%20Prasanna%20Colony%2C%20Avaniyapuram%2C%20Madurai", external: true },
+      { label: "Call Studio", href: "tel:+919865992379", external: true }
     ],
   },
   delivery: {
@@ -368,7 +368,11 @@ export default function ChatbotWidget({ forcedOpen, onClose }) {
                         : "bg-white border border-black/10 text-zinc-900 font-medium rounded-tl-sm shadow-sm"
                     }`}
                   >
-                    {msg.text}
+                    {msg.text.split("\n").map((line, i) => (
+                      <span key={i} className="block whitespace-pre-wrap">
+                        {line || "\u00A0"}
+                      </span>
+                    ))}
                   </div>
                 )}
 
@@ -380,36 +384,139 @@ export default function ChatbotWidget({ forcedOpen, onClose }) {
                       <div className="bg-white border-2 border-[#d4af37]/60 rounded-2xl p-3.5 shadow-md text-xs text-zinc-900">
                         <div className="flex items-center justify-between mb-2 border-b border-black/10 pb-2">
                           <span className="font-bold text-[#8b6508] flex items-center gap-1 text-[11px] uppercase tracking-wider">
-                            <Package size={13} /> Recommended Custom Frames
+                            <Package size={13} /> Custom Frames
                           </span>
-                          <span className="text-[10px] text-zinc-500 font-bold">13 Sizes Available</span>
+                          <span className="text-[10px] text-zinc-500 font-bold">
+                            {msg.cardData.count || msg.cardData.allFrames?.length || msg.cardData.recommendedFrames?.length || 0} sizes
+                          </span>
                         </div>
-                        <div className="grid grid-cols-1 gap-2 my-2">
-                          {msg.cardData.recommendedFrames?.map((f) => (
-                            <div
-                              key={f.id}
-                              className="flex items-center justify-between bg-[#FAFAFA] border border-black/10 p-2.5 rounded-xl"
-                            >
-                              <div>
-                                <span className="font-serif font-bold text-sm text-zinc-900">{f.size} Inch</span>
-                                {f.tag && (
-                                  <span className="ml-2 text-[9px] bg-[#d4af37]/20 text-[#8b6508] font-black px-1.5 py-0.5 rounded border border-[#d4af37]/40">
-                                    {f.tag}
-                                  </span>
-                                )}
-                                <p className="text-[10px] text-zinc-600 font-medium mt-0.5">{f.bestFor}</p>
-                              </div>
-                              <span className="font-serif font-black text-[#8b6508] text-sm">{f.priceFormatted}</span>
+                        {msg.cardData.recommendedFrames?.length > 0 && (
+                          <>
+                            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wide mb-1.5">Top picks for you</p>
+                            <div className="grid grid-cols-1 gap-2 my-2">
+                              {msg.cardData.recommendedFrames.map((f) => (
+                                <div
+                                  key={`rec-${f.id}`}
+                                  className="flex items-center justify-between bg-[#FAFAFA] border border-black/10 p-2.5 rounded-xl"
+                                >
+                                  <div>
+                                    <span className="font-serif font-bold text-sm text-zinc-900">{f.size} Inch</span>
+                                    {f.tag && (
+                                      <span className="ml-2 text-[9px] bg-[#d4af37]/20 text-[#8b6508] font-black px-1.5 py-0.5 rounded border border-[#d4af37]/40">
+                                        {f.tag}
+                                      </span>
+                                    )}
+                                    <p className="text-[10px] text-zinc-600 font-medium mt-0.5">{f.bestFor}</p>
+                                  </div>
+                                  <span className="font-serif font-black text-[#8b6508] text-sm">{f.priceFormatted}</span>
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
+                          </>
+                        )}
+                        {(msg.cardData.allFrames?.length > 0) && (
+                          <>
+                            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wide mb-1.5 mt-2">Full price list</p>
+                            <div className="max-h-48 overflow-y-auto grid grid-cols-1 gap-1.5 pr-0.5">
+                              {msg.cardData.allFrames.map((f) => (
+                                <div
+                                  key={`all-${f.id}`}
+                                  className="flex items-center justify-between bg-white border border-black/5 px-2.5 py-2 rounded-lg"
+                                >
+                                  <div className="min-w-0">
+                                    <span className="font-bold text-[11px] text-zinc-900">{f.size}&quot;</span>
+                                    {f.popular && (
+                                      <span className="ml-1.5 text-[8px] bg-[#d4af37]/25 text-[#8b6508] font-black px-1 py-0.5 rounded">
+                                        POPULAR
+                                      </span>
+                                    )}
+                                    {f.bestFor && (
+                                      <p className="text-[9px] text-zinc-500 truncate">{f.bestFor}</p>
+                                    )}
+                                  </div>
+                                  <span className="font-serif font-bold text-[#8b6508] text-[11px] shrink-0 ml-2">
+                                    {f.priceFormatted}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </>
+                        )}
+                        {msg.cardData.finishesAvailable?.length > 0 && (
+                          <p className="text-[10px] text-zinc-600 mt-2">
+                            Finishes: {msg.cardData.finishesAvailable.join(" · ")}
+                          </p>
+                        )}
+                        <p className="text-[10px] text-zinc-600 mt-1.5 leading-relaxed">
+                          {msg.cardData.howToOrder ||
+                            "Order: /store or Home #frames → choose size → upload photo → cart → Cash / UPI."}
+                        </p>
                         <div className="mt-2.5 pt-2 border-t border-black/10 flex gap-2">
                           <a
-                            href="/#frames"
+                            href="/store"
                             onClick={() => setIsOpen(false)}
                             className="w-full py-2 bg-[#d4af37] text-black font-bold text-[11px] rounded-lg text-center flex items-center justify-center gap-1 hover:brightness-105 shadow-sm"
                           >
-                            Order in Frame Studio →
+                            Order in Store →
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Full packages list */}
+                    {msg.cardData.action === "LIST_PACKAGES" && (
+                      <div className="bg-white border-2 border-[#d4af37]/60 rounded-2xl p-3.5 shadow-md text-xs text-zinc-900">
+                        <div className="flex items-center justify-between mb-2 border-b border-black/10 pb-2">
+                          <span className="font-bold text-[#8b6508] flex items-center gap-1 text-[11px] uppercase tracking-wider">
+                            <Package size={13} /> Live Packages
+                          </span>
+                          <span className="text-[10px] text-zinc-500 font-bold">{msg.cardData.count || 0} packages</span>
+                        </div>
+                        <div className="max-h-56 overflow-y-auto space-y-2 my-2">
+                          {msg.cardData.packages?.map((p) => (
+                            <div
+                              key={p.id}
+                              className="bg-[#FAFAFA] border border-black/10 p-2.5 rounded-xl"
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="min-w-0">
+                                  <span className="font-serif font-bold text-sm text-zinc-900">{p.name}</span>
+                                  {p.popular && (
+                                    <span className="ml-2 text-[9px] bg-[#d4af37]/20 text-[#8b6508] font-black px-1.5 py-0.5 rounded border border-[#d4af37]/40">
+                                      Popular
+                                    </span>
+                                  )}
+                                  {p.description && (
+                                    <p className="text-[10px] text-zinc-600 mt-0.5 line-clamp-2">{p.description}</p>
+                                  )}
+                                  {Array.isArray(p.features) && p.features.length > 0 && (
+                                    <p className="text-[9px] text-zinc-500 mt-1">
+                                      {p.features.slice(0, 4).join(" · ")}
+                                    </p>
+                                  )}
+                                </div>
+                                <span className="font-serif font-black text-[#8b6508] text-sm shrink-0">{p.price}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="text-[10px] text-zinc-600 mb-2">
+                          Book: /book or WhatsApp +91 98659 92379 · Full page: /packages
+                        </p>
+                        <div className="pt-2 border-t border-black/10 flex gap-2">
+                          <a
+                            href="/packages"
+                            onClick={() => setIsOpen(false)}
+                            className="flex-1 py-2 bg-[#d4af37] text-black font-bold text-[11px] rounded-lg text-center hover:brightness-105 shadow-sm"
+                          >
+                            View packages →
+                          </a>
+                          <a
+                            href="/book"
+                            onClick={() => setIsOpen(false)}
+                            className="flex-1 py-2 bg-black text-white font-bold text-[11px] rounded-lg text-center hover:bg-zinc-800 shadow-sm"
+                          >
+                            Book now →
                           </a>
                         </div>
                       </div>
@@ -458,10 +565,24 @@ export default function ChatbotWidget({ forcedOpen, onClose }) {
                             </a>
                           ))}
                         </div>
+                        <div className="mt-2.5 pt-2 border-t border-black/10 flex gap-2">
+                          <a
+                            href="/gallery"
+                            onClick={() => setIsOpen(false)}
+                            className="flex-1 py-2 bg-[#d4af37] text-black font-bold text-[11px] rounded-lg text-center hover:brightness-105 shadow-sm"
+                          >
+                            Open gallery →
+                          </a>
+                          <a
+                            href="/#portfolio"
+                            onClick={() => setIsOpen(false)}
+                            className="flex-1 py-2 bg-black text-white font-bold text-[11px] rounded-lg text-center hover:bg-zinc-800 shadow-sm"
+                          >
+                            Portfolio / films →
+                          </a>
+                        </div>
                       </div>
                     )}
-
-                    {/* Package Quote Calculation Tool Output */}
                     {msg.cardData.action === "PACKAGE_QUOTE" && (
                       <div className="bg-white border-2 border-[#d4af37]/60 rounded-2xl p-3.5 shadow-md text-xs text-zinc-900">
                         <div className="flex items-center justify-between mb-2 border-b border-black/10 pb-2">
@@ -494,7 +615,7 @@ export default function ChatbotWidget({ forcedOpen, onClose }) {
                             <ShieldCheck size={12} /> 1-Month Delivery Guaranteed
                           </span>
                           <a
-                            href={`https://wa.me/916383565425?text=${encodeURIComponent(
+                            href={`https://wa.me/919865992379?text=${encodeURIComponent(
                               `Hi SSS Studio! I got an AI package quote for ${msg.cardData.eventType} (${msg.cardData.totalEstimated}). Can we finalize the date?`
                             )}`}
                             target="_blank"
@@ -566,7 +687,7 @@ export default function ChatbotWidget({ forcedOpen, onClose }) {
                                 View Timeline →
                               </a>
                               <a
-                                href={`https://wa.me/916383565425?text=${encodeURIComponent(
+                                href={`https://wa.me/919865992379?text=${encodeURIComponent(
                                   `Hi SSS Studio! Checking on status of order ${msg.cardData.orderId} (${msg.cardData.customerName}).`
                                 )}`}
                                 target="_blank"

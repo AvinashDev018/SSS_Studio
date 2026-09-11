@@ -6,7 +6,7 @@ import { MessageCircle, X, Globe, Sparkles } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import ChatbotWidget from "@/components/ChatbotWidget";
 
-export default function MultilingualWhatsAppWidget({ whatsappNumber = "916383565425" }) {
+export default function MultilingualWhatsAppWidget({ whatsappNumber = "919865992379" }) {
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
   const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
   const [isAiChatOpen, setIsAiChatOpen] = useState(false);
@@ -70,7 +70,7 @@ export default function MultilingualWhatsAppWidget({ whatsappNumber = "916383565
                     <h4 className="font-serif font-bold text-sm text-white">SSS WhatsApp Concierge</h4>
                     <p className="text-[10px] text-emerald-400 font-semibold uppercase flex items-center gap-1">
                       <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping" />
-                      Online Now (+91 63835 65425)
+                      Online Now (+91 98659 92379)
                     </p>
                   </div>
                 </div>

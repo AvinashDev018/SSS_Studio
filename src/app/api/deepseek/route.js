@@ -51,7 +51,7 @@ export async function POST(req) {
     console.error("Agent Route Error:", error);
     return NextResponse.json(
       {
-        reply: "Vanakkam! SSS Studio is ready to assist. You can reach our lead photographer directly on WhatsApp at +91 63835 65425.",
+        reply: "Vanakkam! SSS Studio is ready to assist. You can reach our lead photographer directly on WhatsApp at +91 98659 92379.",
         actionCards: [],
         error: error.message,
       },

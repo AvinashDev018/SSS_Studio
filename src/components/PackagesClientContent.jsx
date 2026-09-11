@@ -2,17 +2,15 @@
 
 import React, { useState } from "react";
 import { 
-  Check, 
   MapPin, 
   Truck, 
   ShieldCheck, 
-  Sparkles, 
-  Layers, 
-  Send
+  Sparkles
 } from "lucide-react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import PackageCalculator from "@/components/PackageCalculator";
 import BookingQuoteModal from "@/components/ui/BookingQuoteModal";
+import RoundMemoryCarousel from "@/components/ui/RoundMemoryCarousel";
 
 export default function PackagesClientContent({ displayPackages }) {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -49,6 +47,11 @@ export default function PackagesClientContent({ displayPackages }) {
     if (activeCategory === "portraits") return !isWedding;
     return true;
   });
+
+  // Popular / favorite packages lead the list (front card in 360 ring)
+  const orderedPackages = [...filteredPackages].sort(
+    (a, b) => Number(!!b.popular) - Number(!!a.popular)
+  );
 
   return (
     <>
@@ -109,140 +112,30 @@ export default function PackagesClientContent({ displayPackages }) {
           </button>
         </div>
 
-        {/* Packages Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-16 sm:mb-24 items-stretch">
-          {filteredPackages.map((pkg, idx) => {
-            const isOfficialWedding = pkg.name.toLowerCase().startsWith("package");
-
-            return (
-              <AnimatedSection key={pkg.id || idx} delay={idx * 0.08} className="h-full">
-                <div 
-                  className={`h-full relative group backdrop-blur-xl bg-[#0d0f14] border rounded-3xl p-5 sm:p-7 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 shadow-2xl ${
-                    pkg.popular 
-                      ? "border-amber-400/90 shadow-amber-500/15 ring-2 ring-amber-400/40" 
-                      : "border-zinc-800 hover:border-amber-400/50"
-                  }`}
-                >
-                  {/* Top Popular / Flagship Ribbon */}
-                  {pkg.popular && (
-                    <>
-                      <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 rounded-t-3xl" />
-                      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-yellow-500 text-black px-4 py-1 rounded-full text-[10px] sm:text-xs font-black tracking-widest uppercase shadow-xl flex items-center gap-1.5 z-20 whitespace-nowrap">
-                        <Sparkles className="w-3.5 h-3.5 fill-current text-black" /> 
-                        {pkg.name.includes("8") ? "Flagship Imperial" : "Client Favorite"}
-                      </div>
-                    </>
-                  )}
-
-                  <div>
-                    {/* Tier badge */}
-                    <div className="flex items-center justify-between gap-2 mb-3 pt-1">
-                      {isOfficialWedding ? (
-                        <span className="px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-400/30 text-[11px] font-black uppercase tracking-wider">
-                          {pkg.name.split("-")[0]?.trim()}
-                        </span>
-                      ) : (
-                        <span className="px-3 py-1 rounded-full bg-zinc-800 text-zinc-300 text-[11px] font-bold uppercase tracking-wider">
-                          Milestone Session
-                        </span>
-                      )}
-
-                      <span className="text-[11px] font-bold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-800/60">
-                        1-Month Guarantee
-                      </span>
-                    </div>
-
-                    {/* Title */}
-                    <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white leading-snug font-serif">
-                      {pkg.name}
-                    </h3>
-                    
-                    {/* Description */}
-                    <p className="text-zinc-300 mb-5 text-xs sm:text-sm leading-relaxed font-light">
-                      {pkg.description}
-                    </p>
-                    
-                    {/* Pricing */}
-                    <div className="mb-6 p-4 rounded-2xl bg-zinc-950/80 border border-zinc-800/80 flex items-baseline justify-between">
-                      <div>
-                        <span className={`text-3xl sm:text-4xl font-extrabold tracking-tight font-mono ${
-                          pkg.popular ? "text-amber-300 drop-shadow-sm" : "text-amber-400"
-                        }`}>
-                          {pkg.price}
-                        </span>
-                        <span className="text-[11px] text-zinc-400 font-medium block mt-0.5">
-                          Studio Catalog Rate (Taxes Incl.)
-                        </span>
-                      </div>
-                    </div>
-                    
-                    {/* Inclusions / Features List */}
-                    <div className="space-y-2.5 mb-6">
-                      <div className="text-[11px] font-black uppercase tracking-wider text-amber-400/90 mb-1 flex items-center gap-1.5">
-                        <Layers className="w-3.5 h-3.5 text-amber-400" />
-                        Inclusions &amp; Deliverables
-                      </div>
-
-                      <ul className="space-y-2.5">
-                        {(Array.isArray(pkg.features) 
-                          ? pkg.features 
-                          : (typeof pkg.features === 'string' ? pkg.features.split(',') : [])
-                        ).map((feature, fIdx) => {
-                          const fText = typeof feature === 'string' ? feature.trim() : feature;
-                          const isAlbum = fText.toLowerCase().includes("album");
-                          const isDrone = fText.toLowerCase().includes("drone") || fText.toLowerCase().includes("aerial");
-                          const isScreen = fText.toLowerCase().includes("led") || fText.toLowerCase().includes("tv");
-
-                          return (
-                            <li 
-                              key={fIdx} 
-                              className={`flex items-start gap-2.5 text-xs sm:text-sm leading-snug rounded-xl p-2 transition-colors ${
-                                isAlbum || isDrone || isScreen
-                                  ? "bg-zinc-900/60 text-zinc-100 font-medium border border-zinc-800/40"
-                                  : "text-zinc-200"
-                              }`}
-                            >
-                              <Check className={`w-4 h-4 shrink-0 mt-0.5 ${
-                                pkg.popular ? "text-amber-400 font-bold" : "text-amber-400/90"
-                              }`} />
-                              <span className="leading-tight">{fText}</span>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="space-y-2.5 pt-4 border-t border-zinc-800/80 mt-4">
-                    <button 
-                      type="button"
-                      onClick={() => handleOpenBooking(pkg.name)}
-                      className={`w-full text-center py-3.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all duration-300 shadow-xl cursor-pointer ${
-                        pkg.popular 
-                          ? "bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black shadow-amber-500/20" 
-                          : "bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-400/40"
-                      }`}
-                    >
-                      Book Package / Lock Spot
-                    </button>
-
-                    <a
-                      href={`https://wa.me/916383565425?text=${encodeURIComponent(
-                        `Vanakkam SSS Studio! I am interested in *${pkg.name}* (${pkg.price}). Please share availability and booking details for our celebration dates.`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full text-center py-2.5 rounded-xl text-xs font-bold text-zinc-400 hover:text-white bg-zinc-900/70 hover:bg-zinc-800 border border-zinc-800 transition-all flex items-center justify-center gap-2"
-                    >
-                      <Send className="w-3.5 h-3.5 text-emerald-400" />
-                      Quick WhatsApp Enquiry
-                    </a>
-                  </div>
-                </div>
-              </AnimatedSection>
-            );
-          })}
+        {/* Packages — rotating carousel only (Most Popular first) */}
+        <div className="mb-14 sm:mb-20 rounded-3xl bg-zinc-950/40 border border-zinc-800 p-1 sm:p-4 overflow-visible">
+          <RoundMemoryCarousel
+            popularFirst
+            items={orderedPackages.map((pkg) => ({
+              id: pkg.id,
+              label: pkg.name,
+              image: null,
+              flippable: true,
+              popular: !!pkg.popular,
+              description: pkg.description,
+              features: pkg.features,
+              badge: pkg.popular
+                ? pkg.name?.toLowerCase().includes("8")
+                  ? "Flagship Favorite"
+                  : "Most Popular"
+                : (pkg.name || "").split("-")[0]?.trim() || "Package",
+              meta: pkg.price,
+              raw: pkg,
+            }))}
+            onSelect={(pkg) => handleOpenBooking(pkg.name)}
+            title="Photography Packages"
+            subtitle="Most Popular first · Swipe to rotate · Flip for inclusions · Book on back"
+          />
         </div>
 
         {/* District Travel Policy Section */}

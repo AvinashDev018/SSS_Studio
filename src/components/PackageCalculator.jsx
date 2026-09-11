@@ -212,7 +212,7 @@ export default function PackageCalculator({ isEmbedded = false }) {
       `--------------------------------\n` +
       `Hello SSS Studio team, please check availability for our celebration dates!`;
 
-    const url = `https://wa.me/916383565425?text=${encodeURIComponent(msg)}`;
+    const url = `https://wa.me/919865992379?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank");
   };
 

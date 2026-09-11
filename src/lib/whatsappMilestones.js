@@ -43,9 +43,9 @@ Thank you for choosing SSS Photography Studio! ✨`;
 
 Great news! Your handcrafted order *#${orderId}* is complete and *READY FOR PICKUP* at our studio! 🏬
 
-📍 *Studio Address:* 34, Prasanna New Colony, Avaniyapuram, Madurai - 625012
+📍 *Studio Address:* 7th Street, Prasanna Colony, Avaniyapuram, Madurai
 ⏰ *Timings:* Mon–Sun, 9:00 AM – 8:00 PM
-📞 *Direct Helpline:* +91 63835 65425
+📞 *Direct Helpline:* +91 98659 92379
 
 You can view order details with your *Order ID (${orderId})* or *Mobile Number* on our website **Track Order** page!
 

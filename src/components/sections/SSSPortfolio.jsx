@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Camera, X, ChevronLeft, ChevronRight, Sparkles, BookOpen, Upload, FileText, Play, Film } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import WeddingAlbumPdfModal from "@/components/ui/WeddingAlbumPdfModal";
+import RoundMemoryCarousel from "@/components/ui/RoundMemoryCarousel";
 import { getFeaturedPhotos } from "@/app/actions/gallery";
 
 const getYouTubeEmbedUrl = (url) => {
@@ -100,6 +101,42 @@ const PORTFOLIO_PROJECTS = [
       "https://res.cloudinary.com/e5pnwpo5/image/upload/v1788886070/sss_festive_sangeet_shoot/festive_sangeet_candid_laughter_moment.jpg",
       "https://res.cloudinary.com/e5pnwpo5/image/upload/v1788886057/sss_festive_sangeet_shoot/festive_sangeet_solo_grace_portrait.jpg",
       "https://res.cloudinary.com/e5pnwpo5/image/upload/v1788886062/sss_festive_sangeet_shoot/festive_sangeet_solo_candid_glamour.jpg",
+    ],
+  },
+  {
+    id: 10,
+    title: "Crimson Velvet Half Saree Portrait Series",
+    storyTitle: "Crimson Velvet Half Saree & Henna Portrait Series",
+    category: "birthday-events",
+    categoryLabel: "Traditional Ceremony",
+    shortName: "Crimson Portraits",
+    storyName: "Half Saree Portraits",
+    avatar: "/images/portfolio/crimson-portrait/crimson-portrait-01.jpg",
+    description: "Elegant crimson velvet styling with emerald jewelry, intricate henna art, outdoor golden-hour portraits, and radiant stage celebrations captured in classic SSS Studio color grade.",
+    images: [
+      "/images/portfolio/crimson-portrait/crimson-portrait-01.jpg",
+      "/images/portfolio/crimson-portrait/crimson-portrait-02.jpg",
+      "/images/portfolio/crimson-portrait/crimson-portrait-03.jpg",
+      "/images/portfolio/crimson-portrait/crimson-henna-detail.jpg",
+      "/images/portfolio/crimson-portrait/crimson-portrait-stage.jpg",
+      "/images/portfolio/crimson-portrait/crimson-portrait-throne.jpg",
+    ],
+  },
+  {
+    id: 11,
+    title: "Kids Outdoor Portrait Session — Park & Nature",
+    storyTitle: "Kids Outdoor Portrait Session — Park & Nature",
+    category: "birthday-events",
+    categoryLabel: "Kids & Family",
+    shortName: "Kids Outdoor",
+    storyName: "Kids Park Portraits",
+    avatar: "/images/portfolio/kids-outdoor/kids-boy-portrait-01.jpg",
+    description: "Natural daylight kids portraits in a lush park setting — plum formal styling, playful tree-framed poses, and soft candid moments on the lawn.",
+    images: [
+      "/images/portfolio/kids-outdoor/kids-boy-portrait-01.jpg",
+      "/images/portfolio/kids-outdoor/kids-boy-trees.jpg",
+      "/images/portfolio/kids-outdoor/kids-boy-full.jpg",
+      "/images/portfolio/kids-outdoor/kids-girl-park.jpg",
     ],
   },
   {
@@ -204,6 +241,8 @@ export default function SSSPortfolio() {
             </button>
           </div>
         </div>
+
+        {/* Round Memory Disc — removed from top; lives in project cards place below */}
 
         {/* Instagram-Style Recent Shoot Story Bubbles (Mobile & Tablet Showcase) */}
         <div className="mb-8 block">
@@ -326,127 +365,31 @@ export default function SSSPortfolio() {
         )}
 
         {/* Mobile Guidance Banner */}
-        <div className="flex md:hidden items-center justify-between px-2 mb-3 text-xs text-zinc-500 font-medium">
+        <div className="flex md:hidden items-center justify-between px-2 mb-1 text-xs text-zinc-500 font-medium">
           <span className="flex items-center gap-1 text-[#8b6508] font-bold">
-            ← Swipe to explore projects ({filteredProjects.length}) →
-          </span>
-          <span className="text-[11px] bg-black/5 px-2.5 py-0.5 rounded-full font-mono text-zinc-600">
-            Horizontal Scroll
+            Swipe to browse stories ({filteredProjects.length})
           </span>
         </div>
 
-        {/* Projects Container: Horizontal Snap Carousel on Mobile (< md), Grid on Desktop (md+) */}
-        <div 
-          className="flex md:grid overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar pb-6 gap-4 sm:gap-6 md:gap-8 -mx-4 px-4 md:mx-0 md:px-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          <AnimatePresence mode="popLayout">
-            {filteredProjects.map((proj, idx) => (
-              <motion.div
-                key={proj.id}
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.4, delay: idx * 0.06 }}
-                whileHover={{ y: -8 }}
-                onClick={() => openLightbox(proj)}
-                className="w-[85vw] sm:w-[340px] md:w-auto shrink-0 snap-center bg-white border-2 border-[#d4af37]/70 hover:border-[#d4af37] rounded-2xl overflow-hidden shadow-[0_10px_35px_rgba(212,175,55,0.12)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.25)] flex flex-col justify-between cursor-pointer group transition-all duration-300 relative"
-              >
-                {/* Thin Inner Gold Accent Border Frame */}
-                <div className="absolute inset-1 border border-[#d4af37]/30 rounded-[14px] pointer-events-none z-10" />
-
-                <div>
-                  <div className="relative h-60 sm:h-72 overflow-hidden bg-zinc-950">
-                    {proj.images && proj.images.length > 0 ? (
-                      <img
-                        src={proj.images[0]}
-                        alt={proj.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = proj.images?.[0] || "/images/wedding/spread-1.png";
-                        }}
-                      />
-                    ) : proj.videoUrl ? (
-                      <div className="w-full h-full relative flex items-center justify-center bg-zinc-950 overflow-hidden">
-                        <video
-                          src={`${proj.videoUrl}#t=1`}
-                          preload="metadata"
-                          muted
-                          playsInline
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90"
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                          <div className="w-14 h-14 rounded-full bg-black/65 border-2 border-[#d4af37] flex items-center justify-center shadow-[0_0_30px_rgba(212,175,55,0.7)] group-hover:scale-110 group-hover:bg-[#d4af37] transition-all">
-                            <Play size={22} className="fill-[#d4af37] text-[#d4af37] group-hover:fill-black group-hover:text-black ml-1 transition-colors" />
-                          </div>
-                        </div>
-                      </div>
-                    ) : null}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
-
-                    <span className="absolute top-4 left-4 text-[10px] font-extrabold text-[#8b6508] bg-white/95 border border-[#d4af37]/40 px-3 py-1 rounded-full uppercase tracking-widest backdrop-blur-md shadow-sm z-10">
-                      {proj.categoryLabel}
-                    </span>
-
-                    {/* Photo Count & Teaser Badges */}
-                    <div className="absolute top-4 right-4 flex flex-col items-end gap-1.5 z-10">
-                      {proj.images && proj.images.length > 0 && (
-                        <span className="text-[10px] font-extrabold text-white bg-black/60 border border-white/20 px-2.5 py-1 rounded-full uppercase tracking-wider backdrop-blur-md flex items-center gap-1 shadow-sm">
-                          <Camera size={11} /> {`${proj.images.length} Photos`}
-                        </span>
-                      )}
-                      {proj.videoUrl && (
-                        <span className="text-[10px] font-extrabold text-amber-300 bg-black/80 border border-amber-400/70 px-2.5 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-md flex items-center gap-1 shadow-md animate-pulse">
-                          <Play size={10} className="fill-amber-300 text-amber-300" /> 4K Teaser
-                        </span>
-                      )}
-                    </div>
-
-                    {/* All-Caps Category Bottom Frame Label */}
-                    <div className="absolute bottom-3 left-4 right-4 text-center">
-                      <span className="font-serif text-sm sm:text-base tracking-[0.25em] font-extrabold text-white uppercase drop-shadow-lg">
-                        {proj.categoryLabel}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-5 sm:p-6 text-left">
-                    <h3 className="text-lg sm:text-xl font-serif font-bold text-zinc-900 mb-2 group-hover:text-[#b8860b] transition-colors leading-snug">
-                      {proj.title}
-                    </h3>
-                    <p className="text-zinc-600 text-xs line-clamp-2 font-light leading-relaxed">
-                      {proj.description}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-0 mt-auto">
-                  <div className="border-t border-black/10 pt-3.5 flex justify-between items-center text-xs text-zinc-600 font-bold uppercase tracking-wider">
-                    <span className="text-[11px] text-zinc-500 font-medium">
-                      {proj.shortName}
-                    </span>
-                    <div className="flex items-center gap-2">
-                      {proj.videoUrl && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openLightbox(proj, "video");
-                          }}
-                          className="text-[11px] font-extrabold text-black bg-[#d4af37] hover:bg-amber-400 px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm transition-all hover:scale-105 cursor-pointer"
-                        >
-                          <Play size={10} className="fill-black" /> Teaser
-                        </button>
-                      )}
-                      <span className="text-[#8b6508] group-hover:underline flex items-center gap-1 font-extrabold">
-                        View Story →
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
+        {/* Portfolio stories — rotating card carousel */}
+        <RoundMemoryCarousel
+          items={filteredProjects.map((proj) => ({
+            id: proj.id,
+            label: proj.storyName || proj.shortName || proj.title,
+            image: proj.avatar || proj.images?.[0] || null,
+            videoUrl: proj.videoUrl,
+            badge: proj.categoryLabel,
+            meta: proj.images?.length
+              ? `${proj.images.length} photos`
+              : proj.videoUrl
+              ? "4K teaser"
+              : null,
+            raw: proj,
+          }))}
+          onSelect={(proj) => openLightbox(proj)}
+          title="Client Stories"
+          subtitle="Swipe to browse · Tap the front card to open"
+        />
       </div>
 
       {/* Fullscreen Lightbox Modal */}

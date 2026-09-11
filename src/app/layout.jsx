@@ -91,7 +91,7 @@ const jsonLdSchema = {
   legalName: 'SSS Studio',
   description: 'Premium wedding photography, candid cinematography, pre-wedding, birthday, baby, and maternity shoots in Madurai, Tamil Nadu with a guaranteed 1-Month Album Delivery.',
   url: 'https://sssstudiomadurai.com',
-  telephone: '+91 63835 65425',
+  telephone: '+91 98659 92379',
   priceRange: '₹₹',
   currenciesAccepted: 'INR',
   paymentAccepted: 'Cash, Credit Card, Debit Card, UPI, Net Banking',
@@ -99,7 +99,7 @@ const jsonLdSchema = {
   logo: 'https://res.cloudinary.com/e5pnwpo5/image/upload/v1787504972/kllcuquwxjltq88cmb5n.jpg',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: '34, Prasanna New Colony, Avaniyapuram',
+    streetAddress: '7th Street, Prasanna Colony, Avaniyapuram',
     addressLocality: 'Madurai',
     addressRegion: 'Tamil Nadu',
     postalCode: '625012',
@@ -207,7 +207,7 @@ export default function RootLayout({ children }) {
             <Navbar />
             <main className="flex-grow w-full max-w-full overflow-x-hidden">{children}</main>
             <Footer />
-            <MultilingualWhatsAppWidget whatsappNumber="916383565425" />
+            <MultilingualWhatsAppWidget whatsappNumber="919865992379" />
           </Providers>
         </div>
       </body>

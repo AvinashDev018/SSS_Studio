@@ -7,9 +7,9 @@ export const WEBSITE_MAP = {
   studio: {
     name: "SSS Photography Studio",
     nameTa: "SSS போட்டோகிராபி ஸ்டுடியோ",
-    phone: "+91 63835 65425",
-    whatsapp: "https://wa.me/916383565425",
-    address: "34, Prasanna New Colony, Avaniyapuram, Madurai, Tamil Nadu 625012",
+    phone: "+91 98659 92379",
+    whatsapp: "https://wa.me/919865992379",
+    address: "7th Street, Prasanna Colony, Avaniyapuram, Madurai",
     hours: "Monday–Sunday, 9:00 AM – 8:00 PM",
   },
   routes: [
@@ -75,9 +75,9 @@ export const WEBSITE_MAP = {
     },
     {
       path: "/visualizer",
-      name: "AI Visualizer / Moodboard", 
-      purpose: "Advanced AI-powered mood board creation with outfit recommendations, color palette analysis, cultural styling guidance, and location matching based on uploaded photos and preferences. Includes traditional Tamil heritage concepts and modern editorial styling.",
-      keywords: ["visualizer", "moodboard", "ai stylist", "style", "outfit", "color", "palette", "styling", "cultural", "tamil", "traditional", "modern", "heritage"],
+      name: "AI Visualizer",
+      purpose: "Upload a photo and get outfit recommendations and color palette suggestions for wedding, portrait, birthday, or corporate shoots.",
+      keywords: ["visualizer", "ai stylist", "style", "outfit", "color", "palette", "styling"],
     },
     {
       path: "/client-gallery/[slug]",
@@ -112,21 +112,85 @@ export const WEBSITE_MAP = {
   ],
   howTos: {
     bookShoot:
-      "Open Home → tap Book a Consultation, or visit /book. Share event type, date, and requirements. You can also WhatsApp +91 63835 65425.",
+      "How to book a shoot:\n1) Open /book or Home → “Book a Consultation”\n2) Choose event type (wedding / maternity / birthday / etc.)\n3) Share preferred date + city/venue\n4) Or WhatsApp +91 98659 92379 for instant help\n5) Studio confirms package, advance & shoot plan",
     buyFrame:
-      "Open /store or homepage #frames section → choose size → Order → upload custom photo if needed → checkout with promo code optional → pay Cash at studio or UPI home delivery.",
+      "How to order a photo frame:\n1) Open /store OR Home → Photo Frame Price List (#frames)\n2) Pick size (e.g. 12x18, 16x20) — preview tilts in 3D on Home\n3) Tap Order → upload your photo (optional custom crop)\n4) Add to cart → apply promo code if you have one\n5) Checkout: Cash pickup at studio OR UPI home delivery\n6) Track anytime on /track with Order ID or mobile number",
     trackOrder:
-      "Open /track → enter Order ID (SSS-...) or your mobile number. Chatbot can also track if you paste the ID or phone here.",
+      "How to track an order:\n1) Open /track\n2) Enter Order ID (SSS-...) OR your registered mobile number\n3) Or paste the ID/phone here in chat — I will look it up live",
     seePackages:
-      "Open /packages for live CMS prices. Admin updates appear on this page immediately after refresh.",
+      "How to see & choose packages:\n1) Open /packages for live CMS prices (wedding, pre-wedding, maternity, baby/birthday)\n2) Compare features & price\n3) Book via /book or WhatsApp +91 98659 92379\nAsk me “list packages” anytime for the full live list.",
     seePortfolio:
-      "Open homepage Portfolio or /gallery. Wedding album opens as a hardcover flipbook. Featured photos are starred in Admin → Gallery.",
+      "How to browse photos & films:\n1) Home → Portfolio (wedding album flipbook + films)\n2) Full public gallery: /gallery (weddings, pre-wedding, baby, maternity, birthday, events)\n3) Ask me “recent shoots” or “wedding samples” for curated recent work cards\n4) Private proofing (after your shoot): /client-gallery/[slug] + passcode from studio",
     usePromo:
-      "Admin creates promo in /admin/promos. Customer enters the same code in Store cart before checkout.",
-    useMoodboardAI:
-      "Visit /visualizer → Upload your photo or try demo → Select shoot type & style preference → Get AI-generated mood board with color palettes, outfit recommendations, cultural styling elements, and location suggestions. The MoodBoard AI analyzes your photo's dominant colors and provides expert styling advice tailored to Tamil cultural authenticity and modern aesthetics.",
+      "Promo codes: created in Admin → Promos. Enter the same code in /store cart before checkout.",
+    useVisualizer:
+      "AI Visualizer (/visualizer): upload a photo → choose shoot type & style → get outfit + color palette ideas.",
+    buyGift:
+      "Personalized gifts on /store (Magic Mug, Crystal Cube, Moon Lamp, Puzzle, keychains, etc.): add to cart → checkout like frames.",
+    passport:
+      "Passport / stamp photos on /store: 8 Passport ₹100 | 8 Passport + 8 Stamp ₹150 | 16 Stamp ₹100. Order online or visit studio.",
   },
 };
+
+/** Format live packages for chat replies (full list). */
+export function formatPackagesCatalog(packages = [], lang = "en") {
+  if (!packages.length) {
+    return lang === "tanglish"
+      ? "Packages load aagala — /packages page open pannunga."
+      : lang === "ta"
+      ? "பேக்கேஜ் பட்டியல் கிடைக்கவில்லை — /packages பாருங்கள்."
+      : "No live packages loaded — open /packages.";
+  }
+  const lines = packages.map((p, i) => {
+    const feats = Array.isArray(p.features)
+      ? p.features.slice(0, 4).join(" · ")
+      : typeof p.features === "string"
+      ? p.features.split(",").slice(0, 4).map((f) => f.trim()).filter(Boolean).join(" · ")
+      : "";
+    const badge = p.popular ? (lang === "ta" ? " ★ பிரபலம்" : lang === "tanglish" ? " ★ Popular" : " ★ Popular") : "";
+    const body = feats ? `\n   ${feats}` : "";
+    return `${i + 1}. ${p.name} — ${p.price}${badge}${body}`;
+  });
+  return lines.join("\n");
+}
+
+/** Format live frames for chat replies (full list). */
+export function formatFramesCatalog(frames = [], lang = "en") {
+  if (!frames.length) {
+    return lang === "tanglish"
+      ? "Frames load aagala — /store illana Home #frames paaru."
+      : lang === "ta"
+      ? "பிரேம் பட்டியல் கிடைக்கவில்லை — /store அல்லது Home #frames."
+      : "No live frames loaded — open /store or Home #frames.";
+  }
+  const lines = frames.map((f, i) => {
+    const size = f.size || `${f.width}x${f.height}`;
+    const price = f.price || f.priceFormatted || (f.numericPrice != null ? `₹${f.numericPrice}` : "");
+    const tag = f.tag ? ` [${f.tag}]` : f.popular ? " [Popular]" : "";
+    const best = f.bestFor ? ` — ${f.bestFor}` : "";
+    return `${i + 1}. ${size}"${tag} · ${price}${best}`;
+  });
+  return lines.join("\n");
+}
+
+export function orderGuideBlock(lang = "en", kind = "frame") {
+  if (kind === "package" || kind === "book") {
+    if (lang === "tanglish") {
+      return `\n\n📌 Epdi book pannuvathu:\n• /book open pannunga (or Home → Book a Consultation)\n• Event type + date share pannunga\n• WhatsApp: ${WEBSITE_MAP.studio.phone}\n• Full packages page: /packages`;
+    }
+    if (lang === "ta") {
+      return `\n\n📌 முன்பதிவு எப்படி:\n• /book அல்லது Home → Book a Consultation\n• நிகழ்வு வகை + தேதி அனுப்புங்கள்\n• WhatsApp: ${WEBSITE_MAP.studio.phone}\n• பேக்கேஜ்கள்: /packages`;
+    }
+    return `\n\n📌 How to book:\n• Open /book or Home → Book a Consultation\n• Share event type + preferred date\n• WhatsApp: ${WEBSITE_MAP.studio.phone}\n• Compare live packages on /packages`;
+  }
+  if (lang === "tanglish") {
+    return `\n\n📌 Epdi order pannuvathu:\n1) /store illana Home #frames\n2) Size choose → Order → photo upload\n3) Cart-la promo (optional)\n4) Cash studio pickup / UPI home delivery\n5) Track: /track (Order ID or mobile)\nWhatsApp help: ${WEBSITE_MAP.studio.phone}`;
+  }
+  if (lang === "ta") {
+    return `\n\n📌 ஆர்டர் எப்படி:\n1) /store அல்லது Home #frames\n2) அளவு தேர்வு → Order → போட்டோ அப்லோடு\n3) கார்ட்டில் ப்ரோமோ (விருப்பம்)\n4) ஸ்டுடியோ Cash / UPI ஹோம் டெலிவரி\n5) டிராக்: /track\nWhatsApp: ${WEBSITE_MAP.studio.phone}`;
+  }
+  return `\n\n📌 How to order:\n1) Open /store or Home → #frames\n2) Choose size → Order → upload photo\n3) Optional promo in cart\n4) Pay: Cash at studio or UPI home delivery\n5) Track on /track with Order ID or mobile\nWhatsApp: ${WEBSITE_MAP.studio.phone}`;
+}
 
 export function findRouteForQuery(lowerText) {
   for (const route of WEBSITE_MAP.routes) {

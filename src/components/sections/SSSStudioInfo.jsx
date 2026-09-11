@@ -55,7 +55,7 @@ export default function SSSStudioInfo({ onOpenBooking }) {
                 <div>
                   <h4 className="text-white font-bold text-base">Direct Phone &amp; WhatsApp</h4>
                   <p className="text-amber-300 font-semibold text-sm mt-0.5">
-                    +91 63835 65425
+                    +91 98659 92379
                   </p>
                 </div>
               </div>
@@ -87,7 +87,7 @@ export default function SSSStudioInfo({ onOpenBooking }) {
               </button>
               
               <a
-                href="https://wa.me/916383565425"
+                href="https://wa.me/919865992379"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-amber-500/30 text-white font-semibold rounded-full shadow-lg hover:border-amber-400/50 transition-all duration-300 flex items-center gap-2 text-xs uppercase tracking-wider"

@@ -306,7 +306,7 @@ export default function OrderCart({ items, onRemove, onUpdateItem, isOpen }) {
           `--------------------------------\n` +
           `Please confirm printing and framing schedule!`;
 
-        const waUrl = `https://wa.me/916383565425?text=${encodeURIComponent(msg)}`;
+        const waUrl = `https://wa.me/919865992379?text=${encodeURIComponent(msg)}`;
         const win = window.open(waUrl, "_blank");
         if (!win || win.closed || typeof win.closed === "undefined") {
           window.location.href = waUrl;

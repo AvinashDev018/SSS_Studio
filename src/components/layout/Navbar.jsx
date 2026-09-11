@@ -292,17 +292,6 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Prominent Mobile Moodboard Matcher Action Card */}
-            <button
-              onClick={() => {
-                setIsOpen(false);
-                triggerModal("moodboard");
-              }}
-              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-500 text-black font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md border border-amber-300 cursor-pointer"
-            >
-              <Sparkles size={15} className="text-black" /> ✨ Match Moodboard (AI Vision)
-            </button>
-
             {/* Nav Links Grid */}
             <div className="grid grid-cols-2 gap-1.5 pt-1">
               {mobileLinks.map((link) => (
