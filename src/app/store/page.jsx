@@ -8,6 +8,7 @@ import OrderCart from "@/components/store/OrderCart";
 import SSSPhotoFramePricing from "@/components/sections/SSSPhotoFramePricing";
 import BirthdayGiftOrderModal from "@/components/ui/BirthdayGiftOrderModal";
 import PhotoFrameOrderModal from "@/components/ui/PhotoFrameOrderModal";
+import GiftBoxUnbox from "@/components/ui/GiftBoxUnbox";
 import { Package, Camera, Gift, ShoppingCart, Plus, Loader2 } from "lucide-react";
 
 export default function StorePage() {
@@ -235,42 +236,24 @@ export default function StorePage() {
       <Loader2 className="w-8 h-8 animate-spin text-teal-400" />
     </div>
   ) : (
- <AnimatedSection className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
- {gifts.map((gift) => (
- <div 
-   key={gift.id} 
-   onClick={() => setSelectedGiftForOrder(gift)}
-   className="bg-black/40 backdrop-blur-xl border border-white/10 hover:border-teal-500/50 rounded-3xl overflow-hidden hover:shadow-[0_0_30px_rgba(20,184,166,0.3)] transition-all duration-500 group flex flex-col h-full relative cursor-pointer"
- >
-   <div className="h-52 overflow-hidden shrink-0 relative bg-[#081210]">
-     <img src={gift.image} alt={gift.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-500"></div>
-     <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-teal-300 border border-teal-500/30">
-       Personalized
-     </div>
+ <AnimatedSection>
+   <div className="text-center mb-8">
+     <p className="text-xs font-bold uppercase tracking-widest text-[#8b6508] mb-1">3D Gift Unbox</p>
+     <p className="text-sm text-zinc-500 dark:text-zinc-400">Tap the box lid to open — then personalize &amp; order</p>
    </div>
-   <div className="p-5 flex flex-col flex-1 relative z-10 justify-between">
-     <div>
-       <h3 className="font-serif font-bold text-lg text-white mb-1 group-hover:text-teal-300 transition-colors">{gift.name}</h3>
-       <p className="text-teal-400 font-bold text-base mb-3 font-serif">₹{gift.price}</p>
-       <p className="text-xs text-zinc-400 font-light leading-relaxed mb-4">
-         Includes custom photo mounting, optional luxury gift box, and handwritten wish card.
-       </p>
-     </div>
-
-     <button 
-       type="button"
-       onClick={(e) => {
-         e.stopPropagation();
-         setSelectedGiftForOrder(gift);
-       }}
-       className="w-full py-3 bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-300 hover:to-emerald-300 text-[#071f1b] rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-teal-500/20 hover:scale-[1.02]"
-     >
-       <Gift className="w-4 h-4" /> Personalize &amp; Order Gift
-     </button>
+   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
+     {gifts.map((gift) => (
+       <div
+         key={gift.id}
+         className="bg-white/80 dark:bg-zinc-900/80 border border-[#d4af37]/25 dark:border-amber-500/20 rounded-3xl p-5 sm:p-6 shadow-lg"
+       >
+         <GiftBoxUnbox
+           gift={gift}
+           onOrder={(g) => setSelectedGiftForOrder(g)}
+         />
+       </div>
+     ))}
    </div>
- </div>
- ))}
  </AnimatedSection>
   )
  )}
