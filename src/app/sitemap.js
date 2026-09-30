@@ -1,73 +1,26 @@
-export default async function sitemap() {
-  const baseUrl = 'https://sssstudiomadurai.com';
-  const currentDate = new Date().toISOString();
+import { SITE_URL } from "@/lib/site";
 
-  return [
-    {
-      url: `${baseUrl}`,
-      lastModified: currentDate,
-      changeFrequency: 'daily',
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/services`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/packages`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/gallery`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/store`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/book`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/visualizer`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/track`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/support`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
+export default async function sitemap() {
+  const now = new Date().toISOString();
+
+  const routes = [
+    { path: "", priority: 1.0, changeFrequency: "weekly" },
+    { path: "/services", priority: 0.9, changeFrequency: "weekly" },
+    { path: "/packages", priority: 0.9, changeFrequency: "weekly" },
+    { path: "/gallery", priority: 0.8, changeFrequency: "weekly" },
+    { path: "/store", priority: 0.8, changeFrequency: "weekly" },
+    { path: "/about", priority: 0.8, changeFrequency: "monthly" },
+    { path: "/contact", priority: 0.8, changeFrequency: "monthly" },
+    { path: "/book", priority: 0.8, changeFrequency: "weekly" },
+    { path: "/visualizer", priority: 0.6, changeFrequency: "monthly" },
+    { path: "/track", priority: 0.5, changeFrequency: "monthly" },
+    { path: "/support", priority: 0.5, changeFrequency: "monthly" },
   ];
+
+  return routes.map(({ path, priority, changeFrequency }) => ({
+    url: `${SITE_URL}${path}`,
+    lastModified: now,
+    changeFrequency,
+    priority,
+  }));
 }

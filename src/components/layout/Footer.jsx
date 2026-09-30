@@ -35,7 +35,7 @@ export default function Footer() {
 
             <div className="flex space-x-4">
               <a
-                href="https://instagram.com"
+                href="https://instagram.com/sss_studio_70"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-xl bg-black/5 hover:bg-[#d4af37]/20 border border-black/15 hover:border-[#d4af37] flex items-center justify-center text-zinc-900 hover:text-[#8b6508] transition-colors shadow-sm"
@@ -44,7 +44,7 @@ export default function Footer() {
                 <Instagram size={18} />
               </a>
               <a
-                href="https://facebook.com"
+                href="https://www.facebook.com/sivakumar.subramanianshetty"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-xl bg-black/5 hover:bg-[#d4af37]/20 border border-black/15 hover:border-[#d4af37] flex items-center justify-center text-zinc-900 hover:text-[#8b6508] transition-colors shadow-sm"

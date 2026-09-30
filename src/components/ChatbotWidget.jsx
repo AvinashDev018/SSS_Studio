@@ -91,7 +91,7 @@ export default function ChatbotWidget({ forcedOpen, onClose }) {
     {
       id: 1,
       sender: "bot",
-      text: "Vanakkam! 🙏 Welcome to SSS Photography Studio. I am your autonomous AI Studio Concierge powered by DeepSeek. How can I assist with your wedding, portrait session, or custom photo frame today?",
+      text: "Vanakkam! 🙏 Welcome to SSS Photography Studio. I am your AI Studio Concierge. How can I assist with your wedding, portrait session, or custom photo frame today?",
       type: "text",
     },
     { id: 2, sender: "bot", type: "menu", options: MENU_OPTIONS },
@@ -320,9 +320,6 @@ export default function ChatbotWidget({ forcedOpen, onClose }) {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="font-bold text-sm text-zinc-900">SSS Studio AI Assistant</h3>
-                  <span className="bg-black/5 text-[#8b6508] text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider border border-[#d4af37]/40">
-                    DeepSeek Agent
-                  </span>
                 </div>
                 <p className="text-[11px] text-[#8b6508] font-bold flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
@@ -766,7 +763,7 @@ export default function ChatbotWidget({ forcedOpen, onClose }) {
             {isAgentTyping && (
               <div className="self-start flex items-center gap-2 bg-white border border-[#d4af37]/60 px-3 py-2 rounded-2xl rounded-tl-sm text-xs text-[#8b6508] font-bold shadow-sm">
                 <Loader2 size={13} className="animate-spin text-[#8b6508]" />
-                <span>DeepSeek Agent is consulting studio data...</span>
+                <span>Checking studio data...</span>
               </div>
             )}
 
@@ -821,9 +818,9 @@ export default function ChatbotWidget({ forcedOpen, onClose }) {
                 type="text"
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
-                placeholder={isAgentTyping ? "DeepSeek is typing..." : "Ask in English or தமிழ் (e.g. Frame size)..."}
+                placeholder={isAgentTyping ? "Assistant is typing..." : "Ask in English or தமிழ் (e.g. Frame size)..."}
                 disabled={isAgentTyping || currentState === "report_form"}
-                aria-label="Ask SSS Studio DeepSeek Agent"
+                aria-label="Ask SSS Studio AI Assistant"
                 className="bg-transparent flex-1 text-xs sm:text-sm outline-none text-zinc-900 font-semibold placeholder:text-zinc-400 disabled:cursor-not-allowed"
               />
               <button

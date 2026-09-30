@@ -53,9 +53,9 @@ export default function SSSAbout() {
                   <div className="absolute -inset-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 rounded-3xl blur-md opacity-50 group-hover:opacity-80 transition-opacity duration-500" />
                   <div className="relative rounded-2xl overflow-hidden border-2 border-amber-400/60 shadow-2xl bg-[#090804]">
                     <img
-                      src="https://res.cloudinary.com/e5pnwpo5/image/upload/v1788541019/sss-about/e5wqbahcvquxizqnw7ij.jpg"
+                      src="https://res.cloudinary.com/e5pnwpo5/image/upload/v1790760457/sss-about/siva-kumar-founder.jpg"
                       alt="Mr. SIVA KUMAR - Managing Director SSS Studio"
-                      className="w-full h-[400px] object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                      className="w-full h-[400px] object-cover object-[center_20%] group-hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black via-black/40 to-transparent p-4 text-center">
                       <h4 className="text-lg font-serif font-bold text-white">

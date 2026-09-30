@@ -239,11 +239,11 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
 
                   {photoPreview ? (
                     <div className="space-y-3">
-                      <div className="relative mx-auto max-w-[240px] aspect-[4/3] rounded-xl overflow-hidden border-2 border-[#d4af37] shadow-lg bg-black">
+                      <div className="relative mx-auto max-w-[280px] w-full min-h-[200px] max-h-[320px] rounded-xl overflow-hidden border-2 border-[#d4af37] shadow-lg bg-black flex items-center justify-center">
                         <img
                           src={photoPreview}
                           alt="Uploaded Preview"
-                          className="w-full h-full object-cover"
+                          className="w-full h-auto max-h-[320px] object-contain"
                         />
                         <div className="absolute top-2 right-2 px-2 py-0.5 rounded bg-black/80 text-[10px] text-[#d4af37] font-bold">
                           ✓ Photo Selected
