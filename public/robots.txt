@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /login
+Disallow: /profile
+Disallow: /demo/
+
+Host: https://ssstudio.online
+Sitemap: https://ssstudio.online/sitemap.xml
