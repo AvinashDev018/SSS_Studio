@@ -128,13 +128,13 @@ export default function PromoDashboard() {
       <div
         className={`mb-8 rounded-3xl border p-5 sm:p-6 ${
           launchStatus?.active
-            ? "border-teal-400/40 bg-teal-950/40"
-            : "border-rose-500/30 bg-rose-950/20"
+            ? "border-amber-400/50 bg-[#12100a]"
+            : "border-rose-500/40 bg-[#160c0c]"
         }`}
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
-            <div className="p-2.5 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-300">
+            <div className="p-2.5 rounded-xl bg-amber-500/20 border border-amber-400/50 text-amber-300">
               <Gift className="w-5 h-5" />
             </div>
             <div>
@@ -145,17 +145,17 @@ export default function PromoDashboard() {
                 <span
                   className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
                     launchStatus?.active
-                      ? "bg-emerald-500/20 text-emerald-300 border-emerald-400/40"
-                      : "bg-rose-500/20 text-rose-300 border-rose-400/40"
+                      ? "bg-emerald-500 text-black border-emerald-300"
+                      : "bg-rose-500 text-white border-rose-300"
                   }`}
                 >
                   {launchStatus?.active ? "Live" : "Expired / Off"}
                 </span>
               </div>
-              <p className="text-sm text-zinc-300 mt-1">
+              <p className="text-sm text-zinc-100 mt-1 font-medium">
                 ₹{LAUNCH_OFFER.discountInr} OFF · Frames &amp; Birthday Gifts · First {LAUNCH_OFFER.maxUses} customers
               </p>
-              <p className="text-xs text-zinc-500 mt-1">
+              <p className="text-xs text-zinc-300 mt-1">
                 {launchStatus?.exists
                   ? `Used ${launchStatus.uses || 0} / ${LAUNCH_OFFER.maxUses} · ${launchStatus.remaining || 0} left`
                   : "Not in database — create to enable the Offer popup"}
@@ -172,7 +172,7 @@ export default function PromoDashboard() {
               type="button"
               disabled={saving}
               onClick={handleCreateLaunchOffer}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-400 to-emerald-500 text-black text-xs font-black uppercase tracking-wider disabled:opacity-60 shrink-0"
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-black text-xs font-black uppercase tracking-wider disabled:opacity-60 shrink-0"
             >
               {saving ? "Creating…" : `Create ${LAUNCH_OFFER.code} voucher`}
             </button>
@@ -271,35 +271,37 @@ export default function PromoDashboard() {
                 <div
                   key={promo.id}
                   className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border p-5 ${
-                    isLaunch ? "border-teal-400/40 bg-teal-950/30" : "border-amber-500/25 bg-[#0b0c07]"
+                    isLaunch ? "border-amber-400/40 bg-[#14120c]" : "border-amber-500/25 bg-[#0b0c07]"
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     <div
                       className={`p-2.5 rounded-xl border ${
-                        promo.active ? "bg-amber-500/15 border-amber-400/40 text-amber-300" : "bg-zinc-800 border-zinc-700 text-zinc-500"
+                        promo.active
+                          ? "bg-amber-500/20 border-amber-400/50 text-amber-300"
+                          : "bg-zinc-800 border-zinc-600 text-zinc-400"
                       }`}
                     >
                       {isLaunch ? <Gift className="w-5 h-5" /> : promo.type === "percentage" ? <Percent className="w-5 h-5" /> : <Tag className="w-5 h-5" />}
                     </div>
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className={`text-lg font-mono font-bold ${promo.active ? "text-white" : "text-zinc-500 line-through"}`}>
+                        <h3 className={`text-lg font-mono font-bold ${promo.active ? "text-white" : "text-zinc-400 line-through"}`}>
                           {promo.code}
                         </h3>
                         {isLaunch && (
-                          <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 border border-teal-400/30">
+                          <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-amber-400 text-black border border-amber-300">
                             Website Offer
                           </span>
                         )}
-                        <button type="button" onClick={() => handleCopyCode(promo.id, promo.code)} className="text-zinc-400 hover:text-amber-300">
+                        <button type="button" onClick={() => handleCopyCode(promo.id, promo.code)} className="text-zinc-300 hover:text-amber-300">
                           {copiedId === promo.id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                         </button>
                       </div>
-                      <p className="text-sm text-amber-300 font-semibold mt-0.5">
+                      <p className="text-sm text-amber-300 font-bold mt-0.5">
                         {promo.type === "percentage" ? `${promo.discount}% DISCOUNT` : `₹${promo.discount} OFF`}
                       </p>
-                      <p className="text-[11px] text-zinc-500 mt-1">
+                      <p className="text-[11px] text-zinc-300 mt-1">
                         Uses: {promo.uses || 0}
                         {isLaunch ? ` / ${LAUNCH_OFFER.maxUses} max` : ""}
                       </p>
@@ -309,10 +311,10 @@ export default function PromoDashboard() {
                     <button
                       type="button"
                       onClick={() => handleToggle(promo.id, promo.active)}
-                      className={`px-3 py-2 rounded-xl text-xs font-bold border ${
+                      className={`px-3 py-2 rounded-xl text-xs font-black border ${
                         promo.active
-                          ? "border-emerald-500/40 text-emerald-300 bg-emerald-500/10"
-                          : "border-zinc-600 text-zinc-400 bg-zinc-800"
+                          ? "border-emerald-400 bg-emerald-500 text-black"
+                          : "border-zinc-500 text-zinc-200 bg-zinc-800"
                       }`}
                     >
                       {promo.active ? "Deactivate" : "Activate"}
@@ -320,7 +322,7 @@ export default function PromoDashboard() {
                     <button
                       type="button"
                       onClick={() => handleDelete(promo.id, promo.code)}
-                      className="px-3 py-2 rounded-xl text-xs font-bold border border-rose-500/40 text-rose-300 bg-rose-500/10"
+                      className="px-3 py-2 rounded-xl text-xs font-bold border border-rose-400 bg-rose-600 text-white"
                       title="Delete"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
