@@ -1,0 +1,26 @@
+name: Keep Supabase awake
+
+on:
+  schedule:
+    # Every 3 days at 03:30 UTC (avoids free-tier ~7 day pause)
+    - cron: "30 3 */3 * *"
+  workflow_dispatch:
+
+jobs:
+  ping-health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping /api/health (DB keep-alive)
+        env:
+          HEALTH_URL: ${{ secrets.HEALTH_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          URL="${HEALTH_URL:-https://sssstudio.online/api/health}"
+          echo "Pinging $URL"
+          if [ -n "$CRON_SECRET" ]; then
+            curl -fsS -H "Authorization: Bearer ${CRON_SECRET}" "$URL"
+          else
+            curl -fsS "$URL"
+          fi
+          echo ""
+          echo "OK"
