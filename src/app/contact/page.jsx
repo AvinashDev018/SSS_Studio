@@ -7,9 +7,9 @@ export default function Contact() {
  return (
  <div className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen flex flex-col justify-center">
  <AnimatedSection className="text-center mb-16">
- <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 to-zinc-500 dark:from-cyan-400 dark:to-violet-500 drop-shadow-sm">Get in Touch</h1>
+ <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 to-zinc-500 dark:from-cyan-400 dark:to-violet-500 drop-shadow-sm">Contact SSS Studio Madurai</h1>
  <p className="text-zinc-600 dark:text-zinc-300 text-xl max-w-2xl mx-auto font-light leading-relaxed">
- We'd love to hear from you. Find our studio or drop us a message.
+ Visit our Avaniyapuram studio or message us for wedding photography, portraits and frame orders across Tamil Nadu.
  </p>
  </AnimatedSection>
 

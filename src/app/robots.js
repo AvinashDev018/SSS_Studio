@@ -1,30 +1,29 @@
-export default function robots() {
-  const baseUrl = 'https://sssstudiomadurai.com';
+import { SITE_URL } from "@/lib/site";
 
+export default function robots() {
   return {
     rules: [
       {
-        userAgent: '*',
-        allow: '/',
+        userAgent: "*",
+        allow: "/",
         disallow: [
-          '/admin/',
-          '/admin/*',
-          '/api/',
-          '/api/*',
-          '/login',
-          '/profile',
+          "/admin/",
+          "/admin",
+          "/api/",
+          "/api",
+          "/login",
+          "/profile",
+          "/demo/",
+          "/demo",
         ],
       },
       {
-        userAgent: 'Googlebot',
-        allow: '/',
-        disallow: [
-          '/admin/',
-          '/api/',
-        ],
+        userAgent: "Googlebot",
+        allow: "/",
+        disallow: ["/admin/", "/api/", "/demo/"],
       },
     ],
-    sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl,
+    sitemap: `${SITE_URL}/sitemap.xml`,
+    host: SITE_URL,
   };
 }

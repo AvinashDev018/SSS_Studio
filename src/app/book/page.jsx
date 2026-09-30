@@ -3,11 +3,14 @@ import AnimatedSection from "@/components/ui/AnimatedSection";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata = {
-  title: 'Book a Session',
-  description: 'Secure your date and time with SSS Studio instantly.',
-};
+export const metadata = pageMetadata({
+  title: "Book a Photography Session Madurai | SSS Studio",
+  description:
+    "Book your wedding, pre-wedding, maternity or event shoot with SSS Studio Madurai. Secure your date online or via WhatsApp.",
+  path: "/book",
+});
 
 export default async function BookPage() {
   const session = await getServerSession(authOptions);
