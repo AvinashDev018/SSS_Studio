@@ -6,5 +6,5 @@ Disallow: /login
 Disallow: /profile
 Disallow: /demo/
 
-Host: https://ssstudio.online
-Sitemap: https://ssstudio.online/sitemap.xml
+Host: https://sssstudio.online
+Sitemap: https://sssstudio.online/sitemap.xml

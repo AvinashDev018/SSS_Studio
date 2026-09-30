@@ -1,5 +1,5 @@
 /** Canonical public site URL — keep in sync with domain DNS / hosting */
-export const SITE_URL = "https://ssstudio.online";
+export const SITE_URL = "https://sssstudio.online";
 
 export const SITE_NAME = "SSS Studio Photography";
 export const SITE_NAME_SHORT = "SSS Studio";
@@ -7,13 +7,12 @@ export const SITE_TAGLINE =
   "Premium wedding photography & cinematic films in Madurai, Tamil Nadu";
 
 export const SITE_DESCRIPTION =
-  "SSS Studio (sssstudio / ssstudio) — premium wedding photography, candid cinematography, pre-wedding, maternity, baby & event shoots in Avaniyapuram, Madurai. 1-Month Album Delivery Guarantee across Tamil Nadu.";
+  "SSS Studio (sssstudio) — premium wedding photography, candid cinematography, pre-wedding, maternity, baby & event shoots in Avaniyapuram, Madurai. 1-Month Album Delivery Guarantee across Tamil Nadu.";
 
 export const SITE_KEYWORDS = [
   "sss studio",
   "sssstudio",
-  "ssstudio",
-  "ssstudio.online",
+  "sssstudio.online",
   "sss photography studio",
   "sss studio madurai",
   "photography studio madurai",
@@ -32,7 +31,7 @@ export const SITE_KEYWORDS = [
 
 export const SITE_PHONE = "+91 98659 92379";
 export const SITE_WHATSAPP = "919865992379";
-export const SITE_EMAIL = "hello@ssstudio.online";
+export const SITE_EMAIL = "hello@sssstudio.online";
 
 export const SITE_ADDRESS = {
   streetAddress: "7th Street, Prasanna Colony, Avaniyapuram",
