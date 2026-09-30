@@ -30,6 +30,7 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
   const [address, setAddress] = useState("");
   const [couponCode, setCouponCode] = useState("");
   const [isCouponApplied, setIsCouponApplied] = useState(false);
+  const [couponRemaining, setCouponRemaining] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [isGift, setIsGift] = useState(true);
   const [giftWish, setGiftWish] = useState("");
@@ -50,8 +51,8 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
     : "Classic Synthetic Wood Frame";
 
   const subtotal = Math.round(baseNum * finishMultiplier * quantity);
-  const discount = isCouponApplied ? Math.round(subtotal * 0.15) : 0;
-  const finalTotal = subtotal - discount;
+  const discount = isCouponApplied ? Math.min(100, subtotal) : 0;
+  const finalTotal = Math.max(0, subtotal - discount);
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files?.[0];
@@ -71,14 +72,22 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
     reader.readAsDataURL(file);
   };
 
-  const handleApplyCoupon = () => {
+  const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
-    const clean = couponCode.trim().toUpperCase();
-    if (clean === "SSS-LUCKY2026" || clean === "SSS15" || clean === "STUDIO2026") {
-      setIsCouponApplied(true);
-      setErrorMsg("");
-    } else {
-      setErrorMsg("Invalid coupon code. Try SSS-LUCKY2026");
+    setErrorMsg("");
+    try {
+      const { validateLaunchOfferCode } = await import("@/app/actions/promos");
+      const res = await validateLaunchOfferCode(couponCode);
+      if (res.success) {
+        setIsCouponApplied(true);
+        setCouponCode(res.promo?.code || "SSS100");
+        setCouponRemaining(res.promo?.remaining ?? null);
+      } else {
+        setIsCouponApplied(false);
+        setErrorMsg(res.error || "Invalid coupon");
+      }
+    } catch {
+      setErrorMsg("Could not validate coupon. Try again.");
     }
   };
 
@@ -91,6 +100,13 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
 
     setIsSubmitting(true);
     setErrorMsg("");
+
+    if (isCouponApplied) {
+      try {
+        const { claimLaunchOffer } = await import("@/app/actions/promos");
+        await claimLaunchOffer(couponCode);
+      } catch (_) {}
+    }
 
     let uploadedPhotoUrl = "";
     if (photoPreview && photoPreview.startsWith("data:image")) {
@@ -473,9 +489,12 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="Coupon Code (e.g. SSS-LUCKY2026)"
+                    placeholder="Coupon Code (e.g. SSS100)"
                     value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
+                    onChange={(e) => {
+                      setCouponCode(e.target.value);
+                      setIsCouponApplied(false);
+                    }}
                     disabled={isCouponApplied}
                     className="flex-1 bg-[#FAFAFA] border border-black/15 rounded-xl px-3.5 py-2 text-xs text-zinc-900 uppercase font-bold placeholder-zinc-400 focus:outline-none focus:border-[#d4af37] disabled:opacity-50"
                   />
@@ -488,6 +507,12 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
                     {isCouponApplied ? "✓ Applied" : "Apply"}
                   </button>
                 </div>
+                {isCouponApplied && (
+                  <p className="text-[11px] text-emerald-700 font-semibold mt-1.5">
+                    🎉 ₹100 OFF applied
+                    {couponRemaining != null ? ` · ${couponRemaining} of 20 slots left` : ""}
+                  </p>
+                )}
 
                 {/* Step 2 Buttons */}
                 <div className="pt-2 flex items-center justify-between">
@@ -536,7 +561,7 @@ export default function PhotoFrameOrderModal({ isOpen, onClose, selectedFrame })
                     </div>
                     {isCouponApplied && (
                       <span className="text-[11px] text-black font-black block mt-0.5">
-                        🎉 Coupon Applied (Saved ₹{discount.toLocaleString("en-IN")})
+                        🎉 ₹100 OFF applied (Saved ₹{discount.toLocaleString("en-IN")})
                       </span>
                     )}
                   </div>
