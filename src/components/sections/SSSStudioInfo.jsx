@@ -128,7 +128,7 @@ export default function SSSStudioInfo({ onOpenBooking }) {
                 </div>
                 <div className="flex items-center justify-between text-xs text-zinc-300 border-b border-white/10 pb-3">
                   <span>Album Delivery</span>
-                  <span className="text-white font-semibold">Guaranteed 20 Days</span>
+                  <span className="text-white font-semibold">Guaranteed 30 Days</span>
                 </div>
                 <div className="flex items-center justify-between text-xs text-zinc-300">
                   <span>Pre-Wedding Outdoors</span>
